@@ -100,5 +100,8 @@ export default {
     nodeFiles: {
       type: 'array',
     },
+    disableTypeCheck: {
+      type: 'boolean',
+    },
   },
 };

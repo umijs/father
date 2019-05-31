@@ -59,6 +59,7 @@ export interface IBundleOptions {
   nodeFiles?: {
     [value: string]: any;
   };
+  disableTypeCheck?: boolean;
 }
 
 export interface IOpts {

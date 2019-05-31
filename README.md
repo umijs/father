@@ -305,6 +305,13 @@ export default {
 
 配置 rollup-plugin-commonjs 的 [namedExports](https://github.com/rollup/rollup-plugin-commonjs#usage)。
 
+#### disableTypeCheck
+
+是否禁用类型检测。
+
+* Type: `boolean`
+* Default: `false`
+
 #### target
 
 配置是 node 库还是 browser 库，只作用于语法层。
