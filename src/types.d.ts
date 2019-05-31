@@ -53,6 +53,12 @@ export interface IBundleOptions {
   replace?: {
     [value: string]: any;
   };
+  browserFiles?: {
+    [value: string]: any;
+  };
+  nodeFiles?: {
+    [value: string]: any;
+  };
 }
 
 export interface IOpts {

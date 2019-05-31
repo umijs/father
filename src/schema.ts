@@ -94,5 +94,11 @@ export default {
     replace: {
       type: 'object',
     },
+    browserFiles: {
+      type: 'array',
+    },
+    nodeFiles: {
+      type: 'array',
+    },
   },
 };

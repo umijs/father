@@ -3,11 +3,26 @@ interface IGetBabelConfigOpts {
   type?: 'esm' | 'cjs';
   typescript: boolean;
   runtimeHelpers?: boolean;
+  filePath?: string;
+  browserFiles?: {
+    [value: string]: any;
+  };
+  nodeFiles?: {
+    [value: string]: any;
+  };
 }
 
 export default function(opts: IGetBabelConfigOpts) {
-  const { target, typescript, type, runtimeHelpers } = opts;
-  const isBrowser = target === 'browser';
+  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles } = opts;
+  let isBrowser = target === 'browser';
+  // rollup 场景下不会传入 filePath
+  if (filePath) {
+    if (isBrowser) {
+      if (nodeFiles.includes(filePath)) isBrowser = false;
+    } else {
+      if (browserFiles.includes(filePath)) isBrowser = true;
+    }
+  }
   const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: 6 };
 
   return {
