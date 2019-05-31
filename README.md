@@ -314,6 +314,20 @@ export default {
 
 如果为 `node`，兼容到 node@6；如果为 `browser`，兼容到 `['last 2 versions', 'IE 10']`，所以肯定会是 es5 的语法。
 
+#### browserFiles
+
+target 为 `node` 时，配置例外文件走 `browser` target。
+
+* Type: `[string]`
+* Default: `[]`
+
+#### nodeFiles
+
+target 为 `browser` 时，配置例外文件走 `node` target。
+
+* Type: `[string]`
+* Default: `[]`
+
 #### runtimeHelpers
 
 是否把 helper 方法提取到 `@babel/runtime` 里。
