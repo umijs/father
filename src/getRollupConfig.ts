@@ -127,7 +127,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     }),
     ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
     nodeResolve({
-      jsnext: true,
+      mainFields: ['module', 'jsnext:main', 'main'],
       extensions,
     }),
     ...(isTypeScript
