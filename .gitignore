@@ -3,5 +3,5 @@
 /coverage
 /.local
 /src/fixtures/**/node_modules/.cache
-/src/fixtures/**/.docz
+# /src/fixtures/**/.docz
 /src/fixtures/build/*/dist
