@@ -2,8 +2,9 @@
 
 Library toolkit based on rollup and docz.
 
-[![NPM version](https://img.shields.io/npm/v/father.svg?style=flat)](https://npmjs.org/package/umi-plugin-library)
-[![NPM downloads](http://img.shields.io/npm/dm/father.svg?style=flat)](https://npmjs.org/package/umi-library)
+[![NPM version](https://img.shields.io/npm/v/father.svg?style=flat)](https://npmjs.org/package/father)
+[![Build Status](https://img.shields.io/travis/umijs/father.svg?style=flat)](https://travis-ci.org/umijs/father)
+[![NPM downloads](http://img.shields.io/npm/dm/father.svg?style=flat)](https://npmjs.org/package/father)
 
 [视频教程：利用 umi-library（father） 做组件打包](https://www.bilibili.com/video/av47853431)。
 
