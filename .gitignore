@@ -1,6 +1,5 @@
 /node_modules
 /lib
 /.local
-/yarn.lock
 /src/fixtures/**/node_modules
 /src/fixtures/**/.docz
