@@ -1,5 +1,6 @@
 /node_modules
 /lib
+/coverage
 /.local
-/src/fixtures/**/node_modules
+/src/fixtures/**/node_modules/.cache
 /src/fixtures/**/.docz
