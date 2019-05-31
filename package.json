@@ -66,6 +66,7 @@
     "coveralls": "^3.0.3",
     "np": "^5.0.2",
     "puppeteer": "^1.17.0",
+    "serve-handler": "^6.0.1",
     "test-build-result": "^1.1.2",
     "umi-test": "^1.5.8",
     "umi-tools": "^0.4.0"
