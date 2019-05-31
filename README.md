@@ -79,12 +79,12 @@ $ father doc deploy
 
 注：
 
-1. 不能传 `--config` 参数，通过 `--config` 指定的文件内容可全部配置在 `.umirc.library.js` 的 [doc](#doc) 配置里。
+1. 不能传 `--config` 参数，通过 `--config` 指定的文件内容可全部配置在 `.fatherrc.js` 的 [doc](#doc) 配置里。
 2. 使用 `deploy` 之前请先执行 `build` 命令，文档部署后域名为：`https://yourname.github.io/your-repo`。
 
 ## Config
 
-新建 `.umirc.library.js` 文件进行配置。
+新建 `.fatherrc.js` 文件进行配置。
 
 比如：
 
@@ -100,7 +100,7 @@ export default {
 
 注意：
 
-1. lerna 项目可以为每个 package 单独配，并且可以继承根目录的 `.umirc.library.js` 配置
+1. lerna 项目可以为每个 package 单独配，并且可以继承根目录的 `.fatherrc.js` 配置
 2. 配置文件支持 es6 和 TypeScript
 
 ### Options

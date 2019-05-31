@@ -11,6 +11,10 @@ function testDefault(obj) {
 }
 
 export const CONFIG_FILES = [
+  '.fatherrc.js',
+  '.fatherrc.jsx',
+  '.fatherrc.ts',
+  '.fatherrc.tsx',
   '.umirc.library.js',
   '.umirc.library.jsx',
   '.umirc.library.ts',
