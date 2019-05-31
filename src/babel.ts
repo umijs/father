@@ -40,6 +40,7 @@ export default async function(opts: IBabelOpts) {
       extraBabelPlugins = [],
       browserFiles = [],
       nodeFiles = [],
+      disableTypeCheck,
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -81,15 +82,17 @@ export default async function(opts: IBabelOpts) {
   }
 
   function createStream(src) {
+    const tsConfig = getTSConfig();
+    const babelTransformRegexp = disableTypeCheck ? /\.(t|j)sx?$/ : /\.jsx?$/;
     return vfs
       .src(src, {
         allowEmpty: true,
         base: srcPath,
       })
-      .pipe(gulpIf(f => /\.tsx?$/.test(f.path), gulpTs(getTSConfig())))
+      .pipe(gulpIf(f => !disableTypeCheck && /\.tsx?$/.test(f.path), gulpTs(tsConfig)))
       .pipe(
         gulpIf(
-          f => /\.jsx?$/.test(f.path),
+          f => babelTransformRegexp.test(f.path),
           through.obj((file, env, cb) => {
             try {
               file.contents = Buffer.from(
@@ -116,6 +119,7 @@ export default async function(opts: IBabelOpts) {
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures/**/*')}`,
       `!${join(srcPath, '**/*.mdx')}`,
+      `!${join(srcPath, '**/*.d.ts')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
     ]).on('end', () => {
       if (watch) {
