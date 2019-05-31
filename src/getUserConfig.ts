@@ -1,7 +1,7 @@
-import { existsSync } from 'fs';
 import AJV from 'ajv';
 import slash from 'slash2';
 import { relative } from 'path';
+import signale from 'signale';
 import schema from './schema';
 import { getExistFile } from './utils';
 import { IBundleOptions } from './types';
@@ -11,6 +11,10 @@ function testDefault(obj) {
 }
 
 export const CONFIG_FILES = [
+  '.fatherrc.js',
+  '.fatherrc.jsx',
+  '.fatherrc.ts',
+  '.fatherrc.tsx',
   '.umirc.library.js',
   '.umirc.library.jsx',
   '.umirc.library.ts',
@@ -24,7 +28,11 @@ export default function({ cwd }): IBundleOptions {
     returnRelative: false,
   });
 
-  if (existsSync(configFile)) {
+  if (configFile) {
+    if (configFile.includes('.umirc.library.')) {
+      signale.warn(`Please use .fatherrc.js instead of .umirc.library.js`);
+    }
+
     const userConfig = testDefault(require(configFile)); // eslint-disable-line
     const ajv = new AJV({ allErrors: true });
     const isValid = ajv.validate(schema, userConfig);
