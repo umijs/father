@@ -9,6 +9,7 @@
     "themeConfig": {},
     "separator": "-",
     "typescript": false,
+    "theme": "/Users/chencheng/Code/github.com/umijs/father/node_modules/docz-theme-umi/es/index.js",
     "hashRouter": true,
     "plugins": [
       {},
@@ -18,6 +19,7 @@
       {}
     ]
   },
+  "props": [],
   "entries": [
     {
       "key": "README.mdx",
@@ -71,6 +73,5 @@
         ]
       }
     }
-  ],
-  "props": []
+  ]
 }

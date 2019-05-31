@@ -11,15 +11,16 @@
     },
     "separator": "-",
     "typescript": false,
+    "theme": "/Users/chencheng/Code/github.com/umijs/father/node_modules/docz-theme-umi/es/index.js",
     "htmlContext": {
       "favicon": "https://private-alipayobjects.alipay.com/alipay-rmsdeploy-image/rmsportal/EPkOqxgKmFIsEuPcFBOy.png",
       "head": {
         "scripts": [
           {
-            "src": "https://unpkg.com/react@16.8.6/umd/react.production.min.js"
+            "src": "https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.production.min.js"
           },
           {
-            "src": "https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"
+            "src": "https://gw.alipayobjects.com/os/lib/react-dom/16.8.6/umd/react-dom.production.min.js"
           }
         ]
       }
@@ -32,6 +33,7 @@
       {}
     ]
   },
+  "props": [],
   "entries": [
     {
       "key": "README.mdx",
@@ -54,6 +56,5 @@
         ]
       }
     }
-  ],
-  "props": []
+  ]
 }

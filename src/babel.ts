@@ -1,4 +1,4 @@
-import { join, extname } from 'path';
+import { join, extname, relative } from 'path';
 import { existsSync, readFileSync, statSync } from 'fs';
 import vfs from 'vinyl-fs';
 import signale from 'signale';
@@ -38,6 +38,8 @@ export default async function(opts: IBabelOpts) {
       runtimeHelpers,
       extraBabelPresets = [],
       extraBabelPlugins = [],
+      browserFiles = [],
+      nodeFiles = [],
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -56,6 +58,9 @@ export default async function(opts: IBabelOpts) {
       type,
       typescript: true,
       runtimeHelpers,
+      filePath: relative(cwd, file.path),
+      browserFiles,
+      nodeFiles,
     });
     babelOpts.presets.push(...extraBabelPresets);
     babelOpts.plugins.push(...extraBabelPlugins);

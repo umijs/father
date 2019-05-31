@@ -63,6 +63,7 @@
     "yargs-parser": "13.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "coveralls": "^3.0.3",
     "np": "^5.0.2",
     "puppeteer": "^1.17.0",
