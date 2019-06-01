@@ -169,6 +169,15 @@ esm 为 `rollup` 或 `babel` 时，等同于配置了 `{ type: "rollup" | "babel
 
 通常不需要配置，除非你发布到 npm 的代码需要保密。
 
+#### esm.importLibToEs
+
+是否在 esm 模式下把 import 项里的 `/lib/` 转换为 `/es/`。
+
+* Type: `boolean`
+* Default: `false`
+
+比如 `import 'foo/lib/button';`，在 cjs 模式下会保持原样，在 esm 模式下会编译成 `import 'foo/es/button';`。
+
 #### cjs
 
 是否输出 cjs 格式，以及指定 cjs 格式的打包方式等。

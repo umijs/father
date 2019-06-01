@@ -10,14 +10,16 @@ interface IRollupOpts {
   type: ModuleFormat;
   bundleOpts: IBundleOptions;
   watch?: boolean;
+  importLibToEs?: boolean;
 }
 
 async function build(entry: string, opts: IRollupOpts) {
-  const { cwd, type, bundleOpts } = opts;
+  const { cwd, type, bundleOpts, importLibToEs } = opts;
   const rollupConfigs = getRollupConfig({
     cwd,
     type,
     entry,
+    importLibToEs,
     bundleOpts: normalizeBundleOpts(entry, bundleOpts),
   });
 

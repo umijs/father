@@ -119,13 +119,15 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   if (bundleOpts.esm) {
     const esm = bundleOpts.esm as IEsm;
     log(`Build esm with ${esm.type}`);
+    const importLibToEs = esm && esm.importLibToEs;
     if (esm && esm.type === 'babel') {
-      await babel({ cwd, watch, type: 'esm', bundleOpts });
+      await babel({ cwd, watch, type: 'esm', importLibToEs, bundleOpts });
     } else {
       await rollup({
         cwd,
         type: 'esm',
         entry: bundleOpts.entry,
+        importLibToEs,
         watch,
         bundleOpts,
       });

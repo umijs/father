@@ -17,6 +17,7 @@ interface IBabelOpts {
   type: 'esm' | 'cjs';
   target?: 'browser' | 'node';
   watch?: boolean;
+  importLibToEs?: boolean;
   bundleOpts: IBundleOptions;
 }
 
@@ -33,6 +34,7 @@ export default async function(opts: IBabelOpts) {
     cwd,
     type,
     watch,
+    importLibToEs,
     bundleOpts: {
       target = 'browser',
       runtimeHelpers,
@@ -63,6 +65,9 @@ export default async function(opts: IBabelOpts) {
       browserFiles,
       nodeFiles,
     });
+    if (importLibToEs && type === 'esm') {
+      babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));
+    }
     babelOpts.presets.push(...extraBabelPresets);
     babelOpts.plugins.push(...extraBabelPlugins);
 
