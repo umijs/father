@@ -23,6 +23,9 @@ export default {
             file: noEmptyStr,
             mjs: { type: 'boolean' },
             minify: { type: 'boolean' },
+            importLibToEs: {
+              type: 'boolean',
+            },
           },
         },
       ],

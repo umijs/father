@@ -19,6 +19,7 @@ interface IGetRollupConfigOpts {
   cwd: string;
   entry: string;
   type: ModuleFormat;
+  importLibToEs?: boolean;
   bundleOpts: IBundleOptions;
 }
 
@@ -29,7 +30,7 @@ interface IPkg {
 }
 
 export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
-  const { type, entry, cwd, bundleOpts } = opts;
+  const { type, entry, cwd, importLibToEs, bundleOpts } = opts;
   const {
     umd,
     esm,
@@ -70,6 +71,9 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     // ref: https://github.com/rollup/rollup-plugin-babel#usage
     extensions,
   };
+  if (importLibToEs && type === 'esm') {
+    babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));
+  }
   babelOpts.presets.push(...extraBabelPresets);
   babelOpts.plugins.push(...extraBabelPlugins);
 

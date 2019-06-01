@@ -14,6 +14,7 @@ interface ICjs extends IBundleTypeOutput {
 interface IEsm extends IBundleTypeOutput {
   mjs?: boolean;
   minify?: boolean;
+  importLibToEs?: boolean;
 }
 
 interface IStringObject {
