@@ -1,1 +1,6 @@
 /src/fixtures
+/node_modules
+/lib
+/coverage
+/.local
+/.idea
