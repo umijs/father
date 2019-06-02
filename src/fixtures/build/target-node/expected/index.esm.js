@@ -1,4 +1,4 @@
-const foo = 'bar';
+var foo = 'bar';
 function index () {
   return foo;
 }
