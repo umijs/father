@@ -34,8 +34,8 @@ async function build(entry: string, opts: IRollupOpts) {
       watcher.on('event', event => {
         if (event.error) {
           signale.error(event.error);
-        } else {
-          signale.info(`[${type}] file changed`);
+        } else if (event.code === 'START') {
+          signale.info(`[${type}] Rebuild since file changed`);
         }
       });
     } else {

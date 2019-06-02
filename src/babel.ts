@@ -5,6 +5,7 @@ import signale from 'signale';
 import rimraf from 'rimraf';
 import through from 'through2';
 import slash from 'slash2';
+import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import gulpTs from 'gulp-typescript';
@@ -123,6 +124,7 @@ export default async function(opts: IBabelOpts) {
     createStream([
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures/**/*')}`,
+      `!${join(srcPath, '**/templates/**/*')}`,
       `!${join(srcPath, '**/*.mdx')}`,
       `!${join(srcPath, '**/*.d.ts')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,

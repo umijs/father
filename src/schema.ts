@@ -72,6 +72,9 @@ export default {
     extraPostCSSPlugins: {
       type: 'array',
     },
+    extraExternals: {
+      type: 'array',
+    },
     cssModules: {
       oneOf: [{ type: 'boolean' }, { type: 'object' }],
     },
