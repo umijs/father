@@ -310,6 +310,13 @@ export default {
 * Type: `array`
 * Default: `[]`
 
+#### extraExternals
+
+为 rollup 模式配置额外的 external，但不推荐这么做，external 可通过 dependencies 和 peerDependencies 的约定实现。
+
+* Type: `string[]`
+* Default: `[]`
+
 #### namedExports
 
 配置 rollup-plugin-commonjs 的 [namedExports][13]。
