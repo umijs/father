@@ -24,7 +24,7 @@ export function devOrBuild({ cwd, cmd, params, userConfig = {} }) {
     assert.ok(
       !params.includes('--config'),
       `
-Don't use --config, config under doc in .umirc.library.js
+Don't use --config, config under doc in .fatherrc.js
 
 e.g.
 
