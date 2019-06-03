@@ -30,7 +30,7 @@ export default function({ cwd }): IBundleOptions {
 
   if (configFile) {
     if (configFile.includes('.umirc.library.')) {
-      signale.warn(`Please use .fatherrc.js instead of .umirc.library.js`);
+      signale.warn(`.umirc.library.js is deprecated, please use .fatherrc.js instead.`);
     }
 
     const userConfig = testDefault(require(configFile)); // eslint-disable-line

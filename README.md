@@ -2,16 +2,16 @@
 
 Library toolkit based on rollup and docz.
 
-[![NPM version](https://img.shields.io/npm/v/father.svg?style=flat)](https://npmjs.org/package/father)
-[![Build Status](https://img.shields.io/travis/umijs/father.svg?style=flat)](https://travis-ci.org/umijs/father)
-[![NPM downloads](http://img.shields.io/npm/dm/father.svg?style=flat)](https://npmjs.org/package/father)
+[![NPM version][image-1]][1]
+[![Build Status][image-2]][2]
+[![NPM downloads][image-3]][3]
 
-[视频教程：利用 umi-library（father） 做组件打包](https://www.bilibili.com/video/av47853431)。
+[视频教程：利用 umi-library（father） 做组件打包][4]。
 
 ## Features
 
-* ✔︎ 基于 [docz](https://www.docz.site/) 的文档功能
-* ✔︎ 基于 [rollup](http://rollupjs.org/) 和 babel 的组件打包功能
+* ✔︎ 基于 [docz][5] 的文档功能
+* ✔︎ 基于 [rollup][6] 和 babel 的组件打包功能
 * ✔︎ 支持 TypeScript
 * ✔︎ 支持 cjs、esm 和 umd 三种格式的打包
 * ✔︎ esm 支持生成 mjs，直接为浏览器使用
@@ -75,11 +75,11 @@ $ father doc build
 $ father doc deploy
 ```
 
-所有的命令行参数会透传给 docz，详见 [docz.site#project-configuration](https://www.docz.site/docs/project-configuration)。
+所有的命令行参数会透传给 docz，详见 [docz.site#project-configuration][7]。
 
 注：
 
-1. 不能传 `--config` 参数，通过 `--config` 指定的文件内容可全部配置在 `.fatherrc.js` 的 [doc](#doc) 配置里。
+1. 不能传 `--config` 参数，通过 `--config` 指定的文件内容可全部配置在 `.fatherrc.js` 的 [doc][8] 配置里。
 2. 使用 `deploy` 之前请先执行 `build` 命令，文档部署后域名为：`https://yourname.github.io/your-repo`。
 
 ## Config
@@ -124,7 +124,7 @@ export default {
 注：
 
 1. entry 为数组时，不可配置 file，因为不能多个 entry 输出到同一个文件
-2. 为不同 entry 指定不同的输出文件名时，可通过 [overridesByEntry](#overridesbyentry) 实现
+2. 为不同 entry 指定不同的输出文件名时，可通过 [overridesByEntry][9] 实现
 
 #### esm
 
@@ -219,11 +219,11 @@ cjs 为 `rollup` 或 `babel` 时，等同于配置了 `{ type: "rollup" | "babel
 
 #### umd.globals
 
-指定 rollup 的 [globals](https://rollupjs.org/guide/en#output-globals) 配置。
+指定 rollup 的 [globals][10] 配置。
 
 #### umd.name
 
-指定 rollup 的 [name](https://rollupjs.org/guide/en#output-name) 配置。
+指定 rollup 的 [name][11] 配置。
 
 * Type: `string`
 * Default: `${camelCase(basename(pkg.name))}`
@@ -244,7 +244,7 @@ cjs 为 `rollup` 或 `babel` 时，等同于配置了 `{ type: "rollup" | "babel
 
 #### autoprefixer
 
-配置参数传给 autoprefixer，详见 [autoprefixer#options](https://github.com/postcss/autoprefixer#options)，常用的有 `flexbox` 和 `browsers`。
+配置参数传给 autoprefixer，详见 [autoprefixer#options][12]，常用的有 `flexbox` 和 `browsers`。
 
 比如：
 
@@ -310,9 +310,16 @@ export default {
 * Type: `array`
 * Default: `[]`
 
+#### extraExternals
+
+为 rollup 模式配置额外的 external，但不推荐这么做，external 可通过 dependencies 和 peerDependencies 的约定实现。
+
+* Type: `string[]`
+* Default: `[]`
+
 #### namedExports
 
-配置 rollup-plugin-commonjs 的 [namedExports](https://github.com/rollup/rollup-plugin-commonjs#usage)。
+配置 rollup-plugin-commonjs 的 [namedExports][13]。
 
 #### disableTypeCheck
 
@@ -359,7 +366,7 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 
 #### replace
 
-配置需要替换的内容，基于 [rollup-plugin-replace](https://github.com/rollup/rollup-plugin-replace)。
+配置需要替换的内容，基于 [rollup-plugin-replace][14]。
 
 * Type: `Object`
 * Default: `{}`
@@ -417,7 +424,7 @@ export default {
 
 #### doc
 
-透传配置给 [docz](https://www.docz.site/documentation/project-configuration)，可以有 `title`、`theme`、`themeConfig` 等。
+透传配置给 [docz][15]，可以有 `title`、`theme`、`themeConfig` 等。
 
 比如要切换默认主题为 dark 模式：
 
@@ -462,7 +469,7 @@ export default {
 1. 通常只要配置 `esm: "rollup"` 就够了
 2. cjs 和 esm 支持 rollup 和 babel 两种打包方式，rollup 是跟进 entry 把项目依赖打包在一起输出一个文件，babel 是把 src 目录转化成 lib（cjs） 或 es（esm）
 3. 如果要考虑 ssr，再配上 `cjs: "rollup"`
-4. `package.json` 里配上 `sideEffects: false | string[]`，会让 webpack 的 [tree-shaking](https://webpack.js.org/guides/tree-shaking/) 更高效
+4. `package.json` 里配上 `sideEffects: false | string[]`，会让 webpack 的 [tree-shaking][16] 更高效
 
 ### 关于 dependencies、peerDependencies 和 external
 
@@ -496,3 +503,23 @@ $ PACKAGE=foo father build
 
 MIT
 
+[1]:	https://npmjs.org/package/father
+[2]:	https://travis-ci.org/umijs/father
+[3]:	https://npmjs.org/package/father
+[4]:	https://www.bilibili.com/video/av47853431
+[5]:	https://www.docz.site/
+[6]:	http://rollupjs.org/
+[7]:	https://www.docz.site/docs/project-configuration
+[8]:	#doc
+[9]:	#overridesbyentry
+[10]:	https://rollupjs.org/guide/en#output-globals
+[11]:	https://rollupjs.org/guide/en#output-name
+[12]:	https://github.com/postcss/autoprefixer#options
+[13]:	https://github.com/rollup/rollup-plugin-commonjs#usage
+[14]:	https://github.com/rollup/rollup-plugin-replace
+[15]:	https://www.docz.site/documentation/project-configuration
+[16]:	https://webpack.js.org/guides/tree-shaking/
+
+[image-1]:	https://img.shields.io/npm/v/father.svg?style=flat
+[image-2]:	https://img.shields.io/travis/umijs/father.svg?style=flat
+[image-3]:	http://img.shields.io/npm/dm/father.svg?style=flat

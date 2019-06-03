@@ -46,6 +46,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     namedExports,
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
+    extraExternals = [],
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -61,7 +62,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   const runtimeHelpers = type === 'cjs' ? false : runtimeHelpersOpts;
   const babelOpts = {
     ...getBabelConfig({
-      target,
+      target: type === 'esm' ? 'browser' : target,
       typescript: false,
       runtimeHelpers,
     }),
@@ -87,14 +88,16 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    ...extraExternals,
   ];
   // umd 只要 external peerDependencies
   const externalPeerDeps = Object.keys(pkg.peerDependencies || {});
 
   function getPkgNameByid(id) {
-    if (id.charAt(0) === '@') {
-      return id
-        .split('/')
+    const splitted = id.split('/');
+    // @ 和 @tmp 是为了兼容 umi 的逻辑
+    if (id.charAt(0) === '@' && splitted[0] !== '@' && splitted[0] !== '@tmp') {
+      return splitted
         .slice(0, 2)
         .join('/');
     } else {

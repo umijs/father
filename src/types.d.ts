@@ -41,6 +41,7 @@ export interface IBundleOptions {
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
   extraPostCSSPlugins?: any[];
+  extraExternals?: string[];
   cssModules?: boolean | Object;
   extractCSS?: boolean;
   autoprefixer?: Object;
