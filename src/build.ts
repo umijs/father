@@ -58,6 +58,18 @@ None format of ${chalk.cyan(
 `.trim(),
     );
   }
+  if (bundleOpts.entry) {
+    const tsConfigPath = join(cwd, 'tsconfig.json')
+    if (Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) {
+      assert.ok(existsSync(tsConfigPath), 'tsconfig.json is mandatory for typescript based project');
+    } else if (!Array.isArray(bundleOpts.entry) && isTypescriptFile(bundleOpts.entry)) {
+      assert.ok(existsSync(tsConfigPath), 'tsconfig.json is mandatory for typescript based project');
+    }
+  }
+}
+
+function isTypescriptFile(filePath) {
+  return filePath.endsWith('.ts') || filePath.endsWith('.tsx')
 }
 
 interface IExtraBuildOpts {
