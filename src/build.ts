@@ -59,10 +59,11 @@ None format of ${chalk.cyan(
     );
   }
   if (bundleOpts.entry) {
+    const tsConfigPath = join(cwd, 'tsconfig.json')
     if (Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) {
-      assert.ok(existsSync(join(cwd, 'tsconfig.json')), 'tsconfig.json is mandatory for typescript based project');
+      assert.ok(existsSync(tsConfigPath), 'tsconfig.json is mandatory for typescript based project');
     } else if (!Array.isArray(bundleOpts.entry) && isTypescriptFile(bundleOpts.entry)) {
-      assert.ok(existsSync(join(cwd, 'tsconfig.json')), 'tsconfig.json is mandatory for typescript based project');
+      assert.ok(existsSync(tsConfigPath), 'tsconfig.json is mandatory for typescript based project');
     }
   }
 }
