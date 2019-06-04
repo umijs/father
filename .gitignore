@@ -5,3 +5,4 @@
 /src/fixtures/**/node_modules/.cache
 # /src/fixtures/**/.docz
 /src/fixtures/build/*/dist
+/src/fixtures/e2e/normal/.docz
