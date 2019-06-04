@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { fork } from 'child_process';
 import { join } from 'path';
-import { writeFileSync, existsSync } from 'fs';
+import { writeFileSync, existsSync, copyFileSync } from 'fs';
 import { sync as mkdirp } from 'mkdirp';
 import ghpages from 'gh-pages';
 import chalk from 'chalk';
@@ -66,7 +66,11 @@ export default {
 export function deploy({ cwd, args }) {
   return new Promise((resolve, reject) => {
     const distDir = join(cwd, '.docz/dist');
+    
     assert.ok(existsSync(distDir), `Please run ${chalk.green(`umi-lib doc build`)} first`);
+
+    copyFileSync(join(distDir, 'index.html'), join(distDir, '404.html'));
+
     ghpages.publish(distDir, args, err => {
       if (err) {
         reject(new Error(`Doc deploy failed. ${err.message}`));
@@ -74,5 +78,6 @@ export function deploy({ cwd, args }) {
         resolve();
       }
     });
+
   });
 }
