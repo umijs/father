@@ -1,8 +1,11 @@
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, existsSync, readFileSync, writeFileSync, chmodSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import chalk from 'chalk';
+import { spawn } from 'child_process';
 import { EOL } from 'os';
+import { format, Options } from 'prettier';
 import signale from 'signale';
+import sgf from 'staged-git-files';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import registerBabel from './registerBabel';
 
@@ -52,6 +55,12 @@ export function install() {
     }
 
     writeFileSync(preCommitHooks, getPreCommitTemplate(), 'utf8');
+    try {
+      chmodSync(preCommitHooks, '777');
+    } catch (e) {
+      signale.warn(`chmod ${chalk.cyan(preCommitHooks)} failed: ${e.message}`);
+    }
+
     pkg.scripts['pre-commit'] = 'father pre-commit';
     writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
 
@@ -59,11 +68,89 @@ export function install() {
   }
 }
 
-export function check() {
-  // Prettier
-  if (preCommitConfig.prettier) {
-    
+function runCmd(cmd: string, args: string[]) {
+  return new Promise((resolve, reject) => {
+    args = args || [];
+    const runner = spawn(cmd, args, {
+      // keep color
+      stdio: 'inherit',
+    });
+    runner.on('close', code => {
+      if (code) {
+        signale.error(`Error on execution: ${cmd} ${(args || []).join(' ')}`);
+        reject();
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+function getPrettierConfig() {
+  const prettierrcPath = join(cwd, '.prettierrc');
+  const templatePrettierrcPath = join(__dirname, '../template/.prettierrc');
+
+  if (existsSync(prettierrcPath)) {
+    return JSON.parse(readFileSync(prettierrcPath, 'utf-8')) || {};
+  } else {
+    return JSON.parse(readFileSync(templatePrettierrcPath, 'utf-8')) || {};
+  }
+}
+
+function getEsLintConfig() {
+  const lintPath = join(cwd, '.eslintrc.js');
+  const templateLintPath = join(__dirname, '../template/.eslintrc.js');
+
+  if (existsSync(lintPath)) {
+    return lintPath;
+  } else {
+    return templateLintPath;
+  }
+}
+
+export async function check() {
+  const list: string[] = (await sgf())
+    .map((file: { filename: string }) => file.filename)
+    .filter((filename: string) => /^(src|tests)/.test(filename))
+    .filter((filename: string) => /\.(ts|js|tsx|jsx)$/.test(filename))
+
+    // Only keep exist files
+    .map((filename: string) => {
+      const filePath = join(cwd, filename);
+      return existsSync(filePath) ? filePath : null;
+    })
+    .filter((filePath: string | null) => filePath);
+
+  if (!list.length) {
+    return;
   }
 
-  signale.success('pre-commit success!');
+  // Prettier
+  if (preCommitConfig.prettier) {
+    const prettierConfig = getPrettierConfig();
+
+    list.forEach(filePath => {
+      if (existsSync(filePath)) {
+        const text = readFileSync(filePath, 'utf8');
+        const formatText = format(text, prettierConfig);
+
+        writeFileSync(filePath, formatText, 'utf8');
+      }
+    });
+
+    signale.success(`${chalk.cyan('prettier')} success!`);
+  }
+
+  // eslint
+  if (preCommitConfig.eslint) {
+    const eslintConfig = getEsLintConfig();
+    const eslintBin = require.resolve('eslint/bin/eslint');
+    const args = [eslintBin, '-c', eslintConfig, ...list, '--fix'];
+    await runCmd('node', args);
+
+    signale.success(`${chalk.cyan('eslint')} success!`);
+  }
+
+  const gitAllList = list.map(filePath => runCmd('git', ['add', filePath]));
+  await Promise.all(gitAllList);
 }

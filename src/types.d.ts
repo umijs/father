@@ -64,7 +64,6 @@ export interface IBundleOptions {
   disableTypeCheck?: boolean;
   preCommit?: {
     eslint?: boolean;
-    tslint?: boolean;
     prettier?: boolean;
   };
 }
