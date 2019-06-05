@@ -10,6 +10,7 @@ module.exports = (baseConfig, env, config) => {
       {
         loader: require.resolve('ts-loader'),
         options: {
+          context: cwd,
           configFile: join(__dirname, '../../template/tsconfig.json'),
           transpileOnly: true,
         },

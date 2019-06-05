@@ -1,6 +1,5 @@
 import { existsSync, ensureDirSync, writeFileSync } from 'fs-extra';
 import { join } from 'path';
-import tempDir from 'temp-dir';
 import { sync } from 'glob';
 
 function getTitle(name: string) {
@@ -13,7 +12,7 @@ function getTitle(name: string) {
 
 function generateFiles(projectPath: string) {
   const pkg = require(join(projectPath, './package.json'));
-  const tempStorybookPath = join(tempDir, pkg.name);
+  const tempStorybookPath = join(projectPath, 'storybook');
 
   // ===================================================================
   // =                              Story                              =
@@ -100,14 +99,14 @@ ${addString.join('\n')}
 import { configure, addDecorator } from '@storybook/react';
 import { withNotes } from '@storybook/addon-notes';
 import { withOptions } from '@storybook/addon-options';
-//import withSource from 'storybook-addon-source';
+import withSource from 'storybook-addon-source';
 
 function loadStories() {
   require('${entryPath}');
 }
 
 addDecorator(withNotes);
-//addDecorator(withSource);
+addDecorator(withSource);
 
 addDecorator(
   withOptions({
