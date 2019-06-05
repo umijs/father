@@ -126,7 +126,6 @@ export default async function(opts: IBabelOpts) {
     createStream([
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures/**/*')}`,
-      `!${join(srcPath, '**/templates/**/*')}`,
       `!${join(srcPath, '**/*.mdx')}`,
       `!${join(srcPath, '**/*.d.ts')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
