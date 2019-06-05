@@ -80,10 +80,12 @@ export default async function(opts: IBabelOpts) {
 
   function getTSConfig() {
     const tsconfigPath = join(cwd, 'tsconfig.json');
+    const templateTsconfigPath = join(__dirname, '../template/tsconfig.json');
+
     if (existsSync(tsconfigPath)) {
       return JSON.parse(readFileSync(tsconfigPath, 'utf-8')).compilerOptions || {};
     } else {
-      return {};
+      return JSON.parse(readFileSync(templateTsconfigPath, 'utf-8')).compilerOptions || {};
     }
   }
 
