@@ -62,6 +62,11 @@ export interface IBundleOptions {
     [value: string]: any;
   };
   disableTypeCheck?: boolean;
+  preCommit?: {
+    eslint?: boolean;
+    tslint?: boolean;
+    prettier?: boolean;
+  };
 }
 
 export interface IOpts {

@@ -109,5 +109,14 @@ export default {
     disableTypeCheck: {
       type: 'boolean',
     },
+    preCommit: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        tslint: { type: 'boolean' },
+        eslint: { type: 'boolean' },
+        prettier: { type: 'boolean' },
+      },
+    },
   },
 };

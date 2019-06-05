@@ -6,6 +6,7 @@ const yParser = require('yargs-parser');
 const chalk = require('chalk');
 const assert = require('assert');
 const signale = require('signale');
+const preCommit = require('../lib/preCommit');
 
 // print version and @local
 const args = yParser(process.argv.slice(2));
@@ -21,6 +22,9 @@ if (args.v || args.version) {
 const updater = require('update-notifier');
 const pkg = require('../package.json');
 updater({ pkg }).notify({ defer: true });
+
+// Check if pre commit config
+preCommit.install();
 
 const cwd = process.cwd();
 
@@ -51,6 +55,9 @@ async function doc(args) {
 }
 
 switch (args._[0]) {
+  case 'pre-commit':
+    preCommit.check();
+    break;
   case 'build':
     build();
     break;
