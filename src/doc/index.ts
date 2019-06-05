@@ -38,7 +38,7 @@ export default {
 
     // test 时走 src/doc.ts，这时没有 doczrc.js
     if (__dirname.endsWith('src')) {
-      params.push('--config', join(__dirname, '../lib/doczrc.js'));
+      params.push('--config', join(__dirname, '../../lib/doczrc.js'));
     } else {
       params.push('--config', join(__dirname, 'doczrc.js'));
     }

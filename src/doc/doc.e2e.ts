@@ -8,13 +8,13 @@ let port = 12500;
 const servers = {};
 let browser;
 let page;
-const fixtures = join(__dirname, 'fixtures/doc');
+const fixtures = join(__dirname, '../fixtures/doc');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 process.env.COMPRESS = 'none';
 
 async function buildDoc(cwd) {
-  const umiLibPath = join(__dirname, '../bin/father.js');
+  const umiLibPath = join(__dirname, '../../bin/father.js');
   return new Promise((resolve, reject) => {
     const child = fork(umiLibPath, ['doc', 'build'], {
       cwd,
