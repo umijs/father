@@ -1,18 +1,22 @@
 import * as docz from './docz';
+import * as storybook from './storybook';
 
-interface DevProps {
+export interface DocProps {
   cwd: string;
   cmd: string;
-  params: any;
+  params: string[];
   userConfig: any;
 }
 
-interface DeployProps {
+export interface DeployProps {
   cwd: string;
   args: any;
 }
 
-export function devOrBuild(option: DevProps) {
+export function devOrBuild(option: DocProps) {
+ if ((option.params || []).includes('--storybook')) {
+  return storybook.devOrBuild(option);
+ }
   return docz.devOrBuild(option);
 }
 
