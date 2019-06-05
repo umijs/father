@@ -41,5 +41,12 @@ module.exports = (baseConfig, env, config) => {
     ],
   });
   config.resolve.extensions.push('.less');
+
+  // Resolve
+  config.resolve.modules = [
+    ...(config.resolve.modules || []),
+    join(cwd, 'node_modules'),
+    join(__dirname, '../../node_modules'),
+  ];
   return config;
 };

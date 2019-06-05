@@ -94,6 +94,7 @@
     "storybook-addon-source": "latest",
     "temp-dir": "2.0.0",
     "through2": "3.0.1",
+    "ts-loader": "^6.0.2",
     "typescript": "3.5.1",
     "update-notifier": "3.0.0",
     "vinyl-fs": "3.0.3",
