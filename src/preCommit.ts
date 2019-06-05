@@ -35,7 +35,6 @@ function getPreCommitTemplate() {
 export function install() {
   const usePreCommit: boolean = !!Object.keys(preCommitConfig).length;
   const pkgPath = join(cwd, 'package.json');
-  const pkg = require(pkgPath);
 
   const hookPath = join(cwd, '.git/hooks');
   const preCommitHooks = join(hookPath, 'pre-commit');
@@ -60,9 +59,6 @@ export function install() {
     } catch (e) {
       signale.warn(`chmod ${chalk.cyan(preCommitHooks)} failed: ${e.message}`);
     }
-
-    pkg.scripts['pre-commit'] = 'father pre-commit';
-    writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
 
     signale.info('Create pre-commit hook');
   }
