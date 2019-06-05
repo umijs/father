@@ -1,9 +1,9 @@
-import { mkdirSync, existsSync, readFileSync, writeFileSync, chmodSync, unlinkSync } from 'fs';
+import { mkdirSync, existsSync, readFileSync, writeFileSync, chmodSync } from 'fs';
 import { join } from 'path';
 import chalk from 'chalk';
 import { spawn } from 'child_process';
 import { EOL } from 'os';
-import { format, Options } from 'prettier';
+import { format } from 'prettier';
 import signale from 'signale';
 import sgf from 'staged-git-files';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
