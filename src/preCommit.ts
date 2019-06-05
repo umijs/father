@@ -34,7 +34,6 @@ function getPreCommitTemplate() {
 
 export function install() {
   const usePreCommit: boolean = !!Object.keys(preCommitConfig).length;
-  const pkgPath = join(cwd, 'package.json');
 
   const hookPath = join(cwd, '.git/hooks');
   const preCommitHooks = join(hookPath, 'pre-commit');
