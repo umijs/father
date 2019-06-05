@@ -12,7 +12,7 @@
     "test": "umi-test --coverage",
     "debug": "umi-test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish"
+    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish --any-branch"
   },
   "dependencies": {
     "@babel/core": "7.4.5",
