@@ -1,13 +1,14 @@
 import * as assert from 'assert';
 import { fork } from 'child_process';
 import { join } from 'path';
-import { writeFileSync, existsSync, copyFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { sync as mkdirp } from 'mkdirp';
+import { DocProps } from '.';
 
 // userConfig 是从 Bigfish 过来的，用于传入额外的配置信息
 // 这部分信息需要写入到临时文件，因为在 doczrc.ts 里无法读取到他
 // TODO: userConfig 无法用函数
-export function devOrBuild({ cwd, cmd, params, userConfig = {} }) {
+export function devOrBuild({ cwd, cmd, params, userConfig = {}, DOC_PATH }: DocProps) {
   process.chdir(cwd);
 
   mkdirp(join(cwd, '.docz'));
