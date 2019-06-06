@@ -3,8 +3,6 @@ import { fork } from 'child_process';
 import { join } from 'path';
 import { writeFileSync, existsSync, copyFileSync } from 'fs';
 import { sync as mkdirp } from 'mkdirp';
-import ghpages from 'gh-pages';
-import chalk from 'chalk';
 
 // userConfig 是从 Bigfish 过来的，用于传入额外的配置信息
 // 这部分信息需要写入到临时文件，因为在 doczrc.ts 里无法读取到他
@@ -60,24 +58,5 @@ export default {
         resolve();
       }
     });
-  });
-}
-
-export function deploy({ cwd, args }) {
-  return new Promise((resolve, reject) => {
-    const distDir = join(cwd, '.docz/dist');
-    
-    assert.ok(existsSync(distDir), `Please run ${chalk.green(`umi-lib doc build`)} first`);
-
-    copyFileSync(join(distDir, 'index.html'), join(distDir, '404.html'));
-
-    ghpages.publish(distDir, args, err => {
-      if (err) {
-        reject(new Error(`Doc deploy failed. ${err.message}`));
-      } else {
-        resolve();
-      }
-    });
-
   });
 }
