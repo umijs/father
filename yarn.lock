@@ -5199,7 +5199,7 @@ docz-plugin-umi-css@0.14.0:
     webpack "^4.17.2"
     webpack-chain "^4.10.0"
 
-docz-theme-umi@1.1.4:
+docz-theme-umi@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/docz-theme-umi/-/docz-theme-umi-1.1.4.tgz#0a5b6f8827d08899b382572efda3731cdd37470e"
   integrity sha512-yJweMb5wBKsPUo7vUgJhsx4JdMRfXYVnFiYpoWgqz3o30IinpLFlWrcGRy0iAXyEpsIQb/SBI5c9WiRXBUaAYQ==
@@ -14454,31 +14454,6 @@ ulid@^2.3.0:
   resolved "https://registry.yarnpkg.com/ulid/-/ulid-2.3.0.tgz#93063522771a9774121a84d126ecd3eb9804071f"
   integrity sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw==
 
-umi-test@1.5.10:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/umi-test/-/umi-test-1.5.10.tgz#b32ebd6ac2a1df167863b83f6b9eafd54253f878"
-  integrity sha512-r23DRh3IAJ0nIe1ue25fCLG9qtNeo0n54JOdr4w/MeQxg6o1TGNdr6xaNBzu0l9wbnczQw1yhFoHMXHZHOll3w==
-  dependencies:
-    "@babel/core" "7.2.2"
-    "@babel/polyfill" "7.2.5"
-    "@babel/preset-typescript" "7.3.3"
-    babel-core "7.0.0-bridge.0"
-    babel-jest "24.1.0"
-    babel-plugin-module-resolver "3.1.1"
-    babel-preset-umi "1.5.0"
-    debug "4.1.1"
-    enzyme "3.9.0"
-    enzyme-adapter-react-16 "1.9.1"
-    identity-obj-proxy "3.0.0"
-    jest "24.1.0"
-    jest-pnp-resolver "1.1.0"
-    jest-resolve "24.1.0"
-    react "16.8.3"
-    react-dom "16.8.3"
-    typescript "3.3.3"
-    umi-utils "1.4.4"
-    yargs-parser "13.0.0"
-
 umi-test@^1.2.0:
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/umi-test/-/umi-test-1.5.8.tgz#ecbebd283fbcb53acf639dc5c4865e8f3adfe76b"
@@ -14502,6 +14477,31 @@ umi-test@^1.2.0:
     react-dom "16.8.3"
     typescript "3.3.3"
     umi-utils "1.4.2"
+    yargs-parser "13.0.0"
+
+umi-test@^1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/umi-test/-/umi-test-1.5.10.tgz#b32ebd6ac2a1df167863b83f6b9eafd54253f878"
+  integrity sha512-r23DRh3IAJ0nIe1ue25fCLG9qtNeo0n54JOdr4w/MeQxg6o1TGNdr6xaNBzu0l9wbnczQw1yhFoHMXHZHOll3w==
+  dependencies:
+    "@babel/core" "7.2.2"
+    "@babel/polyfill" "7.2.5"
+    "@babel/preset-typescript" "7.3.3"
+    babel-core "7.0.0-bridge.0"
+    babel-jest "24.1.0"
+    babel-plugin-module-resolver "3.1.1"
+    babel-preset-umi "1.5.0"
+    debug "4.1.1"
+    enzyme "3.9.0"
+    enzyme-adapter-react-16 "1.9.1"
+    identity-obj-proxy "3.0.0"
+    jest "24.1.0"
+    jest-pnp-resolver "1.1.0"
+    jest-resolve "24.1.0"
+    react "16.8.3"
+    react-dom "16.8.3"
+    typescript "3.3.3"
+    umi-utils "1.4.4"
     yargs-parser "13.0.0"
 
 umi-tools@^0.4.0:
