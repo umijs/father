@@ -1,6 +1,8 @@
-import { existsSync, ensureDirSync, writeFileSync } from 'fs-extra';
+import { existsSync, ensureDirSync, writeFileSync, readFileSync } from 'fs-extra';
 import { join } from 'path';
 import { sync } from 'glob';
+
+const STORYBOOK_FOLDER = '.storybook';
 
 function getTitle(name: string) {
   return name
@@ -12,7 +14,7 @@ function getTitle(name: string) {
 
 function generateFiles(projectPath: string) {
   const pkg = require(join(projectPath, './package.json'));
-  const tempStorybookPath = join(projectPath, '.storybook');
+  const tempStorybookPath = join(projectPath, STORYBOOK_FOLDER);
 
   // ===================================================================
   // =                              Story                              =
@@ -95,7 +97,7 @@ ${addString.join('\n')}
   // ===================================================================
   // =                              Frame                              =
   // ===================================================================
-const addOn = `
+  const addOn = `
 import '@storybook/addon-actions/register';
 import '@storybook/addon-a11y/register';
 import '@storybook/addon-console';
@@ -142,7 +144,6 @@ configure(loadStories, module);`;
   writeFileSync(join(tempStorybookPath, 'config.js'), configJs);
   writeFileSync(join(tempStorybookPath, 'manager-head.html'), manageHeaderHtml);
 
-
   // ===================================================================
   // =                             Webpack                             =
   // ===================================================================
@@ -152,6 +153,21 @@ module.exports = function(...args) {
 };
 `;
   writeFileSync(join(tempStorybookPath, 'webpack.config.js'), webpackContent);
+
+  // ===================================================================
+  // =                              Other                              =
+  // ===================================================================
+  const gitIgnorePath = join(projectPath, '.gitignore');
+  let ignoreText = '';
+
+  if (existsSync(gitIgnorePath)) {
+    ignoreText = readFileSync(gitIgnorePath);
+  }
+
+  if (!ignoreText.includes(STORYBOOK_FOLDER)) {
+    ignoreText = STORYBOOK_FOLDER + '\n' + ignoreText;
+    writeFileSync(gitIgnorePath, ignoreText, 'utf8');
+  }
 
   return {
     storybookPath: tempStorybookPath,
