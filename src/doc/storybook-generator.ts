@@ -1,5 +1,4 @@
 import { existsSync, ensureDirSync, writeFileSync } from 'fs-extra';
-import tempDir from 'temp-dir';
 import { join } from 'path';
 import { sync } from 'glob';
 
@@ -96,6 +95,14 @@ ${addString.join('\n')}
   // ===================================================================
   // =                              Frame                              =
   // ===================================================================
+const addOn = `
+import '@storybook/addon-actions/register';
+import '@storybook/addon-a11y/register';
+import '@storybook/addon-console';
+import '@storybook/addon-viewport/register';
+import 'storybook-addon-source/register';
+`;
+
   const configJs = `
 import { configure, addDecorator } from '@storybook/react';
 import { withNotes } from '@storybook/addon-notes';
@@ -131,6 +138,7 @@ configure(loadStories, module);`;
 />
 `;
 
+  writeFileSync(join(tempStorybookPath, 'addons.js'), addOn);
   writeFileSync(join(tempStorybookPath, 'config.js'), configJs);
   writeFileSync(join(tempStorybookPath, 'manager-head.html'), manageHeaderHtml);
 
