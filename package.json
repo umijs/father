@@ -37,7 +37,7 @@
     "docz": "1.2.0",
     "docz-core": "1.2.0",
     "docz-plugin-umi-css": "0.14.0",
-    "docz-theme-umi": "1.1.4",
+    "docz-theme-umi": "^1.1.4",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-airbnb-base": "^13.1.0",
@@ -90,7 +90,7 @@
     "puppeteer": "^1.17.0",
     "serve-handler": "^6.0.1",
     "test-build-result": "^1.1.2",
-    "umi-test": "1.5.10",
+    "umi-test": "^1.5.10",
     "umi-tools": "^0.4.0"
   },
   "repository": {
