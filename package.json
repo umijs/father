@@ -78,6 +78,8 @@
     "less-plugin-npm-import": "2.1.0",
     "lodash": "4.17.11",
     "prettier": "^1.17.1",
+    "rc-source-loader": "^1.0.2",
+    "react-markdown": "^4.0.8",
     "rimraf": "2.6.3",
     "rollup": "1.13.0",
     "rollup-plugin-babel": "4.3.2",

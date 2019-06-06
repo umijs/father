@@ -49,5 +49,9 @@ module.exports = (baseConfig, env, config) => {
     join(cwd, 'node_modules'),
     join(__dirname, '../../node_modules'),
   ];
+
+  // Remove core-js
+  delete config.resolve.alias['core-js'];
+
   return config;
 };

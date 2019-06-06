@@ -1,4 +1,5 @@
 import { existsSync, ensureDirSync, writeFileSync } from 'fs-extra';
+import tempDir from 'temp-dir';
 import { join } from 'path';
 import { sync } from 'glob';
 
@@ -12,7 +13,7 @@ function getTitle(name: string) {
 
 function generateFiles(projectPath: string) {
   const pkg = require(join(projectPath, './package.json'));
-  const tempStorybookPath = join(projectPath, 'storybook');
+  const tempStorybookPath = join(projectPath, '.storybook');
 
   // ===================================================================
   // =                              Story                              =
