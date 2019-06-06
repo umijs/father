@@ -42,6 +42,7 @@ async function doc(args) {
         .devOrBuild({
           cwd,
           cmd: args._[1],
+          args,
           // extra args to docz
           params: process.argv.slice(4),
         });

@@ -5,6 +5,7 @@ export interface DocProps {
   cwd: string;
   cmd: string;
   params: string[];
+  args: any;
   userConfig: any;
 }
 
@@ -14,15 +15,15 @@ export interface DeployProps {
 }
 
 export function devOrBuild(option: DocProps) {
-  if ((option.params || []).includes('--storybook')) {
+  if ((option || {})['--storybook']) {
     return storybook.devOrBuild(option);
   }
   return docz.devOrBuild(option);
 }
 
 export function deploy(option: DeployProps) {
-  // if ((option.params || []).includes('--storybook')) {
-  //   return storybook.deploy(option);
-  // }
+  if ((option || {})['--storybook']) {
+    return storybook.deploy(option);
+  }
   return docz.deploy(option);
 }
