@@ -14,12 +14,15 @@ export interface DeployProps {
 }
 
 export function devOrBuild(option: DocProps) {
- if ((option.params || []).includes('--storybook')) {
-  return storybook.devOrBuild(option);
- }
+  if ((option.params || []).includes('--storybook')) {
+    return storybook.devOrBuild(option);
+  }
   return docz.devOrBuild(option);
 }
 
 export function deploy(option: DeployProps) {
+  // if ((option.params || []).includes('--storybook')) {
+  //   return storybook.deploy(option);
+  // }
   return docz.deploy(option);
 }
