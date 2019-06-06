@@ -34,7 +34,7 @@ async function buildDoc(cwd) {
 
 async function doc(name) {
   const cwd = join(fixtures, name);
-  const targetDist = join(cwd, '.docz/dist');
+  const targetDist = join(cwd, '.doc');
   if (!existsSync(targetDist)) {
     await buildDoc(cwd);
   }

@@ -8,11 +8,11 @@ xdescribe('father doc build', () => {
     root: join(__dirname, '../fixtures/doc'),
     build({ cwd }) {
       return devOrBuild({ cwd, cmd: 'build', params: [], docConfig: {} } as any).then(() => {
-        const absDirPath = join(cwd, '.docz/dist');
+        const absDirPath = join(cwd, '.doc');
         if (existsSync(absDirPath)) {
           renameSync(absDirPath, join(cwd, 'dist'));
         } else {
-          throw new Error(`.docz/dist not exists`);
+          throw new Error(`.doc not exists`);
         }
       });
     },
