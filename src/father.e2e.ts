@@ -15,6 +15,8 @@ describe('father doc build', () => {
   process.env.COMPRESS = 'none';
   process.env.IS_TEST = 'true';
 
+  jest.setTimeout(50000)
+
   require('test-build-result')({
     root: join(__dirname, './fixtures/e2e'),
     build({ cwd }) {
