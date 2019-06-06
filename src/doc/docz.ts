@@ -48,6 +48,9 @@ export default {
     if (params.includes('-h')) {
       params.push('--help');
     }
+    if (params.every(param => !param.includes('--dest'))) {
+      params.push('--dest', DOC_PATH);
+    }
     const child = fork(binPath, [cmd, ...params], {
       cwd,
       env: process.env,
