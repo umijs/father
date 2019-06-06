@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.5.2-alpha.3",
+  "version": "2.5.1",
   "description": "Library toolkit based on rollup and docz.",
   "main": "lib/index.js",
   "bin": {
@@ -12,7 +12,7 @@
     "test": "umi-test --coverage",
     "debug": "umi-test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish --any-branch"
+    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish"
   },
   "dependencies": {
     "@babel/core": "7.4.5",
