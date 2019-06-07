@@ -1,15 +1,14 @@
 import * as assert from 'assert';
 import { fork } from 'child_process';
 import { join } from 'path';
-import { writeFileSync, existsSync, copyFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { sync as mkdirp } from 'mkdirp';
-import ghpages from 'gh-pages';
-import chalk from 'chalk';
+import { DocProps } from '.';
 
 // userConfig 是从 Bigfish 过来的，用于传入额外的配置信息
 // 这部分信息需要写入到临时文件，因为在 doczrc.ts 里无法读取到他
 // TODO: userConfig 无法用函数
-export function devOrBuild({ cwd, cmd, params, userConfig = {} }) {
+export function devOrBuild({ cwd, cmd, params, userConfig = {}, DOC_PATH }: DocProps) {
   process.chdir(cwd);
 
   mkdirp(join(cwd, '.docz'));
@@ -38,7 +37,7 @@ export default {
 
     // test 时走 src/doc.ts，这时没有 doczrc.js
     if (__dirname.endsWith('src')) {
-      params.push('--config', join(__dirname, '../lib/doczrc.js'));
+      params.push('--config', join(__dirname, '../../lib/doczrc.js'));
     } else {
       params.push('--config', join(__dirname, 'doczrc.js'));
     }
@@ -48,6 +47,9 @@ export default {
     }
     if (params.includes('-h')) {
       params.push('--help');
+    }
+    if (params.every(param => !param.includes('--dest'))) {
+      params.push('--dest', DOC_PATH);
     }
     const child = fork(binPath, [cmd, ...params], {
       cwd,
@@ -60,24 +62,5 @@ export default {
         resolve();
       }
     });
-  });
-}
-
-export function deploy({ cwd, args }) {
-  return new Promise((resolve, reject) => {
-    const distDir = join(cwd, '.docz/dist');
-    
-    assert.ok(existsSync(distDir), `Please run ${chalk.green(`umi-lib doc build`)} first`);
-
-    copyFileSync(join(distDir, 'index.html'), join(distDir, '404.html'));
-
-    ghpages.publish(distDir, args, err => {
-      if (err) {
-        reject(new Error(`Doc deploy failed. ${err.message}`));
-      } else {
-        resolve();
-      }
-    });
-
   });
 }

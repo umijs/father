@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 const binPath = join(__dirname, '../bin/father.js');
 
 function assertDocz(cwd) {
-  const absDirPath = join(cwd, '.docz/dist');
+  const absDirPath = join(cwd, '.doc');
   expect(existsSync(join(absDirPath))).toEqual(true);
   expect(existsSync(join(absDirPath, 'index.html'))).toEqual(true);
   expect(existsSync(join(absDirPath, 'assets.json'))).toEqual(true);

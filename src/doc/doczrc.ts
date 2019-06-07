@@ -2,9 +2,9 @@ import { css } from 'docz-plugin-umi-css';
 import { join, dirname } from 'path';
 import { readFileSync, existsSync } from 'fs';
 import { merge } from 'lodash';
-import getUserConfig, { CONFIG_FILES } from './getUserConfig';
+import getUserConfig, { CONFIG_FILES } from '../getUserConfig';
 import reactExternal from './docz-plugin-react-externals';
-import registerBabel from './registerBabel';
+import registerBabel from '../registerBabel';
 
 const cssModuleRegex = /\.module\.css$/;
 const lessModuleRegex = /\.module\.less$/;
@@ -80,8 +80,8 @@ export default {
     );
 
     // fallback resolve 路径
-    config.resolve.modules.push(join(__dirname, '../node_modules'));
-    config.resolveLoader.modules.push(join(__dirname, '../node_modules'));
+    config.resolve.modules.push(join(__dirname, '../../node_modules'));
+    config.resolveLoader.modules.push(join(__dirname, '../../node_modules'));
 
     return config;
   },
