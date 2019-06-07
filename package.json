@@ -86,7 +86,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.13",
     "coveralls": "3.0.4",
-    "np": "5.0.3",
+    "np": "5.0.2",
     "puppeteer": "^1.17.0",
     "serve-handler": "^6.0.1",
     "test-build-result": "^1.1.2",

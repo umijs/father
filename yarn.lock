@@ -10198,10 +10198,10 @@ now-and-later@^2.0.0:
   dependencies:
     once "^1.3.2"
 
-np@5.0.3:
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/np/-/np-5.0.3.tgz#69e160850d7c89a644b3917e2728eee50de88609"
-  integrity sha512-j8tK6bqKANlZry+chd4LotCBSOuQpCnmSUVk5KOA1AfGu/GmIFE6lPwrkhEX3VkOFsZLW2C3+UmWZYVnMyyCbw==
+np@5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/np/-/np-5.0.2.tgz#3a01ba5dca317ba2435e11bf4496b9bab6ef8d1f"
+  integrity sha512-LH+cjmoenSP8d8SB15RXcNQHNDihh9o6YLP3I/bmnetgxG18RmWPdFdOxzTyHcOfFPpFB9aylypwUx5PfoMxwA==
   dependencies:
     "@samverschueren/stream-to-observable" "^0.3.0"
     any-observable "^0.3.0"
