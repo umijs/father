@@ -38,7 +38,7 @@ export function deploy({ cwd, args }) {
   return new Promise((resolve, reject) => {
     const distDir = join(cwd, DOC_PATH);
 
-    assert.ok(existsSync(distDir), `Please run ${chalk.green(`umi-lib doc build`)} first`);
+    assert.ok(existsSync(distDir), `Please run ${chalk.green(`father doc build`)} first`);
 
     copyFileSync(join(distDir, 'index.html'), join(distDir, '404.html'));
 
