@@ -77,7 +77,7 @@ function runCmd(cmd: string, args: string[]) {
     runner.on('close', code => {
       if (code) {
         signale.error(`Error on execution: ${cmd} ${(args || []).join(' ')}`);
-        reject();
+        reject(code);
         return;
       }
       resolve();
@@ -151,7 +151,12 @@ export async function check() {
     const eslintConfig = getEsLintConfig();
     const eslintBin = require.resolve('eslint/bin/eslint');
     const args = [eslintBin, '-c', eslintConfig, ...list, '--fix'];
-    await runCmd('node', args);
+
+    try {
+      await runCmd('node', args);
+    } catch (code) {
+      process.exit(code);
+    }
 
     signale.success(`${chalk.cyan('eslint')} success!`);
   }
