@@ -156,6 +156,5 @@ export async function check() {
     signale.success(`${chalk.cyan('eslint')} success!`);
   }
 
-  const gitAllList = list.map(filePath => runCmd('git', ['add', filePath]));
-  await Promise.all(gitAllList);
+  await runCmd('git', ['add', ...list]);
 }
