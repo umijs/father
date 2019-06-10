@@ -140,9 +140,17 @@ configure(loadStories, module);`;
 />
 `;
 
+  const previewHeaderHtml = `
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css"
+/>
+`;
+
   writeFileSync(join(tempStorybookPath, 'addons.js'), addOn);
   writeFileSync(join(tempStorybookPath, 'config.js'), configJs);
   writeFileSync(join(tempStorybookPath, 'manager-head.html'), manageHeaderHtml);
+  writeFileSync(join(tempStorybookPath, 'preview-head.html'), previewHeaderHtml);
 
   // ===================================================================
   // =                             Webpack                             =
