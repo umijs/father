@@ -1,4 +1,4 @@
-import { mkdirSync, existsSync, readFileSync, writeFileSync, chmodSync } from 'fs';
+import { ensureDirSync, existsSync, readFileSync, writeFileSync, chmodSync } from 'fs-extra';
 import { join, extname } from 'path';
 import chalk from 'chalk';
 import { spawn } from 'child_process';
@@ -54,9 +54,7 @@ export function install() {
 
   if (usePreCommit && !existHooks) {
     // Create hook path
-    if (!existsSync(hookPath)) {
-      mkdirSync(hookPath);
-    }
+    ensureDirSync(hookPath);
 
     writeFileSync(preCommitHooks, getPreCommitTemplate(), 'utf8');
     try {
