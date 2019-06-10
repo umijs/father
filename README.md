@@ -19,6 +19,10 @@ Library toolkit based on rollup and docz.
 * ✔︎ 支持多 entry
 * ✔︎ 支持 lerna
 * ✔︎ 支持 css 和 less，支持开启 css modules
+* ✔︎ 支持 test
+* ✔︎ 支持 pre-commit 检查
+  * ✔︎ 支持 prettier
+  * ✔︎ 支持 eslint
 
 ## Installation
 
@@ -42,6 +46,10 @@ $ father doc build
 
 # deploy doc to github.io
 $ father doc deploy
+
+# test
+$ father test
+$ father test --coverage
 ```
 
 ## Cli
