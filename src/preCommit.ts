@@ -1,5 +1,5 @@
 import { mkdirSync, existsSync, readFileSync, writeFileSync, chmodSync } from 'fs';
-import { join } from 'path';
+import { join, extname } from 'path';
 import chalk from 'chalk';
 import { spawn } from 'child_process';
 import { EOL } from 'os';
@@ -10,6 +10,12 @@ import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import registerBabel from './registerBabel';
 
 const HOOK_MARK = '##### CREATED BY FATHER #####';
+const PRETTIER_PARSER = {
+  js: 'babel',
+  jsx: 'babel',
+  ts: 'typescript',
+  tsx: 'typescript',
+};
 
 const cwd = process.cwd();
 
@@ -88,7 +94,9 @@ function getPrettierConfig() {
   if (existsSync(prettierrcPath)) {
     return JSON.parse(readFileSync(prettierrcPath, 'utf-8')) || {};
   } else {
-    return JSON.parse(readFileSync(templatePrettierrcPath, 'utf-8')) || {};
+    const templateConfig = JSON.parse(readFileSync(templatePrettierrcPath, 'utf-8')) || {};
+    delete templateConfig.parser;
+    return templateConfig;
   }
 }
 
@@ -126,8 +134,12 @@ export async function check() {
 
     list.forEach(filePath => {
       if (existsSync(filePath)) {
+        const ext = extname(filePath).replace(/^\./, '');
         const text = readFileSync(filePath, 'utf8');
-        const formatText = format(text, prettierConfig);
+        const formatText = format(text, {
+          parser: PRETTIER_PARSER[ext],
+          ...prettierConfig,
+        });
 
         writeFileSync(filePath, formatText, 'utf8');
       }
