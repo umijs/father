@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const assert = require('assert');
 const signale = require('signale');
 const preCommit = require('../lib/preCommit');
+const test = require('../lib/test');
 
 // print version and @local
 const args = yParser(process.argv.slice(2));
@@ -67,6 +68,9 @@ switch (args._[0]) {
       signale.error(e);
       process.exit(1);
     });
+    break;
+  case 'test':
+    test(args);
     break;
   case 'help':
   case undefined:
