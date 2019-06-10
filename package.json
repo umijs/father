@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "Library toolkit based on rollup and docz.",
   "main": "lib/index.js",
   "bin": {
