@@ -1784,6 +1784,20 @@
     merge-deep "^3.0.2"
     svgo "^1.2.1"
 
+"@svgr/rollup@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.npm.alibaba-inc.com/@svgr/rollup/download/@svgr/rollup-4.3.0.tgz#db85e011838d28ec066922f85d5766d4788c653f"
+  integrity sha1-24XgEYONKOwGaSL4XVdm1HiMZT8=
+  dependencies:
+    "@babel/core" "^7.4.3"
+    "@babel/plugin-transform-react-constant-elements" "^7.0.0"
+    "@babel/preset-env" "^7.4.3"
+    "@babel/preset-react" "^7.0.0"
+    "@svgr/core" "^4.3.0"
+    "@svgr/plugin-jsx" "^4.3.0"
+    "@svgr/plugin-svgo" "^4.2.0"
+    rollup-pluginutils "^2.6.0"
+
 "@svgr/webpack@^4.1.0", "@svgr/webpack@^4.2.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@svgr/webpack/-/webpack-4.3.0.tgz#4462e05070d91c04806b99c30a703fb2b50b2bb9"

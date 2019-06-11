@@ -14,6 +14,7 @@ import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
+import svgr from '@svgr/rollup';
 
 interface IGetRollupConfigOpts {
   cwd: string;
@@ -118,6 +119,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     },
   };
   const plugins = [
+    svgr(),
     postcss({
       extract: extractCSS,
       modules,
@@ -140,6 +142,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     ...(isTypeScript
       ? [
           typescript({
+            // @see https://github.com/ezolenko/rollup-plugin-typescript2/issues/105
+			objectHashIgnoreUnknownHack: true,
             cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
             // TODO: 支持往上找 tsconfig.json
             // 比如 lerna 的场景不需要每个 package 有个 tsconfig.json
