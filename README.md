@@ -271,10 +271,22 @@ export default {
 
 配置是否开启 css modules。
 
-* Type: `boolean`
+* Type: `boolean | object`
 * Default: `false`
 
 默认是 `.module.css` 走 css modules，`.css` 不走 css modules。配置 `cssModules` 为 `true` 后，全部 css 文件都走 css modules。（less 文件同理）
+
+如果配置了 object，会被透传给 [postcss-modules](https://github.com/css-modules/postcss-modules)。
+
+比如，要定制 css modules 的样式名前缀，
+
+```js
+export default {
+  cssModules: {
+    generateScopedName: 'foo-bar_[name]__[local]___[hash:base64:5]',
+  },
+}
+```
 
 #### extractCSS
 
