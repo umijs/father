@@ -151,6 +151,8 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     }
   }
 }
+// export for test case
+export const EXCLUDE_DIR = [ '.DS_Store' ];
 
 export async function buildForLerna(opts: IOpts) {
   const { cwd } = opts;
@@ -164,8 +166,11 @@ export async function buildForLerna(opts: IOpts) {
   const userConfig = getUserConfig({ cwd });
 
   const pkgs = readdirSync(join(opts.cwd, 'packages'));
+
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
+    // build error when .DS_Store includes in packages root
+    if (EXCLUDE_DIR.includes(pkg)) continue;
     const pkgPath = join(opts.cwd, 'packages', pkg);
     assert.ok(
       existsSync(join(pkgPath, 'package.json')),
