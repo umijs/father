@@ -1,8 +1,8 @@
 import { join } from 'path';
-import { existsSync, readdirSync, renameSync } from 'fs';
+import { existsSync, readdirSync, renameSync, statSync } from 'fs';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
-import build, { EXCLUDE_DIR } from './build';
+import build from './build';
 
 describe('father build', () => {
   require('test-build-result')({
@@ -26,7 +26,8 @@ describe('father build', () => {
           mkdirp.sync(join(cwd, 'dist'));
           const pkgs = readdirSync(join(cwd, 'packages'));
           for (const pkg of pkgs) {
-            if (EXCLUDE_DIR.includes(pkg)) continue;
+            const pkgPath = join(cwd, 'packages', pkg);
+            if (!statSync(pkgPath).isDirectory()) continue;
             renameSync(join(cwd, 'packages', pkg, 'dist'), join(cwd, 'dist', pkg));
           }
         }
