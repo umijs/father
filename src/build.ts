@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import * as assert from 'assert';
@@ -164,9 +164,12 @@ export async function buildForLerna(opts: IOpts) {
   const userConfig = getUserConfig({ cwd });
 
   const pkgs = readdirSync(join(opts.cwd, 'packages'));
+
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
+    // build error when .DS_Store includes in packages root
     const pkgPath = join(opts.cwd, 'packages', pkg);
+    if (!statSync(pkgPath).isDirectory()) continue;
     assert.ok(
       existsSync(join(pkgPath, 'package.json')),
       `package.json not found in packages/${pkg}`,

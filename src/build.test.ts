@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { existsSync, readdirSync, renameSync } from 'fs';
+import { existsSync, readdirSync, renameSync, statSync } from 'fs';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 import build from './build';
@@ -26,6 +26,8 @@ describe('father build', () => {
           mkdirp.sync(join(cwd, 'dist'));
           const pkgs = readdirSync(join(cwd, 'packages'));
           for (const pkg of pkgs) {
+            const pkgPath = join(cwd, 'packages', pkg);
+            if (!statSync(pkgPath).isDirectory()) continue;
             renameSync(join(cwd, 'packages', pkg, 'dist'), join(cwd, 'dist', pkg));
           }
         }
