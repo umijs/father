@@ -165,6 +165,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       : []),
     babel(babelOpts),
     json(),
+    commonjs({
+      include: /node_modules/,
+      namedExports,
+    }),
   ];
 
   switch (type) {
@@ -214,14 +218,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       ];
 
     case 'umd':
-      // Add umd related plugins
-      plugins.push(
-        commonjs({
-          include: /node_modules/,
-          namedExports,
-        }),
-      );
-
       return [
         {
           input,
