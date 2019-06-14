@@ -51,7 +51,7 @@
     "docz": "1.2.0",
     "docz-core": "1.2.0",
     "docz-plugin-umi-css": "0.14.0",
-    "docz-theme-umi": "^1.1.4",
+    "docz-theme-umi": "^2.0.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-airbnb-base": "^13.1.0",
