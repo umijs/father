@@ -87,20 +87,18 @@ function runCmd(cmd: string, args: string[]) {
 
 function getPrettierConfig() {
   const prettierrcPath = join(cwd, '.prettierrc');
-  const templatePrettierrcPath = join(__dirname, '../template/.prettierrc');
 
   if (existsSync(prettierrcPath)) {
     return JSON.parse(readFileSync(prettierrcPath, 'utf-8')) || {};
   } else {
-    const templateConfig = JSON.parse(readFileSync(templatePrettierrcPath, 'utf-8')) || {};
-    delete templateConfig.parser;
+    const templateConfig = require('@umijs/fabric/dist/prettier');
     return templateConfig;
   }
 }
 
 function getEsLintConfig() {
   const lintPath = join(cwd, '.eslintrc.js');
-  const templateLintPath = join(__dirname, '../template/.eslintrc.js');
+  const templateLintPath = require.resolve('@umijs/fabric/dist/eslint');
 
   if (existsSync(lintPath)) {
     return lintPath;
