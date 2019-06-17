@@ -43,6 +43,7 @@
     "@svgr/rollup": "^4.3.0",
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
+    "@umijs/fabric": "^1.0.5",
     "ajv": "6.10.0",
     "autoprefixer": "9.6.0",
     "babel-plugin-react-require": "3.1.1",
