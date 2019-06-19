@@ -14,6 +14,7 @@
     "coveralls": "3.0.4",
     "gulp-typescript": "^5.0.1",
     "prettier": "^1.18.2",
+    "gh-pages": "^2.0.1",
     "lerna": "^3.6.0",
     "lerna-changelog": "^0.8.2",
     "puppeteer": "^1.17.0",
