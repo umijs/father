@@ -7,7 +7,6 @@ const chalk = require('chalk');
 const assert = require('assert');
 const signale = require('signale');
 const preCommit = require('../lib/preCommit');
-const test = require('../lib/test');
 
 // print version and @local
 const args = yParser(process.argv.slice(2));
@@ -70,7 +69,7 @@ switch (args._[0]) {
     });
     break;
   case 'test':
-    test(args);
+    require('../lib/test')(args);
     break;
   case 'help':
   case undefined:
@@ -108,7 +107,7 @@ function build() {
     process.exit(1);
   }
 
-  require('../lib/build').default({
+  require('father-build').default({
     cwd,
     watch: args.w || args.watch,
     buildArgs,

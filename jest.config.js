@@ -1,6 +1,8 @@
 module.exports = {
   testPathIgnorePatterns: [
-    '/lib/',
-    '/src/fixtures',
+    '/packages/father/lib/',
+    '/packages/father/src/fixtures',
+    '/packages/father-build/lib/',
+    '/packages/father-build/src/fixtures',
   ],
 };

@@ -1,6 +1,6 @@
 # father
 
-Library toolkit based on rollup and docz.
+Library toolkit based on rollup, docz, storybook, jest and eslint.
 
 [![NPM version][image-1]][1]
 [![Build Status][image-2]][2]

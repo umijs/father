@@ -6,8 +6,8 @@ import { EOL } from 'os';
 import { format } from 'prettier';
 import signale from 'signale';
 import sgf from 'staged-git-files';
-import getUserConfig, { CONFIG_FILES } from './getUserConfig';
-import registerBabel from './registerBabel';
+import getUserConfig, { CONFIG_FILES } from 'father-build/lib/getUserConfig';
+import registerBabel from 'father-build/lib/registerBabel';
 
 const HOOK_MARK = '##### CREATED BY FATHER #####';
 const PRETTIER_PARSER = {
