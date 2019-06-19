@@ -1,9 +1,7 @@
 /node_modules
-/yarn.lock
 /coverage
 /packages/*/lib
 /packages/*/node_modules
-/packages/*/yarn.lock
 /packages/*/.local
 /.local
 /packages/*/src/fixtures/**/node_modules/.cache
