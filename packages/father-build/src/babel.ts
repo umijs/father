@@ -5,7 +5,6 @@ import signale from 'signale';
 import rimraf from 'rimraf';
 import through from 'through2';
 import slash from 'slash2';
-import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import gulpTs from 'gulp-typescript';

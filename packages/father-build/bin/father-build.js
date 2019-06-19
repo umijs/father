@@ -4,10 +4,7 @@ const { existsSync } = require('fs');
 const { join } = require('path');
 const yParser = require('yargs-parser');
 const chalk = require('chalk');
-const assert = require('assert');
 const signale = require('signale');
-const preCommit = require('../lib/preCommit');
-const test = require('../lib/test');
 
 // print version and @local
 const args = yParser(process.argv.slice(2));
@@ -24,62 +21,7 @@ const updater = require('update-notifier');
 const pkg = require('../package.json');
 updater({ pkg }).notify({ defer: true });
 
-// Check if pre commit config
-preCommit.install();
-
 const cwd = process.cwd();
-
-async function doc(args) {
-  const cmd = args._[1];
-  assert.ok(
-    ['build', 'dev', 'deploy'].includes(cmd),
-    `Invalid subCommand ${cmd}`,
-  );
-
-  switch (cmd) {
-    case 'build':
-    case 'dev':
-      return await require('../lib/doc')
-        .devOrBuild({
-          cwd,
-          cmd: args._[1],
-          args,
-          // extra args to docz
-          params: process.argv.slice(4),
-        });
-    case 'deploy':
-      return await require('../lib/doc')
-        .deploy({
-          cwd,
-          args,
-        });
-  }
-}
-
-switch (args._[0]) {
-  case 'pre-commit':
-    preCommit.check();
-    break;
-  case 'build':
-    build();
-    break;
-  case 'doc':
-    doc(args).catch(e => {
-      signale.error(e);
-      process.exit(1);
-    });
-    break;
-  case 'test':
-    test(args);
-    break;
-  case 'help':
-  case undefined:
-    printHelp();
-    break;
-  default:
-    console.error(chalk.red(`Unsupported command ${args._[0]}`));
-    process.exit(1);
-}
 
 function stripEmptyKeys(obj) {
   Object.keys(obj).forEach((key) => {
@@ -118,12 +60,4 @@ function build() {
   });
 }
 
-function printHelp() {
-  console.log(`
-  Usage: father <command> [options]
-
-  Commands:
-
-    ${chalk.green('build')}       build library
-  `);
-}
+build();

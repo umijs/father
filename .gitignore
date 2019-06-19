@@ -1,9 +1,11 @@
 /node_modules
-/lib
+/yarn.lock
 /coverage
+/packages/*/node_modules
+/packages/*/yarn.lock
+/packages/*/.local
 /.local
-/src/fixtures/**/node_modules/.cache
-# /src/fixtures/**/.docz
-/src/fixtures/build/*/dist
-/src/fixtures/e2e/normal/.docz
-/src/fixtures/e2e/normal/.doc
+/packages/*/src/fixtures/**/node_modules/.cache
+/packages/father-build/src/fixtures/build/*/dist
+/packages/father/src/fixtures/e2e/normal/.doc
+/packages/father/src/fixtures/e2e/normal/.docz
