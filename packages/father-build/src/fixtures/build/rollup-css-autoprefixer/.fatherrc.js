@@ -2,7 +2,7 @@
 export default {
   esm: { type: 'rollup' },
   autoprefixer: {
-    browsers: [
+    overrideBrowserslist: [
       'ie>8',
       'Safari >= 6',
     ],

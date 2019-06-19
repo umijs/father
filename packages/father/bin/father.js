@@ -107,7 +107,7 @@ function build() {
     process.exit(1);
   }
 
-  require('father-build').default({
+  require('father-build').build({
     cwd,
     watch: args.w || args.watch,
     buildArgs,

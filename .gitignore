@@ -6,3 +6,4 @@
 /packages/*/src/fixtures/**/node_modules/.cache
 /packages/father-build/src/fixtures/build/*/dist
 /packages/father/src/fixtures/e2e/normal/.doc
+/packages/father/src/fixtures/e2e/normal/.docz
