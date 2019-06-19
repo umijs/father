@@ -7,7 +7,7 @@
     "test": "umi-test --coverage",
     "debug": "umi-test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish"
+    "publish": "npm run build && lerna publish"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
