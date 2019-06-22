@@ -60,8 +60,15 @@ None format of ${chalk.cyan(
   }
   if (bundleOpts.entry) {
     const tsConfigPath = join(cwd, 'tsconfig.json')
+    const tsConfigRootPath = join(process.cwd(), 'tsconfig.json')
+    let tsConfig = true
+    if (!existsSync(tsConfigPath)) {
+      if (!existsSync(tsConfigRootPath)) {
+        tsConfig = false;
+      }
+    }
     if (
-      !existsSync(tsConfigPath) && (
+      !tsConfig && (
         (Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) ||
         (!Array.isArray(bundleOpts.entry) && isTypescriptFile(bundleOpts.entry))
       )
