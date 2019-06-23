@@ -40,7 +40,7 @@ export default function(opts: IGetBabelConfigOpts) {
       [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
       [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
       ...(runtimeHelpers
-        ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: true }]]
+        ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: isBrowser }]]
         : []),
     ],
   };
