@@ -89,62 +89,69 @@ export default async function(opts: IBabelOpts) {
   }
 
   function createStream(src) {
+    let haveError = 0;
     const tsConfig = getTSConfig();
     const babelTransformRegexp = disableTypeCheck ? /\.(t|j)sx?$/ : /\.jsx?$/;
-    return vfs
-      .src(src, {
-        allowEmpty: true,
-        base: srcPath,
-      })
-      .pipe(gulpIf(f => !disableTypeCheck && /\.tsx?$/.test(f.path), gulpTs(tsConfig)))
-      .pipe(
-        gulpIf(
-          f => babelTransformRegexp.test(f.path),
-          through.obj((file, env, cb) => {
-            try {
-              file.contents = Buffer.from(
-                transform({
-                  file,
-                  type,
-                }),
-              );
-              // .jsx -> .js
-              file.path = file.path.replace(extname(file.path), '.js');
-              cb(null, file);
-            } catch (e) {
-              signale.error(`Compiled faild: ${file.path}`);
-              cb(null);
-            }
-          }),
-        ),
-      )
-      .pipe(vfs.dest(targetPath));
+    return new Promise((resolve, reject) => {
+      vfs
+        .src(src, {
+          allowEmpty: true,
+          base: srcPath,
+        })
+        .pipe(gulpIf(f => !disableTypeCheck && /\.tsx?$/.test(f.path), gulpTs(tsConfig)))
+        .pipe(
+          gulpIf(
+            f => babelTransformRegexp.test(f.path),
+            through.obj((file, env, cb) => {
+              try {
+                file.contents = Buffer.from(
+                  transform({
+                    file,
+                    type,
+                  }),
+                );
+                // .jsx -> .js
+                file.path = file.path.replace(extname(file.path), '.js');
+                cb(null, file);
+              } catch (e) {
+                signale.error(`Compiled faild: ${file.path}`);
+                // 如果有报错，输出详细的报错信息
+                console.log(e);
+                cb(null);
+              }
+            }),
+          ),
+        )
+        .pipe(vfs.dest(targetPath))
+        .on('end', () => {
+          if (watch) {
+            signale.info('Start watch', srcPath);
+            chokidar
+              .watch(srcPath, {
+                ignoreInitial: true,
+              })
+              .on('all', (event, fullPath) => {
+                const relPath = fullPath.replace(srcPath, '');
+                signale.info(`[${event}] ${join(srcPath, relPath)}`);
+                if (!existsSync(fullPath)) return;
+                if (statSync(fullPath).isFile()) {
+                  createStream([fullPath]);
+                }
+              });
+          }
+          if (haveError) {
+            reject(new Error('build failed'));
+          }
+          resolve();
+        });
+    });
   }
 
-  return new Promise(resolve => {
-    createStream([
-      join(srcPath, '**/*'),
-      `!${join(srcPath, '**/fixtures/**/*')}`,
-      `!${join(srcPath, '**/*.mdx')}`,
-      `!${join(srcPath, '**/*.d.ts')}`,
-      `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
-    ]).on('end', () => {
-      if (watch) {
-        signale.info('Start watch', srcPath);
-        chokidar
-          .watch(srcPath, {
-            ignoreInitial: true,
-          })
-          .on('all', (event, fullPath) => {
-            const relPath = fullPath.replace(srcPath, '');
-            signale.info(`[${event}] ${join(srcPath, relPath)}`);
-            if (!existsSync(fullPath)) return;
-            if (statSync(fullPath).isFile()) {
-              createStream([fullPath]);
-            }
-          });
-      }
-      resolve();
-    });
-  });
+  return createStream([
+    join(srcPath, '**/*'),
+    `!${join(srcPath, '**/fixtures/**/*')}`,
+    `!${join(srcPath, '**/*.mdx')}`,
+    `!${join(srcPath, '**/*.d.ts')}`,
+    `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
+  ]);
 }

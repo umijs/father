@@ -1,3 +1,5 @@
+import { winPath } from './utils';
+
 interface IGetBabelConfigOpts {
   target: 'browser' | 'node';
   type?: 'esm' | 'cjs';
@@ -17,10 +19,12 @@ export default function(opts: IGetBabelConfigOpts) {
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
+    // 转化一下，如果是 win 会报错
+    let realPath = winPath(filePath);
     if (isBrowser) {
-      if (nodeFiles.includes(filePath)) isBrowser = false;
+      if (nodeFiles.includes(realPath)) isBrowser = false;
     } else {
-      if (browserFiles.includes(filePath)) isBrowser = true;
+      if (browserFiles.includes(realPath)) isBrowser = true;
     }
   }
   const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: 6 };

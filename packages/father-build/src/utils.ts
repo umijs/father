@@ -1,4 +1,5 @@
 import { existsSync } from 'fs';
+import slash from 'slash2';
 import { join } from 'path';
 
 export function getExistFile({ cwd, files, returnRelative }) {
@@ -8,4 +9,8 @@ export function getExistFile({ cwd, files, returnRelative }) {
       return returnRelative ? file : absFilePath;
     }
   }
+}
+
+export function winPath(path) {
+  return slash(path);
 }
