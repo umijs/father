@@ -39,7 +39,7 @@ export function getBundleOpts(opts: IOpts): IBundleOptions {
   return bundleOpts;
 }
 
-function validateBundleOpts(bundleOpts: IBundleOptions, { cwd }) {
+function validateBundleOpts(bundleOpts: IBundleOptions, { cwd, rootPath }) {
   if (bundleOpts.runtimeHelpers) {
     const pkgPath = join(cwd, 'package.json');
     assert.ok(existsSync(pkgPath), `@babel/runtime dependency is required to use runtimeHelpers`);
@@ -59,14 +59,9 @@ None format of ${chalk.cyan(
     );
   }
   if (bundleOpts.entry) {
-    const tsConfigPath = join(cwd, 'tsconfig.json')
-    const tsConfigRootPath = join(process.cwd(), 'tsconfig.json')
-    let tsConfig = true
-    if (!existsSync(tsConfigPath)) {
-      if (!existsSync(tsConfigRootPath)) {
-        tsConfig = false;
-      }
-    }
+    const tsConfigPath = join(cwd, 'tsconfig.json');
+    const tsConfig = existsSync(tsConfigPath)
+      || (rootPath && existsSync(join(rootPath, 'tsconfig.json')));
     if (
       !tsConfig && (
         (Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) ||
@@ -89,7 +84,7 @@ interface IExtraBuildOpts {
 }
 
 export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
-  const { cwd, watch } = opts;
+  const { cwd, rootPath, watch } = opts;
   const { pkg } = extraOpts;
 
   // register babel for config files
@@ -104,7 +99,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
 
   // Get user config
   const bundleOpts = getBundleOpts(opts);
-  validateBundleOpts(bundleOpts, { cwd });
+  validateBundleOpts(bundleOpts, { cwd, rootPath });
 
   // Clean dist
   log(`Clean dist directory`);
@@ -127,7 +122,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     const cjs = bundleOpts.cjs as IBundleTypeOutput;
     log(`Build cjs with ${cjs.type}`);
     if (cjs.type === 'babel') {
-      await babel({ cwd, watch, type: 'cjs', bundleOpts });
+      await babel({ cwd, rootPath, watch, type: 'cjs', bundleOpts });
     } else {
       await rollup({
         cwd,
@@ -145,7 +140,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     log(`Build esm with ${esm.type}`);
     const importLibToEs = esm && esm.importLibToEs;
     if (esm && esm.type === 'babel') {
-      await babel({ cwd, watch, type: 'esm', importLibToEs, bundleOpts });
+      await babel({ cwd, rootPath, watch, type: 'esm', importLibToEs, bundleOpts });
     } else {
       await rollup({
         cwd,
@@ -170,12 +165,12 @@ export async function buildForLerna(opts: IOpts) {
 
   const userConfig = getUserConfig({ cwd });
 
-  const pkgs = readdirSync(join(opts.cwd, 'packages'));
+  const pkgs = readdirSync(join(cwd, 'packages'));
 
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
     // build error when .DS_Store includes in packages root
-    const pkgPath = join(opts.cwd, 'packages', pkg);
+    const pkgPath = join(cwd, 'packages', pkg);
     if (!statSync(pkgPath).isDirectory()) continue;
     assert.ok(
       existsSync(join(pkgPath, 'package.json')),
@@ -188,6 +183,7 @@ export async function buildForLerna(opts: IOpts) {
         ...opts,
         buildArgs: merge(opts.buildArgs, userConfig),
         cwd: pkgPath,
+        rootPath: cwd,
       },
       {
         pkg,
