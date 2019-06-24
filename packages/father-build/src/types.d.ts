@@ -66,6 +66,9 @@ export interface IBundleOptions {
     eslint?: boolean;
     prettier?: boolean;
   };
+  typescriptOpts?: {
+    [value: string]: any;
+  };
 }
 
 export interface IOpts {
