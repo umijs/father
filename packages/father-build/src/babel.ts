@@ -14,6 +14,7 @@ import { IBundleOptions } from './types';
 
 interface IBabelOpts {
   cwd: string;
+  rootPath?: string;
   type: 'esm' | 'cjs';
   target?: 'browser' | 'node';
   watch?: boolean;
@@ -32,6 +33,7 @@ interface ITransformOpts {
 export default async function(opts: IBabelOpts) {
   const {
     cwd,
+    rootPath,
     type,
     watch,
     importLibToEs,
@@ -80,13 +82,12 @@ export default async function(opts: IBabelOpts) {
   function getTSConfig() {
     const tsconfigPath = join(cwd, 'tsconfig.json');
     const templateTsconfigPath = join(__dirname, '../template/tsconfig.json');
-    const tsConfigRootPath = join(process.cwd(), 'tsconfig.json');
-    
+
     if (existsSync(tsconfigPath)) {
       return JSON.parse(readFileSync(tsconfigPath, 'utf-8')).compilerOptions || {};
     }
-    if (existsSync(tsConfigRootPath)) {
-      return JSON.parse(readFileSync(tsConfigRootPath, 'utf-8')).compilerOptions || {};
+    if (rootPath && existsSync(join(rootPath, 'tsconfig.json'))) {
+      return JSON.parse(readFileSync(join(rootPath, 'tsconfig.json'), 'utf-8')).compilerOptions || {};
     }
     return JSON.parse(readFileSync(templateTsconfigPath, 'utf-8')).compilerOptions || {};
   }
