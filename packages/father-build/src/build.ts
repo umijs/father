@@ -164,14 +164,31 @@ export async function buildForLerna(opts: IOpts) {
   });
 
   const userConfig = getUserConfig({ cwd });
+  let pkgs = readdirSync(join(cwd, 'packages'));
 
-  const pkgs = readdirSync(join(cwd, 'packages'));
+  // Ö§³Ö scope
+  pkgs = pkgs.reduce((memo, pkg) => {
+    const pkgPath = join(cwd, 'packages', pkg);
+    if (statSync(pkgPath).isDirectory()) {
+      if (pkg.startsWith('@')) {
+        readdirSync(join(cwd, 'packages', pkg)).filter(subPkg => {
+          if (statSync(join(cwd, 'packages', pkg, subPkg)).isDirectory()) {
+            memo = memo.concat(`${pkg}/${subPkg}`);
+          }
+        });
+      } else {
+        memo = memo.concat(pkg);
+      }
+    }
+    return memo;
+  }, []);
+
+  console.log(pkgs);
 
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
     // build error when .DS_Store includes in packages root
     const pkgPath = join(cwd, 'packages', pkg);
-    if (!statSync(pkgPath).isDirectory()) continue;
     assert.ok(
       existsSync(join(pkgPath, 'package.json')),
       `package.json not found in packages/${pkg}`,

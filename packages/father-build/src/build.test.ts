@@ -29,11 +29,19 @@ describe('father build', () => {
         if (existsSync(join(cwd, 'lerna.json'))) {
           mkdirp.sync(join(cwd, 'dist'));
           const pkgs = readdirSync(join(cwd, 'packages'));
-          for (const pkg of pkgs) {
+          for (let pkg of pkgs) {
+            // TODO: hard code
+            if (pkg === '@hoo') {
+              pkg = '@hoo/bar';
+            }
             const pkgPath = join(cwd, 'packages', pkg);
             if (!statSync(pkgPath).isDirectory()) continue;
             moveEsLibToDist(pkgPath);
-            renameSync(join(pkgPath, 'dist'), join(cwd, 'dist', pkg));
+            renameSync(
+              join(pkgPath, 'dist'),
+              // @foo/bar -> bar
+              join(cwd, 'dist', pkg.split('/').slice(-1).join(''))
+            );
           }
         }
       });
