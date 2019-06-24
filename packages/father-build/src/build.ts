@@ -183,8 +183,6 @@ export async function buildForLerna(opts: IOpts) {
     return memo;
   }, []);
 
-  console.log(pkgs);
-
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
     // build error when .DS_Store includes in packages root
