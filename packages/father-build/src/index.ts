@@ -1,2 +1,3 @@
 
-export * from './build';
+import build from './build';
+export default build;
