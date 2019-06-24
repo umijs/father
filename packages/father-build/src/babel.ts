@@ -80,12 +80,15 @@ export default async function(opts: IBabelOpts) {
   function getTSConfig() {
     const tsconfigPath = join(cwd, 'tsconfig.json');
     const templateTsconfigPath = join(__dirname, '../template/tsconfig.json');
-
+    const tsConfigRootPath = join(process.cwd(), 'tsconfig.json');
+    
     if (existsSync(tsconfigPath)) {
       return JSON.parse(readFileSync(tsconfigPath, 'utf-8')).compilerOptions || {};
-    } else {
-      return JSON.parse(readFileSync(templateTsconfigPath, 'utf-8')).compilerOptions || {};
     }
+    if (existsSync(tsConfigRootPath)) {
+      return JSON.parse(readFileSync(tsConfigRootPath, 'utf-8')).compilerOptions || {};
+    }
+    return JSON.parse(readFileSync(templateTsconfigPath, 'utf-8')).compilerOptions || {};
   }
 
   function createStream(src) {
