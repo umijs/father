@@ -61,7 +61,7 @@ export default async function(opts: IBabelOpts) {
       type,
       typescript: true,
       runtimeHelpers,
-      filePath: relative(cwd, file.path),
+      filePath: slash(relative(cwd, file.path)),
       browserFiles,
       nodeFiles,
     });
