@@ -28,6 +28,7 @@
     "chokidar": "3.0.1",
     "glob": "^7.1.4",
     "gulp-if": "2.0.2",
+    "gulp-less": "^4.0.1",
     "gulp-typescript": "5.0.1",
     "less": "3.9.0",
     "less-plugin-npm-import": "2.1.0",

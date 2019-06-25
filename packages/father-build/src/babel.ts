@@ -8,6 +8,7 @@ import slash from 'slash2';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import gulpTs from 'gulp-typescript';
+import gulpLess from 'gulp-less';
 import gulpIf from 'gulp-if';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
@@ -45,6 +46,7 @@ export default async function(opts: IBabelOpts) {
       browserFiles = [],
       nodeFiles = [],
       disableTypeCheck,
+      lessInBabelMode,
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -110,6 +112,7 @@ export default async function(opts: IBabelOpts) {
         base: srcPath,
       })
       .pipe(gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig)))
+      .pipe(gulpIf(f => lessInBabelMode && /\.less$/.test(f.path), gulpLess(lessInBabelMode || {})))
       .pipe(
         gulpIf(
           f => isTransform(f.path),

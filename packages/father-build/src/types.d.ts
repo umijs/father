@@ -66,6 +66,10 @@ export interface IBundleOptions {
     eslint?: boolean;
     prettier?: boolean;
   };
+  lessInBabelMode?: {
+    paths?: any[];
+    plugins?: any[];
+  },
 }
 
 export interface IOpts {
