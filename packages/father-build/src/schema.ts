@@ -100,6 +100,12 @@ export default {
     replace: {
       type: 'object',
     },
+    lessInBabelMode: {
+      oneOf: [
+        { type: 'boolean' },
+        { type: 'object' },
+      ],
+    },
     browserFiles: {
       type: 'array',
     },
