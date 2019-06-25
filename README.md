@@ -276,7 +276,7 @@ export default {
 
 默认是 `.module.css` 走 css modules，`.css` 不走 css modules。配置 `cssModules` 为 `true` 后，全部 css 文件都走 css modules。（less 文件同理）
 
-如果配置了 object，会被透传给 [postcss-modules](https://github.com/css-modules/postcss-modules)。
+如果配置了 object，会被透传给 [postcss-modules][13]。
 
 比如，要定制 css modules 的样式名前缀，
 
@@ -339,7 +339,7 @@ export default {
 
 #### namedExports
 
-配置 rollup-plugin-commonjs 的 [namedExports][13]。
+配置 rollup-plugin-commonjs 的 [namedExports][14]。
 
 #### disableTypeCheck
 
@@ -386,7 +386,7 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 
 #### replace
 
-配置需要替换的内容，基于 [rollup-plugin-replace][14]。
+配置需要替换的内容，基于 [rollup-plugin-replace][15]。
 
 * Type: `Object`
 * Default: `{}`
@@ -403,7 +403,32 @@ export default {
   replace: {
     VERSION: JSON.stringify(require('./package').version),
   },
-},
+}
+```
+
+#### lessInBabelMode
+
+在 babel 模式下做 less 编译，基于 [gulp-less][16]，默认不开启。
+
+* Type: `Boolean` | `Object`
+* Default: `false`
+
+可以配置 paths 和 plugins，详见 gulp-less 的 Options 文档。
+
+#### nodeVersion
+
+指定 node 版本。
+
+* Type: `Number`
+* Default: `6`
+
+比如：
+
+```js
+export default {
+  target: 'node',
+  nodeVersion: 8,
+}
 ```
 
 #### overridesByEntry
@@ -444,7 +469,7 @@ export default {
 
 #### doc
 
-透传配置给 [docz][15]，可以有 `title`、`theme`、`themeConfig` 等。
+透传配置给 [docz][17]，可以有 `title`、`theme`、`themeConfig` 等。
 
 比如要切换默认主题为 dark 模式：
 
@@ -489,7 +514,7 @@ export default {
 1. 通常只要配置 `esm: "rollup"` 就够了
 2. cjs 和 esm 支持 rollup 和 babel 两种打包方式，rollup 是跟进 entry 把项目依赖打包在一起输出一个文件，babel 是把 src 目录转化成 lib（cjs） 或 es（esm）
 3. 如果要考虑 ssr，再配上 `cjs: "rollup"`
-4. `package.json` 里配上 `sideEffects: false | string[]`，会让 webpack 的 [tree-shaking][16] 更高效
+4. `package.json` 里配上 `sideEffects: false | string[]`，会让 webpack 的 [tree-shaking][18] 更高效
 
 ### 关于 dependencies、peerDependencies 和 external
 
@@ -535,10 +560,12 @@ MIT
 [10]:	https://rollupjs.org/guide/en#output-globals
 [11]:	https://rollupjs.org/guide/en#output-name
 [12]:	https://github.com/postcss/autoprefixer#options
-[13]:	https://github.com/rollup/rollup-plugin-commonjs#usage
-[14]:	https://github.com/rollup/rollup-plugin-replace
-[15]:	https://www.docz.site/documentation/project-configuration
-[16]:	https://webpack.js.org/guides/tree-shaking/
+[13]:	https://github.com/css-modules/postcss-modules
+[14]:	https://github.com/rollup/rollup-plugin-commonjs#usage
+[15]:	https://github.com/rollup/rollup-plugin-replace
+[16]:	https://github.com/gulp-community/gulp-less
+[17]:	https://www.docz.site/documentation/project-configuration
+[18]:	https://webpack.js.org/guides/tree-shaking/
 
 [image-1]:	https://img.shields.io/npm/v/father.svg?style=flat
 [image-2]:	https://img.shields.io/travis/umijs/father.svg?style=flat

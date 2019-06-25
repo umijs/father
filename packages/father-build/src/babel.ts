@@ -8,6 +8,7 @@ import slash from 'slash2';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import gulpTs from 'gulp-typescript';
+import gulpLess from 'gulp-less';
 import gulpIf from 'gulp-if';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
@@ -44,7 +45,9 @@ export default async function(opts: IBabelOpts) {
       extraBabelPlugins = [],
       browserFiles = [],
       nodeFiles = [],
+      nodeVersion,
       disableTypeCheck,
+      lessInBabelMode,
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -66,6 +69,7 @@ export default async function(opts: IBabelOpts) {
       filePath: slash(relative(cwd, file.path)),
       browserFiles,
       nodeFiles,
+      nodeVersion,
     });
     if (importLibToEs && type === 'esm') {
       babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));
@@ -95,15 +99,25 @@ export default async function(opts: IBabelOpts) {
   function createStream(src) {
     const tsConfig = getTSConfig();
     const babelTransformRegexp = disableTypeCheck ? /\.(t|j)sx?$/ : /\.jsx?$/;
+
+    function isTsFile(path) {
+      return /\.tsx?$/.test(path) && !path.endsWith('.d.ts');
+    }
+
+    function isTransform(path) {
+      return babelTransformRegexp.test(path) && !path.endsWith('.d.ts');
+    }
+
     return vfs
       .src(src, {
         allowEmpty: true,
         base: srcPath,
       })
-      .pipe(gulpIf(f => !disableTypeCheck && /\.tsx?$/.test(f.path), gulpTs(tsConfig)))
+      .pipe(gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig)))
+      .pipe(gulpIf(f => lessInBabelMode && /\.less$/.test(f.path), gulpLess(lessInBabelMode || {})))
       .pipe(
         gulpIf(
-          f => babelTransformRegexp.test(f.path),
+          f => isTransform(f.path),
           through.obj((file, env, cb) => {
             try {
               file.contents = Buffer.from(
@@ -130,7 +144,6 @@ export default async function(opts: IBabelOpts) {
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures/**/*')}`,
       `!${join(srcPath, '**/*.mdx')}`,
-      `!${join(srcPath, '**/*.d.ts')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
     ]).on('end', () => {
       if (watch) {

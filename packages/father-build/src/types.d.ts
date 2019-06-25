@@ -61,10 +61,15 @@ export interface IBundleOptions {
   nodeFiles?: {
     [value: string]: any;
   };
+  nodeVersion?: number;
   disableTypeCheck?: boolean;
   preCommit?: {
     eslint?: boolean;
     prettier?: boolean;
+  };
+  lessInBabelMode?: {
+    paths?: any[];
+    plugins?: any[];
   };
   typescriptOpts?: {
     [value: string]: any;

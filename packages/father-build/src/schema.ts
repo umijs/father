@@ -100,11 +100,20 @@ export default {
     replace: {
       type: 'object',
     },
+    lessInBabelMode: {
+      oneOf: [
+        { type: 'boolean' },
+        { type: 'object' },
+      ],
+    },
     browserFiles: {
       type: 'array',
     },
     nodeFiles: {
       type: 'array',
+    },
+    nodeVersion: {
+      type: 'number',
     },
     disableTypeCheck: {
       type: 'boolean',
