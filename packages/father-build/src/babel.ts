@@ -45,6 +45,7 @@ export default async function(opts: IBabelOpts) {
       extraBabelPlugins = [],
       browserFiles = [],
       nodeFiles = [],
+      nodeVersion,
       disableTypeCheck,
       lessInBabelMode,
     },
@@ -68,6 +69,7 @@ export default async function(opts: IBabelOpts) {
       filePath: slash(relative(cwd, file.path)),
       browserFiles,
       nodeFiles,
+      nodeVersion,
     });
     if (importLibToEs && type === 'esm') {
       babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));

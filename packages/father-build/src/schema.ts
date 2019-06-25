@@ -112,6 +112,9 @@ export default {
     nodeFiles: {
       type: 'array',
     },
+    nodeVersion: {
+      type: 'number',
+    },
     disableTypeCheck: {
       type: 'boolean',
     },
