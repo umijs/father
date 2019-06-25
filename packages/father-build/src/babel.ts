@@ -95,15 +95,24 @@ export default async function(opts: IBabelOpts) {
   function createStream(src) {
     const tsConfig = getTSConfig();
     const babelTransformRegexp = disableTypeCheck ? /\.(t|j)sx?$/ : /\.jsx?$/;
+
+    function isTsFile(path) {
+      return /\.tsx?$/.test(path) && !path.endsWith('.d.ts');
+    }
+
+    function isTransform(path) {
+      return babelTransformRegexp.test(path) && !path.endsWith('.d.ts');
+    }
+
     return vfs
       .src(src, {
         allowEmpty: true,
         base: srcPath,
       })
-      .pipe(gulpIf(f => !disableTypeCheck && /\.tsx?$/.test(f.path), gulpTs(tsConfig)))
+      .pipe(gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig)))
       .pipe(
         gulpIf(
-          f => babelTransformRegexp.test(f.path),
+          f => isTransform(f.path),
           through.obj((file, env, cb) => {
             try {
               file.contents = Buffer.from(
@@ -130,7 +139,6 @@ export default async function(opts: IBabelOpts) {
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures/**/*')}`,
       `!${join(srcPath, '**/*.mdx')}`,
-      `!${join(srcPath, '**/*.d.ts')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
     ]).on('end', () => {
       if (watch) {
