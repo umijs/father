@@ -403,7 +403,7 @@ export default {
   replace: {
     VERSION: JSON.stringify(require('./package').version),
   },
-},
+}
 ```
 
 #### lessInBabelMode
@@ -414,6 +414,22 @@ export default {
 * Default: `false`
 
 可以配置 paths 和 plugins，详见 gulp-less 的 Options 文档。
+
+#### nodeVersion
+
+指定 node 版本。
+
+* Type: `Number`
+* Default: `6`
+
+比如：
+
+```js
+export default {
+  target: 'node',
+  nodeVersion: 8,
+}
+```
 
 #### overridesByEntry
 

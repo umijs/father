@@ -7,13 +7,14 @@ interface IGetBabelConfigOpts {
   browserFiles?: {
     [value: string]: any;
   };
+  nodeVersion?: number;
   nodeFiles?: {
     [value: string]: any;
   };
 }
 
 export default function(opts: IGetBabelConfigOpts) {
-  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles } = opts;
+  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion } = opts;
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
@@ -23,7 +24,7 @@ export default function(opts: IGetBabelConfigOpts) {
       if (browserFiles.includes(filePath)) isBrowser = true;
     }
   }
-  const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: 6 };
+  const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: nodeVersion || 6 };
 
   return {
     presets: [

@@ -61,6 +61,7 @@ export interface IBundleOptions {
   nodeFiles?: {
     [value: string]: any;
   };
+  nodeVersion?: number;
   disableTypeCheck?: boolean;
   preCommit?: {
     eslint?: boolean;

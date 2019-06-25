@@ -48,6 +48,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
     extraExternals = [],
+    nodeVersion,
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -66,6 +67,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       target: type === 'esm' ? 'browser' : target,
       typescript: false,
       runtimeHelpers,
+      nodeVersion,
     }),
     runtimeHelpers,
     exclude: /\/node_modules\//,
