@@ -13,7 +13,7 @@ export function devOrBuild({ cwd, cmd, params, userConfig = {}, DOC_PATH }: DocP
 
   mkdirp(join(cwd, '.docz'));
   writeFileSync(
-    join(cwd, '.docz', '.umirc.library.json'),
+    join(cwd, '.docz', '.fatherrc.json'),
     JSON.stringify(userConfig, null, 2),
     'utf-8',
   );
