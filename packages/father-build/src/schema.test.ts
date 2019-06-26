@@ -19,6 +19,7 @@ const successValidates = {
   target: ['node', 'browser'],
   overridesByEntry: [{}],
   doc: [{}],
+  typescriptOpts: [{}],
 };
 
 Object.keys(successValidates).forEach(key => {

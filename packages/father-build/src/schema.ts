@@ -126,5 +126,8 @@ export default {
         prettier: { type: 'boolean' },
       },
     },
+    typescriptOpts: {
+      type: 'object',
+    },
   },
 };

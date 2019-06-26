@@ -70,7 +70,10 @@ export interface IBundleOptions {
   lessInBabelMode?: {
     paths?: any[];
     plugins?: any[];
-  },
+  };
+  typescriptOpts?: {
+    [value: string]: any;
+  };
 }
 
 export interface IOpts {

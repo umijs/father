@@ -49,6 +49,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     replace: replaceOpts,
     extraExternals = [],
     nodeVersion,
+    typescriptOpts,
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -145,7 +146,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       ? [
           typescript({
             // @see https://github.com/ezolenko/rollup-plugin-typescript2/issues/105
-			objectHashIgnoreUnknownHack: true,
+            objectHashIgnoreUnknownHack: true,
             cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
             // TODO: 支持往上找 tsconfig.json
             // 比如 lerna 的场景不需要每个 package 有个 tsconfig.json
@@ -162,6 +163,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 target: 'esnext',
               },
             },
+            ...(typescriptOpts || {}),
           }),
         ]
       : []),
