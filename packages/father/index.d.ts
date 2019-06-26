@@ -1,4 +1,4 @@
-import { IBundleOptions, IOpts } from './src/types';
+import { IBundleOptions, IOpts } from '../father-build/src/types';
 
 export { IBundleOptions, IOpts };
 export function build(opts: IOpts): Promise<any>;
