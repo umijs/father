@@ -11,7 +11,7 @@ const lessModuleRegex = /\.module\.less$/;
 
 const cwd = process.cwd();
 const localUserConfig = JSON.parse(
-  readFileSync(join(cwd, '.docz', '.umirc.library.json'), 'utf-8'),
+  readFileSync(join(cwd, '.docz', '.fatherrc.json'), 'utf-8'),
 );
 
 // register babel for config files
