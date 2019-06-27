@@ -17,11 +17,6 @@ export interface DocProps {
   DOC_PATH?: typeof DOC_PATH;
 }
 
-export interface DeployProps {
-  cwd: string;
-  args: any;
-}
-
 export function devOrBuild(option: DocProps) {
   const mergedOption: DocProps = {
     ...option,
