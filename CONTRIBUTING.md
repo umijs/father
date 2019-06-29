@@ -46,6 +46,13 @@ $ y debug father-build/src/build.test.ts -w
 
 ## Publish
 
+Add tag for PRs, changelog is generated based on these tags.
+
+* pr(bug)
+* pr(enhancement)
+* pr(chore)
+* pr(dependency)
+
 Generate changelog.
 
 ```bash
