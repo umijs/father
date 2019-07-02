@@ -40,7 +40,7 @@ function build() {
     umd: args.umd && { name: args.umd === true ? undefined : args.umd },
     file: args.file,
     target: args.target,
-    entry: args._.slice(1),
+    entry: args._,
   });
 
   if (buildArgs.file && buildArgs.entry && buildArgs.entry.length > 1) {
