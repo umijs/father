@@ -110,7 +110,7 @@ function getEsLintConfig() {
 export async function check() {
   const list: string[] = (await sgf())
     .map((file: { filename: string }) => file.filename)
-    .filter((filename: string) => /^(src|tests)/.test(filename))
+    .filter((filename: string) => /^(src|tests|examples)/.test(filename))
     .filter((filename: string) => /\.(ts|js|tsx|jsx)$/.test(filename))
 
     // Only keep exist files
