@@ -3,7 +3,6 @@ import signale from 'signale';
 
 module.exports = async function test(args) {
   const passArgs = {
-    collectCoverageFrom: 'src/**/*',
     ...args,
   };
 
