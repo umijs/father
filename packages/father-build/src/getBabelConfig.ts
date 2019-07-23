@@ -43,6 +43,10 @@ export default function(opts: IGetBabelConfigOpts) {
       ...(runtimeHelpers
         ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: isBrowser }]]
         : []),
+      ...(process.env.COVERAGE
+        ? [require.resolve('babel-plugin-istanbul')]
+        : []
+      )
     ],
   };
 }

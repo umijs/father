@@ -23,6 +23,7 @@
     "@svgr/rollup": "^4.3.0",
     "ajv": "6.10.0",
     "autoprefixer": "9.6.0",
+    "babel-plugin-istanbul": "^5.2.0",
     "babel-plugin-react-require": "3.1.1",
     "chalk": "2.4.2",
     "chokidar": "^3.0.2",

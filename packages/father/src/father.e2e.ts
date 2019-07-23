@@ -15,6 +15,8 @@ describe('father doc build', () => {
   process.env.COMPRESS = 'none';
   process.env.IS_TEST = 'true';
 
+  jest.setTimeout(60000);
+
   require('test-build-result')({
     root: join(__dirname, './fixtures/e2e'),
     build({ cwd }) {
@@ -27,6 +29,7 @@ describe('father doc build', () => {
           expect(code).toEqual(0);
           const child = fork(binPath, ['build', '--esm'], {
             cwd,
+            env: process.env,
           });
           child.on('exit', code => {
             expect(code).toEqual(0);
