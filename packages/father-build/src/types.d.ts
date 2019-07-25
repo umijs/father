@@ -71,6 +71,9 @@ export interface IBundleOptions {
   typescriptOpts?: {
     [value: string]: any;
   };
+  nodeResolveOpts?: {
+    [value: string]: any;
+  };
 }
 
 export interface IOpts {

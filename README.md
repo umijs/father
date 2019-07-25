@@ -341,6 +341,10 @@ export default {
 
 配置 rollup-plugin-commonjs 的 [namedExports][14]。
 
+#### nodeResolveOpts
+
+配置 [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve) 参数。
+
 #### disableTypeCheck
 
 是否禁用类型检测。

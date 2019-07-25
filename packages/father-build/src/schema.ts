@@ -93,6 +93,9 @@ export default {
     overridesByEntry: {
       type: 'object',
     },
+    nodeResolveOpts: {
+      type: 'object',
+    },
     target: noEmptyStr,
     doc: {
       type: 'object',
