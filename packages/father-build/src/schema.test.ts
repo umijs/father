@@ -15,6 +15,7 @@ const successValidates = {
   cssModules: [true, false, {}],
   autoprefixer: [{}],
   namedExports: [{}],
+  nodeResolveOpts: [{}],
   runtimeHelpers: [true, false],
   target: ['node', 'browser'],
   overridesByEntry: [{}],

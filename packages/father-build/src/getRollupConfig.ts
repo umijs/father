@@ -50,6 +50,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extraExternals = [],
     nodeVersion,
     typescriptOpts,
+    nodeResolveOpts = {},
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -141,6 +142,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       extensions,
+      ...nodeResolveOpts,
     }),
     ...(isTypeScript
       ? [
