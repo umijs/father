@@ -65,6 +65,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   const runtimeHelpers = type === 'cjs' ? false : runtimeHelpersOpts;
   const babelOpts = {
     ...getBabelConfig({
+      type,
       target: type === 'esm' ? 'browser' : target,
       typescript: false,
       runtimeHelpers,
