@@ -21,8 +21,6 @@ const updater = require('update-notifier');
 const pkg = require('../package.json');
 updater({ pkg }).notify({ defer: true });
 
-const cwd = process.cwd();
-
 function stripEmptyKeys(obj) {
   Object.keys(obj).forEach((key) => {
     if (!obj[key] || (Array.isArray(obj[key]) && !obj[key].length)) {
@@ -51,7 +49,7 @@ function build() {
   }
 
   require('../lib/build').default({
-    cwd,
+    cwd: args.root || process.cwd(),
     watch: args.w || args.watch,
     buildArgs,
   }).catch(e => {
