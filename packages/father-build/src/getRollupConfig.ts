@@ -51,6 +51,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     nodeVersion,
     typescriptOpts,
     nodeResolveOpts = {},
+    disableTypeCheck,
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -166,6 +167,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 target: 'esnext',
               },
             },
+            check: !disableTypeCheck,
             ...(typescriptOpts || {}),
           }),
         ]
