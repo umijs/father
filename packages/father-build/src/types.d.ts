@@ -7,6 +7,7 @@ interface IBundleTypeOutput {
 
 interface ICjs extends IBundleTypeOutput {
   minify?: boolean;
+  lazy?: boolean;
 }
 
 interface IEsm extends IBundleTypeOutput {
