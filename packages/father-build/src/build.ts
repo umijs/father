@@ -49,6 +49,11 @@ function validateBundleOpts(bundleOpts: IBundleOptions, { cwd, rootPath }) {
       `@babel/runtime dependency is required to use runtimeHelpers`,
     );
   }
+  if (bundleOpts.cjs && bundleOpts.cjs.lazy && bundleOpts.cjs.type === 'rollup') {
+    throw new Error(`
+cjs.lazy don't support rollup.
+    `.trim());
+  }
   if (!bundleOpts.esm && !bundleOpts.cjs && !bundleOpts.umd) {
     throw new Error(
       `

@@ -48,6 +48,7 @@ export default async function(opts: IBabelOpts) {
       nodeVersion,
       disableTypeCheck,
       lessInBabelMode,
+      cjs,
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -70,6 +71,7 @@ export default async function(opts: IBabelOpts) {
       browserFiles,
       nodeFiles,
       nodeVersion,
+      lazy: cjs && cjs.lazy,
     });
     if (importLibToEs && type === 'esm') {
       babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));
@@ -131,6 +133,7 @@ export default async function(opts: IBabelOpts) {
               cb(null, file);
             } catch (e) {
               signale.error(`Compiled faild: ${file.path}`);
+              console.log(e);
               cb(null);
             }
           }),

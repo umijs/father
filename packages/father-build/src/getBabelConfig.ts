@@ -1,7 +1,7 @@
 interface IGetBabelConfigOpts {
   target: 'browser' | 'node';
   type?: 'esm' | 'cjs';
-  typescript: boolean;
+  typescript?: boolean;
   runtimeHelpers?: boolean;
   filePath?: string;
   browserFiles?: {
@@ -11,10 +11,11 @@ interface IGetBabelConfigOpts {
   nodeFiles?: {
     [value: string]: any;
   };
+  lazy?: boolean;
 }
 
 export default function(opts: IGetBabelConfigOpts) {
-  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion } = opts;
+  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy } = opts;
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
@@ -29,10 +30,18 @@ export default function(opts: IGetBabelConfigOpts) {
   return {
     presets: [
       ...(typescript ? [require.resolve('@babel/preset-typescript')] : []),
-      [require.resolve('@babel/preset-env'), { targets, modules: type === 'esm' ? false : 'auto' }],
+      [require.resolve('@babel/preset-env'), {
+        targets,
+        modules: type === 'esm' ? false : 'auto'
+      }],
       ...(isBrowser ? [require.resolve('@babel/preset-react')] : []),
     ],
     plugins: [
+      ...((type === 'cjs' && lazy)
+        ? [[require.resolve('@babel/plugin-transform-modules-commonjs'), {
+            lazy: true,
+          }]]
+        : []),
       require.resolve('babel-plugin-react-require'),
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       require.resolve('@babel/plugin-proposal-export-default-from'),

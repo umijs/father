@@ -218,6 +218,15 @@ cjs 为 `rollup` 或 `babel` 时，等同于配置了 `{ type: "rollup" | "babel
 
 通常不需要配置，除非你发布到 npm 的代码需要保密。
 
+#### cjs.lazy
+
+是否开启 lazy require。
+
+* Type: `boolean`
+* Default: `false`
+
+对于工具来说推荐开启，可加速命令行执行速度，同时减少依赖和耦合。
+
 #### umd
 
 是否输出 umd 格式，以及指定 umd 的相关配置。

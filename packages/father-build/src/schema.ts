@@ -44,6 +44,7 @@ export default {
             },
             file: noEmptyStr,
             minify: { type: 'boolean' },
+            lazy: { type: 'boolean' },
           },
         },
       ],
