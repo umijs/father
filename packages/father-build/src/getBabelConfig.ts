@@ -37,7 +37,7 @@ export default function(opts: IGetBabelConfigOpts) {
       ...(isBrowser ? [require.resolve('@babel/preset-react')] : []),
     ],
     plugins: [
-      ...((type === 'cjs' && lazy)
+      ...((type === 'cjs' && lazy && !isBrowser)
         ? [[require.resolve('@babel/plugin-transform-modules-commonjs'), {
             lazy: true,
           }]]
