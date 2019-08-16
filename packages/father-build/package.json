@@ -1,6 +1,6 @@
 {
   "name": "father-build",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Library build tool based on rollup.",
   "main": "lib/index.js",
   "bin": {
@@ -9,13 +9,13 @@
   "typings": "./index.d.ts",
   "dependencies": {
     "@babel/core": "7.4.5",
-    "@babel/plugin-transform-modules-commonjs": "7.5.0",
     "@babel/plugin-proposal-class-properties": "7.4.4",
     "@babel/plugin-proposal-decorators": "7.4.4",
     "@babel/plugin-proposal-do-expressions": "7.2.0",
     "@babel/plugin-proposal-export-default-from": "7.2.0",
     "@babel/plugin-proposal-export-namespace-from": "7.2.0",
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
+    "@babel/plugin-transform-modules-commonjs": "7.5.0",
     "@babel/plugin-transform-runtime": "7.4.4",
     "@babel/preset-env": "7.4.5",
     "@babel/preset-react": "7.0.0",
