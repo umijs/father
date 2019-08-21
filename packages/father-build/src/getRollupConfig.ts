@@ -7,6 +7,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 import commonjs from 'rollup-plugin-commonjs';
 import postcss from 'rollup-plugin-postcss-umi';
+import copy from 'rollup-plugin-copy';
 import { ModuleFormat, RollupOptions } from 'rollup';
 import { camelCase } from 'lodash';
 import tempDir from 'temp-dir';
@@ -52,6 +53,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     typescriptOpts,
     nodeResolveOpts = {},
     disableTypeCheck,
+    copy:copyOpts
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -174,6 +176,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       : []),
     babel(babelOpts),
     json(),
+    copy(copyOpts)
   ];
 
   switch (type) {

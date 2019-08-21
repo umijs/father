@@ -21,6 +21,7 @@ const successValidates = {
   overridesByEntry: [{}],
   doc: [{}],
   typescriptOpts: [{}],
+  copy: [{}],
 };
 
 Object.keys(successValidates).forEach(key => {

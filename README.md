@@ -480,6 +480,21 @@ export default {
 
 则 `foo.js` 的 umd 配置为 `{ globals: { jquery: 'window.jQuery' }, name: 'foo' }`。
 
+#### copy
+```js
+export default {
+  copy: {
+    targets:[
+      {
+        src:'src/assets',
+        dest:'dist'
+      }
+    ]
+  }
+}
+```
+详细配置参考[rollup-plugin-copy](https://www.npmjs.com/package/rollup-plugin-copy)
+
 #### doc
 
 透传配置给 [docz][17]，可以有 `title`、`theme`、`themeConfig` 等。

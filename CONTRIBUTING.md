@@ -19,7 +19,12 @@ $ y bootstrap
 Link father globally.
 
 ```bash
-$ cd packages/father
+# link local father-build
+$ cd packages/father-build
+$ y link
+
+$ cd ../father
+$ y link father-build
 $ y link
 ```
 

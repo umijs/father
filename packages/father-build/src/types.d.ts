@@ -75,6 +75,7 @@ export interface IBundleOptions {
   nodeResolveOpts?: {
     [value: string]: any;
   };
+  copy?: object;
 }
 
 export interface IOpts {

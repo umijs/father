@@ -133,5 +133,8 @@ export default {
     typescriptOpts: {
       type: 'object',
     },
+    copy: {
+      type: 'object',
+    },
   },
 };
