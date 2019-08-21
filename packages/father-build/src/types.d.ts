@@ -37,6 +37,7 @@ export interface IBundleOptions {
   esm?: BundleType | IEsm | false;
   cjs?: BundleType | ICjs | false;
   umd?: IUmd | false;
+  extraRollupPlugins?: any[];
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
   extraPostCSSPlugins?: any[];

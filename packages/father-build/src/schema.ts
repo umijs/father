@@ -64,6 +64,9 @@ export default {
         },
       ],
     },
+    extraRollupPlugins: {
+      type: 'array',
+    },
     extraBabelPlugins: {
       type: 'array',
     },

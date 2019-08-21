@@ -14,7 +14,7 @@ import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
-import svgr from '@svgr/rollup';
+import svgr from '@svgr/rollup'; 
 
 interface IGetRollupConfigOpts {
   cwd: string;
@@ -42,6 +42,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     cssModules: modules,
     extraPostCSSPlugins = [],
     extraBabelPresets = [],
+    extraRollupPlugins = [],
     extraBabelPlugins = [],
     autoprefixer: autoprefixerOpts,
     namedExports,
@@ -176,6 +177,12 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     json(),
   ];
 
+  extraRollupPlugins.forEach((plugin)=>{
+    if(!plugins.find((item)=>{return item===plugin})){
+      plugins.push(plugin);
+    } 
+  });
+ 
   switch (type) {
     case 'esm':
       return [
