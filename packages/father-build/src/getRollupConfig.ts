@@ -39,6 +39,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     file,
     target = 'browser',
     extractCSS = false,
+    injectCSS = true,
     cssModules: modules,
     extraPostCSSPlugins = [],
     extraBabelPresets = [],
@@ -128,6 +129,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     svgr(),
     postcss({
       extract: extractCSS,
+      inject: injectCSS,
       modules,
       use: [
         [
