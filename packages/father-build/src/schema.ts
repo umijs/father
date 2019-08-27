@@ -82,6 +82,9 @@ export default {
     extractCSS: {
       type: 'boolean',
     },
+    injectCSS: {
+      type: 'boolean',
+    },
     autoprefixer: {
       type: 'object',
     },
