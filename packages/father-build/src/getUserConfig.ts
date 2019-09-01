@@ -34,20 +34,23 @@ export default function({ cwd }): IBundleOptions {
     }
 
     const userConfig = testDefault(require(configFile)); // eslint-disable-line
+    const userConfigs = Array.isArray(userConfig) ? userConfig : [userConfig];
+    userConfigs.forEach(userConfig => {
     const ajv = new AJV({ allErrors: true });
-    const isValid = ajv.validate(schema, userConfig);
-    if (!isValid) {
-      const errors = ajv.errors.map(({ dataPath, message }, index) => {
-        return `${index + 1}. ${dataPath}${dataPath ? ' ' : ''}${message}`;
-      });
-      throw new Error(
-        `
+      const isValid = ajv.validate(schema, userConfig);
+      if (!isValid) {
+        const errors = ajv.errors.map(({ dataPath, message }, index) => {
+          return `${index + 1}. ${dataPath}${dataPath ? ' ' : ''}${message}`;
+        });
+        throw new Error(
+          `
 Invalid options in ${slash(relative(cwd, configFile))}
 
 ${errors.join('\n')}
 `.trim(),
-      );
-    }
+        );
+      }
+    });
     return userConfig;
   } else {
     return {};
