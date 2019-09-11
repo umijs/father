@@ -107,6 +107,9 @@ export default {
     replace: {
       type: 'object',
     },
+    inject: {
+      type: 'object',
+    },
     lessInBabelMode: {
       oneOf: [
         { type: 'boolean' },

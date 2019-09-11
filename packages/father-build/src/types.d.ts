@@ -44,6 +44,7 @@ export interface IBundleOptions {
   cssModules?: boolean | Object;
   extractCSS?: boolean;
   injectCSS?: boolean,
+  inject?: Object,
   autoprefixer?: Object;
   namedExports?: IStringArrayObject;
   runtimeHelpers?: boolean;
