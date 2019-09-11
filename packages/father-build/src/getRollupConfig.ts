@@ -212,7 +212,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                   }),
                   terser(terserOpts),
                 ],
-                external: testExternal.bind(null, externalPeerDeps),
+                external: testExternal.bind(null, externalPeerDeps, externalsExclude),
               },
             ]
           : []),
@@ -227,7 +227,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             file: join(cwd, `dist/${(cjs && (cjs as any).file) || name}.js`),
           },
           plugins: [...plugins, ...(cjs && (cjs as any).minify ? [terser(terserOpts)] : [])],
-          external: testExternal.bind(null, external),
+          external: testExternal.bind(null, external, externalsExclude),
         },
       ];
 
@@ -255,7 +255,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
               'process.env.NODE_ENV': JSON.stringify('development'),
             }),
           ],
-          external: testExternal.bind(null, externalPeerDeps),
+          external: testExternal.bind(null, externalPeerDeps, externalsExclude),
         },
         ...(umd && umd.minFile === false
           ? []
@@ -275,7 +275,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                   }),
                   terser(terserOpts),
                 ],
-                external: testExternal.bind(null, externalPeerDeps),
+                external: testExternal.bind(null, externalPeerDeps, externalsExclude),
               },
             ]),
       ];
