@@ -7,14 +7,15 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 import commonjs from 'rollup-plugin-commonjs';
 import postcss from 'rollup-plugin-postcss-umi';
+import inject from 'rollup-plugin-inject';
 import { ModuleFormat, RollupOptions } from 'rollup';
 import { camelCase } from 'lodash';
 import tempDir from 'temp-dir';
 import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
+import svgr from '@svgr/rollup';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
-import svgr from '@svgr/rollup';
 
 interface IGetRollupConfigOpts {
   cwd: string;
@@ -48,6 +49,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     namedExports,
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
+    inject: injectOpts,
     extraExternals = [],
     nodeVersion,
     typescriptOpts,
@@ -142,6 +144,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       ],
       plugins: [autoprefixer(autoprefixerOpts), ...extraPostCSSPlugins],
     }),
+    ...(injectOpts ? [inject(injectOpts)] : []),
     ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
