@@ -355,6 +355,22 @@ export default {
 * Type: `string[]`
 * Default: `[]`
 
+#### externalsExclude
+
+配置一些依赖不走 externals。
+
+* Type: `string[]`
+* Default: `[]`
+
+比如 'foo' 走 externals，而 `foo/bar` 不走，可以这么配，
+
+```js
+export default {
+  extraExternals: ['foo'],
+  externalsExclude: ['foo/bar'],
+}
+```
+
 #### namedExports
 
 配置 rollup-plugin-commonjs 的 [namedExports][14]。
