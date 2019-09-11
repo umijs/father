@@ -76,6 +76,9 @@ export default {
     extraExternals: {
       type: 'array',
     },
+    externalsExclude: {
+      type: 'array',
+    },
     cssModules: {
       oneOf: [{ type: 'boolean' }, { type: 'object' }],
     },

@@ -51,6 +51,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     replace: replaceOpts,
     inject: injectOpts,
     extraExternals = [],
+    externalsExclude = [],
     nodeVersion,
     typescriptOpts,
     nodeResolveOpts = {},
@@ -115,7 +116,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     }
   }
 
-  function testExternal(pkgs, id) {
+  function testExternal(pkgs, excludes, id) {
+    if (excludes.includes(id)) {
+      return false;
+    }
     return pkgs.includes(getPkgNameByid(id));
   }
 
@@ -191,7 +195,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
           },
           plugins: [...plugins, ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
-          external: testExternal.bind(null, external),
+          external: testExternal.bind(null, external, externalsExclude),
         },
         ...(esm && (esm as any).mjs
           ? [
