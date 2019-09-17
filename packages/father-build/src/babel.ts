@@ -151,18 +151,21 @@ export default async function(opts: IBabelOpts) {
     ]).on('end', () => {
       if (watch) {
         signale.info('Start watch', srcPath);
-        chokidar
+        const watcher = chokidar
           .watch(srcPath, {
             ignoreInitial: true,
-          })
-          .on('all', (event, fullPath) => {
-            const relPath = fullPath.replace(srcPath, '');
-            signale.info(`[${event}] ${join(srcPath, relPath)}`);
-            if (!existsSync(fullPath)) return;
-            if (statSync(fullPath).isFile()) {
-              createStream([fullPath]);
-            }
           });
+        watcher.on('all', (event, fullPath) => {
+          const relPath = fullPath.replace(srcPath, '');
+          signale.info(`[${event}] ${join(srcPath, relPath)}`);
+          if (!existsSync(fullPath)) return;
+          if (statSync(fullPath).isFile()) {
+            createStream([fullPath]);
+          }
+        });
+        process.once('SIGINT', () => {
+          watcher.close();
+        });
       }
       resolve();
     });
