@@ -38,6 +38,9 @@ async function build(entry: string, opts: IRollupOpts) {
           signale.info(`[${type}] Rebuild since file changed`);
         }
       });
+      process.once('SIGINT', () => {
+        watcher.close();
+      });
     } else {
       const { output, ...input } = rollupConfig;
       const bundle = await rollup(input); // eslint-disable-line
