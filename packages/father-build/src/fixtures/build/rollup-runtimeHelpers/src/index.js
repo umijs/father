@@ -1,6 +1,6 @@
 
 class A {
-  foo() {}
+  async foo() {}
 }
 
 (new A()).foo();

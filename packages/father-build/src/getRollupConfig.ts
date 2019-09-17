@@ -64,8 +64,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     pkg = require(join(cwd, 'package.json')); // eslint-disable-line
   } catch (e) {}
 
-  // cjs 不给浏览器用，所以无需 runtimeHelpers
-  const runtimeHelpers = type === 'cjs' ? false : runtimeHelpersOpts;
+  // target 为 browser 时才使用 runtimeHelper
+  const runtimeHelpers = target === 'browser' ? runtimeHelpersOpts : false;
   const babelOpts = {
     ...getBabelConfig({
       type,
