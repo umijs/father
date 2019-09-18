@@ -13,6 +13,8 @@ export function devOrBuild({ cwd, cmd, DOC_PATH, args = {}, }: Partial<DocProps>
     });
   } else {
     // Dev mode
+    process.env.NODE_ENV = 'development';
+
     return storybook({
       mode: 'dev',
       port: args.port || '9001',
