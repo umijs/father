@@ -145,8 +145,8 @@ export default async function(opts: IBabelOpts) {
   return new Promise(resolve => {
     createStream([
       join(srcPath, '**/*'),
-      `!${join(srcPath, '**/fixtures/**/*')}`,
-      `!${join(srcPath, '**/__test__/**/*')}`,
+      `!${join(srcPath, '**/fixtures{,/**}')}`,
+      `!${join(srcPath, '**/__test__{,/**}')}`,
       `!${join(srcPath, '**/*.mdx')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
     ]).on('end', () => {
