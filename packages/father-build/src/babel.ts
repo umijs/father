@@ -143,17 +143,18 @@ export default async function(opts: IBabelOpts) {
   }
 
   return new Promise(resolve => {
-    createStream([
+    const patterns = [
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures{,/**}')}`,
       `!${join(srcPath, '**/__test__{,/**}')}`,
       `!${join(srcPath, '**/*.mdx')}`,
       `!${join(srcPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
-    ]).on('end', () => {
+    ];
+    createStream(patterns).on('end', () => {
       if (watch) {
         signale.info('Start watch', srcPath);
         const watcher = chokidar
-          .watch(srcPath, {
+          .watch(patterns, {
             ignoreInitial: true,
           });
         watcher.on('all', (event, fullPath) => {
