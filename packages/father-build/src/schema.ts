@@ -93,7 +93,7 @@ export default {
     },
     include: {
       oneOf: [
-        { type: 'boolean' },
+        { type: 'string' },
         { type: 'object' }
       ]
     },
