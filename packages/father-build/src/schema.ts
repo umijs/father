@@ -91,6 +91,12 @@ export default {
     autoprefixer: {
       type: 'object',
     },
+    include: {
+      oneOf: [
+        { type: 'string' },
+        { type: 'object' }
+      ]
+    },
     namedExports: {
       type: 'object',
     },

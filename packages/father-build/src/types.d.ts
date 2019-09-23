@@ -47,6 +47,7 @@ export interface IBundleOptions {
   injectCSS?: boolean,
   inject?: Object,
   autoprefixer?: Object;
+  include?: string | RegExp;
   namedExports?: IStringArrayObject;
   runtimeHelpers?: boolean;
   target?: 'node' | 'browser';

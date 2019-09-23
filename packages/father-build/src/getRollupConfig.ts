@@ -46,6 +46,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extraBabelPresets = [],
     extraBabelPlugins = [],
     autoprefixer: autoprefixerOpts,
+    include = /node_modules/,
     namedExports,
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
@@ -235,7 +236,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       // Add umd related plugins
       plugins.push(
         commonjs({
-          include: /node_modules/,
+          include,
           namedExports,
         }),
       );

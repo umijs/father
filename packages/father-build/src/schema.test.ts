@@ -14,6 +14,7 @@ const successValidates = {
   extraPostCSSPlugins: [[]],
   cssModules: [true, false, {}],
   autoprefixer: [{}],
+  include: ['node_modules', /node_modules/],
   namedExports: [{}],
   nodeResolveOpts: [{}],
   runtimeHelpers: [true, false],
