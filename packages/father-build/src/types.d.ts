@@ -40,6 +40,7 @@ export interface IBundleOptions {
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
   extraPostCSSPlugins?: any[];
+  extraRollupPlugins?: any[];
   extraExternals?: string[];
   externalsExclude?: string[];
   cssModules?: boolean | Object;

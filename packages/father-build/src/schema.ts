@@ -73,6 +73,9 @@ export default {
     extraPostCSSPlugins: {
       type: 'array',
     },
+    extraRollupPlugins: {
+      type: 'array',
+    },
     extraExternals: {
       type: 'array',
     },
