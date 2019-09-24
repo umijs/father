@@ -348,6 +348,21 @@ export default {
 * Type: `array`
 * Default: `[]`
 
+#### extraRollupPlugins
+
+配置额外的 rollup plugin。
+
+* Type: `array`
+* Default: `[]`
+
+```js
+import url from 'rollup-plugin-url';
+
+export default {
+  extraRollupPlugins:[url()],
+};
+```
+
 #### extraExternals
 
 为 rollup 模式配置额外的 external，但不推荐这么做，external 可通过 dependencies 和 peerDependencies 的约定实现。

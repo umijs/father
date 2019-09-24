@@ -45,6 +45,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extraPostCSSPlugins = [],
     extraBabelPresets = [],
     extraBabelPlugins = [],
+    extraRollupPlugins = [],
     autoprefixer: autoprefixerOpts,
     include = /node_modules/,
     namedExports,
@@ -184,6 +185,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       : []),
     babel(babelOpts),
     json(),
+    ...(extraRollupPlugins || []),
   ];
 
   switch (type) {
