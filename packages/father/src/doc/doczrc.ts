@@ -115,6 +115,7 @@ export default {
             cssmodules: true,
             loaderOpts: {
               javascriptEnabled: true,
+              ...userConfig.extraLessOptions
             },
           }),
           css({
@@ -125,6 +126,7 @@ export default {
             cssmodules: false,
             loaderOpts: {
               javascriptEnabled: true,
+              ...userConfig.extraLessOptions
             },
           }),
         ]
@@ -154,6 +156,7 @@ export default {
             cssmodules: false,
             loaderOpts: {
               javascriptEnabled: true,
+              ...userConfig.extraLessOptions
             },
           }),
           css({
@@ -164,6 +167,7 @@ export default {
             cssmodules: true,
             loaderOpts: {
               javascriptEnabled: true,
+              ...userConfig.extraLessOptions
             },
           }),
         ]),

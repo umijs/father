@@ -80,6 +80,9 @@ export interface IBundleOptions {
   nodeResolveOpts?: {
     [value: string]: any;
   };
+  extraLessOptions?: {
+    [opt: string]: any
+  }
 }
 
 export interface IOpts {

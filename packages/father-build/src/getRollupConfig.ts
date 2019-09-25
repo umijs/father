@@ -58,6 +58,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     typescriptOpts,
     nodeResolveOpts = {},
     disableTypeCheck,
+    extraLessOptions = {},
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -145,6 +146,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           {
             plugins: [new NpmImport({ prefix: '~' })],
             javascriptEnabled: true,
+            ...extraLessOptions,
           },
         ],
       ],
