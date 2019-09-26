@@ -80,7 +80,7 @@ export interface IBundleOptions {
   nodeResolveOpts?: {
     [value: string]: any;
   };
-  extraLessOptions?: {
+  lessInRollupMode?: {
     [opt: string]: any
   }
 }

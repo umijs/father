@@ -122,7 +122,7 @@ export default {
     inject: {
       type: 'object',
     },
-    extraLessOptions: {
+    lessInRollupMode: {
       type: 'object'
     },
     lessInBabelMode: {

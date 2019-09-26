@@ -493,6 +493,15 @@ import $inject_window_foo from 'foo';
 console.log($inject_window_foo);
 ```
 
+#### lessInRollupMode
+
+在 rollup 模式下做 less 编译，支持配置 less 在编译过程中的 Options
+
+* Type: `Object`
+* Default: `{}`
+
+可以配置 modifyVars 等， 详见 less 的 [Options 文档](http://lesscss.org/usage/#less-options)。
+
 #### lessInBabelMode
 
 在 babel 模式下做 less 编译，基于 [gulp-less](https://github.com/gulp-community/gulp-less)，默认不开启。
