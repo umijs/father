@@ -122,6 +122,9 @@ export default {
     inject: {
       type: 'object',
     },
+    lessInRollupMode: {
+      type: 'object'
+    },
     lessInBabelMode: {
       oneOf: [
         { type: 'boolean' },
