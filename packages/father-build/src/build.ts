@@ -176,7 +176,7 @@ export async function buildForLerna(opts: IOpts) {
   const userConfig = getUserConfig({ cwd });
   let pkgs = readdirSync(join(cwd, 'packages'));
 
-  // Ö§³Ö scope
+  // æ”¯æŒ scope
   pkgs = pkgs.reduce((memo, pkg) => {
     const pkgPath = join(cwd, 'packages', pkg);
     if (statSync(pkgPath).isDirectory()) {
