@@ -1,6 +1,7 @@
 import { existsSync, ensureDirSync, writeFileSync, readFileSync } from 'fs-extra';
 import { join } from 'path';
 import { sync } from 'glob';
+import winPath from 'slash2';
 
 const STORYBOOK_FOLDER = '.storybook';
 
@@ -90,7 +91,7 @@ ${addString.join('\n')}
 `;
 
   // Write files
-  const entryPath = join(tempStorybookPath, 'index.js');
+  const entryPath = winPath(join(tempStorybookPath, 'index.js'));
   ensureDirSync(tempStorybookPath);
   writeFileSync(entryPath, fileContent, 'utf8');
 
@@ -157,7 +158,7 @@ configure(loadStories, module);`;
   // ===================================================================
   const webpackContent = `
 module.exports = function(...args) {
-  return require('${join(__dirname, 'storybook-webpack')}')(...args);
+  return require('${winPath(join(__dirname, 'storybook-webpack'))}')(...args);
 };
 `;
   writeFileSync(join(tempStorybookPath, 'webpack.config.js'), webpackContent);
