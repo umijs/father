@@ -54,6 +54,7 @@
     "rc-source-loader": "^1.0.2",
     "react-markdown": "^4.0.8",
     "signale": "1.4.0",
+    "slash2": "^2.0.0",
     "staged-git-files": "^1.2.0",
     "storybook-addon-source": "^1.0.7",
     "umi-test": "^1.5.10",
