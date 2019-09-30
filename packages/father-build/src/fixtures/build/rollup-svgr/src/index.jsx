@@ -1,3 +1,3 @@
-import MenuComponent from './menu.svg';
+import svgUrl, { ReactComponent as MenuComponent } from './menu.svg';
 
-console.log(<MenuComponent />)
+console.log(svgUrl, <MenuComponent />);
