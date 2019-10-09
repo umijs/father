@@ -14,6 +14,7 @@ import tempDir from 'temp-dir';
 import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
 import svgr from '@svgr/rollup';
+import url from 'rollup-plugin-url';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
 
@@ -135,6 +136,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     },
   };
   const plugins = [
+    url(),
     svgr(),
     postcss({
       extract: extractCSS,
