@@ -1,5 +1,7 @@
 # father
 
+<img src="https://www.youngisthan.in/wp-content/uploads/2018/09/Fathers-day.jpg" width="160" />
+
 Library toolkit based on rollup, docz, storybook, jest and eslint.
 
 [![NPM version](https://img.shields.io/npm/v/father.svg?style=flat)](https://npmjs.org/package/father)
