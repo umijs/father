@@ -16,9 +16,9 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
       - run: yarn
-      - run: yarn run bootstrap
+      - run: yarn run bootstrap --npm-client yarn
       - run: yarn run build
-      - run: yarn run test -- --forceExit
+      - run: yarn run test --forceExit
         env:
           CI: true
           HEADLESS: false
