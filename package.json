@@ -4,6 +4,7 @@
     "bootstrap": "lerna bootstrap",
     "build": "umi-tools build",
     "changelog": "lerna-changelog",
+    "clean": "lerna clean -y",
     "test": "umi-test --coverage",
     "debug": "umi-test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",

@@ -1,3 +1,5 @@
+import { extname } from 'path';
+
 interface IGetBabelConfigOpts {
   target: 'browser' | 'node';
   type?: 'esm' | 'cjs';
@@ -19,10 +21,14 @@ export default function(opts: IGetBabelConfigOpts) {
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
-    if (isBrowser) {
-      if (nodeFiles.includes(filePath)) isBrowser = false;
+    if (extname(filePath) === '.tsx' || extname(filePath) === '.jsx') {
+      isBrowser = true;
     } else {
-      if (browserFiles.includes(filePath)) isBrowser = true;
+      if (isBrowser) {
+        if (nodeFiles.includes(filePath)) isBrowser = false;
+      } else {
+        if (browserFiles.includes(filePath)) isBrowser = true;
+      }
     }
   }
   const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: nodeVersion || 6 };

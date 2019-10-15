@@ -423,6 +423,10 @@ target 为 `node` 时，配置例外文件走 `browser` target。
 * Type: `[string]`
 * Default: `[]`
 
+注：
+
+1. 所有 `.tsx` 和 `.jsx` 文件始终走 `browser` target。
+
 #### nodeFiles
 
 target 为 `browser` 时，配置例外文件走 `node` target。
