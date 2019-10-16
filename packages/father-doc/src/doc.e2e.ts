@@ -8,7 +8,7 @@ let port = 12500;
 const servers = {};
 let browser;
 let page;
-const fixtures = join(__dirname, '../fixtures/doc');
+const fixtures = join(__dirname, './fixtures/doc');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 process.env.COMPRESS = 'none';
