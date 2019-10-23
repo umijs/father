@@ -25,9 +25,7 @@ Library toolkit based on rollup, docz, storybook, jest and eslint.
 * ✔︎ 支持 lerna
 * ✔︎ 支持 css 和 less，支持开启 css modules
 * ✔︎ 支持 test
-* ✔︎ 支持 pre-commit 检查
-  * ✔︎ 支持 prettier
-  * ✔︎ 支持 eslint
+* ✔︎ 支持用 prettier 和 eslint 做 pre-commit 检查
 
 ## Installation
 
