@@ -8,6 +8,7 @@ import reactExternal from './docz-plugin-react-externals';
 
 const cssModuleRegex = /\.module\.css$/;
 const lessModuleRegex = /\.module\.less$/;
+const sassModuleRegex = /\.module\.[(sass)|(scss)]$/;
 
 const cwd = process.cwd();
 const localUserConfig = JSON.parse(
@@ -129,6 +130,28 @@ export default {
               ...userConfig.lessInRollupMode
             },
           }),
+
+          // .sass
+          css({
+            preprocessor: 'sass',
+            ruleOpts: {
+              exclude: /node_modules\/.*\.sass$/,
+            },
+            cssmodules: true,
+            loaderOpts: {
+              ...userConfig.sassInRollupMode
+            },
+          }),
+          css({
+            preprocessor: 'sass',
+            ruleOpts: {
+              test: /node_modules\/.*\.sass$/,
+            },
+            cssmodules: false,
+            loaderOpts: {
+              ...userConfig.sassInRollupMode
+            },
+          }),
         ]
       : [
           // .css
@@ -168,6 +191,28 @@ export default {
             loaderOpts: {
               javascriptEnabled: true,
               ...userConfig.lessInRollupMode
+            },
+          }),
+
+          // sass
+          css({
+            preprocessor: 'sass',
+            ruleOpts: {
+              exclude: sassModuleRegex,
+            },
+            cssmodules: false,
+            loaderOpts: {
+              ...userConfig.sassInRollupMode
+            },
+          }),
+          css({
+            preprocessor: 'sass',
+            ruleOpts: {
+              test: sassModuleRegex,
+            },
+            cssmodules: true,
+            loaderOpts: {
+              ...userConfig.sassInRollupMode
             },
           }),
         ]),

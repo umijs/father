@@ -517,6 +517,20 @@ console.log($inject_window_foo);
 
 可以配置 paths 和 plugins，详见 gulp-less 的 Options 文档。
 
+#### sassInRollupMode
+
+在 rollup 模式下做 sass 编译，支持配置 sass 在编译过程中的 Options
+
+* Type: `Object`
+* Default: `{}`
+
+详见 sass 的 [Options 文档](https://www.npmjs.com/package/node-sass#options)。
+
+
+* Type: `Boolean` | `Object`
+* Default: `false`
+
+
 #### nodeVersion
 
 指定 node 版本。

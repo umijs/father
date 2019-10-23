@@ -54,7 +54,8 @@
     "typescript": "^3.5.1",
     "update-notifier": "3.0.0",
     "vinyl-fs": "3.0.3",
-    "yargs-parser": "13.1.1"
+    "yargs-parser": "13.1.1",
+    "node-sass": "^4.12.0"
   },
   "repository": {
     "type": "git",

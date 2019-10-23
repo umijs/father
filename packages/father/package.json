@@ -59,7 +59,8 @@
     "storybook-addon-source": "^1.0.7",
     "umi-test": "^1.5.10",
     "update-notifier": "3.0.0",
-    "yargs-parser": "13.1.1"
+    "yargs-parser": "13.1.1",
+    "node-sass": "^4.12.0"
   },
   "repository": {
     "type": "git",

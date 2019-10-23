@@ -82,7 +82,10 @@ export interface IBundleOptions {
   };
   lessInRollupMode?: {
     [opt: string]: any
-  }
+  };
+  sassInRollupMode?: {
+    [opt: string]: any
+  };
 }
 
 export interface IOpts {
