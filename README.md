@@ -2,7 +2,7 @@
 
 <img src="https://www.youngisthan.in/wp-content/uploads/2018/09/Fathers-day.jpg" width="160" />
 
-Library toolkit based on rollup, docz, storybook, jest and eslint.
+Library toolkit based on rollup, docz, storybook, jest, prettier and eslint.
 
 [![codecov](https://codecov.io/gh/umijs/father/branch/master/graph/badge.svg)](https://codecov.io/gh/umijs/father)
 [![NPM version](https://img.shields.io/npm/v/father.svg?style=flat)](https://npmjs.org/package/father)
