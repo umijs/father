@@ -31,6 +31,7 @@ jobs:
       - run:
           command: npm run test -- --forceExit --detectOpenHandles --runInBand --maxWorkers=2
           no_output_timeout: 300m
+      - run: bash <(curl -s https://codecov.io/bash)
       - save_cache:
           key: node-modules-{{ checksum "package.json" }}
           paths:
