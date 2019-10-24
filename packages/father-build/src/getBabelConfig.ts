@@ -25,11 +25,9 @@ function transformImportLess2Css() {
       name: 'transform-import-less-to-css',
       visitor: {
           ImportDeclaration(path, source) {
-              const importLessRegExp = /(.*)\.less/;
-              if(importLessRegExp.test(path.node.source.value)){
-                path.node.source.value = path.node.source.value.replace(importLessRegExp, ($0, $1) => {
-                  return `${$1}.css`
-                })
+              const re = /\.less$/;
+              if(re.test(path.node.source.value)){
+                path.node.source.value = path.node.source.value.replace(re, '.css');
               }
           }
       }

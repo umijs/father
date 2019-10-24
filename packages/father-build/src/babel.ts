@@ -48,6 +48,7 @@ export default async function(opts: IBabelOpts) {
       nodeVersion,
       disableTypeCheck,
       cjs,
+      lessInBabelMode,
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -56,8 +57,6 @@ export default async function(opts: IBabelOpts) {
 
   signale.info(`Clean ${targetDir} directory`);
   rimraf.sync(targetPath);
-
-  const lessInBabelMode = opts.bundleOpts.lessInBabelMode;
 
   function transform(opts: ITransformOpts) {
     const { file, type } = opts;

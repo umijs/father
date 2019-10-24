@@ -70,7 +70,7 @@ export interface IBundleOptions {
     eslint?: boolean;
     prettier?: boolean;
   };
-  lessInBabelMode?: boolean|{
+  lessInBabelMode?: boolean | {
     paths?: any[];
     plugins?: any[];
   };
