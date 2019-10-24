@@ -520,17 +520,17 @@ console.log($inject_window_foo);
 
 #### sassInRollupMode
 
-在 rollup 模式下做 sass 编译，支持配置 sass 在编译过程中的 Options
+在 rollup 模式下做 sass 编译，支持配置 sass 在编译过程中的 Options。
+
+> 注：使用此功能需手动安装 node-sass 依赖。
 
 * Type: `Object`
 * Default: `{}`
 
 详见 sass 的 [Options 文档](https://www.npmjs.com/package/node-sass#options)。
 
-
 * Type: `Boolean` | `Object`
 * Default: `false`
-
 
 #### nodeVersion
 
