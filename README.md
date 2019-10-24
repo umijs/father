@@ -2,11 +2,14 @@
 
 <img src="https://www.youngisthan.in/wp-content/uploads/2018/09/Fathers-day.jpg" width="160" />
 
-Library toolkit based on rollup, docz, storybook, jest and eslint.
+Library toolkit based on rollup, docz, storybook, jest, prettier and eslint.
 
+[![codecov](https://codecov.io/gh/umijs/father/branch/master/graph/badge.svg)](https://codecov.io/gh/umijs/father)
 [![NPM version](https://img.shields.io/npm/v/father.svg?style=flat)](https://npmjs.org/package/father)
-[![Build Status](https://img.shields.io/travis/umijs/father.svg?style=flat)](https://travis-ci.org/umijs/father)
+[![CircleCI](https://circleci.com/gh/umijs/father/tree/master.svg?style=svg)](https://circleci.com/gh/umijs/father/tree/master)
+[![GitHub Actions status](https://github.com/umijs/father/workflows/Node%20CI/badge.svg)](https://github.com/umijs/father)
 [![NPM downloads](http://img.shields.io/npm/dm/father.svg?style=flat)](https://npmjs.org/package/father)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
 [视频教程：利用 umi-library（father） 做组件打包](https://www.bilibili.com/video/av47853431)。
 
@@ -22,9 +25,7 @@ Library toolkit based on rollup, docz, storybook, jest and eslint.
 * ✔︎ 支持 lerna
 * ✔︎ 支持 css 和 less，支持开启 css modules
 * ✔︎ 支持 test
-* ✔︎ 支持 pre-commit 检查
-  * ✔︎ 支持 prettier
-  * ✔︎ 支持 eslint
+* ✔︎ 支持用 prettier 和 eslint 做 pre-commit 检查
 
 ## Installation
 
