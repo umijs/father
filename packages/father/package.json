@@ -15,8 +15,8 @@
     "yargs-parser": "13.1.1"
   },
   "devDependencies": {
-    "father-doc": "0.2.0-alpha.0",
-    "father-pre-commit": "0.2.0-alpha.0",
+    "father-doc": "^0.2.0-alpha.0",
+    "father-pre-commit": "^0.2.0-alpha.0",
     "umi-test": "^1.5.10"
   },
   "repository": {

@@ -39,7 +39,7 @@ async function doc(args) {
     `Invalid subCommand ${cmd}`,
   );
 
-  const doc = await requireOnDemandWithVersion('umi-father');
+  const doc = await requireOnDemandWithVersion('father-doc');
   switch (cmd) {
     case 'build':
     case 'dev':
@@ -85,7 +85,7 @@ switch (args._[0]) {
         collectCoverageFrom: 'src/**/*',
         ...args,
       };
-      umiTest(passArgs);
+      umiTest.default(passArgs);
     }).catch(e => {
       signale.error(e);
       process.exit(1);
