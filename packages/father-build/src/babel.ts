@@ -47,7 +47,6 @@ export default async function(opts: IBabelOpts) {
       nodeFiles = [],
       nodeVersion,
       disableTypeCheck,
-      lessInBabelMode,
       cjs,
     },
   } = opts;
@@ -57,6 +56,8 @@ export default async function(opts: IBabelOpts) {
 
   signale.info(`Clean ${targetDir} directory`);
   rimraf.sync(targetPath);
+
+  const lessInBabelMode = opts.bundleOpts.lessInBabelMode;
 
   function transform(opts: ITransformOpts) {
     const { file, type } = opts;
@@ -72,6 +73,7 @@ export default async function(opts: IBabelOpts) {
       nodeFiles,
       nodeVersion,
       lazy: cjs && cjs.lazy,
+      lessInBabelMode,
     });
     if (importLibToEs && type === 'esm') {
       babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));

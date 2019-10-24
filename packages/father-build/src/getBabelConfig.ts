@@ -14,10 +14,30 @@ interface IGetBabelConfigOpts {
     [value: string]: any;
   };
   lazy?: boolean;
+  lessInBabelMode: boolean|{
+    paths?: any[];
+    plugins?: any[];
+  };
+}
+
+function transformImportLess2Css() {
+  return {
+      name: 'transform-import-less-to-css',
+      visitor: {
+          ImportDeclaration(path, source) {
+              const importLessRegExp = /(.*)\.less/;
+              if(importLessRegExp.test(path.node.source.value)){
+                path.node.source.value = path.node.source.value.replace(importLessRegExp, ($0, $1) => {
+                  return `${$1}.css`
+                })
+              }
+          }
+      }
+  }
 }
 
 export default function(opts: IGetBabelConfigOpts) {
-  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy } = opts;
+  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy, lessInBabelMode } = opts;
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
@@ -48,6 +68,7 @@ export default function(opts: IGetBabelConfigOpts) {
             lazy: true,
           }]]
         : []),
+      ...(lessInBabelMode ? [transformImportLess2Css] : []),
       require.resolve('babel-plugin-react-require'),
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       require.resolve('@babel/plugin-proposal-export-default-from'),
