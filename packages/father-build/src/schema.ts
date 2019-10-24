@@ -125,6 +125,9 @@ export default {
     lessInRollupMode: {
       type: 'object'
     },
+    sassInRollupMode: {
+      type: 'object'
+    },
     lessInBabelMode: {
       oneOf: [
         { type: 'boolean' },

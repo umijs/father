@@ -60,6 +60,7 @@ beforeAll(async () => {
   await doc('config-theme');
   await doc('babel-extra-babel-presets-and-plugins');
   await doc('less-options');
+  await doc('sass-options');
   browser = await puppeteer.launch({ args: ['--no-sandbox'] });
 });
 
@@ -122,6 +123,17 @@ test('babel-extra-babel-presets-and-plugins', async () => {
 
 test('less-options', async () => {
   await page.goto(`http://localhost:${servers['less-options'].port}/`, {
+    waitUntil: 'networkidle2',
+  });
+  const buttonColor = await page.evaluate(() => {
+    const el = document.querySelectorAll('button')[1]
+    return window.getComputedStyle(el).color
+  });
+  expect(buttonColor).toEqual('rgb(255, 0, 0)');
+});
+
+test('sass-options', async () => {
+  await page.goto(`http://localhost:${servers['sass-options'].port}/`, {
     waitUntil: 'networkidle2',
   });
   const buttonColor = await page.evaluate(() => {
