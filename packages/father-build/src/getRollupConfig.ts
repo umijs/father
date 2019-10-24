@@ -166,9 +166,12 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           typescript({
             // @see https://github.com/ezolenko/rollup-plugin-typescript2/issues/105
             objectHashIgnoreUnknownHack: true,
+            // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
+            clean: true,
             cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
+            // TODO: 支持往上找 tsconfig.json
             // 比如 lerna 的场景不需要每个 package 有个 tsconfig.json
-            tsconfig: 'tsconfig.json',
+            tsconfig: join(cwd, 'tsconfig.json'),
             tsconfigDefaults: {
               compilerOptions: {
                 // Generate declaration files by default

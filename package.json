@@ -7,12 +7,10 @@
     "clean": "lerna clean -y",
     "test": "umi-test --coverage",
     "debug": "umi-test",
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "publish": "npm run build && lerna publish"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
-    "coveralls": "3.0.4",
     "lerna": "^3.6.0",
     "lerna-changelog": "^0.8.2",
     "puppeteer": "^1.17.0",
