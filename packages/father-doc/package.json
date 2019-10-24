@@ -1,6 +1,6 @@
 {
   "name": "father-doc",
-  "version": "0.1.0-alpha.1",
+  "version": "0.2.0-alpha.0",
   "description": "Library doc tool based on docz and storybook.",
   "main": "lib/index.js",
   "dependencies": {
