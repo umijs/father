@@ -6,7 +6,6 @@ const yParser = require('yargs-parser');
 const chalk = require('chalk');
 const assert = require('assert');
 const signale = require('signale');
-const preCommit = require('../lib/preCommit');
 
 // print version and @local
 const args = yParser(process.argv.slice(2));
@@ -23,10 +22,15 @@ const updater = require('update-notifier');
 const pkg = require('../package.json');
 updater({ pkg }).notify({ defer: true });
 
-// Check if pre commit config
-preCommit.install();
-
+const requireOnDemand = require('require-on-demand');
 const cwd = process.cwd();
+
+async function requireOnDemandWithVersion(name) {
+  const pkg = require('../package');
+  const pkgName = requireOnDemand.getModuleParts(name);
+  const version = pkg.devDependencies[pkgName];
+  return await requireOnDemand(name, version, cwd);
+}
 
 async function doc(args) {
   const cmd = args._[1];
@@ -35,10 +39,11 @@ async function doc(args) {
     `Invalid subCommand ${cmd}`,
   );
 
+  const doc = await requireOnDemandWithVersion('umi-father');
   switch (cmd) {
     case 'build':
     case 'dev':
-      return await require('../lib/doc')
+      return await doc
         .devOrBuild({
           cwd,
           cmd: args._[1],
@@ -47,7 +52,7 @@ async function doc(args) {
           params: process.argv.slice(4),
         });
     case 'deploy':
-      return await require('../lib/doc')
+      return await doc
         .deploy({
           cwd,
           args,
@@ -57,7 +62,13 @@ async function doc(args) {
 
 switch (args._[0]) {
   case 'pre-commit':
-    preCommit.check();
+    requireOnDemandWithVersion('father-pre-commit').then(preCommit => {
+      preCommit.install();
+      preCommit.check();
+    }).catch(e => {
+      signale.error(e);
+      process.exit(1);
+    });
     break;
   case 'build':
     build();
@@ -69,7 +80,16 @@ switch (args._[0]) {
     });
     break;
   case 'test':
-    require('../lib/test')(args);
+    requireOnDemandWithVersion('umi-test').then(umiTest => {
+      const passArgs = {
+        collectCoverageFrom: 'src/**/*',
+        ...args,
+      };
+      umiTest(passArgs);
+    }).catch(e => {
+      signale.error(e);
+      process.exit(1);
+    });
     break;
   case 'help':
   case undefined:
@@ -124,5 +144,8 @@ function printHelp() {
   Commands:
 
     ${chalk.green('build')}       build library
+    ${chalk.green('doc')}         doc solution for library
+    ${chalk.green('test')}        test based on umi-test
+    ${chalk.green('pre-commit')}  pre-commit hook
   `);
 }

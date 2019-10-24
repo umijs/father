@@ -8,11 +8,16 @@
   },
   "typings": "./index.d.ts",
   "dependencies": {
-    "father-build": "1.13.0",
+    "father-build": "1.13.2",
     "signale": "1.4.0",
-    "umi-test": "^1.5.10",
+    "require-on-demand": "^0.1.0",
     "update-notifier": "3.0.0",
     "yargs-parser": "13.1.1"
+  },
+  "devDependencies": {
+    "father-doc": "0.1.0-alpha.1",
+    "father-pre-commit": "0.1.0-alpha.1",
+    "umi-test": "^1.5.10"
   },
   "repository": {
     "type": "git",
