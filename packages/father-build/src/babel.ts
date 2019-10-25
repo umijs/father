@@ -47,8 +47,8 @@ export default async function(opts: IBabelOpts) {
       nodeFiles = [],
       nodeVersion,
       disableTypeCheck,
-      lessInBabelMode,
       cjs,
+      lessInBabelMode,
     },
   } = opts;
   const srcPath = join(cwd, 'src');
@@ -72,6 +72,7 @@ export default async function(opts: IBabelOpts) {
       nodeFiles,
       nodeVersion,
       lazy: cjs && cjs.lazy,
+      lessInBabelMode,
     });
     if (importLibToEs && type === 'esm') {
       babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));
