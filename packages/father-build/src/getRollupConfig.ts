@@ -75,13 +75,13 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   // cjs 不给浏览器用，所以无需 runtimeHelpers
   const runtimeHelpers = type === 'cjs' ? false : runtimeHelpersOpts;
   const babelOpts = {
-    ...getBabelConfig({
+    ...(getBabelConfig({
       type,
       target: type === 'esm' ? 'browser' : target,
       typescript: false,
       runtimeHelpers,
       nodeVersion,
-    }),
+    }).opts),
     runtimeHelpers,
     exclude: /\/node_modules\//,
     babelrc: false,

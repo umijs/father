@@ -10,6 +10,7 @@ import * as babel from '@babel/core';
 import gulpTs from 'gulp-typescript';
 import gulpLess from 'gulp-less';
 import gulpIf from 'gulp-if';
+import chalk from "chalk";
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
 
@@ -18,6 +19,7 @@ interface IBabelOpts {
   rootPath?: string;
   type: 'esm' | 'cjs';
   target?: 'browser' | 'node';
+  log?: (string) => void;
   watch?: boolean;
   importLibToEs?: boolean;
   bundleOpts: IBundleOptions;
@@ -38,6 +40,7 @@ export default async function(opts: IBabelOpts) {
     type,
     watch,
     importLibToEs,
+    log,
     bundleOpts: {
       target = 'browser',
       runtimeHelpers,
@@ -55,14 +58,12 @@ export default async function(opts: IBabelOpts) {
   const targetDir = type === 'esm' ? 'es' : 'lib';
   const targetPath = join(cwd, targetDir);
 
-  signale.info(`Clean ${targetDir} directory`);
+  log(`Clean ${targetDir} directory`);
   rimraf.sync(targetPath);
 
   function transform(opts: ITransformOpts) {
     const { file, type } = opts;
-    signale.info(`[${type}] Transform: ${slash(file.path).replace(`${cwd}/`, '')}`);
-
-    const babelOpts = getBabelConfig({
+    const { opts: babelOpts, isBrowser } = getBabelConfig({
       target,
       type,
       typescript: true,
@@ -79,6 +80,9 @@ export default async function(opts: IBabelOpts) {
     }
     babelOpts.presets.push(...extraBabelPresets);
     babelOpts.plugins.push(...extraBabelPlugins);
+
+    const relFile = slash(file.path).replace(`${cwd}/`, '');
+    log(`[${type}] Transform: ${chalk[isBrowser ? 'yellow' : 'blue'](relFile)}`);
 
     return babel.transform(file.contents, {
       ...babelOpts,
@@ -153,14 +157,14 @@ export default async function(opts: IBabelOpts) {
     ];
     createStream(patterns).on('end', () => {
       if (watch) {
-        signale.info('Start watch', srcPath);
+        log(`Start watching ${slash(srcPath).replace(`${cwd}/`, '')} directory`);
         const watcher = chokidar
           .watch(patterns, {
             ignoreInitial: true,
           });
         watcher.on('all', (event, fullPath) => {
           const relPath = fullPath.replace(srcPath, '');
-          signale.info(`[${event}] ${join(srcPath, relPath)}`);
+          log(`[${event}] ${slash(join(srcPath, relPath)).replace(`${cwd}/`, '')}`);
           if (!existsSync(fullPath)) return;
           if (statSync(fullPath).isFile()) {
             createStream([fullPath]);
