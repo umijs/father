@@ -11,6 +11,7 @@ import rollup from './rollup';
 import registerBabel from './registerBabel';
 import { getExistFile } from './utils';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
+import randomColor from "./randomColor";
 
 export function getBundleOpts(opts: IOpts): IBundleOptions[] {
   const { cwd, buildArgs = {} } = opts;
@@ -102,7 +103,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   });
 
   function log(msg) {
-    signale.info(`${pkg ? `[${pkg}] ` : ''}${msg}`);
+    console.log(`${pkg ? `${randomColor(`${pkg}`)}: ` : ''}${msg}`);
   }
 
   // Get user config
@@ -111,7 +112,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
 
     // Clean dist
-    log(`Clean dist directory`);
+    log(chalk.gray(`Clean dist directory`));
     rimraf.sync(join(cwd, 'dist'));
 
     // Build umd
@@ -119,6 +120,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       log(`Build umd`);
       await rollup({
         cwd,
+        log,
         type: 'umd',
         entry: bundleOpts.entry,
         watch,
@@ -131,10 +133,11 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       const cjs = bundleOpts.cjs as IBundleTypeOutput;
       log(`Build cjs with ${cjs.type}`);
       if (cjs.type === 'babel') {
-        await babel({ cwd, rootPath, watch, type: 'cjs', bundleOpts });
+        await babel({ cwd, rootPath, watch, type: 'cjs', log, bundleOpts });
       } else {
         await rollup({
           cwd,
+          log,
           type: 'cjs',
           entry: bundleOpts.entry,
           watch,
@@ -149,10 +152,11 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       log(`Build esm with ${esm.type}`);
       const importLibToEs = esm && esm.importLibToEs;
       if (esm && esm.type === 'babel') {
-        await babel({ cwd, rootPath, watch, type: 'esm', importLibToEs, bundleOpts });
+        await babel({ cwd, rootPath, watch, type: 'esm', importLibToEs, log, bundleOpts });
       } else {
         await rollup({
           cwd,
+          log,
           type: 'esm',
           entry: bundleOpts.entry,
           importLibToEs,

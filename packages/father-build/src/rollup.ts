@@ -8,13 +8,14 @@ interface IRollupOpts {
   cwd: string;
   entry: string | string[];
   type: ModuleFormat;
+  log: (string) => void;
   bundleOpts: IBundleOptions;
   watch?: boolean;
   importLibToEs?: boolean;
 }
 
 async function build(entry: string, opts: IRollupOpts) {
-  const { cwd, type, bundleOpts, importLibToEs } = opts;
+  const { cwd, type, log, bundleOpts, importLibToEs } = opts;
   const rollupConfigs = getRollupConfig({
     cwd,
     type,
@@ -35,7 +36,7 @@ async function build(entry: string, opts: IRollupOpts) {
         if (event.error) {
           signale.error(event.error);
         } else if (event.code === 'START') {
-          signale.info(`[${type}] Rebuild since file changed`);
+          log(`[${type}] Rebuild since file changed`);
         }
       });
       process.once('SIGINT', () => {

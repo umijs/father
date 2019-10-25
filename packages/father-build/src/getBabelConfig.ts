@@ -52,35 +52,38 @@ export default function(opts: IGetBabelConfigOpts) {
   const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: nodeVersion || 6 };
 
   return {
-    presets: [
-      ...(typescript ? [require.resolve('@babel/preset-typescript')] : []),
-      [require.resolve('@babel/preset-env'), {
-        targets,
-        modules: type === 'esm' ? false : 'auto'
-      }],
-      ...(isBrowser ? [require.resolve('@babel/preset-react')] : []),
-    ],
-    plugins: [
-      ...((type === 'cjs' && lazy && !isBrowser)
-        ? [[require.resolve('@babel/plugin-transform-modules-commonjs'), {
+    opts: {
+      presets: [
+        ...(typescript ? [require.resolve('@babel/preset-typescript')] : []),
+        [require.resolve('@babel/preset-env'), {
+          targets,
+          modules: type === 'esm' ? false : 'auto'
+        }],
+        ...(isBrowser ? [require.resolve('@babel/preset-react')] : []),
+      ],
+      plugins: [
+        ...((type === 'cjs' && lazy && !isBrowser)
+          ? [[require.resolve('@babel/plugin-transform-modules-commonjs'), {
             lazy: true,
           }]]
-        : []),
-      ...(lessInBabelMode ? [transformImportLess2Css] : []),
-      require.resolve('babel-plugin-react-require'),
-      require.resolve('@babel/plugin-syntax-dynamic-import'),
-      require.resolve('@babel/plugin-proposal-export-default-from'),
-      require.resolve('@babel/plugin-proposal-export-namespace-from'),
-      require.resolve('@babel/plugin-proposal-do-expressions'),
-      [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-      [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
-      ...(runtimeHelpers
-        ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: isBrowser && (type === 'esm') }]]
-        : []),
-      ...(process.env.COVERAGE
-        ? [require.resolve('babel-plugin-istanbul')]
-        : []
-      )
-    ],
+          : []),
+        ...(lessInBabelMode ? [transformImportLess2Css] : []),
+        require.resolve('babel-plugin-react-require'),
+        require.resolve('@babel/plugin-syntax-dynamic-import'),
+        require.resolve('@babel/plugin-proposal-export-default-from'),
+        require.resolve('@babel/plugin-proposal-export-namespace-from'),
+        require.resolve('@babel/plugin-proposal-do-expressions'),
+        [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+        [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
+        ...(runtimeHelpers
+          ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: isBrowser && (type === 'esm') }]]
+          : []),
+        ...(process.env.COVERAGE
+            ? [require.resolve('babel-plugin-istanbul')]
+            : []
+        )
+      ],
+    },
+    isBrowser,
   };
 }

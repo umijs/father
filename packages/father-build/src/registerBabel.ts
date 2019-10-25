@@ -9,7 +9,7 @@ interface IRegisterBabelOpts {
 
 export default function(opts: IRegisterBabelOpts) {
   const { cwd, only } = opts;
-  const babelConfig = getBabelConfig({
+  const { opts: babelConfig } = getBabelConfig({
     target: 'node',
     typescript: true,
   });
