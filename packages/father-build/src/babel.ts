@@ -58,7 +58,7 @@ export default async function(opts: IBabelOpts) {
   const targetDir = type === 'esm' ? 'es' : 'lib';
   const targetPath = join(cwd, targetDir);
 
-  log(`Clean ${targetDir} directory`);
+  log(chalk.gray(`Clean ${targetDir} directory`));
   rimraf.sync(targetPath);
 
   function transform(opts: ITransformOpts) {
@@ -82,7 +82,7 @@ export default async function(opts: IBabelOpts) {
     babelOpts.plugins.push(...extraBabelPlugins);
 
     const relFile = slash(file.path).replace(`${cwd}/`, '');
-    log(`[${type}] Transform: ${chalk[isBrowser ? 'yellow' : 'blue'](relFile)}`);
+    log(`Transform to ${type} for ${chalk[isBrowser ? 'yellow' : 'blue'](relFile)}`);
 
     return babel.transform(file.contents, {
       ...babelOpts,
@@ -157,7 +157,7 @@ export default async function(opts: IBabelOpts) {
     ];
     createStream(patterns).on('end', () => {
       if (watch) {
-        log(`Start watching ${slash(srcPath).replace(`${cwd}/`, '')} directory`);
+        log(chalk.magenta(`Start watching ${slash(srcPath).replace(`${cwd}/`, '')} directory...`));
         const watcher = chokidar
           .watch(patterns, {
             ignoreInitial: true,

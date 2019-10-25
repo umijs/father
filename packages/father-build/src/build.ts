@@ -103,7 +103,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   });
 
   function log(msg) {
-    signale.info(`${pkg ? `${randomColor(`[${pkg}]`)} ` : ''}${msg}`);
+    console.log(`${pkg ? `${randomColor(`${pkg}`)}: ` : ''}${msg}`);
   }
 
   // Get user config
@@ -112,7 +112,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
 
     // Clean dist
-    log(`Clean dist directory`);
+    log(chalk.gray(`Clean dist directory`));
     rimraf.sync(join(cwd, 'dist'));
 
     // Build umd
