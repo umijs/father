@@ -15,7 +15,7 @@
   ],
   "command": {
     "version": {
-      "exact": true
+      "exact": false
     }
   },
   "npmClient": "yarn",
