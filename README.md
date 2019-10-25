@@ -518,6 +518,16 @@ console.log($inject_window_foo);
 
 可以配置 paths 和 plugins，详见 gulp-less 的 Options 文档。
 
+PS：若配置 lessInBabelMode 为 [truthy](https://developer.mozilla.org/zh-CN/docs/Glossary/Truthy)，则会将
+```js
+import './index.less';
+```
+转换成
+
+```js
+import './index.css';
+```
+
 #### nodeVersion
 
 指定 node 版本。
