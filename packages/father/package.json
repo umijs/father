@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.23.2",
+  "version": "2.24.0",
   "description": "Library toolkit based on rollup, docz, storybook, jest and eslint.",
   "main": "lib/index.js",
   "bin": {
@@ -46,21 +46,21 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-unicorn": "^8.0.1",
-    "father-build": "1.13.2",
+    "father-build": "1.14.0",
     "fs-extra": "^8.0.1",
     "gh-pages": "2.0.1",
     "lodash": "4.17.13",
     "prettier": "1.18.2",
     "rc-source-loader": "^1.0.2",
     "react-markdown": "^4.0.8",
+    "sass-loader": "^8.0.0",
     "signale": "1.4.0",
     "slash2": "^2.0.0",
     "staged-git-files": "^1.2.0",
     "storybook-addon-source": "^1.0.7",
     "umi-test": "^1.5.10",
     "update-notifier": "3.0.0",
-    "yargs-parser": "13.1.1",
-    "sass-loader": "^8.0.0"
+    "yargs-parser": "13.1.1"
   },
   "repository": {
     "type": "git",
