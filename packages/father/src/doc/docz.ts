@@ -45,6 +45,9 @@ export default {
     if (!params.includes('--port') && !params.includes('-p')) {
       params.push('--port', '8001');
     }
+    if (process.env.HOST && !params.includes('--host')) {
+      params.push('--host', process.env.HOST);
+    }
     if (params.includes('-h')) {
       params.push('--help');
     }
