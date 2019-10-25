@@ -8,4 +8,5 @@
 /packages/father-build/src/fixtures/build/*/dist
 /packages/father/src/fixtures/e2e/normal/.doc
 /packages/father/src/fixtures/e2e/normal/.docz
+/packages/father/src/fixtures/doc/sass-options/.docz/
 /.changelog
