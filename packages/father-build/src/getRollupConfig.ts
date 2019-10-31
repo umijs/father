@@ -136,40 +136,44 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       warnings: false,
     },
   };
-  const plugins = [
-    url(),
-    svgr(),
-    postcss({
-      extract: extractCSS,
-      inject: injectCSS,
-      modules,
-      use: [
-        [
-          'less',
-          {
-            plugins: [new NpmImport({ prefix: '~' })],
-            javascriptEnabled: true,
-            ...lessInRollupMode,
-          },
+
+  function getPlugins(opts = {} as { minCSS: boolean; }) {
+    const { minCSS } = opts;
+    return [
+      url(),
+      svgr(),
+      postcss({
+        extract: extractCSS,
+        inject: injectCSS,
+        modules,
+        minimize: !!minCSS,
+        use: [
+          [
+            'less',
+            {
+              plugins: [new NpmImport({ prefix: '~' })],
+              javascriptEnabled: true,
+              ...lessInRollupMode,
+            },
+          ],
+          [
+            'sass',
+            {
+              ...sassInRollupMode,
+            },
+          ],
         ],
-        [
-          'sass',
-          {
-            ...sassInRollupMode,
-          },
-        ],
-      ],
-      plugins: [autoprefixer(autoprefixerOpts), ...extraPostCSSPlugins],
-    }),
-    ...(injectOpts ? [inject(injectOpts)] : []),
-    ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
-    nodeResolve({
-      mainFields: ['module', 'jsnext:main', 'main'],
-      extensions,
-      ...nodeResolveOpts,
-    }),
-    ...(isTypeScript
-      ? [
+        plugins: [autoprefixer(autoprefixerOpts), ...extraPostCSSPlugins],
+      }),
+      ...(injectOpts ? [inject(injectOpts)] : []),
+      ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
+      nodeResolve({
+        mainFields: ['module', 'jsnext:main', 'main'],
+        extensions,
+        ...nodeResolveOpts,
+      }),
+      ...(isTypeScript
+        ? [
           typescript({
             // @see https://github.com/ezolenko/rollup-plugin-typescript2/issues/105
             objectHashIgnoreUnknownHack: true,
@@ -195,11 +199,12 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             ...(typescriptOpts || {}),
           }),
         ]
-      : []),
-    babel(babelOpts),
-    json(),
-    ...(extraRollupPlugins || []),
-  ];
+        : []),
+      babel(babelOpts),
+      json(),
+      ...(extraRollupPlugins || []),
+    ];
+  }
 
   switch (type) {
     case 'esm':
@@ -210,7 +215,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             format,
             file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
           },
-          plugins: [...plugins, ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
+          plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),
         },
         ...(esm && (esm as any).mjs
@@ -222,7 +227,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                   file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}`}.mjs`),
                 },
                 plugins: [
-                  ...plugins,
+                  ...getPlugins(),
                   replace({
                     'process.env.NODE_ENV': JSON.stringify('production'),
                   }),
@@ -242,19 +247,19 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             format,
             file: join(cwd, `dist/${(cjs && (cjs as any).file) || name}.js`),
           },
-          plugins: [...plugins, ...(cjs && (cjs as any).minify ? [terser(terserOpts)] : [])],
+          plugins: [...getPlugins(), ...(cjs && (cjs as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),
         },
       ];
 
     case 'umd':
       // Add umd related plugins
-      plugins.push(
+      const extraUmdPlugins = [
         commonjs({
           include,
           namedExports,
         }),
-      );
+      ];
 
       return [
         {
@@ -266,7 +271,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             name: (umd && umd.name) || (pkg.name && camelCase(basename(pkg.name))),
           },
           plugins: [
-            ...plugins,
+            ...getPlugins(),
+            ...extraUmdPlugins,
             replace({
               'process.env.NODE_ENV': JSON.stringify('development'),
             }),
@@ -285,7 +291,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                   name: (umd && umd.name) || (pkg.name && camelCase(basename(pkg.name))),
                 },
                 plugins: [
-                  ...plugins,
+                  ...getPlugins({ minCSS: true }),
+                  ...extraUmdPlugins,
                   replace({
                     'process.env.NODE_ENV': JSON.stringify('production'),
                   }),
