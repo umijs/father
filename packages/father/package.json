@@ -25,7 +25,6 @@
     "@storybook/addon-notes": "^5.2.6",
     "@storybook/addon-options": "^5.2.6",
     "@storybook/addon-storysource": "^5.2.6",
-    "@storybook/addon-viewport": "^5.2.6",
     "@storybook/addons": "^5.2.6",
     "@storybook/cli": "^5.2.6",
     "@storybook/react": "^5.2.6",
