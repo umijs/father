@@ -56,7 +56,7 @@ function generateFiles(projectPath: string) {
 /* eslint-disable import/no-webpack-loader-syntax */
 import React from 'react';
 import Markdown from 'react-markdown';
-import { checkA11y } from '@storybook/addon-a11y';
+import { withA11y } from '@storybook/addon-a11y';
 import { storiesOf, addParameters } from '@storybook/react';
 import { withConsole } from '@storybook/addon-console';
 ${importSourceString.join('\n')}
@@ -68,6 +68,9 @@ import { themes } from '@storybook/theming';
 addParameters({
   options: {
     theme: themes.dark,
+    name: '${pkg.name}',
+    url: '${pkg.homepage}',
+    title:'${pkg.name}'
   },
 });
 import READMECode from '../README.md';
@@ -75,7 +78,7 @@ import READMECode from '../README.md';
 
 // add demo
 storiesOf('${pkg.name}', module)
-.addDecorator(checkA11y) 
+.addDecorator(withA11y) 
 .addDecorator((storyFn, context) => withConsole()(storyFn)(context))
 .add(
   'README',
@@ -126,13 +129,6 @@ function loadStories() {
 addDecorator(withNotes);
 addDecorator(withSource);
 
-addDecorator(
-  withOptions({
-    name: '${pkg.name}',
-    url: '${pkg.homepage}',
-    title:'${pkg.name}'
-  })
-);
 
 configure(loadStories, module);`;
 
