@@ -5,18 +5,21 @@ const pkg = require(join(cwd, 'package.json'));
 
 module.exports = (baseConfig, env, config) => {
   config.module.rules.push({
-    test: /\.tsx?$/,
-    use: [
-      {
-        loader: require.resolve('ts-loader'),
-        options: {
-          context: cwd,
-          configFile: require.resolve('father-build/template/tsconfig.json'),
-          transpileOnly: true,
-        },
-      },
-      require.resolve('react-docgen-typescript-loader'),
-    ],
+    test: /\.(ts|tsx)$/,
+    loader: require.resolve('babel-loader'),
+    options: {
+      presets: [
+        '@babel/preset-typescript',
+        [
+          'umi',
+          {
+            targets: {
+              browsers: ['last 2 versions'],
+            },
+          },
+        ],
+      ],
+    },
   });
 
   config.resolve.extensions.push('.ts', '.tsx');

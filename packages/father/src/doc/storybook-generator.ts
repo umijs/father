@@ -70,7 +70,7 @@ storiesOf('${pkg.name}', module)
 .addDecorator((storyFn, context) => withConsole()(storyFn)(context))
 .addDecorator(withViewport())
 .add(
-  'readMe',
+  'README',
   () => (
     <div
       className="markdown-body entry-content"
