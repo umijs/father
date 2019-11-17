@@ -57,11 +57,23 @@ function generateFiles(projectPath: string) {
 import React from 'react';
 import Markdown from 'react-markdown';
 import { checkA11y } from '@storybook/addon-a11y';
-import { storiesOf } from '@storybook/react';
+import { storiesOf, addParameters } from '@storybook/react';
 import { withConsole } from '@storybook/addon-console';
 ${importSourceString.join('\n')}
 ${importString.join('\n')}
+
+import { themes } from '@storybook/theming';
+
+// Option defaults.
+addParameters({
+  options: {
+    theme: themes.dark,
+  },
+});
 import READMECode from '../README.md';
+
+
+// add demo
 storiesOf('${pkg.name}', module)
 .addDecorator(checkA11y) 
 .addDecorator((storyFn, context) => withConsole()(storyFn)(context))
@@ -137,10 +149,15 @@ configure(loadStories, module);`;
 `;
 
   const previewHeaderHtml = `
-<link
+  <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css"
 />
+<style>
+#root{
+  background: #eee;
+}
+</style>
 `;
 
   writeFileSync(join(tempStorybookPath, 'addons.js'), addOn);
