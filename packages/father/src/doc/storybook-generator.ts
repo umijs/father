@@ -59,18 +59,14 @@ import Markdown from 'react-markdown';
 import { checkA11y } from '@storybook/addon-a11y';
 import { storiesOf } from '@storybook/react';
 import { withConsole } from '@storybook/addon-console';
-import { withViewport } from '@storybook/addon-viewport';
-import { withInfo } from '@storybook/addon-info';
 ${importSourceString.join('\n')}
 ${importString.join('\n')}
 import READMECode from '../README.md';
 storiesOf('${pkg.name}', module)
 .addDecorator(checkA11y) 
-.addDecorator(withInfo)
 .addDecorator((storyFn, context) => withConsole()(storyFn)(context))
-.addDecorator(withViewport())
 .add(
-  'readMe',
+  'README',
   () => (
     <div
       className="markdown-body entry-content"
@@ -102,7 +98,6 @@ ${addString.join('\n')}
 import '@storybook/addon-actions/register';
 import '@storybook/addon-a11y/register';
 import '@storybook/addon-console';
-import '@storybook/addon-viewport/register';
 import 'storybook-addon-source/register';
 `;
 
