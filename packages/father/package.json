@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.25.0-alpha.0",
+  "version": "2.25.0-alpha.1",
   "description": "Library toolkit based on rollup, docz, storybook, jest and eslint.",
   "main": "lib/index.js",
   "bin": {
