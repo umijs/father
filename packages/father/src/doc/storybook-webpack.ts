@@ -3,7 +3,7 @@ import { join } from 'path';
 const cwd = process.cwd();
 const pkg = require(join(cwd, 'package.json'));
 
-module.exports = (baseConfig, env, config) => {
+module.exports = ({ config, ...rest }) => {
   config.module.rules.push({
     test: /\.(ts|tsx)$/,
     loader: require.resolve('babel-loader'),
