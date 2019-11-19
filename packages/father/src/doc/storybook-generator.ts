@@ -50,20 +50,40 @@ function generateFiles(projectPath: string) {
       },
     })`);
   });
-
+  /**
+   * 设置主题，默认还是白色的
+   * 设置 STORYBOOK_THEME 即可变成黑色，
+   * 这两种都是自带的
+   */
+  const theme = process.env.STORYBOOK_THEME || 'light';
   // Generate template
   const fileContent = `
 /* eslint-disable import/no-webpack-loader-syntax */
 import React from 'react';
 import Markdown from 'react-markdown';
-import { checkA11y } from '@storybook/addon-a11y';
-import { storiesOf } from '@storybook/react';
+import { withA11y } from '@storybook/addon-a11y';
+import { storiesOf, addParameters } from '@storybook/react';
 import { withConsole } from '@storybook/addon-console';
 ${importSourceString.join('\n')}
 ${importString.join('\n')}
+
+import { themes } from '@storybook/theming';
+
+// Option defaults.
+addParameters({
+  options: {
+    theme: themes.${theme},
+    name: '${pkg.name}',
+    url: '${pkg.homepage}',
+    title:'${pkg.name}'
+  },
+});
 import READMECode from '../README.md';
+
+
+// add demo
 storiesOf('${pkg.name}', module)
-.addDecorator(checkA11y) 
+.addDecorator(withA11y) 
 .addDecorator((storyFn, context) => withConsole()(storyFn)(context))
 .add(
   'README',
@@ -114,13 +134,6 @@ function loadStories() {
 addDecorator(withNotes);
 addDecorator(withSource);
 
-addDecorator(
-  withOptions({
-    name: '${pkg.name}',
-    url: '${pkg.homepage}',
-    title:'${pkg.name}'
-  })
-);
 
 configure(loadStories, module);`;
 
@@ -137,10 +150,15 @@ configure(loadStories, module);`;
 `;
 
   const previewHeaderHtml = `
-<link
+  <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css"
 />
+<style>
+#root{
+  background: #eee;
+}
+</style>
 `;
 
   writeFileSync(join(tempStorybookPath, 'addons.js'), addOn);

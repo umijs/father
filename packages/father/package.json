@@ -2,11 +2,18 @@
   "name": "father",
   "version": "2.25.0",
   "description": "Library toolkit based on rollup, docz, storybook, jest and eslint.",
+  "homepage": "http://github.com/umijs/father",
+  "bugs": "http://github.com/umijs/father/issues",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/umijs/father"
+  },
+  "license": "MIT",
   "main": "lib/index.js",
+  "typings": "./index.d.ts",
   "bin": {
     "father": "./bin/father.js"
   },
-  "typings": "./index.d.ts",
   "dependencies": {
     "@babel/plugin-proposal-decorators": "7.4.4",
     "@storybook/addon-a11y": "^5.2.6",
@@ -17,6 +24,7 @@
     "@storybook/addon-notes": "^5.2.6",
     "@storybook/addon-options": "^5.2.6",
     "@storybook/addon-storysource": "^5.2.6",
+    "@storybook/theming": "^5.2.6W",
     "@storybook/addons": "^5.2.6",
     "@storybook/cli": "^5.2.6",
     "@storybook/react": "^5.2.6",
@@ -61,15 +69,8 @@
     "update-notifier": "3.0.0",
     "yargs-parser": "13.1.1"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/umijs/father"
-  },
-  "homepage": "http://github.com/umijs/father",
-  "bugs": "http://github.com/umijs/father/issues",
   "authors": [
     "clock157 <clock157@163.com> (https://github.com/clock157)",
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT"
+  ]
 }
