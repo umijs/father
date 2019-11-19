@@ -52,10 +52,10 @@ function generateFiles(projectPath: string) {
   });
   /**
    * 设置主题，默认还是白色的
-   * 设置 storybook_theme 即可变成黑色，
+   * 设置 STORYBOOK_THEME 即可变成黑色，
    * 这两种都是自带的
    */
-  const theme = process.env.storybook_theme || 'light';
+  const theme = process.env.STORYBOOK_THEME || 'light';
   // Generate template
   const fileContent = `
 /* eslint-disable import/no-webpack-loader-syntax */
