@@ -236,7 +236,7 @@ cjs 为 `rollup` 或 `babel` 时，等同于配置了 `{ type: "rollup" | "babel
 
 是否输出 umd 格式，以及指定 umd 的相关配置。
 
-* Type: `{ globals, name, minFile, file } | false`
+* Type: `{ globals, name, minFile, file, sourcemap } | false`
 * Default: `false`
 
 #### umd.globals
@@ -262,6 +262,13 @@ cjs 为 `rollup` 或 `babel` 时，等同于配置了 `{ type: "rollup" | "babel
 指定 umd 的输出文件名。
 
 - Type: `string`
+- Default: `undefined`
+
+#### umd.sourcemap
+
+是否同步输出sourcemap。
+
+- Type: `boolean`
 - Default: `undefined`
 
 #### autoprefixer

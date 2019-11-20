@@ -29,6 +29,7 @@ interface IUmd {
   name?: string;
   minFile?: boolean;
   file?: string;
+  sourcemap?: boolean;
 }
 
 export interface IBundleOptions {
