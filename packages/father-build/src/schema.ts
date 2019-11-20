@@ -60,6 +60,7 @@ export default {
             file: noEmptyStr,
             name: noEmptyStr,
             minFile: { type: 'boolean' },
+            sourcemap: { type: 'boolean' },
           },
         },
       ],
