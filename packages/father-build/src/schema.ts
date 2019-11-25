@@ -158,5 +158,8 @@ export default {
     typescriptOpts: {
       type: 'object',
     },
+    pkgs: {
+      type: 'array',
+    },
   },
 };

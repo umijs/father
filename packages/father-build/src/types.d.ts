@@ -87,6 +87,7 @@ export interface IBundleOptions {
   sassInRollupMode?: {
     [opt: string]: any
   };
+  pkgs?: string[];
 }
 
 export interface IOpts {

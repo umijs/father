@@ -27,8 +27,8 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
       {
         entry,
       },
-      userConfig,
       buildArgs,
+      userConfig,
     );
 
     // Support config esm: 'rollup' and cjs: 'rollup'
@@ -179,6 +179,11 @@ export async function buildForLerna(opts: IOpts) {
 
   const userConfig = getUserConfig({ cwd });
   let pkgs = readdirSync(join(cwd, 'packages'));
+
+  // support define pkgs in lerna
+  if (userConfig.pkgs) {
+    pkgs = userConfig.pkgs;
+  }
 
   // 支持 scope
   pkgs = pkgs.reduce((memo, pkg) => {

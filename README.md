@@ -643,6 +643,21 @@ export default {
 };
 ```
 
+### pkgs
+
+在 lerna 构建中，有可能出现组件间有构建先后的需求，比如在有两个包 `packages/father-a` 和 `packages/father-util`，在 `father-a` 中对 `father-util` 有依赖，此时需要先构建 `father-util` 才能保证构建的正确性
+
+`pkgs` 允许你自定义 packages 目录下的构建顺序，如以上场景对应的配置为
+
+```js
+export default {
+  pkgs: [
+    'father-util',
+    'father-a',
+  ],
+}
+```
+
 ## Bonus
 
 一些小贴士：
