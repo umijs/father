@@ -94,5 +94,6 @@ export interface IOpts {
   cwd: string;
   watch?: boolean;
   buildArgs?: IBundleOptions;
+  rootConfig?: IBundleOptions;
   rootPath?: string;
 }

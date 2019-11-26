@@ -14,7 +14,7 @@ import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import randomColor from "./randomColor";
 
 export function getBundleOpts(opts: IOpts): IBundleOptions[] {
-  const { cwd, buildArgs = {} } = opts;
+  const { cwd, buildArgs = {}, rootConfig = {} } = opts;
   const entry = getExistFile({
     cwd,
     files: ['src/index.tsx', 'src/index.ts', 'src/index.jsx', 'src/index.js'],
@@ -27,8 +27,9 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
       {
         entry,
       },
-      buildArgs,
+      rootConfig,
       userConfig,
+      buildArgs,
     );
 
     // Support config esm: 'rollup' and cjs: 'rollup'
@@ -215,7 +216,8 @@ export async function buildForLerna(opts: IOpts) {
       {
         // eslint-disable-line
         ...opts,
-        buildArgs: merge(opts.buildArgs, userConfig),
+        buildArgs: opts.buildArgs,
+        rootConfig: userConfig,
         cwd: pkgPath,
         rootPath: cwd,
       },
