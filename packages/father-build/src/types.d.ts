@@ -87,11 +87,13 @@ export interface IBundleOptions {
   sassInRollupMode?: {
     [opt: string]: any
   };
+  pkgs?: string[];
 }
 
 export interface IOpts {
   cwd: string;
   watch?: boolean;
   buildArgs?: IBundleOptions;
+  rootConfig?: IBundleOptions;
   rootPath?: string;
 }

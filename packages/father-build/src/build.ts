@@ -14,7 +14,7 @@ import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import randomColor from "./randomColor";
 
 export function getBundleOpts(opts: IOpts): IBundleOptions[] {
-  const { cwd, buildArgs = {} } = opts;
+  const { cwd, buildArgs = {}, rootConfig = {} } = opts;
   const entry = getExistFile({
     cwd,
     files: ['src/index.tsx', 'src/index.ts', 'src/index.jsx', 'src/index.js'],
@@ -27,6 +27,7 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
       {
         entry,
       },
+      rootConfig,
       userConfig,
       buildArgs,
     );
@@ -180,6 +181,11 @@ export async function buildForLerna(opts: IOpts) {
   const userConfig = getUserConfig({ cwd });
   let pkgs = readdirSync(join(cwd, 'packages'));
 
+  // support define pkgs in lerna
+  if (userConfig.pkgs) {
+    pkgs = userConfig.pkgs;
+  }
+
   // 支持 scope
   pkgs = pkgs.reduce((memo, pkg) => {
     const pkgPath = join(cwd, 'packages', pkg);
@@ -210,7 +216,8 @@ export async function buildForLerna(opts: IOpts) {
       {
         // eslint-disable-line
         ...opts,
-        buildArgs: merge(opts.buildArgs, userConfig),
+        buildArgs: opts.buildArgs,
+        rootConfig: userConfig,
         cwd: pkgPath,
         rootPath: cwd,
       },
