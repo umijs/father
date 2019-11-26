@@ -14,7 +14,7 @@ interface IGetBabelConfigOpts {
     [value: string]: any;
   };
   lazy?: boolean;
-  lessInBabelMode: boolean|{
+  lessInBabelMode?: boolean|{
     paths?: any[];
     plugins?: any[];
   };

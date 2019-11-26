@@ -5,7 +5,7 @@ interface IBundleTypeOutput {
   file?: string;
 }
 
-interface ICjs extends IBundleTypeOutput {
+export interface ICjs extends IBundleTypeOutput {
   minify?: boolean;
   lazy?: boolean;
 }

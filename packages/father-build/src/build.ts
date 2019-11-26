@@ -5,7 +5,7 @@ import * as assert from 'assert';
 import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
-import { IOpts, IBundleOptions, IBundleTypeOutput, IEsm } from './types';
+import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm } from './types';
 import babel from './babel';
 import rollup from './rollup';
 import registerBabel from './registerBabel';
@@ -54,7 +54,7 @@ function validateBundleOpts(bundleOpts: IBundleOptions, { cwd, rootPath }) {
       `@babel/runtime dependency is required to use runtimeHelpers`,
     );
   }
-  if (bundleOpts.cjs && bundleOpts.cjs.lazy && bundleOpts.cjs.type === 'rollup') {
+  if (bundleOpts.cjs && (bundleOpts.cjs as ICjs).lazy && (bundleOpts.cjs as ICjs).type === 'rollup') {
     throw new Error(`
 cjs.lazy don't support rollup.
     `.trim());
