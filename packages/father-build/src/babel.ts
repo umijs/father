@@ -13,6 +13,7 @@ import gulpIf from 'gulp-if';
 import chalk from "chalk";
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
+import * as ts from 'typescript';
 
 interface IBabelOpts {
   cwd: string;
@@ -90,17 +91,35 @@ export default async function(opts: IBabelOpts) {
     }).code;
   }
 
+  /**
+   * tsconfig.json is not valid json file
+   * https://github.com/Microsoft/TypeScript/issues/20384
+   */
+  function parseTsconfig(path: string) {
+    const readFile = (path:string) => readFileSync(path, 'utf-8')
+    const result = ts.readConfigFile(path, readFile)
+    if (result.error) {
+      return
+    }
+    return result.config
+  }
+
+  function getTsconfigCompilerOptions(path: string) {
+    const config = parseTsconfig(path)
+    return config ? config.compilerOptions : undefined
+  }
+
   function getTSConfig() {
     const tsconfigPath = join(cwd, 'tsconfig.json');
     const templateTsconfigPath = join(__dirname, '../template/tsconfig.json');
 
     if (existsSync(tsconfigPath)) {
-      return JSON.parse(readFileSync(tsconfigPath, 'utf-8')).compilerOptions || {};
+      return getTsconfigCompilerOptions(tsconfigPath) || {};
     }
     if (rootPath && existsSync(join(rootPath, 'tsconfig.json'))) {
-      return JSON.parse(readFileSync(join(rootPath, 'tsconfig.json'), 'utf-8')).compilerOptions || {};
+      return getTsconfigCompilerOptions(join(rootPath, 'tsconfig.json')) || {};
     }
-    return JSON.parse(readFileSync(templateTsconfigPath, 'utf-8')).compilerOptions || {};
+    return getTsconfigCompilerOptions(templateTsconfigPath) || {};
   }
 
   function createStream(src) {
