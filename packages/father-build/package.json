@@ -14,6 +14,8 @@
     "@babel/plugin-proposal-do-expressions": "7.2.0",
     "@babel/plugin-proposal-export-default-from": "7.2.0",
     "@babel/plugin-proposal-export-namespace-from": "7.2.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "7.7.4",
+    "@babel/plugin-proposal-optional-chaining": "7.7.4",
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
     "@babel/plugin-transform-modules-commonjs": "7.5.0",
     "@babel/plugin-transform-runtime": "7.4.4",
@@ -51,7 +53,7 @@
     "temp-dir": "2.0.0",
     "through2": "3.0.1",
     "ts-loader": "^6.0.2",
-    "typescript": "^3.5.1",
+    "typescript": "^3.7.3",
     "update-notifier": "3.0.0",
     "vinyl-fs": "3.0.3",
     "yargs-parser": "13.1.1"
