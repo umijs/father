@@ -1,8 +1,9 @@
 import { extname } from 'path';
+import { ModuleFormat } from 'rollup';
 
 interface IGetBabelConfigOpts {
   target: 'browser' | 'node';
-  type?: 'esm' | 'cjs';
+  type?: ModuleFormat;
   typescript?: boolean;
   runtimeHelpers?: boolean;
   filePath?: string;

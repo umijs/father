@@ -4,7 +4,7 @@ import babel from 'rollup-plugin-babel';
 import replace from 'rollup-plugin-replace';
 import json from 'rollup-plugin-json';
 import nodeResolve from 'rollup-plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
+import typescript2 from 'rollup-plugin-typescript2';
 import commonjs from 'rollup-plugin-commonjs';
 import postcss from 'rollup-plugin-postcss-umi';
 import inject from 'rollup-plugin-inject';
@@ -78,7 +78,9 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     ...(getBabelConfig({
       type,
       target: type === 'esm' ? 'browser' : target,
-      typescript: false,
+      // watch 模式下有几率走的 babel？原因未知。
+      // ref: https://github.com/umijs/father/issues/158
+      typescript: true,
       runtimeHelpers,
       nodeVersion,
     }).opts),
@@ -174,7 +176,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       }),
       ...(isTypeScript
         ? [
-          typescript({
+          typescript2({
+            cwd,
             // @see https://github.com/ezolenko/rollup-plugin-typescript2/issues/105
             objectHashIgnoreUnknownHack: true,
             // @see https://github.com/umijs/father/issues/61#issuecomment-544822774

@@ -54,6 +54,7 @@ function b2() {
 }
 
 var b = /*#__PURE__*/Object.freeze({
+  __proto__: null,
   b1: b1,
   b2: b2
 });
