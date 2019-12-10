@@ -318,7 +318,7 @@ export default {
 
 #### injectCSS
 
-是否在 <head>里注入css, 如果`extractCSS: true`，则为`false`
+是否在 \<head>里注入css, 如果`extractCSS: true`，则为`false`
 
 * Type: `boolean`
 * Default: `true`
