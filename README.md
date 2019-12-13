@@ -676,10 +676,10 @@ export default {
 ### 关于 babel 模式
 
 babel 模式下一些文件不会被编译到 es 和 lib 下，包含：
-* __test__ 目录
-* fixtures 目录
-* mdx 文件
-* 测试文件，比如 test.js、spec.js、e2e.js，后缀还支持 jsx、ts 和 tsx
+* `__test__` 目录
+* `fixtures` 目录
+* `mdx` 文件
+* 测试文件，比如 `test.js`、`spec.js`、`e2e.js`，后缀还支持 `jsx`、`ts` 和 `tsx`
 
 ## 环境变量
 
