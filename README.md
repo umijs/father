@@ -342,11 +342,14 @@ export default {
 ```js
 export default {
   extraBabelPlugins: [
-    ['babel-plugin-import', {
-      libraryName: 'antd',
-      libraryDirectory: 'es',
-      style: true,
-    }],
+    [
+      require.resolve('babel-plugin-import'),
+      {
+        libraryName: '@alifd/next',
+        libraryDirectory: 'es',
+        style: true,
+      },
+    ],
   ],
 };
 ```
