@@ -109,7 +109,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     ...extraExternals,
   ];
   // umd 只要 external peerDependencies
-  const externalPeerDeps = Object.keys(pkg.peerDependencies || {});
+  const externalPeerDeps = [
+    ...Object.keys(pkg.peerDependencies || {}),
+    ...extraExternals,    
+  ];
 
   function getPkgNameByid(id) {
     const splitted = id.split('/');
