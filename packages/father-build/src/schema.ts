@@ -60,7 +60,12 @@ export default {
             file: noEmptyStr,
             name: noEmptyStr,
             minFile: { type: 'boolean' },
-            sourcemap: { type: 'boolean' },
+            sourcemap: {
+              oneOf: [
+                { type: 'boolean' },
+                { type: 'string', pattern: '^(inline|hidden)$', },
+              ]
+            },
           },
         },
       ],
