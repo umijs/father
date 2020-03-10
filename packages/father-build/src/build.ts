@@ -94,7 +94,7 @@ interface IExtraBuildOpts {
 }
 
 export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
-  const { cwd, rootPath, watch } = opts;
+  const { cwd, rootPath, watch, sourcemap } = opts;
   const { pkg } = extraOpts;
 
   // register babel for config files
@@ -134,7 +134,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       const cjs = bundleOpts.cjs as IBundleTypeOutput;
       log(`Build cjs with ${cjs.type}`);
       if (cjs.type === 'babel') {
-        await babel({ cwd, rootPath, watch, type: 'cjs', log, bundleOpts });
+        await babel({ cwd, rootPath, watch, sourcemap, type: 'cjs', log, bundleOpts });
       } else {
         await rollup({
           cwd,
@@ -142,6 +142,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
           type: 'cjs',
           entry: bundleOpts.entry,
           watch,
+          sourcemap,
           bundleOpts,
         });
       }
@@ -153,7 +154,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       log(`Build esm with ${esm.type}`);
       const importLibToEs = esm && esm.importLibToEs;
       if (esm && esm.type === 'babel') {
-        await babel({ cwd, rootPath, watch, type: 'esm', importLibToEs, log, bundleOpts });
+        await babel({ cwd, rootPath, watch, sourcemap, type: 'esm', importLibToEs, log, bundleOpts });
       } else {
         await rollup({
           cwd,
@@ -162,6 +163,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
           entry: bundleOpts.entry,
           importLibToEs,
           watch,
+          sourcemap,
           bundleOpts,
         });
       }

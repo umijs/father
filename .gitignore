@@ -10,3 +10,6 @@
 /packages/father/src/fixtures/e2e/normal/.docz
 /packages/father/src/fixtures/doc/sass-options/.docz/
 /.changelog
+
+.history
+yarn.lock

@@ -22,6 +22,7 @@ interface IBabelOpts {
   target?: 'browser' | 'node';
   log?: (string) => void;
   watch?: boolean;
+  sourcemap?: boolean;
   importLibToEs?: boolean;
   bundleOpts: IBundleOptions;
 }
@@ -40,6 +41,7 @@ export default async function(opts: IBabelOpts) {
     rootPath,
     type,
     watch,
+    sourcemap,
     importLibToEs,
     log,
     bundleOpts: {
@@ -74,7 +76,7 @@ export default async function(opts: IBabelOpts) {
       nodeFiles,
       nodeVersion,
       lazy: cjs && cjs.lazy,
-      lessInBabelMode,
+      lessInBabelMode
     });
     if (importLibToEs && type === 'esm') {
       babelOpts.plugins.push(require.resolve('../lib/importLibToEs'));
@@ -84,6 +86,10 @@ export default async function(opts: IBabelOpts) {
 
     const relFile = slash(file.path).replace(`${cwd}/`, '');
     log(`Transform to ${type} for ${chalk[isBrowser ? 'yellow' : 'blue'](relFile)}`);
+
+    if (sourcemap) {
+      babelOpts.sourceMaps = 'inline'
+    }
 
     return babel.transform(file.contents, {
       ...babelOpts,

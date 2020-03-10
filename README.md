@@ -43,6 +43,12 @@ $ yarn add father
 # Bundle library
 $ father build
 
+# watch
+$ father build --watch or father build -w
+
+# sourcemap，babel or rollup
+$ father build --sourcemap or father build -m
+
 # dev with doc
 $ father doc dev
 

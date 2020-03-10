@@ -51,6 +51,7 @@ function build() {
   require('../lib/build').default({
     cwd: args.root || process.cwd(),
     watch: args.w || args.watch,
+    sourcemap: args.m || args.sourcemap,
     buildArgs,
   }).catch(e => {
     signale.error(e);
