@@ -2,6 +2,7 @@ import { join, extname, relative } from 'path';
 import { existsSync, readFileSync, statSync } from 'fs';
 import vfs from 'vinyl-fs';
 import signale from 'signale';
+import lodash from 'lodash';
 import rimraf from 'rimraf';
 import through from 'through2';
 import slash from 'slash2';
@@ -181,12 +182,22 @@ export default async function(opts: IBabelOpts) {
           .watch(patterns, {
             ignoreInitial: true,
           });
+
+        const files = [];
+        function compileFiles() {
+          while (files.length) {
+            createStream(files.pop());
+          }
+        }
+
+        const debouncedCompileFiles = lodash.debounce(compileFiles, 1000);
         watcher.on('all', (event, fullPath) => {
           const relPath = fullPath.replace(srcPath, '');
           log(`[${event}] ${slash(join(srcPath, relPath)).replace(`${cwd}/`, '')}`);
           if (!existsSync(fullPath)) return;
           if (statSync(fullPath).isFile()) {
-            createStream([fullPath]);
+            if (!files.includes(fullPath)) files.push(fullPath);
+            debouncedCompileFiles();
           }
         });
         process.once('SIGINT', () => {
