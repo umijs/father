@@ -1,75 +1,95 @@
-# Contribute
-
-> Notice: `y` is the alias for `yarn`, `n` is the alias for `npm`.
+# Contributing to umi
 
 ## Set up
 
 Install dev deps after git clone the repo.
 
 ```bash
-$ y
+# npm is not allowed.
+$ yarn
 ```
 
-Bootstrap every package with yarn. (Need to execute when new package is included)
+Link umi globally.
 
 ```bash
-$ y bootstrap
+$ cd packages/umi
+$ yarn link
+$ cd -
 ```
 
-Link father globally.
+Try the `umi` cli.
 
 ```bash
-$ cd packages/father
-$ y link
+$ yarn build
+$ umi -v
+umi@0.0.1-alpha.1@local
 ```
 
-## Common Tasks
+## Build
 
-Monitor file changes and transform with babel.
+Transform with babel and rollup.
 
 ```bash
-$ y build --watch
+$ yarn build
+
+# Build and monitor file changes
+$ yarn build --watch
+
+# Build specified package only
+$ PACKAGE=core yarn build --watch
 ```
 
-Run test.
+## Test
 
 ```bash
-# Including e2e test
-$ y test
-
-# Unit test only
-$ y debug .test.(t|j)s
+$ yarn test
 
 # Test specified file and watch
-$ y debug father-build/src/build.test.ts -w
+$ yarn test getMockData.test.js -w
+
+# Test specified package
+$ yarn test --package core
+
+# Generate coverage
+$ yarn test --coverage
 ```
 
-## Publish
-
-Add tag for PRs, changelog is generated based on these tags.
-
-* pr(bug)
-* pr(enhancement)
-* pr(chore)
-* pr(dependency)
-
-Generate changelog.
+## Release
 
 ```bash
-$ y changelog
+$ npm run release
+$ npm run release -- --publish-only
+$ npm run release -- --skip-git-status-check
+$ npm run release -- --skip-build
 ```
 
-Publish to npm.
+## Create new package
+
+Such as creating package `foo`.
 
 ```bash
-# Can't use yarn for this command.
-$ n run publish
+$ mkdir -p packages/foo
+$ yarn bootstrap
 ```
 
-Debug doc in local.
+Then you will find the `README.md` and `package.json` is generated in `packages/foo`.
 
 ```bash
-$ y doc:dev
+$ tree packages/foo
+packages/foo
+├── README.md
+└── package.json
 ```
 
-Paste the previously generated changelog at [umijs/father#release](https://github.com/umijs/father/releases).
+## Upgrade dependencies
+
+```bash
+$ yarn update:deps
+```
+
+## Docs
+
+```bash
+# add doc
+$ yarn docs add docs/routing --title Routing
+```

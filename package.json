@@ -1,23 +1,47 @@
 {
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "build": "umi-tools build",
-    "changelog": "lerna-changelog",
-    "clean": "lerna clean -y",
-    "test": "umi-test --coverage",
-    "debug": "umi-test",
-    "publish": "npm run build && lerna publish"
+    "bootstrap": "node ./scripts/bootstrap.js",
+    "build": "father-build",
+    "docs": "node ./scripts/docs.js",
+    "docs:build": "node ./packages/umi/bin/umi.js build",
+    "docs:dev": "node ./packages/umi/bin/umi.js dev",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
+    "link:umi": "cd packages/umi && yarn link && cd -",
+    "release": "node ./scripts/release.js",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage",
+    "sync:tnpm": "node -e 'require(\"./scripts/syncTNPM\")()'",
+    "update:deps": "yarn upgrade-interactive --latest"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "node scripts/verifyCommit.js"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write",
+      "git add"
+    ]
   },
   "devDependencies": {
-    "@types/jest": "^24.0.13",
-    "lerna": "^3.6.0",
-    "lerna-changelog": "^0.8.2",
-    "puppeteer": "^1.17.0",
-    "node-sass": "^4.12.0",
-    "serve-handler": "^6.0.1",
-    "test-build-result": "^1.1.2",
-    "umi-tools": "^0.4.0",
-    "umi-test": "^1.5.12"
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.0",
+    "@umijs/test": "3.0.7",
+    "father-build": "^1.17.2",
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.0.8",
+    "new-github-release-url": "^1.0.0",
+    "npm-run-all": "^4.1.5",
+    "open": "^7.0.3",
+    "prettier": "^1.19.1",
+    "yorkie": "^2.0.0"
   }
 }

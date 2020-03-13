@@ -1,7 +1,7 @@
 {
-  "name": "father",
+  "name": "father-preset-built-in",
   "version": "3.0.0-beta.1",
-  "description": "father",
+  "description": "father-preset-built-in",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -23,12 +23,8 @@
   ],
   "license": "MIT",
   "bugs": "http://github.com/umijs/father/issues",
-  "homepage": "https://github.com/umijs/father/tree/master/packages/father#readme",
+  "homepage": "https://github.com/umijs/father/tree/master/packages/preset-built-in#readme",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@umijs/core": "^3.0.7",
-    "@umijs/utils": "^3.0.7"
   }
 }
