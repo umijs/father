@@ -125,7 +125,7 @@ export default async function(opts: IBabelOpts) {
 
   function createStream(src) {
     const tsConfig = getTSConfig();
-    const babelTransformRegexp = disableTypeCheck ? /\.(t|j)sx?$/ : /\.jsx?$/;
+    const babelTransformRegexp = /\.(t|j)sx?$/;
 
     function isTsFile(path) {
       return /\.tsx?$/.test(path) && !path.endsWith('.d.ts');
@@ -140,7 +140,18 @@ export default async function(opts: IBabelOpts) {
         allowEmpty: true,
         base: srcPath,
       })
-      .pipe(gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig)))
+      .pipe(
+        gulpIf(
+          f => !disableTypeCheck && isTsFile(f.path),
+          through.obj((file, env, cb) => {
+            gulpTs(tsConfig).on('error', err => {
+              process.exit(1);
+            }).end(file, () => {
+              cb(null, file);
+            });
+          }),
+        ),
+      )
       .pipe(gulpIf(f => lessInBabelMode && /\.less$/.test(f.path), gulpLess(lessInBabelMode || {})))
       .pipe(
         gulpIf(
