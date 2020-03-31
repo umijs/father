@@ -13,7 +13,7 @@ Library toolkit framework based on @umijs/core, rollup and babel.
 
 ---
 
-## Father 3.x 正在开发中，如需查看文档，请切到 [2.x 分支](https://github.com/umijs/father/tree/2.x)。
+## Father 3.x 开发中，如需查看文档，请切到 [2.x 分支](https://github.com/umijs/father/tree/2.x)。
 
 ## LICENSE
 
