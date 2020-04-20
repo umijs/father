@@ -62,7 +62,7 @@ var b = /*#__PURE__*/Object.freeze({
 var _class;
 // babel-plugin-react-require
 var Foo = function Foo() {
-  return React.createElement("div", null);
+  return /*#__PURE__*/React.createElement("div", null);
 }; // Don't support multiple chunks for now
 // @babel/plugin-syntax-dynamic-import
 // import('./a');

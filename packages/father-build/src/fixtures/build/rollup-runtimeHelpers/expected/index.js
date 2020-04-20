@@ -22,9 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-var A =
-/*#__PURE__*/
-function () {
+var A = /*#__PURE__*/function () {
   function A() {
     _classCallCheck(this, A);
   }
