@@ -128,7 +128,8 @@ export default async function(opts: IBabelOpts) {
     const babelTransformRegexp = disableTypeCheck ? /\.(t|j)sx?$/ : /\.jsx?$/;
 
     function isTsFile(path) {
-      return /\.tsx?$/.test(path) && !path.endsWith('.d.ts');
+      const isTypings = path.endsWith('typings.d.ts');
+      return isTypings || (/\.tsx?$/.test(path) && !path.endsWith('.d.ts'));
     }
 
     function isTransform(path) {
@@ -169,6 +170,7 @@ export default async function(opts: IBabelOpts) {
 
   return new Promise(resolve => {
     const patterns = [
+      join(srcPath, '../typings.d.ts'),
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures{,/**}')}`,
       `!${join(srcPath, '**/demos{,/**}')}`,
