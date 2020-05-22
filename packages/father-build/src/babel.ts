@@ -109,7 +109,11 @@ export default async function(opts: IBabelOpts) {
     const config = parseTsconfig(path)
     return config ? config.compilerOptions : undefined
   }
-
+  function getTsconfigInclude(path: string) {
+    const config = parseTsconfig(path)
+    const includesPath = config?.include ?? []
+    return includesPath
+  }
   function getTSConfig() {
     const tsconfigPath = join(cwd, 'tsconfig.json');
     const templateTsconfigPath = join(__dirname, '../template/tsconfig.json');
@@ -121,6 +125,18 @@ export default async function(opts: IBabelOpts) {
       return getTsconfigCompilerOptions(join(rootPath, 'tsconfig.json')) || {};
     }
     return getTsconfigCompilerOptions(templateTsconfigPath) || {};
+  }
+  
+  function getTSMatch() {
+    const tsconfigPath = join(cwd, 'tsconfig.json');
+    const templateTsconfigPath = join(__dirname, '../template/tsconfig.json');
+    if (existsSync(tsconfigPath)) {
+      return getTsconfigInclude(tsconfigPath) || [];
+    }
+    if (rootPath && existsSync(join(rootPath, 'tsconfig.json'))) {
+      return getTsconfigInclude(join(rootPath, 'tsconfig.json')) || [];
+    }
+    return getTsconfigInclude(templateTsconfigPath) || [];
   }
 
   function createStream(src) {
@@ -169,8 +185,12 @@ export default async function(opts: IBabelOpts) {
   }
 
   return new Promise(resolve => {
+    const includes = getTSMatch().map(item => join(srcPath, item))
     const patterns = [
       join(srcPath, '../typings.d.ts'),
+      join(srcPath, '../index.d.ts'),
+      join(srcPath, '../typings/index.d.ts'),
+      ...includes,
       join(srcPath, '**/*'),
       `!${join(srcPath, '**/fixtures{,/**}')}`,
       `!${join(srcPath, '**/demos{,/**}')}`,
