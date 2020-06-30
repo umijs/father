@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -22,17 +22,19 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-var A = /*#__PURE__*/function () {
+var A = /*#__PURE__*/ (function() {
   function A() {
     _classCallCheck(this, A);
   }
 
-  _createClass(A, [{
-    key: "foo",
-    value: function foo() {}
-  }]);
+  _createClass(A, [
+    {
+      key: "foo",
+      value: function foo() {}
+    }
+  ]);
 
   return A;
-}();
+})();
 
 new A().foo();
