@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.29.4",
+  "version": "2.29.5",
   "description": "Library toolkit based on rollup, docz, storybook, jest and eslint.",
   "homepage": "http://github.com/umijs/father",
   "bugs": "http://github.com/umijs/father/issues",
