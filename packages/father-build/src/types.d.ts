@@ -38,6 +38,7 @@ export interface IBundleOptions {
   esm?: BundleType | IEsm | false;
   cjs?: BundleType | ICjs | false;
   umd?: IUmd | false;
+  babelExclude?: string | RegExp | Array<string | RegExp>;
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
   extraPostCSSPlugins?: any[];
