@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@babel/runtime": "0.1.0"
+    "@babel/runtime": "7.10.4"
   }
 }
