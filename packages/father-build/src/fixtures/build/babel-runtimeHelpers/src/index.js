@@ -4,3 +4,6 @@ class A {
 }
 
 (new A()).foo();
+
+const a = {};
+const b = {...a};

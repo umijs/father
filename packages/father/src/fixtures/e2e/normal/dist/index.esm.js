@@ -1,18 +1,16 @@
-import React from "react";
+import React from 'react';
 
 function styleInject(css, ref) {
-  if (ref === void 0) ref = {};
+  if ( ref === void 0 ) ref = {};
   var insertAt = ref.insertAt;
 
-  if (!css || typeof document === "undefined") {
-    return;
-  }
+  if (!css || typeof document === 'undefined') { return; }
 
-  var head = document.head || document.getElementsByTagName("head")[0];
-  var style = document.createElement("style");
-  style.type = "text/css";
+  var head = document.head || document.getElementsByTagName('head')[0];
+  var style = document.createElement('style');
+  style.type = 'text/css';
 
-  if (insertAt === "top") {
+  if (insertAt === 'top') {
     if (head.firstChild) {
       head.insertBefore(style, head.firstChild);
     } else {
@@ -35,17 +33,13 @@ styleInject(css);
 var css$1 = ".b {\n  border: 2px solid #ccc;\n}\n";
 styleInject(css$1);
 
-function index(props) {
-  return /*#__PURE__*/ React.createElement(
-    "button",
-    {
-      className: "g b",
-      style: {
-        fontSize: props.size === "large" ? 40 : 20
-      }
-    },
-    props.children
-  );
+function index (props) {
+  return /*#__PURE__*/React.createElement("button", {
+    className: "g b",
+    style: {
+      fontSize: props.size === 'large' ? 40 : 20
+    }
+  }, props.children);
 }
 
 export { index as button };
