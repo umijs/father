@@ -1,6 +1,6 @@
 {
   "name": "father-build",
-  "version": "1.18.1",
+  "version": "1.18.2",
   "description": "Library build tool based on rollup.",
   "main": "lib/index.js",
   "bin": {

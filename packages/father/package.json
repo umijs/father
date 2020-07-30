@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.29.5",
+  "version": "2.29.6",
   "description": "Library toolkit based on rollup, docz, storybook, jest and eslint.",
   "homepage": "http://github.com/umijs/father",
   "bugs": "http://github.com/umijs/father/issues",
@@ -52,7 +52,7 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-react": "7.13.0",
     "eslint-plugin-unicorn": "^8.0.1",
-    "father-build": "1.18.1",
+    "father-build": "1.18.2",
     "fs-extra": "^8.0.1",
     "gh-pages": "2.0.1",
     "lodash": "4.17.13",
