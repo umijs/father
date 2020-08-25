@@ -92,7 +92,9 @@ export default async function(opts: IBabelOpts) {
 
     return babel.transform(file.contents, {
       ...babelOpts,
-      filename: file.path
+      filename: file.path,
+      // 不读取外部的babel.config.js配置文件，全采用babelOpts中的babel配置来构建
+      configFile: false,
     }).code;
   }
 
