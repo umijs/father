@@ -28,8 +28,8 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
         entry,
       },
       rootConfig,
-      userConfig,
       buildArgs,
+      userConfig,
     );
 
     // Support config esm: 'rollup' and cjs: 'rollup'
