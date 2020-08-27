@@ -178,7 +178,7 @@ export async function buildForLerna(opts: IOpts) {
     only: CONFIG_FILES,
   });
 
-  const userConfig = getUserConfig({ cwd });
+  const userConfig = merge(getUserConfig({ cwd }), opts.rootConfig || {});
   let pkgs = readdirSync(join(cwd, 'packages'));
 
   // support define pkgs in lerna
