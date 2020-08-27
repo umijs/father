@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, basename } from 'path';
 import { existsSync, readdirSync, renameSync, statSync } from 'fs';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
@@ -16,12 +16,16 @@ function moveEsLibToDist(cwd) {
 }
 
 describe('father build', () => {
+  const rootConfigMapping = {
+    'lerna-root-config-override': { cjs: 'rollup', esm: false },
+  };
+
   require('test-build-result')({
     root: join(__dirname, './fixtures/build'),
     build({ cwd }) {
       process.chdir(cwd);
       rimraf.sync(join(cwd, 'dist'));
-      return build({ cwd }).then(() => {
+      return build({ cwd, rootConfig: rootConfigMapping[basename(cwd)] }).then(() => {
         // babel
         moveEsLibToDist(cwd);
 

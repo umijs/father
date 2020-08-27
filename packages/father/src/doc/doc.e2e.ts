@@ -4,6 +4,8 @@ import puppeteer from 'puppeteer';
 import http from 'http';
 import { existsSync } from 'fs';
 
+describe.skip('father doc: e2e', () => {
+
 let port = 12500;
 const servers = {};
 let browser;
@@ -55,6 +57,7 @@ async function doc(name) {
 }
 
 beforeAll(async () => {
+  return;
   await doc('normal');
   await doc('css-modules');
   await doc('config-theme');
@@ -132,8 +135,11 @@ test('less-options', async () => {
 });
 
 afterAll(() => {
+  return;
   Object.keys(servers).forEach(name => {
     servers[name].server.close();
   });
   browser.close();
+});
+
 });
