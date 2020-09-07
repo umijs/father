@@ -99,21 +99,107 @@ export interface IApi extends PluginAPI {
 }
 
 export interface IConfig extends IConfigCore {
-  cjs?: {
-    type: 'rollup' | 'babel';
-  };
+  /**
+   * output runtime & version targets
+   * @note  default behaviors:
+   *          - recognize build platform automatically
+   *          - enable autoprefixer for browser targets
+   */
+  targets: { [key: string]: string | number };
+  /**
+   * extra files for different platform
+   */
+  browserFiles?: string[];
+  nodeFiles?: string[];
+
+  // module types
+  /**
+   * esm module type
+   */
   esm?: {
-    type: 'rollup' | 'babel';
+    type: 'babel' | 'rollup';
+    mjs?: boolean;
+    minify?: boolean;
+    importLibToEs?: boolean;
   };
-  extraBabelPlugins?: IBabelPresetOrPlugin[];
-  extraBabelPresets?: IBabelPresetOrPlugin[];
-  extraPostCSSPlugins?: any[];
-  lessInBabelMode?: object;
-  plugins?: IPresetOrPlugin[];
-  presets?: IPresetOrPlugin[];
-  target?: 'browser' | 'node';
+  /**
+   * cjs module type
+   */
+  cjs?: {
+    type: 'babel' | 'rollup';
+    minify?: boolean;
+    lazy?: boolean;
+  };
+  /**
+   * umd module type
+   */
   umd?: {
-    type: 'rollup' | 'webpack';
+    name?: string;
+    minFile?: boolean;
+    sourcemap?: boolean;
+    globals?: { [key: string]: string };
   };
+
+  // compile modes
+  /**
+   * babel compile mode
+   */
+  babel?: {
+    runtimeHelpers?: boolean;
+    plugins?: IBabelPresetOrPlugin[];
+    presets?: IBabelPresetOrPlugin[];
+  };
+  /**
+   * rollup compile mode
+   */
+  rollup?: {
+    entry?: {
+      [key: string]: string;
+    };
+    /**
+     * extract CSS into single file, styles will be inject <head> if it is false or unset
+     */
+    extractCSS?: boolean;
+    /**
+     * external or exclude external some dependencies
+     * @note  usage:
+     *          - ['pkg']  for external
+     *          - ['!pkg'] for exclude external
+     */
+    externals?: string[];
+    /**
+     * babel configs, use babel mode configs by default
+     */
+    babelRuntimeHelpers?: boolean;
+    babelPlugins?: IBabelPresetOrPlugin[];
+    babelPresets?: IBabelPresetOrPlugin[];
+    /**
+     * @rollup/plugin-inject
+     */
+    inject?: { [key: string]: string };
+    /**
+     * @rollup/plugin-replace
+     */
+    replace?: { [key: string]: string };
+    /**
+     * @rollup/plugin-commonjs
+     */
+    commonjs?: any;
+    /**
+     * @rollup/plugin-node-resolve
+     */
+    resolve?: any;
+    plugins?: any[];
+  };
+
+  /**
+   * Post CSS configs
+   */
+  postCSS?: {
+    plugins?: [];
+    less?: any;
+    sass?: any;
+  };
+
   [key: string]: any;
 }
