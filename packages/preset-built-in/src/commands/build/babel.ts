@@ -3,6 +3,7 @@ import { IConfig } from 'father-types';
 import { existsSync, statSync } from 'fs';
 import { join } from 'path';
 import vfs from 'vinyl-fs';
+import gulpPlumber from 'gulp-plumber';
 import gulpBabel from 'gulp-babel';
 import gulpIf from 'gulp-if';
 import gulpTs from 'gulp-typescript';
@@ -63,6 +64,7 @@ export default async function(opts: {
           allowEmpty: true,
           base: srcPath,
         })
+        .pipe(watch ? gulpPlumber() : through.obj())
         .pipe(
           gulpIf(f => isTsFile(f.path), gulpTs(tsConfig.compilerOptions || {})),
         )
