@@ -10,6 +10,7 @@ import * as chokidar from "chokidar";
 import * as babel from "@babel/core";
 import gulpTs from "gulp-typescript";
 import gulpLess from "gulp-less";
+import gulpPlumber from 'gulp-plumber';
 import gulpIf from "gulp-if";
 import chalk from "chalk";
 import getBabelConfig from "./getBabelConfig";
@@ -146,6 +147,7 @@ export default async function(opts: IBabelOpts) {
         allowEmpty: true,
         base: srcPath
       })
+      .pipe(watch ? gulpPlumber() : through.obj())
       .pipe(
         gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig))
       )
