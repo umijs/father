@@ -33,6 +33,7 @@
     "glob": "^7.1.4",
     "gulp-if": "2.0.2",
     "gulp-less": "^4.0.1",
+    "gulp-plumber": "^1.2.1",
     "gulp-typescript": "5.0.1",
     "less": "3.9.0",
     "less-plugin-npm-import": "2.1.0",
@@ -68,5 +69,8 @@
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/gulp-plumber": "^0.0.32"
+  }
 }
