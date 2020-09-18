@@ -4,10 +4,12 @@ import { deepmerge } from '@umijs/utils';
 import { join } from 'path';
 import { getPackages, isLerna, getPackageConfig, getTSConfig } from './utils';
 import babel from './babel';
+import rollup from './rollup';
 
 export default (api: IApi) => {
   async function build({
     cwd,
+    pkg,
     config,
     tsConfig,
   }: {
@@ -28,6 +30,15 @@ export default (api: IApi) => {
           watch,
           tsConfig,
         });
+      } else if (config.esm.type === 'rollup') {
+        await rollup({
+          pkg,
+          cwd,
+          config,
+          moduleType: 'esm',
+          watch,
+          tsConfig,
+        });
       }
     }
 
@@ -40,10 +51,27 @@ export default (api: IApi) => {
           watch,
           tsConfig,
         });
+      } else if (config.cjs.type === 'rollup') {
+        await rollup({
+          pkg,
+          cwd,
+          config,
+          moduleType: 'cjs',
+          watch,
+          tsConfig,
+        });
       }
     }
 
     if (config.umd) {
+      await rollup({
+        pkg,
+        cwd,
+        config,
+        moduleType: 'umd',
+        watch,
+        tsConfig,
+      });
     }
   }
 
