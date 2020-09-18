@@ -55,7 +55,7 @@
     "father-build": "1.18.5",
     "fs-extra": "^8.0.1",
     "gh-pages": "2.0.1",
-    "lodash": "4.17.13",
+    "lodash": "4.17.19",
     "prettier": "1.18.2",
     "rc-source-loader": "^1.0.2",
     "react-markdown": "^4.0.8",
