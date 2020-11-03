@@ -25,7 +25,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "\n.a {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n}\n";
-styleInject(css);
+var css_248z = "\n.a {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n}\n";
+styleInject(css_248z);
 
 console.log('foo');

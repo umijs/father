@@ -25,7 +25,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css = ".a {\n  color: green;\n}\n";
-styleInject(css);
+var css_248z = ".a {\n  color: green;\n}\n";
+styleInject(css_248z);
 
 console.log('foo');

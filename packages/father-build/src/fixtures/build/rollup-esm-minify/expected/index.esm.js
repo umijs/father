@@ -1,1 +1,1 @@
-export default function(){console.log("foo")}
+function o(){console.log("foo")}export default o;

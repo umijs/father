@@ -25,8 +25,8 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "\n.foo_a__3z5g- { color: green; }\n";
+var css_248z = "\n.foo_a__3z5g- { color: green; }\n";
 var styles = {"a":"foo_a__3z5g-"};
-styleInject(css);
+styleInject(css_248z);
 
 console.log('foo', styles.a);

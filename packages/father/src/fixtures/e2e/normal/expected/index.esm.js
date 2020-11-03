@@ -27,11 +27,11 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "\n.g {\n  font-weight: bold;\n}\n";
-styleInject(css);
+var css_248z = "\n.g {\n  font-weight: bold;\n}\n";
+styleInject(css_248z);
 
-var css$1 = ".b {\n  border: 2px solid #ccc;\n}\n";
-styleInject(css$1);
+var css_248z$1 = ".b {\n  border: 2px solid #ccc;\n}\n";
+styleInject(css_248z$1);
 
 function index (props) {
   return /*#__PURE__*/React.createElement("button", {
