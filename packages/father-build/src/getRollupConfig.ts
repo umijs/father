@@ -49,7 +49,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extraRollupPlugins = [],
     autoprefixer: autoprefixerOpts,
     include = /node_modules/,
-    namedExports,
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
     inject: injectOpts,
@@ -257,7 +256,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       const extraUmdPlugins = [
         commonjs({
           include,
-          namedExports,
+          // namedExports options has been remove from https://github.com/rollup/plugins/pull/149
         }),
       ];
 

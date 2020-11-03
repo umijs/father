@@ -106,9 +106,6 @@ export default {
         { type: 'object' }
       ]
     },
-    namedExports: {
-      type: 'object',
-    },
     runtimeHelpers: {
       type: 'boolean',
     },

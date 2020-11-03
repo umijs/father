@@ -400,10 +400,6 @@ export default {
 
 配置 rollup-plugin-commonjs 的 [include][https://github.com/rollup/rollup-plugin-commonjs#usage]。
 
-#### namedExports
-
-配置 rollup-plugin-commonjs 的 [namedExports](https://github.com/rollup/rollup-plugin-commonjs#usage)。
-
 #### nodeResolveOpts
 
 配置 [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve) 参数。

@@ -20,10 +20,6 @@ interface IStringObject {
   [prop: string]: string;
 }
 
-interface IStringArrayObject {
-  [prop: string]: string[];
-}
-
 interface IUmd {
   globals?: IStringObject;
   name?: string;
@@ -50,7 +46,6 @@ export interface IBundleOptions {
   inject?: Object,
   autoprefixer?: Object;
   include?: string | RegExp;
-  namedExports?: IStringArrayObject;
   runtimeHelpers?: boolean;
   target?: 'node' | 'browser';
   overridesByEntry?: {
