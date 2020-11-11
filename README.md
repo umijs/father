@@ -330,6 +330,13 @@ export default {
 * Type: `array`
 * Default: `[]`
 
+#### babelExclude
+
+babel exclude的配置
+
+* Type: `string | RegExp | (string | RegExp)[]`
+* Default: `/\/node_modules\//`
+
 #### extraBabelPlugins
 
 配置额外的 babel plugin。

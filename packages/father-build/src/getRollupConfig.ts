@@ -43,6 +43,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extractCSS = false,
     injectCSS = true,
     cssModules: modules,
+    babelExclude = /\/node_modules\//,
     extraPostCSSPlugins = [],
     extraBabelPresets = [],
     extraBabelPlugins = [],
@@ -85,7 +86,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       nodeVersion,
     }).opts),
     runtimeHelpers,
-    exclude: /\/node_modules\//,
+    exclude: babelExclude,
     babelrc: false,
     // ref: https://github.com/rollup/rollup-plugin-babel#usage
     extensions,
