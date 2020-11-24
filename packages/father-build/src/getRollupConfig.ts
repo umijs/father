@@ -1,20 +1,20 @@
 import { basename, extname, join } from 'path';
-import { terser } from 'rollup-plugin-terser';
-import babel from 'rollup-plugin-babel';
-import replace from 'rollup-plugin-replace';
-import json from 'rollup-plugin-json';
-import nodeResolve from 'rollup-plugin-node-resolve';
-import typescript2 from 'rollup-plugin-typescript2';
-import commonjs from 'rollup-plugin-commonjs';
-import postcss from 'rollup-plugin-postcss-umi';
-import inject from 'rollup-plugin-inject';
 import { ModuleFormat, RollupOptions } from 'rollup';
+import url from '@rollup/plugin-url';
+import json from '@rollup/plugin-json';
+import replace from '@rollup/plugin-replace';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import inject, { RollupInjectOptions } from '@rollup/plugin-inject';
+import babel, { RollupBabelInputPluginOptions } from '@rollup/plugin-babel';
+import postcss from 'rollup-plugin-postcss';
+import { terser } from 'rollup-plugin-terser';
+import typescript2 from 'rollup-plugin-typescript2';
 import { camelCase } from 'lodash';
 import tempDir from 'temp-dir';
 import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
 import svgr from '@svgr/rollup';
-import url from 'rollup-plugin-url';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
 
@@ -49,7 +49,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extraRollupPlugins = [],
     autoprefixer: autoprefixerOpts,
     include = /node_modules/,
-    namedExports,
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
     inject: injectOpts,
@@ -84,7 +83,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       runtimeHelpers,
       nodeVersion,
     }).opts),
-    runtimeHelpers,
+    // ref: https://github.com/rollup/plugins/tree/master/packages/babel#babelhelpers
+    babelHelpers: (runtimeHelpers ? 'runtime' : 'bundled') as RollupBabelInputPluginOptions['babelHelpers'],
     exclude: /\/node_modules\//,
     babelrc: false,
     // ref: https://github.com/rollup/rollup-plugin-babel#usage
@@ -152,25 +152,20 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         inject: injectCSS,
         modules,
         minimize: !!minCSS,
-        use: [
-          [
-            'less',
-            {
-              plugins: [new NpmImport({ prefix: '~' })],
+        use: {
+          less: {
+            plugins: [new NpmImport({ prefix: '~' })],
               javascriptEnabled: true,
-              ...lessInRollupMode,
-            },
-          ],
-          [
-            'sass',
-            {
-              ...sassInRollupMode,
-            },
-          ],
-        ],
+              ...lessInRollupMode
+          },
+          sass: {
+            ...sassInRollupMode,
+          },
+          stylus: false,
+        },
         plugins: [autoprefixer(autoprefixerOpts), ...extraPostCSSPlugins],
       }),
-      ...(injectOpts ? [inject(injectOpts)] : []),
+      ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
       ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
       nodeResolve({
         mainFields: ['module', 'jsnext:main', 'main'],
@@ -181,8 +176,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         ? [
           typescript2({
             cwd,
-            // @see https://github.com/ezolenko/rollup-plugin-typescript2/issues/105
-            objectHashIgnoreUnknownHack: true,
             // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
             clean: true,
             cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
@@ -263,7 +256,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       const extraUmdPlugins = [
         commonjs({
           include,
-          namedExports,
+          // namedExports options has been remove from https://github.com/rollup/plugins/pull/149
         }),
       ];
 

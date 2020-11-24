@@ -1,11 +1,13 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('foo')) :
 	typeof define === 'function' && define.amd ? define(['foo'], factory) :
-	(global = global || self, factory(global.$));
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.$));
 }(this, (function (foo) { 'use strict';
 
-	foo = foo && foo.hasOwnProperty('default') ? foo['default'] : foo;
+	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-	foo.bar();
+	var foo__default = /*#__PURE__*/_interopDefaultLegacy(foo);
+
+	foo__default['default'].bar();
 
 })));
