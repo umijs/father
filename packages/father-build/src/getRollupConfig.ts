@@ -111,7 +111,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   // umd 只要 external peerDependencies
   const externalPeerDeps = [
     ...Object.keys(pkg.peerDependencies || {}),
-    ...extraExternals,    
+    ...extraExternals,
   ];
 
   function getPkgNameByid(id) {
@@ -151,6 +151,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         extract: extractCSS,
         inject: injectCSS,
         modules,
+        // modules => all .less will convert into css modules
+        ...(modules ? { autoModules: false } : {}),
         minimize: !!minCSS,
         use: {
           less: {
