@@ -66,7 +66,7 @@
     "storybook-addon-source": "^2.0.9",
     "umi-test": "^1.5.10",
     "update-notifier": "3.0.0",
-    "yargs-parser": "13.1.1"
+    "yargs-parser": "13.1.2"
   },
   "authors": [
     "clock157 <clock157@163.com> (https://github.com/clock157)",
