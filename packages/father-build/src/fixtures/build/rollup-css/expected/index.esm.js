@@ -25,7 +25,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = "\n.a { color: green; }\n";
+var css_248z = "\n.a {\n  color: green;\n  display: -webkit-box;\n  -webkit-box-orient: vertical;\n  -webkit-box-align: stretch;\n}\n";
 styleInject(css_248z);
 
 console.log('foo');

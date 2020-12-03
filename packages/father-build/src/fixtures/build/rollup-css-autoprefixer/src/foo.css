@@ -2,9 +2,3 @@
 .a {
   display: flex;
 }
-
-.b {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-box-align: stretch;
-}
