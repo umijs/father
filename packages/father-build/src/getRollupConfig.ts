@@ -165,7 +165,11 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           },
           stylus: false,
         },
-        plugins: [autoprefixer(autoprefixerOpts), ...extraPostCSSPlugins],
+        plugins: [autoprefixer({
+          // https://github.com/postcss/autoprefixer/issues/776
+          remove: false,
+          ...autoprefixerOpts,
+        }), ...extraPostCSSPlugins],
       }),
       ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
       ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
