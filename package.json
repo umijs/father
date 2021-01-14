@@ -10,7 +10,7 @@
     "publish": "npm run build && lerna publish"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^26.0.20",
     "lerna": "^3.6.0",
     "lerna-changelog": "^0.8.2",
     "puppeteer": "^1.17.0",
