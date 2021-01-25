@@ -7,6 +7,7 @@ export default {
     entry: {
       oneOf: [noEmptyStr, { type: 'array', items: noEmptyStr }],
     },
+    outputPath: { type: 'string' },
     file: { type: 'string' },
     esm: {
       oneOf: [

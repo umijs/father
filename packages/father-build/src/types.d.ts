@@ -30,6 +30,7 @@ interface IUmd {
 
 export interface IBundleOptions {
   entry?: string | string[];
+  outputPath?: string;
   file?: string;
   esm?: BundleType | IEsm | false;
   cjs?: BundleType | ICjs | false;

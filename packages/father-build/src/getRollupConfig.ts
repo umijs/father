@@ -39,6 +39,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     esm,
     cjs,
     file,
+    outputPath = 'dist',
     target = 'browser',
     extractCSS = false,
     injectCSS = true,
@@ -218,7 +219,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           input,
           output: {
             format,
-            file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
+            file: join(cwd, `${outputPath}/${(esm && (esm as any).file) || `${name}.esm`}.js`),
           },
           plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),
@@ -229,7 +230,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 input,
                 output: {
                   format,
-                  file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}`}.mjs`),
+                  file: join(cwd, `${outputPath}/${(esm && (esm as any).file) || `${name}`}.mjs`),
                 },
                 plugins: [
                   ...getPlugins(),
@@ -250,7 +251,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           input,
           output: {
             format,
-            file: join(cwd, `dist/${(cjs && (cjs as any).file) || name}.js`),
+            file: join(cwd, `${outputPath}/${(cjs && (cjs as any).file) || name}.js`),
           },
           plugins: [...getPlugins(), ...(cjs && (cjs as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),
@@ -272,7 +273,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           output: {
             format,
             sourcemap: umd && umd.sourcemap,
-            file: join(cwd, `dist/${(umd && umd.file) || `${name}.umd`}.js`),
+            file: join(cwd, `${outputPath}/${(umd && umd.file) || `${name}.umd`}.js`),
             globals: umd && umd.globals,
             name: (umd && umd.name) || (pkg.name && camelCase(basename(pkg.name))),
           },
@@ -293,7 +294,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 output: {
                   format,
                   sourcemap: umd && umd.sourcemap,
-                  file: join(cwd, `dist/${(umd && umd.file) || `${name}.umd`}.min.js`),
+                  file: join(cwd, `${outputPath}/${(umd && umd.file) || `${name}.umd`}.min.js`),
                   globals: umd && umd.globals,
                   name: (umd && umd.name) || (pkg.name && camelCase(basename(pkg.name))),
                 },

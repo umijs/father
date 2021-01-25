@@ -112,9 +112,10 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   for (const bundleOpts of bundleOptsArray) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
 
+    const { outputPath = 'dist' } = bundleOpts;
     // Clean dist
-    log(chalk.gray(`Clean dist directory`));
-    rimraf.sync(join(cwd, 'dist'));
+    log(chalk.gray(`Clean ${outputPath} directory`));
+    rimraf.sync(join(cwd, `${outputPath}`));
 
     // Build umd
     if (bundleOpts.umd) {
