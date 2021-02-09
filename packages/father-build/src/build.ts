@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import * as assert from 'assert';
@@ -12,6 +12,8 @@ import registerBabel from './registerBabel';
 import { getExistFile } from './utils';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import randomColor from "./randomColor";
+
+const { getPackages } = require('@lerna/project');
 
 export function getBundleOpts(opts: IOpts): IBundleOptions[] {
   const { cwd, buildArgs = {}, rootConfig = {} } = opts;
@@ -39,7 +41,7 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
     if (typeof bundleOpts.cjs === 'string') {
       bundleOpts.cjs = { type: bundleOpts.cjs };
     }
-
+    
     return bundleOpts;
   });
 }
@@ -109,6 +111,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
 
   // Get user config
   const bundleOptsArray = getBundleOpts(opts);
+
   for (const bundleOpts of bundleOptsArray) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
 
@@ -179,34 +182,23 @@ export async function buildForLerna(opts: IOpts) {
   });
 
   const userConfig = merge(getUserConfig({ cwd }), opts.rootConfig || {});
-  let pkgs = readdirSync(join(cwd, 'packages'));
+
+  let pkgs = await getPackages(cwd);
 
   // support define pkgs in lerna
+  // TODO: 使用lerna包解决依赖编译问题
   if (userConfig.pkgs) {
-    pkgs = userConfig.pkgs;
+    pkgs = userConfig.pkgs
+      .map((item) => {
+        return pkgs.find(pkg => pkg.contents.endsWith(item))
+      })
+      .filter(Boolean);
   }
-
-  // 支持 scope
-  pkgs = pkgs.reduce((memo, pkg) => {
-    const pkgPath = join(cwd, 'packages', pkg);
-    if (statSync(pkgPath).isDirectory()) {
-      if (pkg.startsWith('@')) {
-        readdirSync(join(cwd, 'packages', pkg)).filter(subPkg => {
-          if (statSync(join(cwd, 'packages', pkg, subPkg)).isDirectory()) {
-            memo = memo.concat(`${pkg}/${subPkg}`);
-          }
-        });
-      } else {
-        memo = memo.concat(pkg);
-      }
-    }
-    return memo;
-  }, []);
 
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
     // build error when .DS_Store includes in packages root
-    const pkgPath = join(cwd, 'packages', pkg);
+    const pkgPath = pkg.contents;
     assert.ok(
       existsSync(join(pkgPath, 'package.json')),
       `package.json not found in packages/${pkg}`,

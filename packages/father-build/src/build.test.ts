@@ -1,8 +1,10 @@
-import { join, basename } from 'path';
+import { join, basename, sep } from 'path';
 import { existsSync, readdirSync, renameSync, statSync } from 'fs';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 import build from './build';
+
+const { getPackagesSync } = require('@lerna/project');
 
 function moveEsLibToDist(cwd) {
   ['es', 'lib'].forEach(dir => {
@@ -32,19 +34,16 @@ describe('father build', () => {
         // lerna
         if (existsSync(join(cwd, 'lerna.json'))) {
           mkdirp.sync(join(cwd, 'dist'));
-          const pkgs = readdirSync(join(cwd, 'packages'));
+          const pkgs = getPackagesSync(cwd)
           for (let pkg of pkgs) {
-            // TODO: hard code
-            if (pkg === '@hoo') {
-              pkg = '@hoo/bar';
-            }
-            const pkgPath = join(cwd, 'packages', pkg);
+           
+            const pkgPath = pkg.contents;
+            
             if (!statSync(pkgPath).isDirectory()) continue;
             moveEsLibToDist(pkgPath);
             renameSync(
               join(pkgPath, 'dist'),
-              // @foo/bar -> bar
-              join(cwd, 'dist', pkg.split('/').slice(-1).join(''))
+              join(cwd, 'dist', pkgPath.split(sep).pop())
             );
           }
         }
