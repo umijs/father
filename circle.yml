@@ -28,7 +28,7 @@ jobs:
       - run: npm run bootstrap
       - run: npm run build
       - run:
-          command: npm test -- --forceExit --detectOpenHandles --maxWorkers=4
+          command: npm test -- --forceExit
           no_output_timeout: 300m
       - run: bash <(curl -s https://codecov.io/bash)
       - save_cache:
