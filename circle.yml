@@ -24,14 +24,14 @@ jobs:
       - checkout
       - restore_cache:
           key: node-modules-{{ checksum "package.json" }}
-      - run: yarn
-      - run: yarn bootstrap --npm-client yarn
-      - run: yarn build
+      - run: npm install
+      - run: npm run bootstrap
+      - run: npm run build
       - run:
-          command: yarn test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
+          command: npm test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
           no_output_timeout: 300m
       - run: bash <(curl -s https://codecov.io/bash)
       - save_cache:
           key: node-modules-{{ checksum "package.json" }}
           paths:
-            - ./node_modules
+            - ~/.cache/npm
