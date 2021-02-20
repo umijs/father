@@ -1,10 +1,9 @@
 import { join, basename, sep } from 'path';
+import { getPackagesSync } from '@lerna/project';
 import { existsSync, readdirSync, renameSync, statSync } from 'fs';
 import mkdirp from 'mkdirp';
 import rimraf from 'rimraf';
 import build from './build';
-
-const { getPackagesSync } = require('@lerna/project');
 
 function moveEsLibToDist(cwd) {
   ['es', 'lib'].forEach(dir => {

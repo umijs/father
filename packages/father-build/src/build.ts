@@ -5,6 +5,7 @@ import * as assert from 'assert';
 import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
+import { getPackages } from '@lerna/project';
 import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm } from './types';
 import babel from './babel';
 import rollup from './rollup';
@@ -12,8 +13,6 @@ import registerBabel from './registerBabel';
 import { getExistFile } from './utils';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import randomColor from "./randomColor";
-
-const { getPackages } = require('@lerna/project');
 
 export function getBundleOpts(opts: IOpts): IBundleOptions[] {
   const { cwd, buildArgs = {}, rootConfig = {} } = opts;
