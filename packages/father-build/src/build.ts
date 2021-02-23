@@ -40,7 +40,7 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
     if (typeof bundleOpts.cjs === 'string') {
       bundleOpts.cjs = { type: bundleOpts.cjs };
     }
-    
+
     return bundleOpts;
   });
 }
