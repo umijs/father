@@ -186,14 +186,21 @@ export async function buildForLerna(opts: IOpts) {
     pkgs = userConfig.pkgs;
   }
 
-  // 支持 scope
   pkgs = pkgs.reduce((memo, pkg) => {
     const pkgPath = join(cwd, 'packages', pkg);
     if (statSync(pkgPath).isDirectory()) {
-      if (pkg.startsWith('@')) {
+
+      // 支持对指定 scope 下的所有包进行统一顺序设置，例如 ['@scope', 'other-package']
+      if (pkg.startsWith('@') && pkg.indexOf('/') === -1) {
         readdirSync(join(cwd, 'packages', pkg)).filter(subPkg => {
-          if (statSync(join(cwd, 'packages', pkg, subPkg)).isDirectory()) {
-            memo = memo.concat(`${pkg}/${subPkg}`);
+          const scopePkg = `${pkg}/${subPkg}`;
+
+          if (
+            statSync(join(cwd, 'packages', pkg, subPkg)).isDirectory() &&
+            // 避免重复处理子包，可支持 ['@scope/foo', 'other-package', '@scope'] 的写法
+            memo.indexOf(scopePkg) === -1
+          ) {
+            memo = memo.concat(scopePkg);
           }
         });
       } else {
