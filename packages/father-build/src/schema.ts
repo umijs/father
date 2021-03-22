@@ -106,6 +106,9 @@ export default {
         { type: 'object' }
       ]
     },
+    alias: {
+      type: 'array',
+    },
     runtimeHelpers: {
       type: 'boolean',
     },

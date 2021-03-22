@@ -3,6 +3,7 @@ import { ModuleFormat, RollupOptions } from 'rollup';
 import url from '@rollup/plugin-url';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import inject, { RollupInjectOptions } from '@rollup/plugin-inject';
@@ -51,6 +52,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     include = /node_modules/,
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
+    alias: aliasOpts = [],
     inject: injectOpts,
     extraExternals = [],
     externalsExclude = [],
@@ -172,7 +174,14 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         }), ...extraPostCSSPlugins],
       }),
       ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
-      ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
+      ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace({
+        preventAssignment: true,
+        values: replaceOpts,
+      })] : []),
+      // 使用 @rollup/plugin-alias 处理别名
+      ...(aliasOpts?.length > 0 ? [alias({
+        entries: [...aliasOpts],
+      })] : []),
       nodeResolve({
         mainFields: ['module', 'jsnext:main', 'main'],
         extensions,
