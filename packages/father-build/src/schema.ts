@@ -103,7 +103,8 @@ export default {
     include: {
       oneOf: [
         { type: 'string' },
-        { type: 'object' }
+        { type: 'object' },
+        { type: 'array' },
       ]
     },
     runtimeHelpers: {
