@@ -24,6 +24,7 @@ interface IBabelOpts {
   target?: "browser" | "node";
   log?: (string) => void;
   watch?: boolean;
+  sourcemap?: boolean;
   importLibToEs?: boolean;
   bundleOpts: IBundleOptions;
 }
@@ -42,6 +43,7 @@ export default async function(opts: IBabelOpts) {
     rootPath,
     type,
     watch,
+    sourcemap,
     importLibToEs,
     log,
     bundleOpts: {
@@ -90,6 +92,10 @@ export default async function(opts: IBabelOpts) {
         relFile
       )}`
     );
+
+    if (sourcemap) {
+      babelOpts.sourceMaps = 'inline'
+    }
 
     return babel.transform(file.contents, {
       ...babelOpts,
