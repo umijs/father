@@ -14,7 +14,7 @@ import gulpPlumber from 'gulp-plumber';
 import gulpIf from "gulp-if";
 import chalk from "chalk";
 import getBabelConfig from "./getBabelConfig";
-import { IBundleOptions } from "./types";
+import { Dispose, IBundleOptions } from "./types";
 import * as ts from "typescript";
 
 interface IBabelOpts {
@@ -24,6 +24,7 @@ interface IBabelOpts {
   target?: "browser" | "node";
   log?: (string) => void;
   watch?: boolean;
+  dispose?: Dispose[];
   importLibToEs?: boolean;
   bundleOpts: IBundleOptions;
 }
@@ -42,6 +43,7 @@ export default async function(opts: IBabelOpts) {
     rootPath,
     type,
     watch,
+    dispose,
     importLibToEs,
     log,
     bundleOpts: {
@@ -228,6 +230,7 @@ export default async function(opts: IBabelOpts) {
         process.once("SIGINT", () => {
           watcher.close();
         });
+        dispose?.push(() => watcher.close());
       }
       resolve();
     });

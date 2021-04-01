@@ -6,7 +6,7 @@ import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
 import { getPackages } from '@lerna/project';
-import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm } from './types';
+import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm, Dispose } from './types';
 import babel from './babel';
 import rollup from './rollup';
 import registerBabel from './registerBabel';
@@ -98,6 +98,8 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   const { cwd, rootPath, watch } = opts;
   const { pkg } = extraOpts;
 
+  const dispose: Dispose[] = [];
+
   // register babel for config files
   registerBabel({
     cwd,
@@ -127,6 +129,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
         type: 'umd',
         entry: bundleOpts.entry,
         watch,
+        dispose,
         bundleOpts,
       });
     }
@@ -136,7 +139,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       const cjs = bundleOpts.cjs as IBundleTypeOutput;
       log(`Build cjs with ${cjs.type}`);
       if (cjs.type === 'babel') {
-        await babel({ cwd, rootPath, watch, type: 'cjs', log, bundleOpts });
+        await babel({ cwd, rootPath, watch, dispose, type: 'cjs', log, bundleOpts });
       } else {
         await rollup({
           cwd,
@@ -144,6 +147,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
           type: 'cjs',
           entry: bundleOpts.entry,
           watch,
+          dispose,
           bundleOpts,
         });
       }
@@ -155,7 +159,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       log(`Build esm with ${esm.type}`);
       const importLibToEs = esm && esm.importLibToEs;
       if (esm && esm.type === 'babel') {
-        await babel({ cwd, rootPath, watch, type: 'esm', importLibToEs, log, bundleOpts });
+        await babel({ cwd, rootPath, watch, dispose, type: 'esm', importLibToEs, log, bundleOpts });
       } else {
         await rollup({
           cwd,
@@ -164,11 +168,14 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
           entry: bundleOpts.entry,
           importLibToEs,
           watch,
+          dispose,
           bundleOpts,
         });
       }
     }
   }
+
+  return dispose;
 }
 
 export async function buildForLerna(opts: IOpts) {
@@ -194,6 +201,7 @@ export async function buildForLerna(opts: IOpts) {
       .filter(Boolean);
   }
 
+  const dispose: Dispose[] = [];
   for (const pkg of pkgs) {
     if (process.env.PACKAGE && pkg !== process.env.PACKAGE) continue;
     // build error when .DS_Store includes in packages root
@@ -203,7 +211,7 @@ export async function buildForLerna(opts: IOpts) {
       `package.json not found in packages/${pkg}`,
     );
     process.chdir(pkgPath);
-    await build(
+    dispose.push(...await build(
       {
         // eslint-disable-line
         ...opts,
@@ -215,15 +223,15 @@ export async function buildForLerna(opts: IOpts) {
       {
         pkg,
       },
-    );
+    ));
   }
+  return dispose;
 }
 
 export default async function(opts: IOpts) {
   const useLerna = existsSync(join(opts.cwd, 'lerna.json'));
-  if (useLerna && process.env.LERNA !== 'none') {
-    await buildForLerna(opts);
-  } else {
-    await build(opts);
-  }
+  const isLerna = useLerna && process.env.LERNA !== 'none';
+
+  const dispose = isLerna ? await buildForLerna(opts) : await build(opts);
+  return () => dispose.forEach(e => e());
 }

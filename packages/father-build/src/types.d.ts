@@ -92,3 +92,5 @@ export interface IOpts {
   rootConfig?: IBundleOptions;
   rootPath?: string;
 }
+
+export type Dispose = () => void;
