@@ -91,7 +91,7 @@ function isTypescriptFile(filePath) {
 }
 
 interface IExtraBuildOpts {
-  pkg?: string;
+  pkg?: string | { name?: string };
 }
 
 export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
@@ -106,8 +106,10 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     only: CONFIG_FILES,
   });
 
+  const pkgName = (typeof pkg === 'string' ? pkg : pkg?.name) || 'unknown';
+
   function log(msg) {
-    console.log(`${pkg ? `${randomColor(`${pkg}`)}: ` : ''}${msg}`);
+    console.log(`${pkg ? `${randomColor(`${pkgName}`)}: ` : ''}${msg}`);
   }
 
   // Get user config
