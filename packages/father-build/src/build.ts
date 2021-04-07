@@ -127,6 +127,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       log(`Build umd`);
       await rollup({
         cwd,
+        rootPath,
         log,
         type: 'umd',
         entry: bundleOpts.entry,
@@ -145,6 +146,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       } else {
         await rollup({
           cwd,
+          rootPath,
           log,
           type: 'cjs',
           entry: bundleOpts.entry,
@@ -165,6 +167,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       } else {
         await rollup({
           cwd,
+          rootPath,
           log,
           type: 'esm',
           entry: bundleOpts.entry,
