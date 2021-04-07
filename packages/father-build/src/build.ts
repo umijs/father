@@ -106,10 +106,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     only: CONFIG_FILES,
   });
 
-  let pkgName = pkg
-  if(typeof pkg !== "string"){
-      pkgName = pkg ? pkg.name || pkg.toString() : "unknown"
-  }
+  const pkgName = (typeof pkg === 'string' ? pkg : pkg?.name) || 'unknown';
 
   function log(msg) {
     console.log(`${pkg ? `${randomColor(`${pkgName}`)}: ` : ''}${msg}`);
