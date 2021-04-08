@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import { basename, extname, join } from 'path';
 import { ModuleFormat, RollupOptions } from 'rollup';
 import url from '@rollup/plugin-url';
@@ -20,6 +21,7 @@ import { IBundleOptions } from './types';
 
 interface IGetRollupConfigOpts {
   cwd: string;
+  rootPath: string;
   entry: string;
   type: ModuleFormat;
   importLibToEs?: boolean;
@@ -33,7 +35,7 @@ interface IPkg {
 }
 
 export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
-  const { type, entry, cwd, importLibToEs, bundleOpts } = opts;
+  const { type, entry, cwd, rootPath, importLibToEs, bundleOpts } = opts;
   const {
     umd,
     esm,
@@ -185,9 +187,9 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
             clean: true,
             cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
-            // TODO: 支持往上找 tsconfig.json
+            // 支持往上找 tsconfig.json
             // 比如 lerna 的场景不需要每个 package 有个 tsconfig.json
-            tsconfig: join(cwd, 'tsconfig.json'),
+            tsconfig: [join(cwd, 'tsconfig.json'), join(rootPath, 'tsconfig.json')].find(existsSync),
             tsconfigDefaults: {
               compilerOptions: {
                 // Generate declaration files by default
