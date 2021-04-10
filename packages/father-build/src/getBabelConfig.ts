@@ -19,6 +19,7 @@ interface IGetBabelConfigOpts {
     paths?: any[];
     plugins?: any[];
   };
+  reserveLess: boolean
 }
 
 function transformImportLess2Css() {

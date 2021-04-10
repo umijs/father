@@ -138,6 +138,9 @@ export default {
         { type: 'object' },
       ],
     },
+    reserveLess: {
+      type: 'boolean'
+    },
     browserFiles: {
       type: 'array',
     },

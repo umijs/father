@@ -46,6 +46,7 @@
     "less": "3.9.0",
     "less-plugin-npm-import": "2.1.0",
     "lodash": "4.17.19",
+    "minimatch": "^3.0.4",
     "rimraf": "2.6.3",
     "rollup": "2.33.3",
     "rollup-plugin-postcss": "3.1.8",

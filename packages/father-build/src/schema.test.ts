@@ -13,6 +13,7 @@ const successValidates = {
   extraBabelPresets: [[]],
   extraPostCSSPlugins: [[]],
   lessInRollupMode: [{}],
+  reserveLess: [true],
   cssModules: [true, false, {}],
   autoprefixer: [{}],
   include: ['node_modules', /node_modules/],

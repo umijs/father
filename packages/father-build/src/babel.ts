@@ -16,6 +16,7 @@ import chalk from "chalk";
 import getBabelConfig from "./getBabelConfig";
 import { Dispose, IBundleOptions } from "./types";
 import * as ts from "typescript";
+import { isValidPath } from "./utils";
 
 interface IBabelOpts {
   cwd: string;
@@ -55,6 +56,7 @@ export default async function(opts: IBabelOpts) {
       nodeFiles = [],
       nodeVersion,
       disableTypeCheck,
+      reserveLess = false,
       cjs,
       lessInBabelMode
     }
@@ -77,8 +79,10 @@ export default async function(opts: IBabelOpts) {
       browserFiles,
       nodeFiles,
       nodeVersion,
+      // @ts-ignore
       lazy: cjs && cjs.lazy,
-      lessInBabelMode
+      lessInBabelMode,
+      reserveLess
     });
     if (importLibToEs && type === "esm") {
       babelOpts.plugins.push(require.resolve("../lib/importLibToEs"));
@@ -143,7 +147,7 @@ export default async function(opts: IBabelOpts) {
     function isTransform(path) {
       return babelTransformRegexp.test(path) && !path.endsWith(".d.ts");
     }
-
+    
     return vfs
       .src(src, {
         allowEmpty: true,
@@ -153,9 +157,9 @@ export default async function(opts: IBabelOpts) {
       .pipe(
         gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig))
       )
+      .pipe(reserveLess ? vfs.dest(targetPath) : through.obj())
       .pipe(
-        gulpIf(
-          f => lessInBabelMode && /\.less$/.test(f.path),
+        gulpIf(f => lessInBabelMode && /\.less$/.test(f.path) && isValidPath(lessInBabelMode, f.path),
           gulpLess(lessInBabelMode || {})
         )
       )
@@ -184,7 +188,7 @@ export default async function(opts: IBabelOpts) {
       .pipe(vfs.dest(targetPath));
   }
 
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     const patterns = [
       join(srcPath, "**/*"),
       `!${join(srcPath, "**/fixtures{,/**}")}`,

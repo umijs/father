@@ -28,6 +28,12 @@ interface IUmd {
   sourcemap?: boolean;
 }
 
+type LessInBabelMode = boolean | {
+  paths?: any[];
+  plugins?: any[];
+  exclude?: string[]
+}
+
 export interface IBundleOptions {
   entry?: string | string[];
   file?: string;
@@ -66,10 +72,8 @@ export interface IBundleOptions {
     eslint?: boolean;
     prettier?: boolean;
   };
-  lessInBabelMode?: boolean | {
-    paths?: any[];
-    plugins?: any[];
-  };
+  reserveLess: boolean
+  lessInBabelMode?: LessInBabelMode;
   typescriptOpts?: {
     [value: string]: any;
   };
