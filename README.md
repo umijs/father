@@ -320,7 +320,7 @@ export default {
 
 是否在 \<head>里注入css, 如果`extractCSS: true`，则为`false`
 
-* Type: `boolean`
+* Type: `boolean | function`
 * Default: `true`
 
 #### extraBabelPresets
