@@ -95,7 +95,7 @@ export default {
       type: 'boolean',
     },
     injectCSS: {
-      type: 'boolean',
+      oneOf: [{ type: 'boolean' }, { instanceof: 'Function' }],
     },
     autoprefixer: {
       type: 'object',

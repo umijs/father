@@ -20,7 +20,20 @@ export const CONFIG_FILES = [
   '.umirc.library.ts',
   '.umirc.library.tsx',
 ];
-
+const CLASSES = {
+  Function: Function,
+};
+const extendAjv = (ajv: AJV.Ajv) => {
+  ajv.addKeyword('instanceof', {
+    compile: function(schema: string) {
+      var Class = CLASSES[schema];
+      return function(data: any) {
+        return data instanceof Class;
+      };
+    }
+  });
+  return ajv;
+}
 export default function({ cwd }): IBundleOptions {
   const configFile = getExistFile({
     cwd,
@@ -36,7 +49,7 @@ export default function({ cwd }): IBundleOptions {
     const userConfig = testDefault(require(configFile)); // eslint-disable-line
     const userConfigs = Array.isArray(userConfig) ? userConfig : [userConfig];
     userConfigs.forEach(userConfig => {
-    const ajv = new AJV({ allErrors: true });
+      const ajv = extendAjv(new AJV({ allErrors: true }));
       const isValid = ajv.validate(schema, userConfig);
       if (!isValid) {
         const errors = ajv.errors.map(({ dataPath, message }, index) => {
