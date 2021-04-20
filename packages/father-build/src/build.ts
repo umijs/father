@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join, basename } from 'path';
 import rimraf from 'rimraf';
 import * as assert from 'assert';
 import { merge } from 'lodash';
@@ -201,7 +201,7 @@ export async function buildForLerna(opts: IOpts) {
   if (userConfig.pkgs) {
     pkgs = userConfig.pkgs
       .map((item) => {
-        return pkgs.find(pkg => pkg.contents.endsWith(item))
+        return pkgs.find(pkg => basename(pkg.contents) === item);
       })
       .filter(Boolean);
   }
