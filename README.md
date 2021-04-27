@@ -398,11 +398,11 @@ export default {
 
 #### include
 
-配置 rollup-plugin-commonjs 的 [include][https://github.com/rollup/rollup-plugin-commonjs#usage]。
+配置 @rollup/plugin-commonjs 的 [include][https://github.com/rollup/plugins/tree/master/packages/commonjs]。
 
 #### nodeResolveOpts
 
-配置 [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve) 参数。
+配置 [@rollup/plugin-node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) 参数。
 
 #### disableTypeCheck
 
@@ -453,7 +453,7 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 
 #### replace
 
-配置需要替换的内容，基于 [rollup-plugin-replace](https://github.com/rollup/rollup-plugin-replace)。
+配置需要替换的内容，基于 [@rollup/plugin-replace](https://github.com/rollup/plugins/tree/master/packages/replace)。
 
 * Type: `Object`
 * Default: `{}`
@@ -473,9 +473,33 @@ export default {
 }
 ```
 
+#### alias
+
+配置别名，基于 [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/master/packages/alias)。
+
+* Type: `Array`
+* Default: `[]`
+
+注：
+
+1. babel 模式下暂不支持
+
+比如：
+
+```js
+export default {
+  alias: [
+    {
+       find: /^@\/(.*)/,
+       replacement: './packages/packageA/src/$1',
+    },
+  ],
+}
+```
+
 #### inject
 
-配置需要替换成依赖引用的全局变量 Map，基于 [rollup-plugin-inject](https://github.com/rollup/rollup-plugin-inject)。
+配置需要替换成依赖引用的全局变量 Map，基于 [@rollup/plugin-inject](https://github.com/rollup/plugins/tree/master/packages/inject)。
 
 * Type: `Object`
 * Default: `{}`

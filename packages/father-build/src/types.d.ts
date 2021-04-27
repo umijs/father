@@ -1,3 +1,5 @@
+import { Alias } from '@rollup/plugin-alias';
+
 export type BundleType = 'rollup' | 'babel';
 
 interface IBundleTypeOutput {
@@ -54,6 +56,7 @@ export interface IBundleOptions {
   replace?: {
     [value: string]: any;
   };
+  alias?: Alias[]
   browserFiles?: {
     [value: string]: any;
   };

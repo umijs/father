@@ -107,6 +107,9 @@ export default {
         { type: 'array' },
       ]
     },
+    alias: {
+      type: 'array',
+    },
     runtimeHelpers: {
       type: 'boolean',
     },
