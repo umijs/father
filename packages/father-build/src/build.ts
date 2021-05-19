@@ -184,7 +184,7 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
 }
 
 export async function buildForLerna(opts: IOpts) {
-  const { cwd } = opts;
+  const { cwd, rootConfig = {}, buildArgs = {} } = opts;
 
   // register babel for config files
   registerBabel({
@@ -192,7 +192,7 @@ export async function buildForLerna(opts: IOpts) {
     only: CONFIG_FILES,
   });
 
-  const userConfig = merge(getUserConfig({ cwd }), opts.rootConfig || {});
+  const userConfig = merge(getUserConfig({ cwd }), rootConfig, buildArgs);
 
   let pkgs = await getPackages(cwd);
 
