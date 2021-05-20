@@ -23,6 +23,7 @@ const successValidates = {
   doc: [{}],
   typescriptOpts: [{}],
   pkgs: [[]],
+  autoPkgs: [true, false]
 };
 
 Object.keys(successValidates).forEach(key => {
