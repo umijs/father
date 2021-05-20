@@ -5,7 +5,6 @@ import * as assert from 'assert';
 import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
-import PQueue from 'p-queue';
 import { getPackages } from '@lerna/project';
 import { QueryGraph } from '@lerna/query-graph';
 import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm, Dispose } from './types';
@@ -208,31 +207,26 @@ export async function buildForLerna(opts: IOpts) {
   }
 
   if (userConfig.autoPkgs && !userConfig.pkgs) {
-    const queue = new PQueue({ concurrency: 1 });
     const graph = new QueryGraph(pkgs, 'allDependencies', true);
 
     function getNextPackages() {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const returnValues = [];
     
         const queueNextAvailablePackages = () =>
           graph.getAvailablePackages()
             .forEach(({ pkg, name }) => {
               graph.markAsTaken(name);
-      
-              queue
-                .add(() =>
-                  Promise.resolve(pkg)
-                    .then((value) => returnValues.push(value))
-                    .then(() => graph.markAsDone(pkg))
-                    .then(() => queueNextAvailablePackages())
-                )
-                .catch(reject);
+
+              Promise.resolve(pkg)
+                .then((value) => returnValues.push(value))
+                .then(() => graph.markAsDone(pkg))
+                .then(() => queueNextAvailablePackages())
             });
     
         queueNextAvailablePackages();
-    
-        return queue.onIdle().then(() => resolve(returnValues));
+
+        setTimeout(() => { resolve(returnValues); }, 0);
       });
     }
 
