@@ -45,8 +45,9 @@ export interface IBundleOptions {
   externalsExclude?: string[];
   cssModules?: boolean | Object;
   extractCSS?: boolean;
-  injectCSS?: boolean,
-  inject?: Object,
+  injectCSS?: boolean;
+  inject?: Object;
+  alias?: Object;
   autoprefixer?: Object;
   include?: string | RegExp;
   namedExports?: IStringArrayObject;

@@ -128,6 +128,9 @@ export default {
     sassInRollupMode: {
       type: 'object'
     },
+    alias: {
+      type: 'object',
+    },
     lessInBabelMode: {
       oneOf: [
         { type: 'boolean' },

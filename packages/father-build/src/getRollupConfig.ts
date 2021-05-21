@@ -8,6 +8,7 @@ import typescript from 'rollup-plugin-typescript2';
 import commonjs from 'rollup-plugin-commonjs';
 import postcss from 'rollup-plugin-postcss-umi';
 import inject from 'rollup-plugin-inject';
+import alias from '@rollup/plugin-alias';
 import { ModuleFormat, RollupOptions } from 'rollup';
 import { camelCase } from 'lodash';
 import tempDir from 'temp-dir';
@@ -53,6 +54,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
     inject: injectOpts,
+    alias: aliasOpts,
     extraExternals = [],
     externalsExclude = [],
     nodeVersion,
@@ -161,6 +163,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       ],
       plugins: [autoprefixer(autoprefixerOpts), ...extraPostCSSPlugins],
     }),
+    // @see https://github.com/umijs/father/issues/356
+    ...(aliasOpts ? [alias(aliasOpts)] : []),
     ...(injectOpts ? [inject(injectOpts)] : []),
     ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
     nodeResolve({
