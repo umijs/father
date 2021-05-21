@@ -473,6 +473,26 @@ export default {
 }
 ```
 
+### alias
+
+配置需要替换的别名路径，基于 [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/master/packages/alias#readme)。
+
+- Type: `Object`
+- Default: `{}`
+
+比如：
+
+```js
+import path from 'path';
+
+// dumi 中引入别名路径
+export default {
+  alias: {
+    entries: [{ find: '@', replacement: path.join(__dirname, 'src') }],
+  },
+};
+```
+
 #### inject
 
 配置需要替换成依赖引用的全局变量 Map，基于 [rollup-plugin-inject](https://github.com/rollup/rollup-plugin-inject)。

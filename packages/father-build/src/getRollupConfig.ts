@@ -8,6 +8,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import inject, { RollupInjectOptions } from '@rollup/plugin-inject';
 import babel, { RollupBabelInputPluginOptions } from '@rollup/plugin-babel';
+import alias, { RollupAliasOptions } from '@rollup/plugin-alias';
 import postcss from 'rollup-plugin-postcss';
 import { terser } from 'rollup-plugin-terser';
 import typescript2 from 'rollup-plugin-typescript2';
@@ -54,6 +55,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
     inject: injectOpts,
+    alias: aliasOpts,
     extraExternals = [],
     externalsExclude = [],
     nodeVersion,
@@ -173,6 +175,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           ...autoprefixerOpts,
         }), ...extraPostCSSPlugins],
       }),
+      // @see https://github.com/umijs/father/issues/356
+      ...(aliasOpts ? [alias(aliasOpts as RollupAliasOptions)] : []),
       ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
       ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
       nodeResolve({
