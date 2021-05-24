@@ -1,5 +1,4 @@
 
 export default {
-  esm: { type: 'rollup' },
-  autoPkgs: true
+  esm: { type: 'rollup' }
 }

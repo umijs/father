@@ -204,9 +204,7 @@ export async function buildForLerna(opts: IOpts) {
         return pkgs.find(pkg => basename(pkg.contents) === item);
       })
       .filter(Boolean);
-  }
-
-  if (userConfig.autoPkgs && !userConfig.pkgs) {
+  } else {
     const graph = new QueryGraph(pkgs, 'allDependencies', true);
 
     function getNextPackages() {

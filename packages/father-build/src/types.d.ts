@@ -83,7 +83,6 @@ export interface IBundleOptions {
     [opt: string]: any
   };
   pkgs?: string[];
-  autoPkgs?: boolean;
 }
 
 export interface IOpts {

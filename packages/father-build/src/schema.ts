@@ -163,9 +163,6 @@ export default {
     },
     pkgs: {
       type: 'array',
-    },
-    autoPkgs: {
-      type: 'boolean',
-    },
+    }
   },
 };
