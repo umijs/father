@@ -220,7 +220,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           input,
           output: {
             format,
-            file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
+            dir: entry.length > 1 && (esm && (esm as any).outputDir) || "dist",
+            file: entry.length === 1 && join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
           },
           plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),
