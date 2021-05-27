@@ -219,7 +219,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       // https://rollupjs.org/guide/en/#code-splitting
       if (entry.length > 1) {
         output = {
-          dir: (esm && (esm as any).outputDir) || "dist",
+          dir: (esm && (esm as any).dir) || "dist",
           entryFileNames: `${name}.esm.js`,
         }
       } else {
