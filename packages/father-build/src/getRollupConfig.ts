@@ -215,13 +215,24 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
 
   switch (type) {
     case 'esm':
+      let output = {}
+      // https://rollupjs.org/guide/en/#code-splitting
+      if (entry.length > 1) {
+        output = {
+          dir: (esm && (esm as any).outputDir) || "dist",
+          entryFileNames: `${name}.esm.js`,
+        }
+      } else {
+        output = {
+          file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
+        }
+      }
       return [
         {
           input,
           output: {
             format,
-            dir: entry.length > 1 && (esm && (esm as any).outputDir) || "dist",
-            file: entry.length === 1 && join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
+            ...output,
           },
           plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),

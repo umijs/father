@@ -26,7 +26,7 @@ export default {
             importLibToEs: {
               type: 'boolean',
             },
-            outputDir: noEmptyStr
+            dir: noEmptyStr
           },
         },
       ],
