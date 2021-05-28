@@ -22,7 +22,7 @@ const successValidates = {
   overridesByEntry: [{}],
   doc: [{}],
   typescriptOpts: [{}],
-  pkgs: [[]],
+  pkgs: [[]]
 };
 
 Object.keys(successValidates).forEach(key => {

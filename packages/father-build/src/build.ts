@@ -6,6 +6,7 @@ import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
 import { getPackages } from '@lerna/project';
+import { QueryGraph } from '@lerna/query-graph';
 import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm, Dispose } from './types';
 import babel from './babel';
 import rollup from './rollup';
@@ -197,13 +198,37 @@ export async function buildForLerna(opts: IOpts) {
   let pkgs = await getPackages(cwd);
 
   // support define pkgs in lerna
-  // TODO: 使用lerna包解决依赖编译问题
   if (userConfig.pkgs) {
     pkgs = userConfig.pkgs
       .map((item) => {
         return pkgs.find(pkg => basename(pkg.contents) === item);
       })
       .filter(Boolean);
+  } else {
+    const graph = new QueryGraph(pkgs, 'allDependencies', true);
+
+    function getNextPackages() {
+      return new Promise((resolve) => {
+        const returnValues = [];
+    
+        const queueNextAvailablePackages = () =>
+          graph.getAvailablePackages()
+            .forEach(({ pkg, name }) => {
+              graph.markAsTaken(name);
+
+              Promise.resolve(pkg)
+                .then((value) => returnValues.push(value))
+                .then(() => graph.markAsDone(pkg))
+                .then(() => queueNextAvailablePackages())
+            });
+    
+        queueNextAvailablePackages();
+
+        setTimeout(() => { resolve(returnValues); }, 0);
+      });
+    }
+
+    pkgs = await getNextPackages();
   }
 
   const dispose: Dispose[] = [];

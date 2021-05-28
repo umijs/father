@@ -164,6 +164,6 @@ export default {
     },
     pkgs: {
       type: 'array',
-    },
+    }
   },
 };
