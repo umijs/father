@@ -149,6 +149,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   function getPlugins(opts = {} as { minCSS: boolean; }) {
     const { minCSS } = opts;
     return [
+      // @see https://github.com/umijs/father/issues/356
+      ...(aliasOpts ? [alias(aliasOpts as RollupAliasOptions)] : []),
       url(),
       svgr(),
       postcss({
@@ -175,8 +177,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           ...autoprefixerOpts,
         }), ...extraPostCSSPlugins],
       }),
-      // @see https://github.com/umijs/father/issues/356
-      ...(aliasOpts ? [alias(aliasOpts as RollupAliasOptions)] : []),
       ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
       ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
       nodeResolve({
