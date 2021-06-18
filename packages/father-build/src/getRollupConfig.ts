@@ -261,6 +261,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         {
           input,
           output: {
+            exports: 'auto',
             format,
             file: join(cwd, `dist/${(cjs && (cjs as any).file) || name}.js`),
           },
