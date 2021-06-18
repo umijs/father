@@ -44,6 +44,7 @@ export interface IBundleOptions {
   extractCSS?: boolean;
   injectCSS?: boolean | ((varname: string, filename: string) => string);
   inject?: Object;
+  alias?: Object;
   autoprefixer?: Object;
   include?: string | RegExp;
   runtimeHelpers?: boolean;

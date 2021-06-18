@@ -127,6 +127,9 @@ export default {
     inject: {
       type: 'object',
     },
+    alias: {
+      type: 'object',
+    },
     lessInRollupMode: {
       type: 'object'
     },
