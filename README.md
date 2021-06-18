@@ -406,7 +406,7 @@ export default {
 
 #### disableTypeCheck
 
-是否禁用类型检测。
+是否禁用类型检测。注意，该配置开启后 `babel` 模式下**将不会生成 TypeScript 类型定义**。
 
 * Type: `boolean`
 * Default: `false`
