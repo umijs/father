@@ -146,7 +146,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
 
   function getPlugins(opts = {} as { minCSS: boolean; }) {
     const { minCSS } = opts;
-    return [
+    const plugins = [
       url(),
       svgr(),
       postcss({
@@ -209,8 +209,18 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         : []),
       babel(babelOpts),
       json(),
-      ...(extraRollupPlugins || []),
     ];
+    (extraRollupPlugins || []).forEach(plugin => {
+        if(plugin.after || plugin.before || plugin.replace){
+            let index = plugins.findIndex(p => p.name === (plugin.after || plugin.before || plugin.replace))
+            if(index > -1) index += plugin.after ? 1 : 0
+            if(index < plugins.length) plugins.splice(index,plugin.replace ? 1 : 0,...plugin.plugins)
+            else plugins.push(...plugin.plugins)
+        }else{
+            plugins.push(plugin)
+        }
+    })
+    return plugins
   }
 
   switch (type) {

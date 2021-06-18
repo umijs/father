@@ -373,6 +373,24 @@ export default {
 };
 ```
 
+支持指定位置 
+
+`before` 在指定插件前插入 
+
+`after` 在指定插件后插入
+
+`replace` 替换指定插件
+
+```js
+import vue from 'rollup-plugin-vue'
+import url from 'rollup-plugin-url';
+
+export default {
+    //在babel插件前插入 vue 插件
+    extraRollupPlugins: [{ before: "babel", plugins: [vue()] }]
+}
+```
+
 #### extraExternals
 
 为 rollup 模式配置额外的 external，但不推荐这么做，external 可通过 dependencies 和 peerDependencies 的约定实现。
