@@ -40,7 +40,7 @@
     "chokidar": "^3.0.2",
     "glob": "^7.1.4",
     "gulp-if": "2.0.2",
-    "gulp-less": "^4.0.1",
+    "gulp-less": "^5.0.0",
     "gulp-plumber": "^1.2.1",
     "gulp-typescript": "5.0.1",
     "less": "3.9.0",
