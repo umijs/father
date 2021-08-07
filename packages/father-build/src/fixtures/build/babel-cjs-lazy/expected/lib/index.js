@@ -1,15 +1,5 @@
 "use strict";
 
-function _react() {
-  const data = _interopRequireDefault(require("react"));
-
-  _react = function _react() {
-    return data;
-  };
-
-  return data;
-}
-
 function _bar() {
   const data = _interopRequireDefault(require("bar"));
 
