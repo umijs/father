@@ -215,16 +215,11 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
 
   switch (type) {
     case 'esm':
-      let output: Record<string, any> = {
-        file: join(cwd, `dist/${(esm && (esm as any).file) || `${name}.esm`}.js`),
+      const output: Record<string, any> = {
+        dir: join(cwd, `${esm && (esm as any).dir || 'dist'}`),
+        entryFileNames: `${(esm && (esm as any).file) || `${name}.esm`}.js`,
       }
-      // https://rollupjs.org/guide/en/#code-splitting
-      if (entry.length > 1) {
-        output = {
-          dir: (esm && (esm as any).dir) || "dist",
-          entryFileNames: `${name}.esm.js`,
-        }
-      }
+    
       return [
         {
           input,
