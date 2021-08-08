@@ -2,6 +2,6 @@
 export default {
   esm: { 
     type: 'rollup', 
-    file: 'demo' 
+    file: 'demo.esm' 
   },
 };
