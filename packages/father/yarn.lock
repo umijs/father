@@ -10736,10 +10736,10 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-father-build@1.19.7:
-  version "1.19.7"
-  resolved "https://registry.yarnpkg.com/father-build/-/father-build-1.19.7.tgz#c28686140ca02c86104a0e3826b347425f52a8fd"
-  integrity sha512-FpQhVMQVpxPkplKfTQvL6vxdfeIc2HQHdNcXPUTQTrYxfVaYm8l+z6MQ5sK8E3SqsZ8JlbCSmwk4H9pL2hgVog==
+father-build@1.19.8:
+  version "1.19.8"
+  resolved "https://registry.yarnpkg.com/father-build/-/father-build-1.19.8.tgz#ec196c3d8daefccfb28f59265bb7e3e7610bf111"
+  integrity sha512-OF5Y8OTXi+dSitMGXuWqB2gBjir/84vlFXyL4qe0zhDO9pdpmE5hVIT7ZXYmxdzSmMBw5hYaBz6Q4XKRYT8y9Q==
   dependencies:
     "@babel/core" "7.12.3"
     "@babel/plugin-proposal-class-properties" "7.12.1"
@@ -16597,9 +16597,9 @@ path-key@^3.1.0:
   integrity sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==
 
 path-parse@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
-  integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
+  integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
 path-to-regexp@0.1.7:
   version "0.1.7"
