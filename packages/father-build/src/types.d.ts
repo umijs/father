@@ -83,6 +83,23 @@ export interface IBundleOptions {
     [opt: string]: any
   };
   pkgs?: string[];
+  /** 处理 lerna 包 */
+  filterPkgs?: {
+    /**
+     * 是否按照依赖进行排序处理
+     * @default true
+     */
+    stream?: boolean;
+    /** 指定包含的包 */
+    include?: string[];
+    /** 指定排除的包 */
+    exclude?: string[];
+    /**
+     * 是否包含私有的包
+     * @default false
+     * */
+    showPrivate?: boolean;
+  }
 }
 
 export interface IOpts {
