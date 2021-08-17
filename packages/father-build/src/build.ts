@@ -5,12 +5,11 @@ import * as assert from 'assert';
 import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
-import { getPackages } from '@lerna/project';
 import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm, Dispose } from './types';
 import babel from './babel';
 import rollup from './rollup';
 import registerBabel from './registerBabel';
-import { getExistFile } from './utils';
+import { getExistFile, getLernaPackages } from './utils';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
 import randomColor from "./randomColor";
 
@@ -194,7 +193,7 @@ export async function buildForLerna(opts: IOpts) {
 
   const userConfig = merge(getUserConfig({ cwd }), rootConfig, buildArgs);
 
-  let pkgs = await getPackages(cwd);
+  let pkgs = await getLernaPackages(cwd);
 
   // support define pkgs in lerna
   // TODO: 使用lerna包解决依赖编译问题
