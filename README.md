@@ -647,9 +647,13 @@ export default {
 
 ```ts
 {
-  /** 指定包含的包 */
+  /** 
+   * 指定包含的包 
+   * */
   include?: string[];
-  /** 指定排除的包 */
+  /** 
+   * 指定排除的包 
+   * */
   exclude?: string[];
   /**
    * 是否编译私有的包 package.json private
