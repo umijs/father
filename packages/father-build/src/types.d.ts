@@ -90,10 +90,10 @@ export interface IBundleOptions {
     /** 指定排除的包 */
     exclude?: string[];
     /**
-     * 是否包含私有的包
+     * 是否编译私有的包 package.json private
      * @default true
      * */
-    showPrivate?: boolean;
+    buildPrivate?: boolean;
   }
 }
 

@@ -22,9 +22,7 @@ describe('default', () => {
   it('获取所有的包', async () => {
     expect.assertions(1);
 
-    const pkgs = await getLernaPackages(fixturePath, {
-      stream: false
-    });
+    const pkgs = await getLernaPackages(fixturePath);
 
     const pkgNames = ['bar', 'foo'];
 
@@ -38,12 +36,9 @@ describe('customize', () => {
   it('获取所有的包', async () => {
     expect.assertions(1);
 
-    const pkgs = await getLernaPackages(fixturePath, {
-      stream: false,
-      showPrivate: true,
-    });
+    const pkgs = await getLernaPackages(fixturePath, {});
 
-    const pkgNames = ['core1', 'core2', 'bar', 'foo'];
+    const pkgNames = ['core2', 'bar', 'foo', 'core1'];
 
     expect(pkgNames).toEqual(pkgs.map(item => item.name));
   });
@@ -52,24 +47,10 @@ describe('customize', () => {
     expect.assertions(1);
 
     const pkgs = await getLernaPackages(fixturePath, {
-      stream: false,
-      showPrivate: false,
+      buildPrivate: false,
     });
 
-    const pkgNames = ['core1', 'bar', 'foo'];
-
-    expect(pkgNames).toEqual(pkgs.map(item => item.name));
-  });
-
-  it('按照依赖顺序获取所有的包', async () => {
-    expect.assertions(1);
-
-    const pkgs = await getLernaPackages(fixturePath, {
-      stream: true,
-      showPrivate: true,
-    });
-
-    const pkgNames = ['core2', 'bar', 'foo', 'core1'];
+    const pkgNames = ['bar', 'foo', 'core1'];
 
     expect(pkgNames).toEqual(pkgs.map(item => item.name));
   });
@@ -78,8 +59,6 @@ describe('customize', () => {
     expect.assertions(1);
 
     const pkgs = await getLernaPackages(fixturePath, {
-      stream: false,
-      showPrivate: true,
       include: [
         'core*'
       ]
@@ -93,8 +72,6 @@ describe('customize', () => {
     expect.assertions(1);
 
     const pkgs = await getLernaPackages(fixturePath, {
-      stream: false,
-      showPrivate: true,
       exclude: [
         'core1'
       ]
