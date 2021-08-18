@@ -19,5 +19,8 @@
     "test-build-result": "^1.1.2",
     "umi-tools": "^0.4.0",
     "umi-test": "^1.5.12"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
