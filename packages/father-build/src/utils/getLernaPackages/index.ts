@@ -3,11 +3,6 @@ import { QueryGraph } from '@lerna/query-graph';
 import { filterPackages } from '@lerna/filter-packages';
 
 export interface Options {
-  /**
-   * 是否按照依赖进行排序处理
-   * @default true
-   */
-  stream?: boolean;
   /** 指定包含的包 */
   include?: string[];
   /** 指定排除的包 */
@@ -25,7 +20,6 @@ export interface Options {
  */
 export async function getLernaPackages(cwd: string, ops: Options = {}): Promise<any[]> {
   const {
-    stream = true,
     include = [],
     exclude = [],
     showPrivate = true,
@@ -34,10 +28,6 @@ export async function getLernaPackages(cwd: string, ops: Options = {}): Promise<
   const allPkgs = getPackagesSync(cwd) ?? [];
 
   const pkgs = filterPackages(allPkgs, include, exclude, showPrivate, true);
-
-  if (!stream) {
-    return pkgs;
-  }
 
   return await getStreamPackages(pkgs);
 }
