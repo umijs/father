@@ -193,7 +193,7 @@ export async function buildForLerna(opts: IOpts) {
 
   const userConfig = merge(getUserConfig({ cwd }), rootConfig, buildArgs);
 
-  let pkgs = await getLernaPackages(cwd, userConfig.filterPkgs);
+  let pkgs = await getLernaPackages(cwd, userConfig.pkgFilter);
 
   // support define pkgs in lerna
   // TODO: 使用lerna包解决依赖编译问题

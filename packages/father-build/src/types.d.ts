@@ -84,7 +84,7 @@ export interface IBundleOptions {
   };
   pkgs?: string[];
   /** 处理 lerna 包 */
-  filterPkgs?: {
+  pkgFilter?: {
     /**
      * 是否按照依赖进行排序处理
      * @default true
@@ -96,7 +96,7 @@ export interface IBundleOptions {
     exclude?: string[];
     /**
      * 是否包含私有的包
-     * @default false
+     * @default true
      * */
     showPrivate?: boolean;
   }

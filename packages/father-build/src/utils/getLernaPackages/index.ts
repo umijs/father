@@ -14,7 +14,7 @@ export interface Options {
   exclude?: string[];
   /**
    * 是否包含私有的包
-   * @default false
+   * @default true
    * */
   showPrivate?: boolean;
 }
@@ -28,7 +28,7 @@ export async function getLernaPackages(cwd: string, ops: Options = {}): Promise<
     stream = true,
     include = [],
     exclude = [],
-    showPrivate = false,
+    showPrivate = true,
   } = ops;
 
   const allPkgs = getPackagesSync(cwd) ?? [];
