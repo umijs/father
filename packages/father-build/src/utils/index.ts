@@ -9,3 +9,5 @@ export function getExistFile({ cwd, files, returnRelative }) {
     }
   }
 }
+
+export { getLernaPackages } from './getLernaPackages';

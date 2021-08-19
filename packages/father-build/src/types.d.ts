@@ -83,6 +83,18 @@ export interface IBundleOptions {
     [opt: string]: any
   };
   pkgs?: string[];
+  /** 处理 lerna 包 */
+  pkgFilter?: {
+    /** 指定包含的包 */
+    include?: string[];
+    /** 指定排除的包 */
+    exclude?: string[];
+    /**
+     * 跳过私有的包 package.json private
+     * @default false
+     * */
+    skipPrivate?: boolean;
+  }
 }
 
 export interface IOpts {

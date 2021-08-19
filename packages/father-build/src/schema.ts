@@ -165,5 +165,8 @@ export default {
     pkgs: {
       type: 'array',
     },
+    pkgFilter: {
+      type: 'object',
+    },
   },
 };

@@ -639,7 +639,60 @@ export default {
 };
 ```
 
+### pkgFilter
+
+在 lerna 构建中，有需要对包进行过滤的需求
+
+可配置项如下:
+
+```ts
+{
+  /** 
+   * 指定包含的包 
+   */
+  include?: string[];
+  /** 
+   * 指定排除的包 
+   */
+  exclude?: string[];
+  /**
+   * 是否跳过私有的包 package.json private
+   * @default false
+   */
+  skipPrivate?: boolean;
+}
+```
+
+`pkgFilter` 允许自定义排除/包含部分包，只对过滤后的包进行构建
+
+例如: 存在  `@umi/util-1`、`@umi/util-2`、`@umi/core`、`@umi/test`(private) 多个包
+
+```ts
+// 只构建 `@umi/util-1`、`@umi/util-2`
+export default {
+  pkgFilter: {
+    include: ['@umi/util-*']
+  }
+}
+
+// 只构建 `@umi/util-1`、`@umi/core`、`@umi/test`
+export default {
+  pkgFilter: {
+    exclude: ['@umi/util-2']
+  }
+}
+
+// 只构建 `@umi/util-1`、`@umi/util-2`、`@umi/core`
+export default {
+  pkgFilter: {
+    skipPrivate: true
+  }
+}
+```
+
 ### pkgs
+
+**已提供根据依赖自动排序的功能，除非有特殊需求定制构建顺序的，此配置项可忽略**
 
 在 lerna 构建中，有可能出现组件间有构建先后的需求，比如在有两个包 `packages/father-a` 和 `packages/father-util`，在 `father-a` 中对 `father-util` 有依赖，此时需要先构建 `father-util` 才能保证构建的正确性
 
