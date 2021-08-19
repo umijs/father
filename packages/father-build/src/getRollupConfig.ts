@@ -225,6 +225,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           input,
           output: {
             format,
+            exports: 'auto',
             ...output,
           },
           plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
@@ -257,6 +258,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           input,
           output: {
             format,
+            exports: 'auto',
             file: join(cwd, `dist/${(cjs && (cjs as any).file) || name}.js`),
           },
           plugins: [...getPlugins(), ...(cjs && (cjs as any).minify ? [terser(terserOpts)] : [])],

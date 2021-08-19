@@ -55,6 +55,7 @@
     "rollup-plugin-typescript2": "0.29.0",
     "signale": "1.4.0",
     "slash2": "2.0.0",
+    "source-map": "0.8.0-beta.0",
     "temp-dir": "2.0.0",
     "through2": "3.0.1",
     "ts-loader": "^8.0.7",
