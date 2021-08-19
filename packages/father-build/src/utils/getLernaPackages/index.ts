@@ -8,10 +8,10 @@ export interface Options {
   /** 指定排除的包 */
   exclude?: string[];
   /**
-   * 是否包含私有的包
-   * @default true
+   * 跳过私有的包
+   * @default false
    * */
-  buildPrivate?: boolean;
+  skipPrivate?: boolean;
 }
 
 /**
@@ -22,12 +22,12 @@ export async function getLernaPackages(cwd: string, ops: Options = {}): Promise<
   const {
     include = [],
     exclude = [],
-    buildPrivate = true,
+    skipPrivate = false,
   } = ops;
 
   const allPkgs = getPackagesSync(cwd) ?? [];
 
-  const pkgs = filterPackages(allPkgs, include, exclude, buildPrivate, true);
+  const pkgs = filterPackages(allPkgs, include, exclude, !skipPrivate, true);
 
   return await getStreamPackages(pkgs);
 }

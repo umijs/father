@@ -47,7 +47,7 @@ describe('customize', () => {
     expect.assertions(1);
 
     const pkgs = await getLernaPackages(fixturePath, {
-      buildPrivate: false,
+      skipPrivate: true,
     });
 
     const pkgNames = ['bar', 'foo', 'core1'];

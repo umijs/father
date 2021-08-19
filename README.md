@@ -656,10 +656,10 @@ export default {
    */
   exclude?: string[];
   /**
-   * 是否编译私有的包 package.json private
-   * @default true
+   * 是否跳过私有的包 package.json private
+   * @default false
    */
-  buildPrivate?: boolean;
+  skipPrivate?: boolean;
 }
 ```
 
@@ -685,7 +685,7 @@ export default {
 // 只构建 `@umi/util-1`、`@umi/util-2`、`@umi/core`
 export default {
   pkgFilter: {
-    buildPrivate: false
+    skipPrivate: true
   }
 }
 ```
