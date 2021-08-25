@@ -180,6 +180,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         extensions,
         ...nodeResolveOpts,
       }),
+      commonjs({
+        include,
+        // namedExports options has been remove from https://github.com/rollup/plugins/pull/149
+      }),
       ...(isTypeScript
         ? [
           typescript2({
@@ -265,14 +269,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       ];
 
     case 'umd':
-      // Add umd related plugins
-      const extraUmdPlugins = [
-        commonjs({
-          include,
-          // namedExports options has been remove from https://github.com/rollup/plugins/pull/149
-        }),
-      ];
-
       return [
         {
           input,
@@ -285,7 +281,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           },
           plugins: [
             ...getPlugins(),
-            ...extraUmdPlugins,
             replace({
               'process.env.NODE_ENV': JSON.stringify('development'),
             }),
@@ -306,7 +301,6 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 },
                 plugins: [
                   ...getPlugins({ minCSS: true }),
-                  ...extraUmdPlugins,
                   replace({
                     'process.env.NODE_ENV': JSON.stringify('production'),
                   }),
