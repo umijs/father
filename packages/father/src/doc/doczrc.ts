@@ -11,9 +11,7 @@ const lessModuleRegex = /\.module\.less$/;
 const sassModuleRegex = /\.module\.[(sass)|(scss)]$/;
 
 const cwd = process.cwd();
-const localUserConfig = JSON.parse(
-  readFileSync(join(cwd, '.docz', '.fatherrc.json'), 'utf-8'),
-);
+const localUserConfig = JSON.parse(readFileSync(join(cwd, '.docz', '.fatherrc.json'), 'utf-8'));
 
 // register babel for config files
 registerBabel({
@@ -75,7 +73,7 @@ export default {
 
     // 透传 BIGFISH_VERSION 环境变量
     config.plugins.push(
-      new (require('webpack')).DefinePlugin({
+      new (require('webpack').DefinePlugin)({
         'process.env.BIGFISH_VERSION': JSON.stringify(process.env.BIGFISH_VERSION),
       }),
     );
@@ -116,7 +114,7 @@ export default {
             cssmodules: true,
             loaderOpts: {
               javascriptEnabled: true,
-              ...userConfig.lessInRollupMode
+              ...userConfig.lessInRollupMode,
             },
           }),
           css({
@@ -127,7 +125,7 @@ export default {
             cssmodules: false,
             loaderOpts: {
               javascriptEnabled: true,
-              ...userConfig.lessInRollupMode
+              ...userConfig.lessInRollupMode,
             },
           }),
 
@@ -139,7 +137,7 @@ export default {
             },
             cssmodules: true,
             loaderOpts: {
-              ...userConfig.sassInRollupMode
+              ...userConfig.sassInRollupMode,
             },
           }),
           css({
@@ -149,7 +147,7 @@ export default {
             },
             cssmodules: false,
             loaderOpts: {
-              ...userConfig.sassInRollupMode
+              ...userConfig.sassInRollupMode,
             },
           }),
         ]
@@ -179,7 +177,7 @@ export default {
             cssmodules: false,
             loaderOpts: {
               javascriptEnabled: true,
-              ...userConfig.lessInRollupMode
+              ...userConfig.lessInRollupMode,
             },
           }),
           css({
@@ -190,7 +188,7 @@ export default {
             cssmodules: true,
             loaderOpts: {
               javascriptEnabled: true,
-              ...userConfig.lessInRollupMode
+              ...userConfig.lessInRollupMode,
             },
           }),
 
@@ -202,7 +200,7 @@ export default {
             },
             cssmodules: false,
             loaderOpts: {
-              ...userConfig.sassInRollupMode
+              ...userConfig.sassInRollupMode,
             },
           }),
           css({
@@ -212,7 +210,7 @@ export default {
             },
             cssmodules: true,
             loaderOpts: {
-              ...userConfig.sassInRollupMode
+              ...userConfig.sassInRollupMode,
             },
           }),
         ]),

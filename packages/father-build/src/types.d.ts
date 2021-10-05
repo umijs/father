@@ -66,10 +66,12 @@ export interface IBundleOptions {
     eslint?: boolean;
     prettier?: boolean;
   };
-  lessInBabelMode?: boolean | {
-    paths?: any[];
-    plugins?: any[];
-  };
+  lessInBabelMode?:
+    | boolean
+    | {
+        paths?: any[];
+        plugins?: any[];
+      };
   typescriptOpts?: {
     [value: string]: any;
   };
@@ -77,10 +79,10 @@ export interface IBundleOptions {
     [value: string]: any;
   };
   lessInRollupMode?: {
-    [opt: string]: any
+    [opt: string]: any;
   };
   sassInRollupMode?: {
-    [opt: string]: any
+    [opt: string]: any;
   };
   pkgs?: string[];
   /** 处理 lerna 包 */
@@ -94,7 +96,7 @@ export interface IBundleOptions {
      * @default false
      * */
     skipPrivate?: boolean;
-  }
+  };
 }
 
 export interface IOpts {

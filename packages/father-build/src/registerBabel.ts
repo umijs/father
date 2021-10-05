@@ -7,7 +7,7 @@ interface IRegisterBabelOpts {
   only: string[];
 }
 
-export default function(opts: IRegisterBabelOpts) {
+export default function (opts: IRegisterBabelOpts) {
   const { cwd, only } = opts;
   const { opts: babelConfig } = getBabelConfig({
     target: 'node',
@@ -16,7 +16,7 @@ export default function(opts: IRegisterBabelOpts) {
   require('@babel/register')({
     ...babelConfig,
     extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx'],
-    only: only.map(file => slash(join(cwd, file))),
+    only: only.map((file) => slash(join(cwd, file))),
     babelrc: false,
     cache: false,
   });

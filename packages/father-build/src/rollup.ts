@@ -20,7 +20,7 @@ async function build(entry: string, opts: IRollupOpts) {
   const { cwd, rootPath, type, log, bundleOpts, importLibToEs, dispose } = opts;
   const rollupConfigs = getRollupConfig({
     cwd,
-    rootPath:rootPath || cwd,
+    rootPath: rootPath || cwd,
     type,
     entry,
     importLibToEs,
@@ -35,7 +35,7 @@ async function build(entry: string, opts: IRollupOpts) {
           watch: {},
         },
       ]);
-      watcher.on('event', event => {
+      watcher.on('event', (event) => {
         if (event.error) {
           signale.error(event.error);
         } else if (event.code === 'START') {
@@ -54,7 +54,7 @@ async function build(entry: string, opts: IRollupOpts) {
   }
 }
 
-export default async function(opts: IRollupOpts) {
+export default async function (opts: IRollupOpts) {
   if (Array.isArray(opts.entry)) {
     const { entry: entries } = opts;
     for (const entry of entries) {

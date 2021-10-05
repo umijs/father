@@ -74,7 +74,7 @@ function runCmd(cmd: string, args: string[]) {
       // keep color
       stdio: 'inherit',
     });
-    runner.on('close', code => {
+    runner.on('close', (code) => {
       if (code) {
         signale.error(`Error on execution: ${cmd} ${(args || []).join(' ')}`);
         reject(code);
@@ -128,7 +128,7 @@ export async function check() {
   if (preCommitConfig.prettier) {
     const prettierConfig = getPrettierConfig();
 
-    list.forEach(filePath => {
+    list.forEach((filePath) => {
       if (existsSync(filePath)) {
         const ext = extname(filePath).replace(/^\./, '');
         const text = readFileSync(filePath, 'utf8');

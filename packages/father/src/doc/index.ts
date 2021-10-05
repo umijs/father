@@ -37,7 +37,7 @@ export function deploy({ cwd, args }) {
 
     copyFileSync(join(distDir, 'index.html'), join(distDir, '404.html'));
 
-    ghPages.publish(distDir, args, err => {
+    ghPages.publish(distDir, args, (err) => {
       if (err) {
         reject(new Error(`Doc deploy failed. ${err.message}`));
       } else {

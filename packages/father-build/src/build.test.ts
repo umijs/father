@@ -6,7 +6,7 @@ import rimraf from 'rimraf';
 import build from './build';
 
 function moveEsLibToDist(cwd) {
-  ['es', 'lib'].forEach(dir => {
+  ['es', 'lib'].forEach((dir) => {
     const absDirPath = join(cwd, dir);
     const absDistPath = join(cwd, 'dist');
     if (existsSync(absDirPath)) {
@@ -33,17 +33,13 @@ describe('father build', () => {
         // lerna
         if (existsSync(join(cwd, 'lerna.json'))) {
           mkdirp.sync(join(cwd, 'dist'));
-          const pkgs = getPackagesSync(cwd)
+          const pkgs = getPackagesSync(cwd);
           for (let pkg of pkgs) {
-           
             const pkgPath = pkg.contents;
-            
+
             if (!statSync(pkgPath).isDirectory()) continue;
             moveEsLibToDist(pkgPath);
-            renameSync(
-              join(pkgPath, 'dist'),
-              join(cwd, 'dist', pkgPath.split(sep).pop())
-            );
+            renameSync(join(pkgPath, 'dist'), join(cwd, 'dist', pkgPath.split(sep).pop()));
           }
         }
       });

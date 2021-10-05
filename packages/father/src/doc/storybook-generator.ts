@@ -7,7 +7,7 @@ const STORYBOOK_FOLDER = '.storybook';
 
 function getTitle(name: string) {
   return name
-    .replace(/\b\w/g, function(v) {
+    .replace(/\b\w/g, function (v) {
       return v.toUpperCase();
     })
     .replace(/-/g, '');
@@ -28,7 +28,7 @@ function generateFiles(projectPath: string) {
   const files: string[] = sync(join(projectPath, 'examples/*.@(js|ts|jsx|tsx)'), {});
 
   // Get pure file name without prefix path & suffix
-  const fileNames = files.map(fileName =>
+  const fileNames = files.map((fileName) =>
     fileName
       .split('/')
       .pop()
@@ -36,7 +36,7 @@ function generateFiles(projectPath: string) {
   );
 
   // Group examples
-  fileNames.forEach(fileName => {
+  fileNames.forEach((fileName) => {
     const ComponentName = getTitle(fileName);
 
     importString.push(`import ${ComponentName} from '../examples/${fileName}';`);

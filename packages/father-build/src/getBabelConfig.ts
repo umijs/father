@@ -15,28 +15,41 @@ interface IGetBabelConfigOpts {
     [value: string]: any;
   };
   lazy?: boolean;
-  lessInBabelMode?: boolean|{
-    paths?: any[];
-    plugins?: any[];
-  };
+  lessInBabelMode?:
+    | boolean
+    | {
+        paths?: any[];
+        plugins?: any[];
+      };
 }
 
 function transformImportLess2Css() {
   return {
-      name: 'transform-import-less-to-css',
-      visitor: {
-          ImportDeclaration(path, source) {
-              const re = /\.less$/;
-              if(re.test(path.node.source.value)){
-                path.node.source.value = path.node.source.value.replace(re, '.css');
-              }
-          }
-      }
-  }
+    name: 'transform-import-less-to-css',
+    visitor: {
+      ImportDeclaration(path, source) {
+        const re = /\.less$/;
+        if (re.test(path.node.source.value)) {
+          path.node.source.value = path.node.source.value.replace(re, '.css');
+        }
+      },
+    },
+  };
 }
 
-export default function(opts: IGetBabelConfigOpts) {
-  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy, lessInBabelMode } = opts;
+export default function (opts: IGetBabelConfigOpts) {
+  const {
+    target,
+    typescript,
+    type,
+    runtimeHelpers,
+    filePath,
+    browserFiles,
+    nodeFiles,
+    nodeVersion,
+    lazy,
+    lessInBabelMode,
+  } = opts;
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
@@ -50,23 +63,33 @@ export default function(opts: IGetBabelConfigOpts) {
       }
     }
   }
-  const targets = isBrowser ? { browsers: ['last 2 versions', 'IE 10'] } : { node: nodeVersion || 6 };
+  const targets = isBrowser
+    ? { browsers: ['last 2 versions', 'IE 10'] }
+    : { node: nodeVersion || 6 };
 
   return {
     opts: {
       presets: [
         ...(typescript ? [require.resolve('@babel/preset-typescript')] : []),
-        [require.resolve('@babel/preset-env'), {
-          targets,
-          modules: type === 'esm' ? false : 'auto'
-        }],
+        [
+          require.resolve('@babel/preset-env'),
+          {
+            targets,
+            modules: type === 'esm' ? false : 'auto',
+          },
+        ],
         ...(isBrowser ? [require.resolve('@babel/preset-react')] : []),
       ],
       plugins: [
-        ...((type === 'cjs' && lazy && !isBrowser)
-          ? [[require.resolve('@babel/plugin-transform-modules-commonjs'), {
-            lazy: true,
-          }]]
+        ...(type === 'cjs' && lazy && !isBrowser
+          ? [
+              [
+                require.resolve('@babel/plugin-transform-modules-commonjs'),
+                {
+                  lazy: true,
+                },
+              ],
+            ]
           : []),
         ...(lessInBabelMode ? [transformImportLess2Css] : []),
         ...(isBrowser ? [require.resolve('babel-plugin-react-require')] : []),
@@ -79,15 +102,17 @@ export default function(opts: IGetBabelConfigOpts) {
         [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
         [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
         ...(runtimeHelpers
-          ? [[require.resolve('@babel/plugin-transform-runtime'), {
-            useESModules: isBrowser && (type === 'esm'),
-            version: require('@babel/runtime/package.json').version,
-          }]]
+          ? [
+              [
+                require.resolve('@babel/plugin-transform-runtime'),
+                {
+                  useESModules: isBrowser && type === 'esm',
+                  version: require('@babel/runtime/package.json').version,
+                },
+              ],
+            ]
           : []),
-        ...(process.env.COVERAGE
-            ? [require.resolve('babel-plugin-istanbul')]
-            : []
-        )
+        ...(process.env.COVERAGE ? [require.resolve('babel-plugin-istanbul')] : []),
       ],
     },
     isBrowser,

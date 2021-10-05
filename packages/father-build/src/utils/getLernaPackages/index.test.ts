@@ -6,14 +6,12 @@ export const FIXTURES_DIR = path.resolve(__dirname, 'fixtures');
 
 export function getDirs() {
   return fs
-		.readdirSync(FIXTURES_DIR)
-		.filter(fixturePath =>
-			fs.statSync(path.resolve(FIXTURES_DIR, fixturePath)).isDirectory(),
-		);
+    .readdirSync(FIXTURES_DIR)
+    .filter((fixturePath) => fs.statSync(path.resolve(FIXTURES_DIR, fixturePath)).isDirectory());
 }
 
 export function fixture(...args: string[]) {
-  return path.join(FIXTURES_DIR, ...args)
+  return path.join(FIXTURES_DIR, ...args);
 }
 
 describe('default', () => {
@@ -26,8 +24,8 @@ describe('default', () => {
 
     const pkgNames = ['bar', 'foo'];
 
-    expect(pkgNames).toEqual(pkgs.map(item => item.name));
-  })
+    expect(pkgNames).toEqual(pkgs.map((item) => item.name));
+  });
 });
 
 describe('customize', () => {
@@ -40,7 +38,7 @@ describe('customize', () => {
 
     const pkgNames = ['core2', 'bar', 'foo', 'core1'];
 
-    expect(pkgNames).toEqual(pkgs.map(item => item.name));
+    expect(pkgNames).toEqual(pkgs.map((item) => item.name));
   });
 
   it('过滤私有的包', async () => {
@@ -52,32 +50,28 @@ describe('customize', () => {
 
     const pkgNames = ['bar', 'foo', 'core1'];
 
-    expect(pkgNames).toEqual(pkgs.map(item => item.name));
+    expect(pkgNames).toEqual(pkgs.map((item) => item.name));
   });
 
   it('设置包含部分包', async () => {
     expect.assertions(1);
 
     const pkgs = await getLernaPackages(fixturePath, {
-      include: [
-        'core*'
-      ]
+      include: ['core*'],
     });
     const pkgNames = ['core1', 'core2'];
 
-    expect(pkgNames).toEqual(pkgs.map(item => item.name));
-  })
+    expect(pkgNames).toEqual(pkgs.map((item) => item.name));
+  });
 
   it('设置包含部分包', async () => {
     expect.assertions(1);
 
     const pkgs = await getLernaPackages(fixturePath, {
-      exclude: [
-        'core1'
-      ]
+      exclude: ['core1'],
     });
     const pkgNames = ['core2', 'bar', 'foo'];
 
-    expect(pkgNames).toEqual(pkgs.map(item => item.name));
-  })
+    expect(pkgNames).toEqual(pkgs.map((item) => item.name));
+  });
 });

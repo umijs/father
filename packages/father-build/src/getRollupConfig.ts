@@ -1,4 +1,4 @@
-import { existsSync } from 'fs'
+import { existsSync } from 'fs';
 import { basename, extname, join } from 'path';
 import { ModuleFormat, RollupOptions } from 'rollup';
 import url from '@rollup/plugin-url';
@@ -34,7 +34,7 @@ interface IPkg {
   name?: string;
 }
 
-export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
+export default function (opts: IGetRollupConfigOpts): RollupOptions[] {
   const { type, entry, cwd, rootPath, importLibToEs, bundleOpts } = opts;
   const {
     umd,
@@ -76,7 +76,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   // cjs 不给浏览器用，所以无需 runtimeHelpers
   const runtimeHelpers = type === 'cjs' ? false : runtimeHelpersOpts;
   const babelOpts = {
-    ...(getBabelConfig({
+    ...getBabelConfig({
       type,
       target: type === 'esm' ? 'browser' : target,
       // watch 模式下有几率走的 babel？原因未知。
@@ -84,9 +84,11 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       typescript: true,
       runtimeHelpers,
       nodeVersion,
-    }).opts),
+    }).opts,
     // ref: https://github.com/rollup/plugins/tree/master/packages/babel#babelhelpers
-    babelHelpers: (runtimeHelpers ? 'runtime' : 'bundled') as RollupBabelInputPluginOptions['babelHelpers'],
+    babelHelpers: (runtimeHelpers
+      ? 'runtime'
+      : 'bundled') as RollupBabelInputPluginOptions['babelHelpers'],
     exclude: /\/node_modules\//,
     babelrc: false,
     // ref: https://github.com/rollup/rollup-plugin-babel#usage
@@ -111,18 +113,13 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     ...extraExternals,
   ];
   // umd 只要 external peerDependencies
-  const externalPeerDeps = [
-    ...Object.keys(pkg.peerDependencies || {}),
-    ...extraExternals,
-  ];
+  const externalPeerDeps = [...Object.keys(pkg.peerDependencies || {}), ...extraExternals];
 
   function getPkgNameByid(id) {
     const splitted = id.split('/');
     // @ 和 @tmp 是为了兼容 umi 的逻辑
     if (id.charAt(0) === '@' && splitted[0] !== '@' && splitted[0] !== '@tmp') {
-      return splitted
-        .slice(0, 2)
-        .join('/');
+      return splitted.slice(0, 2).join('/');
     } else {
       return id.split('/')[0];
     }
@@ -144,7 +141,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     },
   };
 
-  function getPlugins(opts = {} as { minCSS: boolean; }) {
+  function getPlugins(opts = {} as { minCSS: boolean }) {
     const { minCSS } = opts;
     return [
       url(),
@@ -159,19 +156,22 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         use: {
           less: {
             plugins: [new NpmImport({ prefix: '~' })],
-              javascriptEnabled: true,
-              ...lessInRollupMode
+            javascriptEnabled: true,
+            ...lessInRollupMode,
           },
           sass: {
             ...sassInRollupMode,
           },
           stylus: false,
         },
-        plugins: [autoprefixer({
-          // https://github.com/postcss/autoprefixer/issues/776
-          remove: false,
-          ...autoprefixerOpts,
-        }), ...extraPostCSSPlugins],
+        plugins: [
+          autoprefixer({
+            // https://github.com/postcss/autoprefixer/issues/776
+            remove: false,
+            ...autoprefixerOpts,
+          }),
+          ...extraPostCSSPlugins,
+        ],
       }),
       ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
       ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
@@ -182,30 +182,32 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       }),
       ...(isTypeScript
         ? [
-          typescript2({
-            cwd,
-            // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
-            clean: true,
-            cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
-            // 支持往上找 tsconfig.json
-            // 比如 lerna 的场景不需要每个 package 有个 tsconfig.json
-            tsconfig: [join(cwd, 'tsconfig.json'), join(rootPath, 'tsconfig.json')].find(existsSync),
-            tsconfigDefaults: {
-              compilerOptions: {
-                // Generate declaration files by default
-                declaration: true,
+            typescript2({
+              cwd,
+              // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
+              clean: true,
+              cacheRoot: `${tempDir}/.rollup_plugin_typescript2_cache`,
+              // 支持往上找 tsconfig.json
+              // 比如 lerna 的场景不需要每个 package 有个 tsconfig.json
+              tsconfig: [join(cwd, 'tsconfig.json'), join(rootPath, 'tsconfig.json')].find(
+                existsSync,
+              ),
+              tsconfigDefaults: {
+                compilerOptions: {
+                  // Generate declaration files by default
+                  declaration: true,
+                },
               },
-            },
-            tsconfigOverride: {
-              compilerOptions: {
-                // Support dynamic import
-                target: 'esnext',
+              tsconfigOverride: {
+                compilerOptions: {
+                  // Support dynamic import
+                  target: 'esnext',
+                },
               },
-            },
-            check: !disableTypeCheck,
-            ...(typescriptOpts || {}),
-          }),
-        ]
+              check: !disableTypeCheck,
+              ...(typescriptOpts || {}),
+            }),
+          ]
         : []),
       babel(babelOpts),
       json(),
@@ -216,10 +218,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   switch (type) {
     case 'esm':
       const output: Record<string, any> = {
-        dir: join(cwd, `${esm && (esm as any).dir || 'dist'}`),
+        dir: join(cwd, `${(esm && (esm as any).dir) || 'dist'}`),
         entryFileNames: `${(esm && (esm as any).file) || `${name}.esm`}.js`,
-      }
-    
+      };
+
       return [
         {
           input,

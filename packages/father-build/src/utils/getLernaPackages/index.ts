@@ -19,11 +19,7 @@ export interface Options {
  * @param cwd
  */
 export async function getLernaPackages(cwd: string, ops: Options = {}): Promise<any[]> {
-  const {
-    include = [],
-    exclude = [],
-    skipPrivate = false,
-  } = ops;
+  const { include = [], exclude = [], skipPrivate = false } = ops;
 
   const allPkgs = getPackagesSync(cwd) ?? [];
 
@@ -39,7 +35,8 @@ export function getStreamPackages(pkgs: any[]): Promise<any[]> {
     const returnValues: any[] = [];
 
     const queueNextAvailablePackages = () =>
-      graph.getAvailablePackages()
+      graph
+        .getAvailablePackages()
         // @ts-ignore
         .forEach(({ pkg, name }) => {
           graph.markAsTaken(name);
@@ -47,11 +44,13 @@ export function getStreamPackages(pkgs: any[]): Promise<any[]> {
           Promise.resolve(pkg)
             .then((value) => returnValues.push(value))
             .then(() => graph.markAsDone(pkg))
-            .then(() => queueNextAvailablePackages())
+            .then(() => queueNextAvailablePackages());
         });
 
     queueNextAvailablePackages();
 
-    setTimeout(() => { resolve(returnValues); }, 0);
+    setTimeout(() => {
+      resolve(returnValues);
+    }, 0);
   });
 }

@@ -16,7 +16,7 @@ module.exports = async function test(args) {
     ...args,
   };
 
-  umiTest(passArgs).catch(e => {
+  umiTest(passArgs).catch((e) => {
     signale.error(e);
     process.exit(1);
   });

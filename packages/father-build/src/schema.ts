@@ -26,7 +26,7 @@ export default {
             importLibToEs: {
               type: 'boolean',
             },
-            dir: noEmptyStr
+            dir: noEmptyStr,
           },
         },
       ],
@@ -62,10 +62,7 @@ export default {
             name: noEmptyStr,
             minFile: { type: 'boolean' },
             sourcemap: {
-              oneOf: [
-                { type: 'boolean' },
-                { type: 'string', pattern: '^(inline|hidden)$', },
-              ]
+              oneOf: [{ type: 'boolean' }, { type: 'string', pattern: '^(inline|hidden)$' }],
             },
           },
         },
@@ -102,11 +99,7 @@ export default {
       type: 'object',
     },
     include: {
-      oneOf: [
-        { type: 'string' },
-        { type: 'object' },
-        { type: 'array' },
-      ]
+      oneOf: [{ type: 'string' }, { type: 'object' }, { type: 'array' }],
     },
     runtimeHelpers: {
       type: 'boolean',
@@ -128,16 +121,13 @@ export default {
       type: 'object',
     },
     lessInRollupMode: {
-      type: 'object'
+      type: 'object',
     },
     sassInRollupMode: {
-      type: 'object'
+      type: 'object',
     },
     lessInBabelMode: {
-      oneOf: [
-        { type: 'boolean' },
-        { type: 'object' },
-      ],
+      oneOf: [{ type: 'boolean' }, { type: 'object' }],
     },
     browserFiles: {
       type: 'array',

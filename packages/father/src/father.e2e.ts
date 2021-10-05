@@ -20,18 +20,18 @@ describe('father doc build', () => {
   require('test-build-result')({
     root: join(__dirname, './fixtures/e2e'),
     build({ cwd }) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const child = fork(binPath, ['doc', 'build'], {
           cwd,
           env: process.env,
         });
-        child.on('exit', code => {
+        child.on('exit', (code) => {
           expect(code).toEqual(0);
           const child = fork(binPath, ['build', '--esm'], {
             cwd,
             env: process.env,
           });
-          child.on('exit', code => {
+          child.on('exit', (code) => {
             expect(code).toEqual(0);
             assertDocz(cwd);
             resolve();

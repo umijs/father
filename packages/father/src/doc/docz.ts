@@ -12,11 +12,7 @@ export function devOrBuild({ cwd, cmd, params, userConfig = {}, DOC_PATH }: DocP
   process.chdir(cwd);
 
   mkdirp(join(cwd, '.docz'));
-  writeFileSync(
-    join(cwd, '.docz', '.fatherrc.json'),
-    JSON.stringify(userConfig, null, 2),
-    'utf-8',
-  );
+  writeFileSync(join(cwd, '.docz', '.fatherrc.json'), JSON.stringify(userConfig, null, 2), 'utf-8');
 
   return new Promise((resolve, reject) => {
     const binPath = require.resolve('docz/bin/index.js');
@@ -51,14 +47,14 @@ export default {
     if (params.includes('-h')) {
       params.push('--help');
     }
-    if (params.every(param => !param.includes('--dest'))) {
+    if (params.every((param) => !param.includes('--dest'))) {
       params.push('--dest', DOC_PATH);
     }
     const child = fork(binPath, [cmd, ...params], {
       cwd,
       env: process.env,
     });
-    child.on('exit', code => {
+    child.on('exit', (code) => {
       if (code === 1) {
         reject(new Error('Doc build failed'));
       } else {

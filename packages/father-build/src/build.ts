@@ -11,7 +11,7 @@ import rollup from './rollup';
 import registerBabel from './registerBabel';
 import { getExistFile, getLernaPackages } from './utils';
 import getUserConfig, { CONFIG_FILES } from './getUserConfig';
-import randomColor from "./randomColor";
+import randomColor from './randomColor';
 
 export function getBundleOpts(opts: IOpts): IBundleOptions[] {
   const { cwd, buildArgs = {}, rootConfig = {} } = opts;
@@ -22,7 +22,7 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
   });
   const userConfig = getUserConfig({ cwd });
   const userConfigs = Array.isArray(userConfig) ? userConfig : [userConfig];
-  return (userConfigs as any).map(userConfig => {
+  return (userConfigs as any).map((userConfig) => {
     const bundleOpts = merge(
       {
         entry,
@@ -54,10 +54,16 @@ function validateBundleOpts(bundleOpts: IBundleOptions, { cwd, rootPath }) {
       `@babel/runtime dependency is required to use runtimeHelpers`,
     );
   }
-  if (bundleOpts.cjs && (bundleOpts.cjs as ICjs).lazy && (bundleOpts.cjs as ICjs).type === 'rollup') {
-    throw new Error(`
+  if (
+    bundleOpts.cjs &&
+    (bundleOpts.cjs as ICjs).lazy &&
+    (bundleOpts.cjs as ICjs).type === 'rollup'
+  ) {
+    throw new Error(
+      `
 cjs.lazy don't support rollup.
-    `.trim());
+    `.trim(),
+    );
   }
   if (!bundleOpts.esm && !bundleOpts.cjs && !bundleOpts.umd) {
     throw new Error(
@@ -70,23 +76,24 @@ None format of ${chalk.cyan(
   }
   if (bundleOpts.entry) {
     const tsConfigPath = join(cwd, 'tsconfig.json');
-    const tsConfig = existsSync(tsConfigPath)
-      || (rootPath && existsSync(join(rootPath, 'tsconfig.json')));
+    const tsConfig =
+      existsSync(tsConfigPath) || (rootPath && existsSync(join(rootPath, 'tsconfig.json')));
     if (
-      !tsConfig && (
-        (Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) ||
-        (!Array.isArray(bundleOpts.entry) && isTypescriptFile(bundleOpts.entry))
-      )
+      !tsConfig &&
+      ((Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) ||
+        (!Array.isArray(bundleOpts.entry) && isTypescriptFile(bundleOpts.entry)))
     ) {
       signale.info(
-        `Project using ${chalk.cyan('typescript')} but tsconfig.json not exists. Use default config.`
+        `Project using ${chalk.cyan(
+          'typescript',
+        )} but tsconfig.json not exists. Use default config.`,
       );
     }
   }
 }
 
 function isTypescriptFile(filePath) {
-  return filePath.endsWith('.ts') || filePath.endsWith('.tsx')
+  return filePath.endsWith('.ts') || filePath.endsWith('.tsx');
 }
 
 interface IExtraBuildOpts {
@@ -200,7 +207,7 @@ export async function buildForLerna(opts: IOpts) {
   if (userConfig.pkgs) {
     pkgs = userConfig.pkgs
       .map((item) => {
-        return pkgs.find(pkg => basename(pkg.contents) === item);
+        return pkgs.find((pkg) => basename(pkg.contents) === item);
       })
       .filter(Boolean);
   }
@@ -215,27 +222,29 @@ export async function buildForLerna(opts: IOpts) {
       `package.json not found in packages/${pkg}`,
     );
     process.chdir(pkgPath);
-    dispose.push(...await build(
-      {
-        // eslint-disable-line
-        ...opts,
-        buildArgs: opts.buildArgs,
-        rootConfig: userConfig,
-        cwd: pkgPath,
-        rootPath: cwd,
-      },
-      {
-        pkg,
-      },
-    ));
+    dispose.push(
+      ...(await build(
+        {
+          // eslint-disable-line
+          ...opts,
+          buildArgs: opts.buildArgs,
+          rootConfig: userConfig,
+          cwd: pkgPath,
+          rootPath: cwd,
+        },
+        {
+          pkg,
+        },
+      )),
+    );
   }
   return dispose;
 }
 
-export default async function(opts: IOpts) {
+export default async function (opts: IOpts) {
   const useLerna = existsSync(join(opts.cwd, 'lerna.json'));
   const isLerna = useLerna && process.env.LERNA !== 'none';
 
   const dispose = isLerna ? await buildForLerna(opts) : await build(opts);
-  return () => dispose.forEach(e => e());
+  return () => dispose.forEach((e) => e());
 }
