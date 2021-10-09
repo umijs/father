@@ -10,7 +10,7 @@ import * as chokidar from "chokidar";
 import * as babel from "@babel/core";
 import gulpTs from "gulp-typescript";
 import gulpLess from "gulp-less";
-import gulpPlumber from 'gulp-plumber';
+import gulpPlumber from "gulp-plumber";
 import gulpIf from "gulp-if";
 import chalk from "chalk";
 import getBabelConfig from "./getBabelConfig";
@@ -37,7 +37,7 @@ interface ITransformOpts {
   type: "esm" | "cjs";
 }
 
-export default async function(opts: IBabelOpts) {
+export default async function (opts: IBabelOpts) {
   const {
     cwd,
     rootPath,
@@ -56,8 +56,8 @@ export default async function(opts: IBabelOpts) {
       nodeVersion,
       disableTypeCheck,
       cjs,
-      lessInBabelMode
-    }
+      lessInBabelMode,
+    },
   } = opts;
   const srcPath = join(cwd, "src");
   const targetDir = type === "esm" ? "es" : "lib";
@@ -78,7 +78,7 @@ export default async function(opts: IBabelOpts) {
       nodeFiles,
       nodeVersion,
       lazy: cjs && cjs.lazy,
-      lessInBabelMode
+      lessInBabelMode,
     });
     if (importLibToEs && type === "esm") {
       babelOpts.plugins.push(require.resolve("../lib/importLibToEs"));
@@ -111,7 +111,23 @@ export default async function(opts: IBabelOpts) {
     if (result.error) {
       return;
     }
-    return result.config;
+    const pkgTsConfig = result.config;
+    if (pkgTsConfig.extends) {
+      const rootTsConfigPath = slash(relative(cwd, pkgTsConfig.extends));
+      const rootTsConfig = parseTsconfig(rootTsConfigPath);
+      if (rootTsConfig) {
+        const mergedConfig = {
+          ...rootTsConfig,
+          ...pkgTsConfig,
+          compilerOptions: {
+            ...rootTsConfig.compilerOptions,
+            ...pkgTsConfig.compilerOptions,
+          },
+        };
+        return mergedConfig;
+      }
+    }
+    return pkgTsConfig;
   }
 
   function getTsconfigCompilerOptions(path: string) {
@@ -147,27 +163,27 @@ export default async function(opts: IBabelOpts) {
     return vfs
       .src(src, {
         allowEmpty: true,
-        base: srcPath
+        base: srcPath,
       })
       .pipe(watch ? gulpPlumber() : through.obj())
       .pipe(
-        gulpIf(f => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig))
+        gulpIf((f) => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig))
       )
       .pipe(
         gulpIf(
-          f => lessInBabelMode && /\.less$/.test(f.path),
+          (f) => lessInBabelMode && /\.less$/.test(f.path),
           gulpLess(lessInBabelMode || {})
         )
       )
       .pipe(
         gulpIf(
-          f => isTransform(f.path),
+          (f) => isTransform(f.path),
           through.obj((file, env, cb) => {
             try {
               file.contents = Buffer.from(
                 transform({
                   file,
-                  type
+                  type,
                 })
               );
               // .jsx -> .js
@@ -184,7 +200,7 @@ export default async function(opts: IBabelOpts) {
       .pipe(vfs.dest(targetPath));
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const patterns = [
       join(srcPath, "**/*"),
       `!${join(srcPath, "**/fixtures{,/**}")}`,
@@ -207,7 +223,7 @@ export default async function(opts: IBabelOpts) {
           )
         );
         const watcher = chokidar.watch(patterns, {
-          ignoreInitial: true
+          ignoreInitial: true,
         });
 
         const files = [];
