@@ -1,5 +1,6 @@
 import { ModuleFormat, rollup, watch } from 'rollup';
 import signale from 'signale';
+import chalk from 'chalk';
 import getRollupConfig from './getRollupConfig';
 import { Dispose, IBundleOptions } from './types';
 import normalizeBundleOpts from './normalizeBundleOpts';
@@ -35,13 +36,19 @@ async function build(entry: string, opts: IRollupOpts) {
           watch: {},
         },
       ]);
-      watcher.on('event', event => {
-        if (event.error) {
-          signale.error(event.error);
-        } else if (event.code === 'START') {
-          log(`[${type}] Rebuild since file changed`);
-        }
-      });
+      await (new Promise<void>((resolve) => {
+        watcher.on('event', (event) => {
+          // 每次构建完成都会触发 BUNDLE_END 事件
+          // 当第一次构建完成或出错就 resolve
+          if (event.code === 'ERROR') {
+            signale.error(event.error);
+            resolve();
+          } else if (event.code === 'BUNDLE_END') {
+            log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
+            resolve();
+          }
+        });
+      }));
       process.once('SIGINT', () => {
         watcher.close();
       });
@@ -50,6 +57,7 @@ async function build(entry: string, opts: IRollupOpts) {
       const { output, ...input } = rollupConfig;
       const bundle = await rollup(input); // eslint-disable-line
       await bundle.write(output); // eslint-disable-line
+      log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
     }
   }
 }
@@ -62,5 +70,8 @@ export default async function(opts: IRollupOpts) {
     }
   } else {
     await build(opts.entry, opts);
+  }
+  if (opts.watch) {
+    opts.log(chalk.magentaBright(`Rebuild ${opts.type} since file changed 👀`));
   }
 }
