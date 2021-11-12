@@ -64,7 +64,6 @@ export default function({ cwd, customPath }: { cwd: string; customPath?: string 
     const userConfigs = Array.isArray(userConfig) ? userConfig : [userConfig];
     userConfigs.forEach((userConfig) => {
       const ajv = extendAjv(new AJV({ allErrors: true }));
-      console.log(1);
       const isValid = ajv.validate(schema, userConfig);
       if (!isValid) {
         const errors = ajv.errors.map(({ dataPath, message }, index) => {
