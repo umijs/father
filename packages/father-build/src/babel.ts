@@ -9,7 +9,6 @@ import slash from "slash2";
 import * as chokidar from "chokidar";
 import * as babel from "@babel/core";
 import gulpTs from "gulp-typescript";
-import alias from "@gulp-plugin/alias";
 import gulpLess from "gulp-less";
 import gulpPlumber from "gulp-plumber";
 import gulpIf from "gulp-if";
@@ -167,12 +166,6 @@ export default async function (opts: IBabelOpts) {
         base: srcPath,
       })
       .pipe(watch ? gulpPlumber() : through.obj())
-      .pipe(
-        gulpIf((f) =>
-          tsConfig && isTsFile(f.path),
-          tsConfig.paths ? alias({ config: tsConfig, cwd }) : through.obj()
-        )
-      )
       .pipe(
         gulpIf((f) => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig))
       )
