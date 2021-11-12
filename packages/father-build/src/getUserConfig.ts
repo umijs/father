@@ -53,8 +53,6 @@ export default function({ cwd, customPath }: { cwd: string; customPath?: string 
       returnRelative: false,
     });
 
-  console.log(configFile);
-
   if (configFile) {
     if (configFile.includes('.umirc.library.')) {
       signale.warn(`.umirc.library.js is deprecated, please use .fatherrc.js instead.`);
