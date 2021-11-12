@@ -39,7 +39,7 @@ export default function({ cwd, customPath }: { cwd: string; customPath?: string 
   let finalPath = '';
 
   if (customPath) {
-    finalPath = isAbsolute(customPath) ? finalPath : resolve(process.cwd(), customPath);
+    finalPath = isAbsolute(customPath) ? customPath : resolve(process.cwd(), customPath);
     if (!existsSync(finalPath)) {
       throw new Error(`can\'t found config file: ${customPath}`);
     }
