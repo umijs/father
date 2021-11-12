@@ -39,23 +39,26 @@ function build() {
     file: args.file,
     target: args.target,
     entry: args._,
+    config: args.config,
   });
 
   if (buildArgs.file && buildArgs.entry && buildArgs.entry.length > 1) {
-    signale.error(new Error(
-      `Cannot specify file when have multiple entries (${buildArgs.entry.join(', ')})`
-    ));
+    signale.error(
+      new Error(`Cannot specify file when have multiple entries (${buildArgs.entry.join(', ')})`)
+    );
     process.exit(1);
   }
 
-  require('../lib/build').default({
-    cwd: args.root || process.cwd(),
-    watch: args.w || args.watch,
-    buildArgs,
-  }).catch(e => {
-    signale.error(e);
-    process.exit(1);
-  });
+  require('../lib/build')
+    .default({
+      cwd: args.root || process.cwd(),
+      watch: args.w || args.watch,
+      buildArgs,
+    })
+    .catch((e) => {
+      signale.error(e);
+      process.exit(1);
+    });
 }
 
 build();
