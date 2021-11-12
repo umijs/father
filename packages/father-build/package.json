@@ -23,7 +23,6 @@
     "@babel/preset-react": "7.12.1",
     "@babel/preset-typescript": "7.12.1",
     "@babel/register": "7.12.1",
-    "@gulp-plugin/alias": "^2.2.2",
     "@lerna/filter-packages": "4.0.0",
     "@lerna/project": "4.0.0",
     "@lerna/query-graph": "4.0.0",

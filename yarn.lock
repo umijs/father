@@ -2161,13 +2161,6 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
-"@gulp-plugin/alias@^2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@gulp-plugin/alias/-/alias-2.2.2.tgz#b4dca2a5206cf921716209ec58fb44da0f00bf12"
-  integrity sha512-nl5MnEjfovlayaSy9q2wIiIfp2DN+q56A/0YBxMrtj4XxcXmSFmHTJhOT0pM9X3dLTCBZaVKXQXl1uCNEB1U6Q==
-  dependencies:
-    typescript "^4.3.5"
-
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
@@ -22454,11 +22447,6 @@ typescript@^4.0.2, typescript@^4.0.5:
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
-
-typescript@^4.3.5:
-  version "4.4.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.4.tgz#2cd01a1a1f160704d3101fd5a58ff0f9fcb8030c"
-  integrity sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==
 
 ua-parser-js@^0.7.18:
   version "0.7.28"
