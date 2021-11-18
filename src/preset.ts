@@ -14,6 +14,7 @@ export default (api: IApi) => {
       require.resolve('./commands/version'),
 
       // features
+      require.resolve('./features/configBuilder/configBuilder'),
       require.resolve('./features/configPlugins/configPlugins'),
     ],
   };

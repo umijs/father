@@ -1,8 +1,12 @@
 import type { IServicePluginAPI, PluginAPI } from '@umijs/core';
+import type { ITransformer } from './builder/protocol';
 
 export type IApi = PluginAPI &
   IServicePluginAPI & {
-    onFoo: (arg0: string) => void;
+    /**
+     * register bundless transformer
+     */
+    registerBundlessTransformer: (transformer: ITransformer) => void;
   };
 
 export interface IFatherBaseConfig {
