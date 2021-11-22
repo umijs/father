@@ -65,27 +65,26 @@ export function normalizeUserConfig(
 
   // normalize esm config
   if (esm) {
-    const { overrides = {}, input, ...esmBaseConfig } = esm;
-    const autoTransformer = userConfig.targets?.node ? 'esbuild' : 'babel';
-    const autoOutput = userConfig.targets?.node ? 'dist' : 'es';
+    const { overrides = {}, ...esmBaseConfig } = esm;
+    const bundlessTargets = esmBaseConfig.targets || userConfig.targets;
     const bundlessConfig: Omit<ITransformerConfig, 'input'> = {
       type: IFatherBuildTypes.BUNDLESS,
-
-      // default to use auto output
-      output: autoOutput,
-
-      // default to use auto transformer
-      transformer: autoTransformer,
       ...baseConfig,
       ...esmBaseConfig,
     };
 
     // generate config for input
     configs.push({
-      ...bundlessConfig,
-
       // default to transform src
-      input: esm.input || 'src',
+      input: 'src',
+
+      // default to use auto output
+      output: bundlessTargets?.node ? 'dist' : 'es',
+
+      // default to use auto transformer
+      transformer: bundlessTargets?.node ? 'esbuild' : 'babel',
+
+      ...bundlessConfig,
 
       // transform overrides inputs to ignores
       ignores: DEFAULT_BUNDLESS_IGNORES.concat(
@@ -95,7 +94,15 @@ export function normalizeUserConfig(
 
     // generate config for overrides
     Object.keys(overrides).forEach((oInput) => {
+      const overrideTargets = overrides[oInput].targets || bundlessTargets;
+
       configs.push({
+        // default to use auto output
+        output: overrideTargets?.node ? 'dist' : 'es',
+
+        // default to use auto transformer
+        transformer: overrideTargets?.node ? 'esbuild' : 'babel',
+
         ...bundlessConfig,
 
         // override all configs for different input
