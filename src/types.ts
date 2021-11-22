@@ -71,7 +71,7 @@ export interface IFatherTransformerConfig extends IFatherBaseConfig {
 
   /**
    * specific transformer
-   * @default auto (babel for browser files, esbuild for node files)
+   * @note  father will auto-select transformer by default (babel for browser files, esbuild for node files)
    */
   transformer?: string;
 
