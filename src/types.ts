@@ -112,11 +112,6 @@ export interface IFatherBundlerConfig {
   externals?: Record<string, string>;
 
   /**
-   * extract css to a single file
-   */
-  extractCSS?: boolean;
-
-  /**
    * modify webpack config via webpack-chain
    * @todo  real type definition
    */
