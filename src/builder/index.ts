@@ -4,7 +4,7 @@ import { normalizeUserConfig } from './config';
 import bundle from './executor/bundle';
 import bundless from './executor/bundless';
 import type { ITransformer } from './protocol';
-import type { IFatherConfig } from '../types';
+import { IFatherBuildTypes, IFatherConfig } from '../types';
 
 const transformers: Record<string, ITransformer> = {};
 
@@ -24,7 +24,7 @@ export default async (opts: { userConfig: IFatherConfig; cwd: string }) => {
     rimraf.sync(config.output!);
 
     switch (config.type) {
-      case 'bundle':
+      case IFatherBuildTypes.BUNDLE:
         logger.info(
           `[bundle] from ${path.relative(
             opts.cwd,
@@ -34,7 +34,7 @@ export default async (opts: { userConfig: IFatherConfig; cwd: string }) => {
         await bundle(config);
         break;
 
-      case 'bundless':
+      case IFatherBuildTypes.BUNDLESS:
         const Transformer = transformers[config.transformer!];
         const transformer = new Transformer(config);
 

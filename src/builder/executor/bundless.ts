@@ -1,7 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { glob, winPath } from '@umijs/utils';
-import type { IFatherBaseConfig, IFatherTransformerConfig } from '../../types';
+import type {
+  IFatherBaseConfig,
+  IFatherTransformerConfig,
+  IFatherBuildTypes,
+} from '../../types';
 import type { ITransformer } from '../protocol';
 
 /**
@@ -10,7 +14,7 @@ import type { ITransformer } from '../protocol';
 export interface ITransformerConfig
   extends IFatherBaseConfig,
     Omit<IFatherTransformerConfig, 'input' | 'overrides'> {
-  type: 'bundless';
+  type: IFatherBuildTypes.BUNDLESS;
   input: string;
 }
 

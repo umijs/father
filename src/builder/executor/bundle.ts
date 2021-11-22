@@ -1,4 +1,8 @@
-import type { IFatherBaseConfig, IFatherBundlerConfig } from '../../types';
+import type {
+  IFatherBaseConfig,
+  IFatherBuildTypes,
+  IFatherBundlerConfig,
+} from '../../types';
 
 /**
  * declare bundler config
@@ -6,7 +10,7 @@ import type { IFatherBaseConfig, IFatherBundlerConfig } from '../../types';
 export interface IBundlerConfig
   extends IFatherBaseConfig,
     Omit<IFatherBundlerConfig, 'entry'> {
-  type: 'bundle';
+  type: IFatherBuildTypes.BUNDLE;
   bundler: 'webpack';
   entry: string;
 }

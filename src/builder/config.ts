@@ -2,7 +2,7 @@ import path from 'path';
 import { winPath } from '@umijs/utils';
 import type { IBundlerConfig } from './executor/bundle';
 import type { ITransformerConfig } from './executor/bundless';
-import type { IFatherConfig } from '../types';
+import { IFatherBuildTypes, IFatherConfig } from '../types';
 
 const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',
@@ -30,7 +30,7 @@ export function normalizeUserConfig(
   if (umd) {
     const entryConfig = umd.entry;
     const bundleConfig: Omit<IBundlerConfig, 'entry'> = {
-      type: 'bundle',
+      type: IFatherBuildTypes.BUNDLE,
       bundler: 'webpack',
 
       // default to output dist
@@ -68,7 +68,7 @@ export function normalizeUserConfig(
     const { overrides = {}, input, ...esmBaseConfig } = esm;
     const autoTransformer = userConfig.targets?.node ? 'esbuild' : 'babel';
     const bundlessConfig: Omit<ITransformerConfig, 'input'> = {
-      type: 'bundless',
+      type: IFatherBuildTypes.BUNDLESS,
       output: 'es',
 
       // default to use auto transformer
@@ -114,9 +114,9 @@ export function normalizeUserConfig(
 
   // transform relative path to absolute path for all configs
   configs.forEach((config) => {
-    if (config.type === 'bundle') {
+    if (config.type === IFatherBuildTypes.BUNDLE) {
       config.entry = winPath(path.resolve(opts.cwd, config.entry));
-    } else if (config.type === 'bundless') {
+    } else if (config.type === IFatherBuildTypes.BUNDLESS) {
       config.input = winPath(path.resolve(opts.cwd, config.input));
     }
 

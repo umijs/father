@@ -9,6 +9,11 @@ export type IApi = PluginAPI &
     registerBundlessTransformer: (transformer: ITransformer) => void;
   };
 
+export enum IFatherBuildTypes {
+  BUNDLE = 'bundle',
+  BUNDLESS = 'bundless',
+}
+
 export interface IFatherBaseConfig {
   /**
    * compile targets
