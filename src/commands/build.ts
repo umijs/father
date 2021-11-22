@@ -7,8 +7,9 @@ export default (api: IApi) => {
     description: 'build',
     async fn({ args }) {
       const finalArgs = {
-        // disable umd in dev by default
-        umd: args.umd ?? (!args.esm && api.service.env === 'production'),
+        // disable umd if only pass --esm
+        umd: args.umd ?? !args.esm,
+        // disable esm if only pass --umd
         esm: args.esm ?? !args.umd,
       };
 
