@@ -117,12 +117,6 @@ export interface IFatherBundlerConfig {
   extractCSS?: boolean;
 
   /**
-   * extra webpack plugins
-   * @todo  real type definition
-   */
-  extraWebpackPlugins?: any[];
-
-  /**
    * modify webpack config via webpack-chain
    * @todo  real type definition
    */
