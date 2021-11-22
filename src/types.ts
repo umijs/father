@@ -56,7 +56,7 @@ export interface IFatherBaseConfig {
   extraBabelPlugins?: any[];
 }
 
-export interface IFatherTransformerConfig {
+export interface IFatherTransformerConfig extends IFatherBaseConfig {
   /**
    * source code directory
    * @default src
@@ -89,7 +89,7 @@ export interface IFatherTransformerConfig {
   ignores?: string[];
 }
 
-export interface IFatherBundlerConfig {
+export interface IFatherBundlerConfig extends IFatherBaseConfig {
   /**
    * bundle entry config
    * @default src/index.{js,ts,jsx,tsx}
