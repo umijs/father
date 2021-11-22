@@ -67,9 +67,12 @@ export function normalizeUserConfig(
   if (esm) {
     const { overrides = {}, input, ...esmBaseConfig } = esm;
     const autoTransformer = userConfig.targets?.node ? 'esbuild' : 'babel';
+    const autoOutput = userConfig.targets?.node ? 'dist' : 'es';
     const bundlessConfig: Omit<ITransformerConfig, 'input'> = {
       type: IFatherBuildTypes.BUNDLESS,
-      output: 'es',
+
+      // default to use auto output
+      output: autoOutput,
 
       // default to use auto transformer
       transformer: autoTransformer,
