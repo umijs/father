@@ -9,10 +9,10 @@ import { IFatherBuildTypes, IFatherConfig } from '../types';
 const transformers: Record<string, ITransformer> = {};
 
 /**
- * register bundless tranformer
+ * add bundless tranformer
  * @param transformer
  */
-export function registerTransformer(transformer: ITransformer) {
+export function addTransformer(transformer: ITransformer) {
   transformers[transformer.id] = transformer;
 }
 

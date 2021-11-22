@@ -4,9 +4,9 @@ import type { ITransformer } from './builder/protocol';
 export type IApi = PluginAPI &
   IServicePluginAPI & {
     /**
-     * register bundless transformer
+     * add bundless transformer
      */
-    registerBundlessTransformer: (transformer: ITransformer) => void;
+    addTransformer: (transformer: ITransformer) => void;
   };
 
 export enum IFatherBuildTypes {
