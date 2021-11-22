@@ -139,10 +139,4 @@ export interface IFatherConfig extends IFatherBaseConfig {
    * transformer config (esm)
    */
   esm?: IFatherTransformerConfig;
-
-  /**
-   * cjs
-   * @deprecated
-   */
-  cjs?: IFatherTransformerConfig;
 }
