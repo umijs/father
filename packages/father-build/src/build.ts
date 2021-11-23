@@ -189,7 +189,6 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       }
     }
   }
-
   return dispose;
 }
 

@@ -30,6 +30,14 @@ interface IUmd {
 
 export interface IBundleOptions {
   entry?: string | string[];
+  /**
+   * @deprecated
+   */
+  output?: string;
+  /**
+   * @deprecated
+   */
+  ignores?: string;
   file?: string;
   esm?: BundleType | IEsm | false;
   cjs?: BundleType | ICjs | false;
