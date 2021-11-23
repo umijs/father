@@ -42,6 +42,7 @@ function build() {
     config: args.config,
     output: args.output,
     ignores: args.ignores,
+    src: args.src,
   });
 
   if (buildArgs.file && buildArgs.entry && buildArgs.entry.length > 1) {

@@ -37,6 +37,10 @@ export interface IBundleOptions {
   /**
    * @deprecated
    */
+  src?: string;
+  /**
+   * @deprecated
+   */
   ignores?: string;
   file?: string;
   esm?: BundleType | IEsm | false;

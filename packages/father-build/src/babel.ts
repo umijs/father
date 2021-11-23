@@ -59,7 +59,7 @@ export default async function(opts: IBabelOpts) {
       lessInBabelMode,
     },
   } = opts;
-  const srcPath = join(cwd, 'src');
+  const srcPath = join(cwd, opts.bundleOpts.src || 'src');
   const targetDir = opts.bundleOpts.output || (type === 'esm' ? 'es' : 'lib');
   const targetPath = join(cwd, targetDir);
 
