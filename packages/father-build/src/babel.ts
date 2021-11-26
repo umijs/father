@@ -1,4 +1,4 @@
-import { join, extname, relative } from 'path';
+import { join, extname, relative, isAbsolute } from 'path';
 import { existsSync, readFileSync, statSync } from 'fs';
 import vfs from 'vinyl-fs';
 import signale from 'signale';
@@ -59,9 +59,12 @@ export default async function(opts: IBabelOpts) {
       lessInBabelMode,
     },
   } = opts;
-  const srcPath = join(cwd, opts.bundleOpts.src || 'src');
-  const targetDir = opts.bundleOpts.output || (type === 'esm' ? 'es' : 'lib');
-  const targetPath = join(cwd, targetDir);
+  const optsSrc = opts.bundleOpts.src;
+  const srcPath = isAbsolute(optsSrc) ? optsSrc : join(cwd, optsSrc || 'src');
+
+  const optOutput = opts.bundleOpts.output;
+  const targetDir = optOutput || (type === 'esm' ? 'es' : 'lib');
+  const targetPath = isAbsolute(optOutput) ? optOutput : join(cwd, targetDir);
 
   log(chalk.gray(`Clean ${targetDir} directory`));
   rimraf.sync(targetPath);
@@ -87,7 +90,11 @@ export default async function(opts: IBabelOpts) {
     babelOpts.plugins.push(...extraBabelPlugins);
 
     const relFile = slash(file.path).replace(`${cwd}/`, '');
-    log(`Transform to ${type} for ${chalk[isBrowser ? 'yellow' : 'blue'](relFile)}`);
+    log(
+      `Transform to ${type} for ${chalk[isBrowser ? 'yellow' : 'blue'](
+        relFile
+      )}`
+    );
 
     return babel.transform(file.contents, {
       ...babelOpts,
@@ -162,9 +169,14 @@ export default async function(opts: IBabelOpts) {
         base: srcPath,
       })
       .pipe(watch ? gulpPlumber() : through.obj())
-      .pipe(gulpIf((f) => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig)))
       .pipe(
-        gulpIf((f) => lessInBabelMode && /\.less$/.test(f.path), gulpLess(lessInBabelMode || {}))
+        gulpIf((f) => !disableTypeCheck && isTsFile(f.path), gulpTs(tsConfig))
+      )
+      .pipe(
+        gulpIf(
+          (f) => lessInBabelMode && /\.less$/.test(f.path),
+          gulpLess(lessInBabelMode || {})
+        )
       )
       .pipe(
         gulpIf(
@@ -211,14 +223,22 @@ export default async function(opts: IBabelOpts) {
     if (customIgnores) {
       patterns = patterns.concat(
         customIgnores.map(
-          (ignorePath) => '!' + join(srcPath, `${ignorePath.replace(/^src/, '')}/**/*`)
+          (ignorePath) =>
+            '!' + join(srcPath, `${ignorePath.replace(/^src/, '')}/**/*`)
         )
       );
     }
 
     createStream(patterns).on('end', () => {
       if (watch) {
-        log(chalk.magenta(`Start watching ${slash(srcPath).replace(`${cwd}/`, '')} directory...`));
+        log(
+          chalk.magenta(
+            `Start watching ${slash(srcPath).replace(
+              `${cwd}/`,
+              ''
+            )} directory...`
+          )
+        );
         const watcher = chokidar.watch(patterns, {
           ignoreInitial: true,
         });
@@ -233,7 +253,9 @@ export default async function(opts: IBabelOpts) {
         const debouncedCompileFiles = lodash.debounce(compileFiles, 1000);
         watcher.on('all', (event, fullPath) => {
           const relPath = fullPath.replace(srcPath, '');
-          log(`[${event}] ${slash(join(srcPath, relPath)).replace(`${cwd}/`, '')}`);
+          log(
+            `[${event}] ${slash(join(srcPath, relPath)).replace(`${cwd}/`, '')}`
+          );
           if (!existsSync(fullPath)) return;
           if (statSync(fullPath).isFile()) {
             if (!files.includes(fullPath)) files.push(fullPath);
