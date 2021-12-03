@@ -15,7 +15,7 @@ Library toolkit based on rollup, docz, storybook, jest, prettier and eslint.
 
 ## Features
 
-* ✔︎ 基于 [docz](https://www.docz.site/) 的文档功能
+* ✔︎ 基于 [docz](https://www.docz.site/) 的文档功能（**不再维护，建议 [迁移到 dumi](https://github.com/umijs/father/issues/241)** 或 单独安装 docz 使用）
 * ✔︎ 基于 [rollup](http://rollupjs.org/) 和 babel 的组件打包功能
 * ✔︎ 支持 TypeScript
 * ✔︎ 支持 cjs、esm 和 umd 三种格式的打包
