@@ -290,7 +290,7 @@ export default {
 
 #### cssModules
 
-配置是否开启 css modules。
+配置是否开启 css modules。**虽然 father 提供这个能力，但不建议为组件库启用 CSS Modules，这将使得组件库用户很难覆写样式，下一版的 father 也将移除该特性。**
 
 * Type: `boolean | object`
 * Default: `false`
@@ -711,9 +711,9 @@ export default {
 
 一些小贴士：
 
-1. 通常只要配置 `esm: "rollup"` 就够了
+1. 通常只要配置 `esm: "babel"` 就够了
 2. cjs 和 esm 支持 rollup 和 babel 两种打包方式，rollup 是跟进 entry 把项目依赖打包在一起输出一个文件，babel 是把 src 目录转化成 lib（cjs） 或 es（esm）
-3. 如果要考虑 ssr，再配上 `cjs: "rollup"`
+3. 如果要考虑 ssr，再配上 `cjs: "babel"`
 4. `package.json` 里配上 `sideEffects: false | string[]`，会让 webpack 的 [tree-shaking](https://webpack.js.org/guides/tree-shaking/) 更高效
 
 ### 关于 dependencies、peerDependencies 和 external
