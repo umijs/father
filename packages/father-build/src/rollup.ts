@@ -21,7 +21,7 @@ async function build(entry: string, opts: IRollupOpts) {
   const { cwd, rootPath, type, log, bundleOpts, importLibToEs, dispose } = opts;
   const rollupConfigs = getRollupConfig({
     cwd,
-    rootPath:rootPath || cwd,
+    rootPath: rootPath || cwd,
     type,
     entry,
     importLibToEs,
@@ -36,7 +36,7 @@ async function build(entry: string, opts: IRollupOpts) {
           watch: {},
         },
       ]);
-      await (new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         watcher.on('event', (event) => {
           // 每次构建完成都会触发 BUNDLE_END 事件
           // 当第一次构建完成或出错就 resolve
@@ -44,11 +44,15 @@ async function build(entry: string, opts: IRollupOpts) {
             signale.error(event.error);
             resolve();
           } else if (event.code === 'BUNDLE_END') {
-            log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
+            log(
+              `${chalk.green(`Build ${type} success`)} ${chalk.gray(
+                `entry: ${entry}`
+              )}`
+            );
             resolve();
           }
         });
-      }));
+      });
       process.once('SIGINT', () => {
         watcher.close();
       });
@@ -57,7 +61,11 @@ async function build(entry: string, opts: IRollupOpts) {
       const { output, ...input } = rollupConfig;
       const bundle = await rollup(input); // eslint-disable-line
       await bundle.write(output); // eslint-disable-line
-      log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
+      log(
+        `${chalk.green(`Build ${type} success`)} ${chalk.gray(
+          `entry: ${entry}`
+        )}`
+      );
     }
   }
 }
