@@ -5,7 +5,14 @@ import * as assert from 'assert';
 import { merge } from 'lodash';
 import signale from 'signale';
 import chalk from 'chalk';
-import { IOpts, IBundleOptions, IBundleTypeOutput, ICjs, IEsm, Dispose } from './types';
+import {
+  IOpts,
+  IBundleOptions,
+  IBundleTypeOutput,
+  ICjs,
+  IEsm,
+  Dispose,
+} from './types';
 import babel from './babel';
 import rollup from './rollup';
 import registerBabel from './registerBabel';
@@ -47,7 +54,10 @@ export function getBundleOpts(opts: IOpts): IBundleOptions[] {
 function validateBundleOpts(bundleOpts: IBundleOptions, { cwd, rootPath }) {
   if (bundleOpts.runtimeHelpers) {
     const pkgPath = join(cwd, 'package.json');
-    assert.ok(existsSync(pkgPath), `@babel/runtime dependency is required to use runtimeHelpers`);
+    assert.ok(
+      existsSync(pkgPath),
+      `@babel/runtime dependency is required to use runtimeHelpers`
+    );
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     assert.ok(
       (pkg.dependencies || {})['@babel/runtime'],
@@ -77,11 +87,14 @@ None format of ${chalk.cyan(
   if (bundleOpts.entry) {
     const tsConfigPath = join(cwd, 'tsconfig.json');
     const tsConfig =
-      existsSync(tsConfigPath) || (rootPath && existsSync(join(rootPath, 'tsconfig.json')));
+      existsSync(tsConfigPath) ||
+      (rootPath && existsSync(join(rootPath, 'tsconfig.json')));
     if (
       !tsConfig &&
-      ((Array.isArray(bundleOpts.entry) && bundleOpts.entry.some(isTypescriptFile)) ||
-        (!Array.isArray(bundleOpts.entry) && isTypescriptFile(bundleOpts.entry)))
+      ((Array.isArray(bundleOpts.entry) &&
+        bundleOpts.entry.some(isTypescriptFile)) ||
+        (!Array.isArray(bundleOpts.entry) &&
+          isTypescriptFile(bundleOpts.entry)))
     ) {
       signale.info(
         `Project using ${chalk.cyan(
@@ -104,16 +117,22 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   const { cwd, rootPath, watch, buildArgs = {} } = opts;
   const { pkg } = extraOpts;
 
+  const outputDir = opts.buildArgs.output || 'dist';
+
   const dispose: Dispose[] = [];
 
   const customConfigPath =
     buildArgs.config &&
-    (isAbsolute(buildArgs.config) ? buildArgs.config : join(process.cwd(), buildArgs.config));
+    (isAbsolute(buildArgs.config)
+      ? buildArgs.config
+      : join(process.cwd(), buildArgs.config));
 
   // register babel for config files
   registerBabel({
     cwd,
-    only: customConfigPath ? CONFIG_FILES.concat(customConfigPath) : CONFIG_FILES,
+    only: customConfigPath
+      ? CONFIG_FILES.concat(customConfigPath)
+      : CONFIG_FILES,
   });
 
   const pkgName = (typeof pkg === 'string' ? pkg : pkg?.name) || 'unknown';
@@ -129,8 +148,8 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
 
     // Clean dist
-    log(chalk.gray(`Clean dist directory`));
-    rimraf.sync(join(cwd, 'dist'));
+    log(chalk.gray(`Clean ${outputDir} directory`));
+    rimraf.sync(join(cwd, outputDir));
 
     // Build umd
     if (bundleOpts.umd) {
@@ -152,7 +171,15 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       const cjs = bundleOpts.cjs as IBundleTypeOutput;
       log(`Build cjs with ${cjs.type}`);
       if (cjs.type === 'babel') {
-        await babel({ cwd, rootPath, watch, dispose, type: 'cjs', log, bundleOpts });
+        await babel({
+          cwd,
+          rootPath,
+          watch,
+          dispose,
+          type: 'cjs',
+          log,
+          bundleOpts,
+        });
       } else {
         await rollup({
           cwd,
@@ -173,7 +200,16 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
       log(`Build esm with ${esm.type}`);
       const importLibToEs = esm && esm.importLibToEs;
       if (esm && esm.type === 'babel') {
-        await babel({ cwd, rootPath, watch, dispose, type: 'esm', importLibToEs, log, bundleOpts });
+        await babel({
+          cwd,
+          rootPath,
+          watch,
+          dispose,
+          type: 'esm',
+          importLibToEs,
+          log,
+          bundleOpts,
+        });
       } else {
         await rollup({
           cwd,
@@ -217,7 +253,8 @@ export async function buildForLerna(opts: IOpts) {
 
   const dispose: Dispose[] = [];
   for (const pkg of pkgs) {
-    if (process.env.PACKAGE && basename(pkg.contents) !== process.env.PACKAGE) continue;
+    if (process.env.PACKAGE && basename(pkg.contents) !== process.env.PACKAGE)
+      continue;
     // build error when .DS_Store includes in packages root
     const pkgPath = pkg.contents;
     assert.ok(
