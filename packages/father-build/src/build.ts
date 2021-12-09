@@ -117,8 +117,6 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
   const { cwd, rootPath, watch, buildArgs = {} } = opts;
   const { pkg } = extraOpts;
 
-  const outputDir = opts.buildArgs.output || 'dist';
-
   const dispose: Dispose[] = [];
 
   const customConfigPath =
@@ -146,6 +144,8 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
 
   for (const bundleOpts of bundleOptsArray) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
+
+    const outputDir = '' + (bundleOpts.output || 'dist');
 
     // Clean dist
     log(chalk.gray(`Clean ${outputDir} directory`));
