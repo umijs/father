@@ -1,10 +1,11 @@
+import { IFatherTransformerTypes } from '../../types';
 import type { ITransformerConfig } from '../executor/bundless';
 
 /**
  * babel transformer
  */
 class BabelTransformer {
-  static id = 'babel';
+  static id = IFatherTransformerTypes.BABEL;
 
   constructor(config: ITransformerConfig) {
     config;

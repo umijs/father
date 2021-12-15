@@ -1,8 +1,12 @@
 import path from 'path';
 import { winPath } from '@umijs/utils';
+import {
+  IFatherBuildTypes,
+  IFatherConfig,
+  IFatherTransformerTypes,
+} from '../types';
 import type { IBundlerConfig } from './executor/bundle';
 import type { ITransformerConfig } from './executor/bundless';
-import { IFatherBuildTypes, IFatherConfig } from '../types';
 
 const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',
@@ -82,7 +86,9 @@ export function normalizeUserConfig(
       output: 'dist',
 
       // default to use auto transformer
-      transformer: bundlessTargets?.node ? 'esbuild' : 'babel',
+      transformer: bundlessTargets?.node
+        ? IFatherTransformerTypes.ESBUILD
+        : IFatherTransformerTypes.BABEL,
 
       ...bundlessConfig,
 
@@ -98,7 +104,9 @@ export function normalizeUserConfig(
 
       configs.push({
         // default to use auto transformer
-        transformer: overrideTargets?.node ? 'esbuild' : 'babel',
+        transformer: overrideTargets?.node
+          ? IFatherTransformerTypes.ESBUILD
+          : IFatherTransformerTypes.BABEL,
 
         ...bundlessConfig,
 

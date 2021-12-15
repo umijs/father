@@ -1,10 +1,11 @@
+import { IFatherTransformerTypes } from '../../types';
 import type { ITransformerConfig } from '../executor/bundless';
 
 /**
  * esbuild transformer
  */
 class ESBuildTransformer {
-  static id = 'esbuild';
+  static id = IFatherTransformerTypes.ESBUILD;
 
   constructor(config: ITransformerConfig) {
     config;

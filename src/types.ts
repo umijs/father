@@ -14,6 +14,11 @@ export enum IFatherBuildTypes {
   BUNDLESS = 'bundless',
 }
 
+export enum IFatherTransformerTypes {
+  BABEL = 'babel',
+  ESBUILD = 'esbuild',
+}
+
 export interface IFatherBaseConfig {
   /**
    * compile targets
@@ -73,7 +78,7 @@ export interface IFatherTransformerConfig extends IFatherBaseConfig {
    * specific transformer
    * @note  father will auto-select transformer by default (babel for browser files, esbuild for node files)
    */
-  transformer?: string;
+  transformer?: `${IFatherTransformerTypes}`;
 
   /**
    * override config for each sub-directory or file via key-value
