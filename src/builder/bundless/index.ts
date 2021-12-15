@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { glob, winPath } from '@umijs/utils';
+import runLoaders from './loaders';
 import type {
   IFatherBaseConfig,
   IFatherBundlessConfig,
   IFatherBuildTypes,
 } from '../../types';
-import type { ITransformer } from '../protocol';
 
 /**
  * declare bundless config
@@ -18,10 +18,7 @@ export interface IBundlessConfig
   input: string;
 }
 
-export default async (
-  config: IBundlessConfig,
-  transformer: InstanceType<ITransformer>,
-) => {
+export default async (config: IBundlessConfig) => {
   const matches: string[] = [];
 
   if (fs.lstatSync(config.input).isDirectory()) {
@@ -37,7 +34,7 @@ export default async (
   }
 
   // process all matched items
-  matches.forEach((item) => {
+  for (let item of matches) {
     let itemDistPath = winPath(
       path.join(config.output!, path.relative(config.input, item)),
     );
@@ -46,23 +43,18 @@ export default async (
       // mkdir in dist
       fs.mkdirSync(itemDistPath, { recursive: true });
     } else {
-      let result: string;
+      // get result from loaders
+      const result = await runLoaders(item, config);
 
-      if (/\.(j|t)sx?$/.test(item)) {
-        // transform javascript files
-        result = transformer.process(fs.readFileSync(item, 'utf8').toString());
-
-        // replace ext
-        itemDistPath = itemDistPath.replace(/\.[^.]+$/, '.js');
+      if (result) {
+        // distribute file with result
+        fs.writeFileSync(itemDistPath, result);
       } else {
-        // TODO: support to transform other files (such as minify images?)
-        result = fs.readFileSync(item, 'utf-8');
+        // copy file as normal assets
+        fs.copyFileSync(item, itemDistPath);
       }
-
-      // distribute file
-      fs.writeFileSync(itemDistPath, result);
     }
-  });
+  }
 
   // TODO: watch mode
 };

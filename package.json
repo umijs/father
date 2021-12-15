@@ -25,7 +25,7 @@
   "dependencies": {
     "@umijs/core": "^4.0.0-beta.1",
     "@umijs/utils": "^4.0.0-beta.1",
-    "umi": "^4.0.0-beta.1",
+    "loader-runner": "4.2.0",
     "v8-compile-cache": "2.3.0"
   },
   "publishConfig": {
@@ -34,5 +34,8 @@
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)",
     "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
-  ]
+  ],
+  "devDependencies": {
+    "@types/loader-runner": "2.2.4"
+  }
 }

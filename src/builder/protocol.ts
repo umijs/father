@@ -1,6 +1,17 @@
-import type { Root } from '@umijs/core/compiled/@hapi/joi';
+import type { ExtendedLoaderContext, RunLoaderResult } from 'loader-runner';
 import type { IBundlessConfig } from './bundless';
 
+/**
+ * normal loader type (base on webpack loader)
+ */
+export type ILoader = (
+  this: ExtendedLoaderContext & { config: IBundlessConfig },
+  content: RunLoaderResult['resourceBuffer'],
+) => typeof content;
+
+/**
+ * bundless transformer type
+ */
 export interface ITransformer {
   new (config: IBundlessConfig): ITransformer;
 
@@ -11,13 +22,9 @@ export interface ITransformer {
   id: string;
 
   /**
-   * transformer special options schema
-   * @note  use joi way
-   */
-  schema?: Record<string, Root>;
-
-  /**
    * transform raw to result
    */
-  process: (content: string) => string;
+  process: (
+    content: RunLoaderResult['resourceBuffer'],
+  ) => RunLoaderResult['resourceBuffer'];
 }
