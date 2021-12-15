@@ -19,12 +19,17 @@ export enum IFatherTransformerTypes {
   ESBUILD = 'esbuild',
 }
 
+export enum IFatherPlatformTypes {
+  NODE = 'node',
+  BROWSER = 'browser',
+}
+
 export interface IFatherBaseConfig {
   /**
-   * compile targets
-   * @note  such as { chrome: 49 }
+   * compile platform
+   * @note
    */
-  targets?: Record<string, number>;
+  platform?: `${IFatherPlatformTypes}`;
 
   /**
    * define global constants for source code, like webpack

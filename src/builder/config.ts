@@ -3,6 +3,7 @@ import { winPath } from '@umijs/utils';
 import {
   IFatherBuildTypes,
   IFatherConfig,
+  IFatherPlatformTypes,
   IFatherTransformerTypes,
 } from '../types';
 import type { IBundlerConfig } from './executor/bundle';
@@ -70,7 +71,7 @@ export function normalizeUserConfig(
   // normalize esm config
   if (esm) {
     const { overrides = {}, ...esmBaseConfig } = esm;
-    const bundlessTargets = esmBaseConfig.targets || userConfig.targets;
+    const bundlessPlatform = esmBaseConfig.platform || userConfig.platform;
     const bundlessConfig: Omit<ITransformerConfig, 'input'> = {
       type: IFatherBuildTypes.BUNDLESS,
       ...baseConfig,
@@ -86,9 +87,10 @@ export function normalizeUserConfig(
       output: 'dist',
 
       // default to use auto transformer
-      transformer: bundlessTargets?.node
-        ? IFatherTransformerTypes.ESBUILD
-        : IFatherTransformerTypes.BABEL,
+      transformer:
+        bundlessPlatform === IFatherPlatformTypes.NODE
+          ? IFatherTransformerTypes.ESBUILD
+          : IFatherTransformerTypes.BABEL,
 
       ...bundlessConfig,
 
@@ -100,13 +102,14 @@ export function normalizeUserConfig(
 
     // generate config for overrides
     Object.keys(overrides).forEach((oInput) => {
-      const overrideTargets = overrides[oInput].targets || bundlessTargets;
+      const overridePlatform = overrides[oInput].platform || bundlessPlatform;
 
       configs.push({
         // default to use auto transformer
-        transformer: overrideTargets?.node
-          ? IFatherTransformerTypes.ESBUILD
-          : IFatherTransformerTypes.BABEL,
+        transformer:
+          overridePlatform === IFatherPlatformTypes.NODE
+            ? IFatherTransformerTypes.ESBUILD
+            : IFatherTransformerTypes.BABEL,
 
         ...bundlessConfig,
 
