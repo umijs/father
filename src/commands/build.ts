@@ -5,23 +5,9 @@ export default (api: IApi) => {
   api.registerCommand({
     name: 'build',
     description: 'build',
-    async fn({ args }) {
-      const finalArgs = {
-        // disable umd if only pass --esm
-        umd: args.umd ?? !args.esm,
-        // disable esm if only pass --umd
-        esm: args.esm ?? !args.umd,
-      };
-
-      // support to build specific dist type via cli args
-      const pickedConfig = {
-        ...api.config,
-        ...(finalArgs.umd ? { umd: api.config.umd } : { umd: undefined }),
-        ...(finalArgs.esm ? { esm: api.config.esm } : { esm: undefined }),
-      };
-
+    async fn() {
       await builder({
-        userConfig: pickedConfig,
+        userConfig: api.userConfig,
         cwd: api.cwd,
       });
     },
