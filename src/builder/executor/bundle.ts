@@ -1,21 +1,21 @@
 import type {
   IFatherBaseConfig,
   IFatherBuildTypes,
-  IFatherBundlerConfig,
+  IFatherBundleConfig,
 } from '../../types';
 
 /**
  * declare bundler config
  */
-export interface IBundlerConfig
+export interface IBundleConfig
   extends IFatherBaseConfig,
-    Omit<IFatherBundlerConfig, 'entry'> {
+    Omit<IFatherBundleConfig, 'entry'> {
   type: IFatherBuildTypes.BUNDLE;
   bundler: 'webpack';
   entry: string;
 }
 
-export default async (config: IBundlerConfig) => {
+export default async (config: IBundleConfig) => {
   config;
   console.log('[bundle] umd');
 };

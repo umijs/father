@@ -4,10 +4,10 @@ import {
   IFatherBuildTypes,
   IFatherConfig,
   IFatherPlatformTypes,
-  IFatherTransformerTypes,
+  IFatherJSTransformerTypes,
 } from '../types';
-import type { IBundlerConfig } from './executor/bundle';
-import type { ITransformerConfig } from './executor/bundless';
+import type { IBundleConfig } from './executor/bundle';
+import type { IBundlessConfig } from './executor/bundless';
 
 const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',
@@ -18,7 +18,7 @@ const DEFAULT_BUNDLESS_IGNORES = [
 /**
  * declare union builder config
  */
-export type IBuilderConfig = IBundlerConfig | ITransformerConfig;
+export type IBuilderConfig = IBundleConfig | IBundlessConfig;
 
 /**
  * normalize user config to bundler configs
@@ -34,7 +34,7 @@ export function normalizeUserConfig(
   // normalize umd config
   if (umd) {
     const entryConfig = umd.entry;
-    const bundleConfig: Omit<IBundlerConfig, 'entry'> = {
+    const bundleConfig: Omit<IBundleConfig, 'entry'> = {
       type: IFatherBuildTypes.BUNDLE,
       bundler: 'webpack',
 
@@ -72,7 +72,7 @@ export function normalizeUserConfig(
   if (esm) {
     const { overrides = {}, ...esmBaseConfig } = esm;
     const bundlessPlatform = esmBaseConfig.platform || userConfig.platform;
-    const bundlessConfig: Omit<ITransformerConfig, 'input'> = {
+    const bundlessConfig: Omit<IBundlessConfig, 'input'> = {
       type: IFatherBuildTypes.BUNDLESS,
       ...baseConfig,
       ...esmBaseConfig,
@@ -89,8 +89,8 @@ export function normalizeUserConfig(
       // default to use auto transformer
       transformer:
         bundlessPlatform === IFatherPlatformTypes.NODE
-          ? IFatherTransformerTypes.ESBUILD
-          : IFatherTransformerTypes.BABEL,
+          ? IFatherJSTransformerTypes.ESBUILD
+          : IFatherJSTransformerTypes.BABEL,
 
       ...bundlessConfig,
 
@@ -108,8 +108,8 @@ export function normalizeUserConfig(
         // default to use auto transformer
         transformer:
           overridePlatform === IFatherPlatformTypes.NODE
-            ? IFatherTransformerTypes.ESBUILD
-            : IFatherTransformerTypes.BABEL,
+            ? IFatherJSTransformerTypes.ESBUILD
+            : IFatherJSTransformerTypes.BABEL,
 
         ...bundlessConfig,
 

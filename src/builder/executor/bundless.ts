@@ -3,7 +3,7 @@ import path from 'path';
 import { glob, winPath } from '@umijs/utils';
 import type {
   IFatherBaseConfig,
-  IFatherTransformerConfig,
+  IFatherBundlessConfig,
   IFatherBuildTypes,
 } from '../../types';
 import type { ITransformer } from '../protocol';
@@ -11,15 +11,15 @@ import type { ITransformer } from '../protocol';
 /**
  * declare bundless config
  */
-export interface ITransformerConfig
+export interface IBundlessConfig
   extends IFatherBaseConfig,
-    Omit<IFatherTransformerConfig, 'input' | 'overrides'> {
+    Omit<IFatherBundlessConfig, 'input' | 'overrides'> {
   type: IFatherBuildTypes.BUNDLESS;
   input: string;
 }
 
 export default async (
-  config: ITransformerConfig,
+  config: IBundlessConfig,
   transformer: InstanceType<ITransformer>,
 ) => {
   const matches: string[] = [];

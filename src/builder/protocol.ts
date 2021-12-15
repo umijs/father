@@ -1,8 +1,8 @@
 import type { Root } from '@umijs/core/compiled/@hapi/joi';
-import type { ITransformerConfig } from './executor/bundless';
+import type { IBundlessConfig } from './executor/bundless';
 
 export interface ITransformer {
-  new (config: ITransformerConfig): ITransformer;
+  new (config: IBundlessConfig): ITransformer;
 
   /**
    * transformer identifier

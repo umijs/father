@@ -1,13 +1,13 @@
-import { IFatherTransformerTypes } from '../../types';
-import type { ITransformerConfig } from '../executor/bundless';
+import { IFatherJSTransformerTypes } from '../../types';
+import type { IBundlessConfig } from '../executor/bundless';
 
 /**
  * babel transformer
  */
 class BabelTransformer {
-  static id = IFatherTransformerTypes.BABEL;
+  static id = IFatherJSTransformerTypes.BABEL;
 
-  constructor(config: ITransformerConfig) {
+  constructor(config: IBundlessConfig) {
     config;
     // TODO: create babel instance from config
   }

@@ -14,7 +14,7 @@ export enum IFatherBuildTypes {
   BUNDLESS = 'bundless',
 }
 
-export enum IFatherTransformerTypes {
+export enum IFatherJSTransformerTypes {
   BABEL = 'babel',
   ESBUILD = 'esbuild',
 }
@@ -66,7 +66,7 @@ export interface IFatherBaseConfig {
   extraBabelPlugins?: any[];
 }
 
-export interface IFatherTransformerConfig extends IFatherBaseConfig {
+export interface IFatherBundlessConfig extends IFatherBaseConfig {
   /**
    * source code directory
    * @default src
@@ -83,14 +83,14 @@ export interface IFatherTransformerConfig extends IFatherBaseConfig {
    * specific transformer
    * @note  father will auto-select transformer by default (babel for browser files, esbuild for node files)
    */
-  transformer?: `${IFatherTransformerTypes}`;
+  transformer?: `${IFatherJSTransformerTypes}`;
 
   /**
    * override config for each sub-directory or file via key-value
    */
   overrides?: Record<
     string,
-    Omit<IFatherTransformerConfig, 'input'> & IFatherBaseConfig
+    Omit<IFatherBundlessConfig, 'input'> & IFatherBaseConfig
   >;
 
   /**
@@ -99,7 +99,7 @@ export interface IFatherTransformerConfig extends IFatherBaseConfig {
   ignores?: string[];
 }
 
-export interface IFatherBundlerConfig extends IFatherBaseConfig {
+export interface IFatherBundleConfig extends IFatherBaseConfig {
   /**
    * bundle entry config
    * @default src/index.{js,ts,jsx,tsx}
@@ -107,7 +107,7 @@ export interface IFatherBundlerConfig extends IFatherBaseConfig {
    */
   entry?:
     | string
-    | Record<string, Omit<IFatherBundlerConfig, 'entry'> & IFatherBaseConfig>;
+    | Record<string, Omit<IFatherBundleConfig, 'entry'> & IFatherBaseConfig>;
 
   /**
    * bundle output path
@@ -132,10 +132,10 @@ export interface IFatherConfig extends IFatherBaseConfig {
   /**
    * bundler config (umd)
    */
-  umd?: IFatherBundlerConfig;
+  umd?: IFatherBundleConfig;
 
   /**
    * transformer config (esm)
    */
-  esm?: IFatherTransformerConfig;
+  esm?: IFatherBundlessConfig;
 }
