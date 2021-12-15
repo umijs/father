@@ -56,7 +56,7 @@ export default async (
         itemDistPath = itemDistPath.replace(/\.[^.]+$/, '.js');
       } else {
         // TODO: support to transform other files (such as minify images?)
-        result = fs.readFileSync(item, 'utf8').toString();
+        result = fs.readFileSync(item, 'utf-8');
       }
 
       // distribute file
