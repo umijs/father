@@ -1,8 +1,8 @@
 import path from 'path';
 import { logger, rimraf } from '@umijs/utils';
 import { normalizeUserConfig } from './config';
-import bundle from './executor/bundle';
-import bundless from './executor/bundless';
+import bundle from './bundle';
+import bundless from './bundless';
 import type { ITransformer } from './protocol';
 import { IFatherBuildTypes, IFatherConfig } from '../types';
 

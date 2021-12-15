@@ -1,6 +1,6 @@
 import { addTransformer } from '../../builder';
-import babel from '../../builder/transformer/babel';
-import esbuild from '../../builder/transformer/esbuild';
+import babel from '../../builder/bundless/loaders/javascript/babel';
+import esbuild from '../../builder/bundless/loaders/javascript/esbuild';
 import type { IApi } from '../../types';
 import type { ITransformer } from '../../builder/protocol';
 

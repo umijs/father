@@ -6,8 +6,8 @@ import {
   IFatherPlatformTypes,
   IFatherJSTransformerTypes,
 } from '../types';
-import type { IBundleConfig } from './executor/bundle';
-import type { IBundlessConfig } from './executor/bundless';
+import type { IBundleConfig } from './bundle';
+import type { IBundlessConfig } from './bundless';
 
 const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',

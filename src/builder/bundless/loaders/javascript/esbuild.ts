@@ -1,5 +1,5 @@
-import { IFatherJSTransformerTypes } from '../../types';
-import type { IBundlessConfig } from '../executor/bundless';
+import { IFatherJSTransformerTypes } from '../../../../types';
+import type { IBundlessConfig } from '../..';
 
 /**
  * esbuild transformer
