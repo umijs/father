@@ -78,8 +78,8 @@ export function normalizeUserConfig(
       // default to transform src
       input: 'src',
 
-      // default to use auto output
-      output: bundlessTargets?.node ? 'dist' : 'es',
+      // default to output to dist
+      output: 'dist',
 
       // default to use auto transformer
       transformer: bundlessTargets?.node ? 'esbuild' : 'babel',
@@ -97,9 +97,6 @@ export function normalizeUserConfig(
       const overrideTargets = overrides[oInput].targets || bundlessTargets;
 
       configs.push({
-        // default to use auto output
-        output: overrideTargets?.node ? 'dist' : 'es',
-
         // default to use auto transformer
         transformer: overrideTargets?.node ? 'esbuild' : 'babel',
 

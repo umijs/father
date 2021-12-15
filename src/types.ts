@@ -65,8 +65,7 @@ export interface IFatherTransformerConfig extends IFatherBaseConfig {
 
   /**
    * output directory
-   * @note  father will auto-select output by default (es for browser targets, dist for node targets)
-   * @default dist|es
+   * @default dist
    */
   output?: string;
 
