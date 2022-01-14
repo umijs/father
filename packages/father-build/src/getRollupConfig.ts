@@ -151,9 +151,9 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
 
   // https://github.com/umijs/father/issues/164
   function mergePluins(defaultRollupPlugins: Array<RollupPluginOpts> = [], extraRollupPlugins: Array<RollupPluginOpts> = []) {
-    const defaultRollupPluginNames = defaultRollupPlugins.map(({ name }) => name)
+    const pluginArray = [...defaultRollupPlugins.map(({ name }) => name), ...extraRollupPlugins.map(({ name }) => name)]
     const getPluginInArray = (plugins: Array<RollupPluginOpts>, pluginName: string) => plugins.find(({ name }) => name === pluginName)
-    return defaultRollupPluginNames.map(pluginName => getPluginInArray(extraRollupPlugins, pluginName) || getPluginInArray(defaultRollupPlugins, pluginName))
+    return pluginArray.map(pluginName => getPluginInArray(extraRollupPlugins, pluginName) || getPluginInArray(defaultRollupPlugins, pluginName))
   }
 
   function getPlugins(opts = {} as { minCSS: boolean; }) {
