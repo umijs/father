@@ -150,10 +150,12 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   };
 
   // https://github.com/umijs/father/issues/164
-  function mergePluins(defaultRollupPlugins: Array<RollupPluginOpts> = [], extraRollupPlugins: Array<RollupPluginOpts> = []) {
-    const pluginArray = [...defaultRollupPlugins.map(({ name }) => name), ...extraRollupPlugins.map(({ name }) => name)]
-    const getPluginInArray = (plugins: Array<RollupPluginOpts>, pluginName: string) => plugins.find(({ name }) => name === pluginName)
-    return pluginArray.map(pluginName => getPluginInArray(extraRollupPlugins, pluginName) || getPluginInArray(defaultRollupPlugins, pluginName))
+  function mergePlugins(defaultRollupPlugins: Array<RollupPluginOpts> = [], extraRollupPlugins: Array<RollupPluginOpts> = []) {
+    const pluginsMap = Object.assign(
+      Object.fromEntries(defaultRollupPlugins.map(plugin => [plugin.name, plugin])),
+      Object.fromEntries(extraRollupPlugins.map(plugin => [plugin.name, plugin]))
+    )
+    return Object.values(pluginsMap)
   }
 
   function getPlugins(opts = {} as { minCSS: boolean; }) {
@@ -222,7 +224,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       babel(babelOpts),
       json()
     ]
-    return mergePluins(defaultRollupPlugins, extraRollupPlugins || []);
+    return mergePlugins(defaultRollupPlugins, extraRollupPlugins || []);
   }
 
   switch (type) {
