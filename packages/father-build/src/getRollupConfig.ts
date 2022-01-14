@@ -19,6 +19,11 @@ import svgr from '@svgr/rollup';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
 
+interface RollupPluginOpts {
+  name: string;
+  [propName: string]: any;
+}
+
 interface IGetRollupConfigOpts {
   cwd: string;
   rootPath: string;
@@ -144,9 +149,16 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     },
   };
 
+  // https://github.com/umijs/father/issues/164
+  function mergePluins(defaultRollupPlugins: Array<RollupPluginOpts> = [], extraRollupPlugins: Array<RollupPluginOpts> = []) {
+    const defaultRollupPluginNames = defaultRollupPlugins.map(({ name }) => name)
+    const getPluginInArray = (plugins: Array<RollupPluginOpts>, pluginName: string) => plugins.find(({ name }) => name === pluginName)
+    return defaultRollupPluginNames.map(pluginName => getPluginInArray(extraRollupPlugins, pluginName) || getPluginInArray(defaultRollupPlugins, pluginName))
+  }
+
   function getPlugins(opts = {} as { minCSS: boolean; }) {
     const { minCSS } = opts;
-    return [
+    const defaultRollupPlugins = [
       url(),
       svgr(),
       postcss({
@@ -208,9 +220,9 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         ]
         : []),
       babel(babelOpts),
-      json(),
-      ...(extraRollupPlugins || []),
-    ];
+      json()
+    ]
+    return mergePluins(defaultRollupPlugins, extraRollupPlugins || []);
   }
 
   switch (type) {
