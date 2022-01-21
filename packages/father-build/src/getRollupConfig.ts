@@ -222,8 +222,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         ]
         : []),
       babel(babelOpts),
-      json()
-    ]
+      json(),
+    ];
     return mergePlugins(defaultRollupPlugins, extraRollupPlugins || []);
   }
 
