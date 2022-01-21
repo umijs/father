@@ -154,8 +154,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     const pluginsMap = Object.assign(
       Object.fromEntries(defaultRollupPlugins.map(plugin => [plugin.name, plugin])),
       Object.fromEntries(extraRollupPlugins.map(plugin => [plugin.name, plugin]))
-    )
-    return Object.values(pluginsMap)
+    );
+    return Object.values(pluginsMap);
   }
 
   function getPlugins(opts = {} as { minCSS: boolean; }) {
