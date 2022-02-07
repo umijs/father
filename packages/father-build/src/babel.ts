@@ -211,6 +211,7 @@ export default async function (opts: IBabelOpts) {
       `!${join(srcPath, "**/*.md")}`,
       `!${join(srcPath, "**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)")}`,
       `!${join(srcPath, "**/tsconfig{,.*}.json")}`,
+      `!${join(srcPath, ".umi{,-production,-test}{,/**}")}`,
     ];
     createStream(patterns).on("end", () => {
       if (watch) {
