@@ -1,6 +1,6 @@
 import { existsSync } from 'fs'
 import { basename, extname, join } from 'path';
-import { ModuleFormat, RollupOptions } from 'rollup';
+import { ModuleFormat, RollupOptions, Plugin } from 'rollup';
 import url from '@rollup/plugin-url';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
@@ -18,11 +18,6 @@ import NpmImport from 'less-plugin-npm-import';
 import svgr from '@svgr/rollup';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
-
-interface RollupPluginOpts {
-  name: string;
-  [propName: string]: any;
-}
 
 interface IGetRollupConfigOpts {
   cwd: string;
@@ -150,10 +145,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   };
 
   // https://github.com/umijs/father/issues/164
-  function mergePlugins(defaultRollupPlugins: Array<RollupPluginOpts> = [], extraRollupPlugins: Array<RollupPluginOpts> = []) {
-    const pluginsMap = Object.assign(
-      Object.fromEntries(defaultRollupPlugins.map(plugin => [plugin.name, plugin])),
-      Object.fromEntries(extraRollupPlugins.map(plugin => [plugin.name, plugin]))
+  function mergePlugins(defaultRollupPlugins: Array<Plugin> = [], extraRollupPlugins: Array<Plugin> = []) {
+    const pluginsMap: Record<string, Plugin> = Object.assign(
+      defaultRollupPlugins.reduce((r, plugin) => ({ ...r, [plugin.name]: plugin }), {}),
+      extraRollupPlugins.reduce((r, plugin) => ({ ...r, [plugin.name]: plugin }), {}),
     );
     return Object.values(pluginsMap);
   }
