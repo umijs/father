@@ -473,6 +473,28 @@ export default {
 }
 ```
 
+### alias
+
+配置需要替换的别名路径。
+
+rollup 基于 [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/master/packages/alias#readme)。
+babel 基于 [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver)。
+
+- Type: `Object`
+- Default: `{}`
+
+比如：
+
+```js
+import path from 'path';
+export default {
+  alias: {
+    '@': path.join(__dirname, 'src'),
+  },
+};
+```
+
+
 #### inject
 
 配置需要替换成依赖引用的全局变量 Map，基于 [rollup-plugin-inject](https://github.com/rollup/rollup-plugin-inject)。

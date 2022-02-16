@@ -2,11 +2,15 @@ import { extname } from 'path';
 import { ModuleFormat } from 'rollup';
 
 interface IGetBabelConfigOpts {
+  rootPath: string;
   target: 'browser' | 'node';
   type?: ModuleFormat;
   typescript?: boolean;
   runtimeHelpers?: boolean;
   filePath?: string;
+  alias?: {
+    [key: string]: string;
+  }
   browserFiles?: {
     [value: string]: any;
   };
@@ -36,7 +40,7 @@ function transformImportLess2Css() {
 }
 
 export default function(opts: IGetBabelConfigOpts) {
-  const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy, lessInBabelMode } = opts;
+  const { rootPath, target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy, lessInBabelMode, alias: aliasOpts } = opts;
   let isBrowser = target === 'browser';
   // rollup 场景下不会传入 filePath
   if (filePath) {
@@ -76,6 +80,10 @@ export default function(opts: IGetBabelConfigOpts) {
         require.resolve('@babel/plugin-proposal-do-expressions'),
         require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
         require.resolve('@babel/plugin-proposal-optional-chaining'),
+        ...(aliasOpts ? [[require.resolve('babel-plugin-module-resolver'), {
+            root: rootPath,
+            alias: aliasOpts
+        }]] : []),
         [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
         [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
         ...(runtimeHelpers

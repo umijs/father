@@ -47,6 +47,7 @@ export default async function (opts: IBabelOpts) {
     importLibToEs,
     log,
     bundleOpts: {
+      alias,
       target = "browser",
       runtimeHelpers,
       extraBabelPresets = [],
@@ -69,6 +70,7 @@ export default async function (opts: IBabelOpts) {
   function transform(opts: ITransformOpts) {
     const { file, type } = opts;
     const { opts: babelOpts, isBrowser } = getBabelConfig({
+      rootPath,
       target,
       type,
       typescript: true,
@@ -79,6 +81,7 @@ export default async function (opts: IBabelOpts) {
       nodeVersion,
       lazy: cjs && cjs.lazy,
       lessInBabelMode,
+      alias
     });
     if (importLibToEs && type === "esm") {
       babelOpts.plugins.push(require.resolve("../lib/importLibToEs"));

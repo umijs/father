@@ -7,6 +7,7 @@ import replace from '@rollup/plugin-replace';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import inject, { RollupInjectOptions } from '@rollup/plugin-inject';
+import alias, { RollupAliasOptions } from '@rollup/plugin-alias';
 import babel, { RollupBabelInputPluginOptions } from '@rollup/plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 import { terser } from 'rollup-plugin-terser';
@@ -34,6 +35,13 @@ interface IPkg {
   name?: string;
 }
 
+const transformAliasOptions = (aliasOpts: IBundleOptions['alias']): RollupAliasOptions => {
+  const entries = Object.keys(aliasOpts).map(aliasKey => ({ find: aliasKey, replacement: aliasOpts[aliasKey] }));
+  return {
+    entries
+  }
+}
+
 export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   const { type, entry, cwd, rootPath, importLibToEs, bundleOpts } = opts;
   const {
@@ -54,6 +62,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     runtimeHelpers: runtimeHelpersOpts,
     replace: replaceOpts,
     inject: injectOpts,
+    alias: aliasOpts,
     extraExternals = [],
     externalsExclude = [],
     nodeVersion,
@@ -77,6 +86,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   const runtimeHelpers = type === 'cjs' ? false : runtimeHelpersOpts;
   const babelOpts = {
     ...(getBabelConfig({
+      alias: aliasOpts,
+      rootPath,
       type,
       target: type === 'esm' ? 'browser' : target,
       // watch 模式下有几率走的 babel？原因未知。
@@ -158,6 +169,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     const defaultRollupPlugins = [
       url(),
       svgr(),
+      // @see https://github.com/umijs/father/issues/356
+      ...(aliasOpts ? [alias(transformAliasOptions(aliasOpts))] : []),
       postcss({
         extract: extractCSS,
         inject: injectCSS,
@@ -228,7 +241,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         dir: join(cwd, `${esm && (esm as any).dir || 'dist'}`),
         entryFileNames: `${(esm && (esm as any).file) || `${name}.esm`}.js`,
       }
-    
+
       return [
         {
           input,
