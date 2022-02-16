@@ -39,7 +39,7 @@ const transformAliasOptions = (aliasOpts: IBundleOptions['alias']): RollupAliasO
   const entries = Object.keys(aliasOpts).map(aliasKey => ({ find: aliasKey, replacement: aliasOpts[aliasKey] }));
   return {
     entries
-  }
+  };
 }
 
 export default function(opts: IGetRollupConfigOpts): RollupOptions[] {

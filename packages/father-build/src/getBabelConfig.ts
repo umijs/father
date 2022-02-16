@@ -10,7 +10,7 @@ interface IGetBabelConfigOpts {
   filePath?: string;
   alias?: {
     [key: string]: string;
-  }
+  };
   browserFiles?: {
     [value: string]: any;
   };

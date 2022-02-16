@@ -494,6 +494,7 @@ export default {
 };
 ```
 
+> ps: 在babel模式下。受babel插件的影响，alias的path值建议直接使用相对路径
 
 #### inject
 
