@@ -35,13 +35,6 @@ interface IPkg {
   name?: string;
 }
 
-const transformAliasOptions = (aliasOpts: IBundleOptions['alias']): RollupAliasOptions => {
-  const entries = Object.keys(aliasOpts).map(aliasKey => ({ find: aliasKey, replacement: aliasOpts[aliasKey] }));
-  return {
-    entries
-  };
-}
-
 export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
   const { type, entry, cwd, rootPath, importLibToEs, bundleOpts } = opts;
   const {
@@ -170,7 +163,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       url(),
       svgr(),
       // @see https://github.com/umijs/father/issues/356
-      ...(aliasOpts ? [alias(transformAliasOptions(aliasOpts))] : []),
+      ...(aliasOpts ? [alias(aliasOpts)] : []),
       postcss({
         extract: extractCSS,
         inject: injectCSS,
