@@ -494,7 +494,15 @@ export default {
 };
 ```
 
-> ps: 在babel模式下。受babel插件的影响，alias的path值建议直接使用相对路径
+**在babel模式下受插件的影响，alias的path值请直接使用相对路径。例如：**
+
+```js
+export default {
+  alias: {
+    '@': './src',
+  },
+};
+```
 
 #### inject
 
