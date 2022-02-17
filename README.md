@@ -479,6 +479,7 @@ export default {
 
 rollup 基于 [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/master/packages/alias#readme)。
 babel 基于 [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver)。
+typescript d.ts文件 基于 [ttypescript](https://github.com/cevek/ttypescript)。
 
 - Type: `Object`
 - Default: `{}`
@@ -495,13 +496,31 @@ export default {
 ```
 
 **在babel模式下受插件的影响，alias的path值请直接使用相对路径。例如：**
-
 ```js
 export default {
   alias: {
     '@': './src',
   },
 };
+```
+
+**在使用`rollup`模式生成`typescript`定义文件（d.ts）时，原有的`typescript`包不支持对d.ts文件`alias`的转换。**
+
+**为了解决该问题，`father`内置了`ttypescript`来解决该问题。您可以在自定义的`tsconfig.json`文件中，按以下方式声明启用：**
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths"
+      }
+    ]
+  }
+}
 ```
 
 #### inject

@@ -13,6 +13,7 @@ import postcss from 'rollup-plugin-postcss';
 import { terser } from 'rollup-plugin-terser';
 import typescript2 from 'rollup-plugin-typescript2';
 import { camelCase } from 'lodash';
+import ttypescript from 'ttypescript'
 import tempDir from 'temp-dir';
 import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
@@ -198,6 +199,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       ...(isTypeScript
         ? [
           typescript2({
+            typescript: ttypescript,
             cwd,
             // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
             clean: true,

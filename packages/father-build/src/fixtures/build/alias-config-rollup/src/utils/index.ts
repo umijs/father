@@ -1,4 +1,4 @@
-export const serializationArrayByKey = (list, key) => {
+export const serializationArrayByKey = (list: any[], key: string) => {
   if (!list) {
     return null;
   }
