@@ -318,9 +318,10 @@ export default {
 
 #### injectCSS
 
-是否在 \<head>里注入css, 如果`extractCSS: true`，则为`false`
+是否在 \<head>里注入css, 如果`extractCSS: true`，则为`false`。
+使用 `{ insertAt: 'top' }` 可以指定注入在 \<head> 顶部，填入其他值默认注入在 \<head> 底部。
 
-* Type: `boolean | function`
+* Type: `boolean | function | { insertAt: 'top' }`
 * Default: `true`
 
 #### extraBabelPresets
