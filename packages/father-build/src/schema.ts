@@ -96,7 +96,16 @@ export default {
       type: 'boolean',
     },
     injectCSS: {
-      oneOf: [{ type: 'boolean' }, { instanceof: 'Function' }],
+      oneOf: [
+        { type: 'boolean' },
+        { instanceof: 'Function' },
+        {
+          type: 'object',
+          properties: {
+            insertAt: { type: 'string' },
+          },
+        },
+      ],
     },
     autoprefixer: {
       type: 'object',
