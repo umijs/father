@@ -39,13 +39,26 @@ async function build(entry: string, opts: IRollupOpts) {
       await (new Promise<void>((resolve) => {
         watcher.on('event', (event) => {
           // 每次构建完成都会触发 BUNDLE_END 事件
+          // 每次构开始都会触发 BUNDLE_START 事件
           // 当第一次构建完成或出错就 resolve
-          if (event.code === 'ERROR') {
-            signale.error(event.error);
-            resolve();
-          } else if (event.code === 'BUNDLE_END') {
-            log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
-            resolve();
+          switch (event.code) {
+            case 'ERROR':
+              signale.error(event.error);
+              resolve();
+              break;
+
+            case 'BUNDLE_END':
+              log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
+              resolve();
+              break;
+
+            case 'BUNDLE_START':
+              log(`${chalk.yellow(`Build ${type} start`)} ${chalk.gray(`entry: ${entry}`)}`);
+              resolve();
+              break;
+
+            default:
+
           }
         });
       }));
