@@ -56,7 +56,11 @@ async function build(entry: string, opts: IRollupOpts) {
     } else {
       const { output, ...input } = rollupConfig;
       const bundle = await rollup(input); // eslint-disable-line
-      await bundle.write(output); // eslint-disable-line
+      if (Array.isArray(output)) {
+        await Promise.all(output.map(el => bundle.write((el))))
+      } else {
+        await bundle.write(output);
+      }
       log(`${chalk.green(`Build ${type} success`)} ${chalk.gray(`entry: ${entry}`)}`);
     }
   }
