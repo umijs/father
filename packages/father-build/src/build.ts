@@ -101,7 +101,7 @@ interface IExtraBuildOpts {
 }
 
 export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
-  const { cwd, rootPath, watch, buildArgs = {} } = opts;
+  const { cwd, rootPath, watch, buildArgs = {}, clean = true } = opts;
   const { pkg } = extraOpts;
 
   const dispose: Dispose[] = [];
@@ -129,8 +129,11 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
     validateBundleOpts(bundleOpts, { cwd, rootPath });
 
     // Clean dist
-    log(chalk.gray(`Clean dist directory`));
-    rimraf.sync(join(cwd, 'dist'));
+    if (clean) {
+      log(chalk.gray(`Clean dist directory`));
+      rimraf.sync(join(cwd, 'dist'));
+    }
+
 
     // Build umd
     if (bundleOpts.umd) {
@@ -245,7 +248,7 @@ export async function buildForLerna(opts: IOpts) {
   return dispose;
 }
 
-export default async function(opts: IOpts) {
+export default async function (opts: IOpts) {
   const useLerna = existsSync(join(opts.cwd, 'lerna.json'));
   const isLerna = useLerna && process.env.LERNA !== 'none';
 
