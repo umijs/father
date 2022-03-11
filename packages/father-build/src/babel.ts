@@ -14,7 +14,7 @@ import gulpPlumber from "gulp-plumber";
 import gulpIf from "gulp-if";
 import chalk from "chalk";
 import getBabelConfig from "./getBabelConfig";
-import { Dispose, IBundleOptions } from "./types";
+import { Dispose, IBundleOptions, ICjs } from "./types";
 import * as ts from "typescript";
 
 interface IBabelOpts {
@@ -77,7 +77,7 @@ export default async function (opts: IBabelOpts) {
       browserFiles,
       nodeFiles,
       nodeVersion,
-      lazy: cjs && cjs.lazy,
+      lazy: cjs && (cjs as ICjs).lazy, // https://github.com/umijs/father/main/packages/father-build/src/build.ts#L36-L41
       lessInBabelMode,
     });
     if (importLibToEs && type === "esm") {
@@ -251,7 +251,7 @@ export default async function (opts: IBabelOpts) {
         });
         dispose?.push(() => watcher.close());
       }
-      resolve();
+      resolve(true);
     });
   });
 }
