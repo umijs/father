@@ -19,7 +19,7 @@ import svgr from '@svgr/rollup';
 import getBabelConfig from './getBabelConfig';
 import { IBundleOptions } from './types';
 
-interface IGetRollupConfigOpts {
+export interface IGetRollupConfigOpts {
   cwd: string;
   rootPath: string;
   entry: string;
@@ -62,6 +62,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     disableTypeCheck,
     lessInRollupMode = {},
     sassInRollupMode = {},
+    hookRollupConfig,
   } = bundleOpts;
   const entryExt = extname(entry);
   const name = file || basename(entry, entryExt);
@@ -222,14 +223,15 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     return mergePlugins(defaultRollupPlugins, extraRollupPlugins || []);
   }
 
+  let options: RollupOptions[];
   switch (type) {
     case 'esm':
       const output: Record<string, any> = {
         dir: join(cwd, `${esm && (esm as any).dir || 'dist'}`),
         entryFileNames: `${(esm && (esm as any).file) || `${name}.esm`}.js`,
       }
-    
-      return [
+
+      options = [
         {
           input,
           output: {
@@ -259,9 +261,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             ]
           : []),
       ];
+      break;
 
     case 'cjs':
-      return [
+      options = [
         {
           input,
           output: {
@@ -272,6 +275,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           external: testExternal.bind(null, external, externalsExclude),
         },
       ];
+      break;
 
     case 'umd':
       // Add umd related plugins
@@ -282,7 +286,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         }),
       ];
 
-      return [
+      options = [
         {
           input,
           output: {
@@ -325,8 +329,14 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
               },
             ]),
       ];
+      break;
 
     default:
       throw new Error(`Unsupported type ${type}`);
   }
+
+  if (hookRollupConfig) {
+    options = hookRollupConfig(options, opts);
+  }
+  return options;
 }

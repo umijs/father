@@ -1,3 +1,6 @@
+import { RollupOptions } from 'rollup';
+import { IGetRollupConfigOpts } from './getRollupConfig';
+
 export type BundleType = 'rollup' | 'babel';
 
 interface IBundleTypeOutput {
@@ -98,6 +101,13 @@ export interface IBundleOptions {
     skipPrivate?: boolean;
   };
   config?: string;
+  /**
+   * 提供对 rollup 设置项进行自定义修改的能力
+   * @param rollupOptions rollup 配置项
+   * @param opts 编译环境配置项
+   * @returns 修改后的 rollup 配置项
+   */
+  hookRollupConfig?: (rollupOptions: RollupOptions[], environment: IGetRollupConfigOpts) => RollupOptions[];
 }
 
 export interface IOpts {
