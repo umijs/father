@@ -28,6 +28,21 @@ export interface IGetRollupConfigOpts {
   bundleOpts: IBundleOptions;
 }
 
+const RollupPlugins = {
+  babel,
+  commonjs,
+  inject,
+  json,
+  nodeResolve,
+  postcss,
+  replace,
+  svgr,
+  terser,
+  typescript2,
+  url,
+}
+export type IRollupPlugins = typeof RollupPlugins;
+
 interface IPkg {
   dependencies?: Object;
   peerDependencies?: Object;
@@ -62,6 +77,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     disableTypeCheck,
     lessInRollupMode = {},
     sassInRollupMode = {},
+    hookRollupPluginOptions,
     hookRollupConfig,
   } = bundleOpts;
   const entryExt = extname(entry);
@@ -154,12 +170,22 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     return Object.values(pluginsMap);
   }
 
+  function createPlugin<TPluginName extends keyof IRollupPlugins>(
+    pluginName: TPluginName,
+    ...pluginOptions: Parameters<IRollupPlugins[TPluginName]>
+  ): ReturnType<IRollupPlugins[TPluginName]> {
+    if (hookRollupPluginOptions) {
+      pluginOptions = hookRollupPluginOptions(pluginName, pluginOptions, opts);
+    }
+    return RollupPlugins[pluginName](...pluginOptions);
+  }
+
   function getPlugins(opts = {} as { minCSS: boolean; }) {
     const { minCSS } = opts;
     const defaultRollupPlugins = [
-      url(),
-      svgr(),
-      postcss({
+      createPlugin('url'),
+      createPlugin('svgr'),
+      createPlugin('postcss', {
         extract: extractCSS,
         inject: injectCSS,
         modules,
@@ -183,16 +209,16 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           ...autoprefixerOpts,
         }), ...extraPostCSSPlugins],
       }),
-      ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
-      ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
-      nodeResolve({
+      ...(injectOpts ? [createPlugin('inject', injectOpts as RollupInjectOptions)] : []),
+      ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [createPlugin('replace', replaceOpts)] : []),
+      createPlugin('nodeResolve', {
         mainFields: ['module', 'jsnext:main', 'main'],
         extensions,
         ...nodeResolveOpts,
       }),
       ...(isTypeScript
         ? [
-          typescript2({
+          createPlugin('typescript2', {
             cwd,
             // @see https://github.com/umijs/father/issues/61#issuecomment-544822774
             clean: true,
@@ -217,8 +243,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           }),
         ]
         : []),
-      babel(babelOpts),
-      json(),
+      createPlugin('babel', babelOpts),
+      createPlugin('json'),
     ];
     return mergePlugins(defaultRollupPlugins, extraRollupPlugins || []);
   }
@@ -238,7 +264,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             format,
             ...output,
           },
-          plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
+          plugins: [
+            ...getPlugins(),
+            ...(esm && (esm as any).minify ? [createPlugin('terser', terserOpts)] : []),
+          ],
           external: testExternal.bind(null, external, externalsExclude),
         },
         ...(esm && (esm as any).mjs
@@ -251,10 +280,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 },
                 plugins: [
                   ...getPlugins(),
-                  replace({
+                  createPlugin('replace', {
                     'process.env.NODE_ENV': JSON.stringify('production'),
                   }),
-                  terser(terserOpts),
+                  createPlugin('terser', terserOpts),
                 ],
                 external: testExternal.bind(null, externalPeerDeps, externalsExclude),
               },
@@ -271,7 +300,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             format,
             file: join(cwd, `dist/${(cjs && (cjs as any).file) || name}.js`),
           },
-          plugins: [...getPlugins(), ...(cjs && (cjs as any).minify ? [terser(terserOpts)] : [])],
+          plugins: [
+            ...getPlugins(),
+            ...(cjs && (cjs as any).minify ? [createPlugin('terser', terserOpts)] : []),
+          ],
           external: testExternal.bind(null, external, externalsExclude),
         },
       ];
@@ -280,7 +312,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     case 'umd':
       // Add umd related plugins
       const extraUmdPlugins = [
-        commonjs({
+        createPlugin('commonjs', {
           include,
           // namedExports options has been remove from https://github.com/rollup/plugins/pull/149
         }),
@@ -299,7 +331,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           plugins: [
             ...getPlugins(),
             ...extraUmdPlugins,
-            replace({
+            createPlugin('replace', {
               'process.env.NODE_ENV': JSON.stringify('development'),
             }),
           ],
@@ -320,10 +352,10 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                 plugins: [
                   ...getPlugins({ minCSS: true }),
                   ...extraUmdPlugins,
-                  replace({
+                  createPlugin('replace', {
                     'process.env.NODE_ENV': JSON.stringify('production'),
                   }),
-                  terser(terserOpts),
+                  createPlugin('terser', terserOpts),
                 ],
                 external: testExternal.bind(null, externalPeerDeps, externalsExclude),
               },

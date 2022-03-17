@@ -1,5 +1,5 @@
 import { RollupOptions } from 'rollup';
-import { IGetRollupConfigOpts } from './getRollupConfig';
+import { IGetRollupConfigOpts, IRollupPlugins } from './getRollupConfig';
 
 export type BundleType = 'rollup' | 'babel';
 
@@ -101,6 +101,17 @@ export interface IBundleOptions {
     skipPrivate?: boolean;
   };
   config?: string;
+  /**
+   * 提供对 rollup 插件设置项进行自定义修改的能力
+   * @param pluginName rollup 插件名称
+   * @param pluginOptions rollup 插件配置项
+   * @returns 修改后的 rollup 插件配置项
+   */
+  hookRollupPluginOptions?: <TPluginName extends keyof IRollupPlugins>(
+    pluginName: TPluginName,
+    pluginOptions: Parameters<IRollupPlugins[TPluginName]>,
+    environment: IGetRollupConfigOpts,
+  ) => Parameters<IRollupPlugins[TPluginName]>;
   /**
    * 提供对 rollup 设置项进行自定义修改的能力
    * @param rollupOptions rollup 配置项
