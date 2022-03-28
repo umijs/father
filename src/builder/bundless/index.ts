@@ -1,4 +1,4 @@
-import { glob, logger, rimraf, winPath } from '@umijs/utils';
+import { glob, logger, rimraf } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import type { BundlessConfigProvider } from '../config';
@@ -27,6 +27,7 @@ export default async (opts: {
   const matches = glob
     .sync(`${opts.configProvider.input}/**`, {
       ignore: DEFAULT_BUNDLESS_IGNORES,
+      nodir: true,
     })
     // ignore input directory
     .slice(1);
@@ -36,24 +37,26 @@ export default async (opts: {
     const config = opts.configProvider.getConfigForPath(item);
 
     if (config) {
-      const itemDistPath = winPath(
-        path.join(config.output!, path.relative(config.input, item)),
+      const itemDistPath = path.join(
+        config.output!,
+        path.relative(config.input, item),
       );
+      const parentPath = path.dirname(itemDistPath);
 
-      if (fs.lstatSync(item).isDirectory()) {
-        // mkdir in dist
-        fs.mkdirSync(itemDistPath, { recursive: true });
+      // create parent directory if not exists
+      if (!fs.existsSync(itemDistPath)) {
+        fs.mkdirSync(parentPath, { recursive: true });
+      }
+
+      // get result from loaders
+      const result = await runLoaders(item, config);
+
+      if (result) {
+        // distribute file with result
+        fs.writeFileSync(itemDistPath, result);
       } else {
-        // get result from loaders
-        const result = await runLoaders(item, config);
-
-        if (result) {
-          // distribute file with result
-          fs.writeFileSync(itemDistPath, result);
-        } else {
-          // copy file as normal assets
-          fs.copyFileSync(item, itemDistPath);
-        }
+        // copy file as normal assets
+        fs.copyFileSync(item, itemDistPath);
       }
     } else {
       // TODO: DEBUG
