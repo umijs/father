@@ -1,5 +1,5 @@
 import { IFatherJSTransformerTypes } from '../../../../types';
-import type { IBundlessConfig } from '../..';
+import type { IBundlessConfig } from '../../../config';
 
 /**
  * babel transformer

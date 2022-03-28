@@ -1,5 +1,5 @@
 import type { ExtendedLoaderContext, RunLoaderResult } from 'loader-runner';
-import type { IBundlessConfig } from './bundless';
+import type { IBundlessConfig } from './config';
 
 /**
  * normal loader type (base on webpack loader)

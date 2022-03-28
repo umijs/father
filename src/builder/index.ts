@@ -1,39 +1,18 @@
-import path from 'path';
-import { logger, rimraf } from '@umijs/utils';
-import { normalizeUserConfig } from './config';
+import { IFatherConfig } from '../types';
 import bundle from './bundle';
 import bundless from './bundless';
-import { IFatherBuildTypes, IFatherConfig } from '../types';
+import { createConfigProviders } from './config';
 
 export default async (opts: { userConfig: IFatherConfig; cwd: string }) => {
-  const configs = normalizeUserConfig(opts.userConfig, { cwd: opts.cwd });
+  const configProviders = createConfigProviders(opts.userConfig, opts);
 
-  for (let config of configs) {
-    // clean dist dir
-    rimraf.sync(config.output!);
+  // TODO: register config change handler
 
-    switch (config.type) {
-      case IFatherBuildTypes.BUNDLE:
-        logger.info(
-          `[bundle] from ${path.relative(
-            opts.cwd,
-            config.entry,
-          )} to ${path.relative(opts.cwd, config.output!)}`,
-        );
-        await bundle(config);
-        break;
+  if (configProviders.bundle) {
+    await bundle({ cwd: opts.cwd, configProvider: configProviders.bundle });
+  }
 
-      case IFatherBuildTypes.BUNDLESS:
-        logger.info(
-          `[bundless] from ${path.relative(
-            opts.cwd,
-            config.input,
-          )} to ${path.relative(opts.cwd, config.output!)}`,
-        );
-        await bundless(config);
-        break;
-
-      default:
-    }
+  if (configProviders.bundless) {
+    await bundless({ cwd: opts.cwd, configProvider: configProviders.bundless });
   }
 };

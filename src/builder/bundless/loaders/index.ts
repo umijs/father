@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
-import { IBundlessConfig } from '..';
+import { IBundlessConfig } from '../../config';
 
 /**
  * loader item type

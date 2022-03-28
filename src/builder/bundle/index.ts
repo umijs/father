@@ -1,21 +1,20 @@
-import type {
-  IFatherBaseConfig,
-  IFatherBuildTypes,
-  IFatherBundleConfig,
-} from '../../types';
+import { logger, rimraf } from '@umijs/utils';
+import path from 'path';
+import type { BundleConfigProvider } from '../config';
 
-/**
- * declare bundler config
- */
-export interface IBundleConfig
-  extends IFatherBaseConfig,
-    Omit<IFatherBundleConfig, 'entry'> {
-  type: IFatherBuildTypes.BUNDLE;
-  bundler: 'webpack';
-  entry: string;
-}
+export default async (opts: {
+  cwd: string;
+  configProvider: BundleConfigProvider;
+}) => {
+  opts.configProvider.configs.forEach((config) => {
+    // clean dist dir
+    rimraf.sync(config.output!);
 
-export default async (config: IBundleConfig) => {
-  config;
-  console.log('[bundle] umd');
+    logger.info(
+      `[bundle] from ${path.relative(
+        opts.cwd,
+        config.entry,
+      )} to ${path.relative(opts.cwd, config.output!)}`,
+    );
+  });
 };

@@ -1,19 +1,37 @@
-import path from 'path';
 import { winPath } from '@umijs/utils';
+import fs from 'fs';
+import { Minimatch } from 'minimatch';
+import path from 'path';
 import {
+  IFatherBaseConfig,
   IFatherBuildTypes,
+  IFatherBundleConfig,
+  IFatherBundlessConfig,
   IFatherConfig,
-  IFatherPlatformTypes,
   IFatherJSTransformerTypes,
+  IFatherPlatformTypes,
 } from '../types';
-import type { IBundleConfig } from './bundle';
-import type { IBundlessConfig } from './bundless';
 
-const DEFAULT_BUNDLESS_IGNORES = [
-  '**/*.md',
-  '**/__{test,tests}__/**',
-  '**/*.{test,e2e,spec}.{js,jsx,ts,tsx}',
-];
+/**
+ * declare bundler config
+ */
+export interface IBundleConfig
+  extends IFatherBaseConfig,
+    Omit<IFatherBundleConfig, 'entry'> {
+  type: IFatherBuildTypes.BUNDLE;
+  bundler: 'webpack';
+  entry: string;
+}
+
+/**
+ * declare bundless config
+ */
+export interface IBundlessConfig
+  extends IFatherBaseConfig,
+    Omit<IFatherBundlessConfig, 'input' | 'overrides'> {
+  type: IFatherBuildTypes.BUNDLESS;
+  input: string;
+}
 
 /**
  * declare union builder config
@@ -95,9 +113,7 @@ export function normalizeUserConfig(
       ...bundlessConfig,
 
       // transform overrides inputs to ignores
-      ignores: DEFAULT_BUNDLESS_IGNORES.concat(
-        Object.keys(overrides).map((i) => `${i}/*`),
-      ),
+      ignores: Object.keys(overrides).map((i) => `${i}/*`),
     });
 
     // generate config for overrides
@@ -121,11 +137,9 @@ export function normalizeUserConfig(
 
         // transform another child overides to ignores
         // for support to transform src/a and src/a/child with different configs
-        ignores: DEFAULT_BUNDLESS_IGNORES.concat(
-          Object.keys(overrides)
-            .filter((i) => i.startsWith(oInput))
-            .map((i) => `${i}/*`),
-        ),
+        ignores: Object.keys(overrides)
+          .filter((i) => i.startsWith(oInput))
+          .map((i) => `${i}/*`),
       });
     });
   }
@@ -142,4 +156,113 @@ export function normalizeUserConfig(
   });
 
   return configs;
+}
+
+class Minimatcher {
+  matcher?: InstanceType<typeof Minimatch>;
+
+  ignoreMatchers: InstanceType<typeof Minimatch>[] = [];
+
+  constructor(pattern: string, ignores: string[] = []) {
+    this.matcher = new Minimatch(
+      fs.lstatSync(pattern).isDirectory() ? `${pattern}/**` : pattern,
+    );
+    ignores.forEach((i) => {
+      this.ignoreMatchers.push(new Minimatch(i, { dot: true }));
+
+      // see also: https://github.com/isaacs/node-glob/blob/main/common.js#L37
+      if (i.slice(-3) === '/**') {
+        this.ignoreMatchers.push(
+          new Minimatch(i.replace(/(\/\*\*)+$/, ''), { dot: true }),
+        );
+      }
+    });
+  }
+
+  match(filePath: string) {
+    return (
+      this.matcher!.match(filePath) &&
+      this.ignoreMatchers.every((m) => !m.match(filePath))
+    );
+  }
+}
+
+class ConfigProvider {
+  onConfigChange() {
+    // not implemented
+  }
+}
+
+export class BundleConfigProvider extends ConfigProvider {
+  type = IFatherBuildTypes.BUNDLE;
+
+  configs: IBundleConfig[] = [];
+
+  constructor(configs: IBundleConfig[]) {
+    super();
+    this.configs = configs;
+  }
+}
+
+export class BundlessConfigProvider extends ConfigProvider {
+  type = IFatherBuildTypes.BUNDLESS;
+
+  configs: IBundlessConfig[] = [];
+
+  input = '';
+
+  output = '';
+
+  matchers: InstanceType<typeof Minimatcher>[] = [];
+
+  constructor(configs: IBundlessConfig[]) {
+    super();
+
+    this.configs = configs;
+    this.input = configs[0].input;
+    this.output = configs[0].output!;
+    configs.forEach((config) => {
+      this.matchers.push(new Minimatcher(config.input, config.ignores));
+    });
+  }
+
+  getConfigForPath(file: string) {
+    return this.configs[this.matchers.findIndex((m) => m.match(file))];
+  }
+}
+
+export function createConfigProviders(
+  userConfig: IFatherConfig,
+  opts: { cwd: string },
+) {
+  const providers: {
+    bundless?: BundlessConfigProvider;
+    bundle?: BundleConfigProvider;
+  } = {};
+  const configs = normalizeUserConfig(userConfig, opts);
+  const { bundle, bundless } = configs.reduce(
+    (r, config) => {
+      if (config.type === IFatherBuildTypes.BUNDLE) {
+        r.bundle.push(config);
+      } else if (config.type === IFatherBuildTypes.BUNDLESS) {
+        r.bundless.push(config);
+      }
+
+      return r;
+    },
+    { bundle: [], bundless: [] } as {
+      bundle: IBundleConfig[];
+      bundless: IBundlessConfig[];
+    },
+  );
+
+  if (bundle.length) {
+    providers.bundle = new BundleConfigProvider(bundle);
+  }
+
+  if (bundless.length) {
+    providers.bundless = new BundlessConfigProvider(bundless);
+  }
+
+  return providers;
 }
