@@ -18,6 +18,8 @@ export default async (opts: {
     `Bundless for ${chalk.yellow(opts.configProvider.input)} directory`,
   );
 
+  let count = 0;
+  const startTime = Date.now();
   const matches = glob.sync(`${opts.configProvider.input}/**`, {
     cwd: opts.cwd,
     ignore: DEFAULT_BUNDLESS_IGNORES,
@@ -30,14 +32,14 @@ export default async (opts: {
 
     if (config) {
       const itemDistPath = path.join(
-        opts.cwd,
         config.output!,
         path.relative(config.input, item),
       );
-      const parentPath = path.dirname(itemDistPath);
+      const itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+      const parentPath = path.dirname(itemDistAbsPath);
 
       // create parent directory if not exists
-      if (!fs.existsSync(itemDistPath)) {
+      if (!fs.existsSync(itemDistAbsPath)) {
         fs.mkdirSync(parentPath, { recursive: true });
       }
 
@@ -46,15 +48,24 @@ export default async (opts: {
 
       if (result) {
         // distribute file with result
-        fs.writeFileSync(itemDistPath, result);
+        fs.writeFileSync(itemDistAbsPath, result);
       } else {
         // copy file as normal assets
-        fs.copyFileSync(item, itemDistPath);
+        fs.copyFileSync(item, itemDistAbsPath);
       }
+
+      logger.event(
+        `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}`,
+      );
+      count += 1;
     } else {
       // TODO: DEBUG
     }
   }
+
+  logger.event(
+    `Transformed successfully in ${Date.now() - startTime} ms (${count} files)`,
+  );
 
   // TODO: watch mode
 };
