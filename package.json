@@ -23,6 +23,7 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
+    "@umijs/bundler-webpack": "^4.0.0-beta.1",
     "@umijs/core": "^4.0.0-beta.1",
     "@umijs/utils": "^4.0.0-beta.1",
     "loader-runner": "4.2.0",

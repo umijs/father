@@ -63,6 +63,8 @@ export function normalizeUserConfig(
       // override base configs from umd config
       ...umd,
     };
+    // FIXME: use package name first
+    const defaultOuputFilename = 'index.umd.js';
 
     if (typeof entryConfig === 'object') {
       // extract multiple entries to single configs
@@ -73,6 +75,12 @@ export function normalizeUserConfig(
           // override all configs from entry config
           ...entryConfig[entry],
           entry,
+
+          // join filename to output
+          output: path.join(
+            entryConfig[entry].output || bundleConfig.output!,
+            `${entry}.umd.js`,
+          ),
         });
       });
     } else {
@@ -82,6 +90,9 @@ export function normalizeUserConfig(
 
         // default to bundle src/index
         entry: entryConfig || 'src/index',
+
+        // join filename to output
+        output: path.join(bundleConfig.output!, defaultOuputFilename),
       });
     }
   }
