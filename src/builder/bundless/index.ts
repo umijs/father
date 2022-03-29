@@ -1,4 +1,4 @@
-import { glob, logger, rimraf } from '@umijs/utils';
+import { chalk, glob, logger } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import type { BundlessConfigProvider } from '../config';
@@ -14,23 +14,15 @@ export default async (opts: {
   cwd: string;
   configProvider: BundlessConfigProvider;
 }) => {
-  // clean dist dir
-  rimraf.sync(opts.configProvider.output);
-
   logger.info(
-    `[bundless] for ${path.relative(
-      opts.cwd,
-      opts.configProvider.input,
-    )} directory`,
+    `Bundless for ${chalk.yellow(opts.configProvider.input)} directory`,
   );
 
-  const matches = glob
-    .sync(`${opts.configProvider.input}/**`, {
-      ignore: DEFAULT_BUNDLESS_IGNORES,
-      nodir: true,
-    })
-    // ignore input directory
-    .slice(1);
+  const matches = glob.sync(`${opts.configProvider.input}/**`, {
+    cwd: opts.cwd,
+    ignore: DEFAULT_BUNDLESS_IGNORES,
+    nodir: true,
+  });
 
   // process all matched items
   for (let item of matches) {
@@ -38,6 +30,7 @@ export default async (opts: {
 
     if (config) {
       const itemDistPath = path.join(
+        opts.cwd,
         config.output!,
         path.relative(config.input, item),
       );

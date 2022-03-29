@@ -4,7 +4,7 @@ import bundless from './bundless';
 import { createConfigProviders } from './config';
 
 export default async (opts: { userConfig: IFatherConfig; cwd: string }) => {
-  const configProviders = createConfigProviders(opts.userConfig, opts);
+  const configProviders = createConfigProviders(opts.userConfig);
 
   // TODO: register config change handler
 

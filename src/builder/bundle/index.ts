@@ -14,10 +14,11 @@ export default async (opts: {
     logger.info(
       `Bundle from ${chalk.yellow(
         path.relative(opts.cwd, config.entry),
-      )} to ${chalk.yellow(path.relative(opts.cwd, config.output!))}`,
+      )} to ${chalk.yellow(
+        path.join(config.output.path, config.output.filename),
+      )}`,
     );
 
-    const parsedOutput = path.parse(config.output!);
     const { plugins: extraPostCSSPlugins, ...postcssLoader } =
       config.postcssOptions || {};
 
@@ -29,14 +30,17 @@ export default async (opts: {
         chainWebpack: config.chainWebpack,
         define: config.define,
         externals: config.externals,
-        outputPath: path.relative(opts.cwd, parsedOutput.dir),
+        outputPath: config.output.path,
 
         // postcss config
         extraPostCSSPlugins,
         postcssLoader,
       },
       entry: {
-        [parsedOutput.name]: config.entry,
+        [path.parse(config.output.filename).name]: path.join(
+          opts.cwd,
+          config.entry,
+        ),
       },
       extraBabelPresets: config.extraBabelPresets,
       extraBabelPlugins: config.extraBabelPlugins,

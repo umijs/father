@@ -1,7 +1,5 @@
-import { winPath } from '@umijs/utils';
 import fs from 'fs';
 import { Minimatch } from 'minimatch';
-import path from 'path';
 import {
   IFatherBaseConfig,
   IFatherBuildTypes,
@@ -17,10 +15,14 @@ import {
  */
 export interface IBundleConfig
   extends IFatherBaseConfig,
-    Omit<IFatherBundleConfig, 'entry'> {
+    Omit<IFatherBundleConfig, 'entry' | 'output'> {
   type: IFatherBuildTypes.BUNDLE;
   bundler: 'webpack';
   entry: string;
+  output: {
+    filename: string;
+    path: string;
+  };
 }
 
 /**
@@ -42,10 +44,7 @@ export type IBuilderConfig = IBundleConfig | IBundlessConfig;
  * normalize user config to bundler configs
  * @param userConfig  config from user
  */
-export function normalizeUserConfig(
-  userConfig: IFatherConfig,
-  opts: { cwd: string },
-) {
+export function normalizeUserConfig(userConfig: IFatherConfig) {
   const configs: IBuilderConfig[] = [];
   const { umd, esm, ...baseConfig } = userConfig;
 
@@ -55,16 +54,19 @@ export function normalizeUserConfig(
     const bundleConfig: Omit<IBundleConfig, 'entry'> = {
       type: IFatherBuildTypes.BUNDLE,
       bundler: 'webpack',
-
-      // default to output dist
-      output: 'dist',
       ...baseConfig,
 
       // override base configs from umd config
       ...umd,
+
+      // generate default output
+      output: {
+        // FIXME: use package name first
+        filename: 'index.umd.js',
+        // default to output dist
+        path: umd.output || 'dist',
+      },
     };
-    // FIXME: use package name first
-    const defaultOuputFilename = 'index.umd.js';
 
     if (typeof entryConfig === 'object') {
       // extract multiple entries to single configs
@@ -76,11 +78,11 @@ export function normalizeUserConfig(
           ...entryConfig[entry],
           entry,
 
-          // join filename to output
-          output: path.join(
-            entryConfig[entry].output || bundleConfig.output!,
-            `${entry}.umd.js`,
-          ),
+          // override output
+          output: {
+            filename: `${entry}.umd.js`,
+            path: entryConfig[entry].output || bundleConfig.output.path,
+          },
         });
       });
     } else {
@@ -90,9 +92,6 @@ export function normalizeUserConfig(
 
         // default to bundle src/index
         entry: entryConfig || 'src/index',
-
-        // join filename to output
-        output: path.join(bundleConfig.output!, defaultOuputFilename),
       });
     }
   }
@@ -154,17 +153,6 @@ export function normalizeUserConfig(
       });
     });
   }
-
-  // transform relative path to absolute path for all configs
-  configs.forEach((config) => {
-    if (config.type === IFatherBuildTypes.BUNDLE) {
-      config.entry = winPath(path.resolve(opts.cwd, config.entry));
-    } else if (config.type === IFatherBuildTypes.BUNDLESS) {
-      config.input = winPath(path.resolve(opts.cwd, config.input));
-    }
-
-    config.output = winPath(path.resolve(opts.cwd, config.output!));
-  });
 
   return configs;
 }
@@ -242,15 +230,12 @@ export class BundlessConfigProvider extends ConfigProvider {
   }
 }
 
-export function createConfigProviders(
-  userConfig: IFatherConfig,
-  opts: { cwd: string },
-) {
+export function createConfigProviders(userConfig: IFatherConfig) {
   const providers: {
     bundless?: BundlessConfigProvider;
     bundle?: BundleConfigProvider;
   } = {};
-  const configs = normalizeUserConfig(userConfig, opts);
+  const configs = normalizeUserConfig(userConfig);
   const { bundle, bundless } = configs.reduce(
     (r, config) => {
       if (config.type === IFatherBuildTypes.BUNDLE) {
