@@ -8,6 +8,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import inject, { RollupInjectOptions } from '@rollup/plugin-inject';
 import babel, { RollupBabelInputPluginOptions } from '@rollup/plugin-babel';
+import { createFilter } from '@rollup/pluginutils';
 import postcss from 'rollup-plugin-postcss';
 import { terser } from 'rollup-plugin-terser';
 import typescript2 from 'rollup-plugin-typescript2';
@@ -17,6 +18,7 @@ import autoprefixer from 'autoprefixer';
 import NpmImport from 'less-plugin-npm-import';
 import svgr from '@svgr/rollup';
 import getBabelConfig from './getBabelConfig';
+import { getPkgPath, shouldTransform } from './es5ImcompatibleVersions';
 import { IBundleOptions } from './types';
 
 interface IGetRollupConfigOpts {
@@ -87,7 +89,16 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     }).opts),
     // ref: https://github.com/rollup/plugins/tree/master/packages/babel#babelhelpers
     babelHelpers: (runtimeHelpers ? 'runtime' : 'bundled') as RollupBabelInputPluginOptions['babelHelpers'],
-    exclude: /\/node_modules\//,
+    // exclude: /\/node_modules\//,
+    filter: (filePath: string) => {
+      const rollupFilter = createFilter(null, /\/node_modules\//);
+      // 默认过滤 node_modules
+      if (!rollupFilter(filePath)) {
+        const pkgPath = getPkgPath(filePath);
+        return shouldTransform(pkgPath);
+      }
+      return true;
+    },
     babelrc: false,
     // ref: https://github.com/rollup/rollup-plugin-babel#usage
     extensions,
