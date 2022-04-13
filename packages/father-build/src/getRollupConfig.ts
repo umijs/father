@@ -304,8 +304,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
             name: (umd && umd.name) || (pkg.name && camelCase(basename(pkg.name))),
           },
           plugins: [
-            ...getPlugins(),
             ...extraUmdPlugins,
+            ...getPlugins(),
             replace({
               'process.env.NODE_ENV': JSON.stringify('development'),
             }),
@@ -325,8 +325,8 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
                   name: (umd && umd.name) || (pkg.name && camelCase(basename(pkg.name))),
                 },
                 plugins: [
-                  ...getPlugins({ minCSS: true }),
                   ...extraUmdPlugins,
+                  ...getPlugins({ minCSS: true }),
                   replace({
                     'process.env.NODE_ENV': JSON.stringify('production'),
                   }),
