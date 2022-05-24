@@ -35,6 +35,14 @@ function transformImportLess2Css() {
   }
 }
 
+function getBabelRuntimeVersion(cwd: string) {
+  try {
+    return require(require.resolve('@babel/runtime/package.json', { paths: [cwd] })).version;
+  } catch {
+    return require('@babel/runtime/package.json').version;
+  }
+}
+
 export default function(opts: IGetBabelConfigOpts) {
   const { target, typescript, type, runtimeHelpers, filePath, browserFiles, nodeFiles, nodeVersion, lazy, lessInBabelMode } = opts;
   let isBrowser = target === 'browser';
@@ -81,7 +89,7 @@ export default function(opts: IGetBabelConfigOpts) {
         ...(runtimeHelpers
           ? [[require.resolve('@babel/plugin-transform-runtime'), {
             useESModules: isBrowser && (type === 'esm'),
-            version: require('@babel/runtime/package.json').version,
+            version: getBabelRuntimeVersion(filePath),
           }]]
           : []),
         ...(process.env.COVERAGE
