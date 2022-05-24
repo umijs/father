@@ -86,6 +86,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
       typescript: true,
       runtimeHelpers,
       nodeVersion,
+      cwd,
     }).opts),
     // ref: https://github.com/rollup/plugins/tree/master/packages/babel#babelhelpers
     babelHelpers: (runtimeHelpers ? 'runtime' : 'bundled') as RollupBabelInputPluginOptions['babelHelpers'],
