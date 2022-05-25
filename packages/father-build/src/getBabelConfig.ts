@@ -19,6 +19,7 @@ interface IGetBabelConfigOpts {
     paths?: any[];
     plugins?: any[];
   };
+  cwd?: string;
 }
 
 function transformImportLess2Css() {
@@ -81,7 +82,8 @@ export default function(opts: IGetBabelConfigOpts) {
         ...(runtimeHelpers
           ? [[require.resolve('@babel/plugin-transform-runtime'), {
             useESModules: isBrowser && (type === 'esm'),
-            version: require('@babel/runtime/package.json').version,
+            // use @babel/runtime version from project dependencies
+            version: require(`${opts.cwd}/package.json`).dependencies['@babel/runtime'],
           }]]
           : []),
         ...(process.env.COVERAGE

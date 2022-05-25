@@ -79,6 +79,7 @@ export default async function (opts: IBabelOpts) {
       nodeVersion,
       lazy: cjs && cjs.lazy,
       lessInBabelMode,
+      cwd,
     });
     if (importLibToEs && type === "esm") {
       babelOpts.plugins.push(require.resolve("../lib/importLibToEs"));
