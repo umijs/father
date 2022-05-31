@@ -8,7 +8,7 @@
   },
   "typings": "./index.d.ts",
   "dependencies": {
-    "@babel/core": "7.12.3",
+    "@babel/core": "7.18.2",
     "@babel/plugin-proposal-class-properties": "7.12.1",
     "@babel/plugin-proposal-decorators": "7.12.1",
     "@babel/plugin-proposal-do-expressions": "7.12.1",
@@ -18,7 +18,7 @@
     "@babel/plugin-proposal-optional-chaining": "7.12.1",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/plugin-transform-modules-commonjs": "7.12.1",
-    "@babel/plugin-transform-runtime": "7.12.1",
+    "@babel/plugin-transform-runtime": "7.18.2",
     "@babel/preset-env": "7.12.1",
     "@babel/preset-react": "7.12.1",
     "@babel/preset-typescript": "7.12.1",
