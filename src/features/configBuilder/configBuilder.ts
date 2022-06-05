@@ -1,12 +1,12 @@
-import { addTransformer as addJSTransformer } from '../../builder/bundless/loaders/javascript';
 import {
   addLoader as addBundlessLoader,
-  type ILoaderItem,
+  ILoaderItem,
 } from '../../builder/bundless/loaders';
+import { addTransformer as addJSTransformer } from '../../builder/bundless/loaders/javascript';
 import babel from '../../builder/bundless/loaders/javascript/babel';
 import esbuild from '../../builder/bundless/loaders/javascript/esbuild';
-import type { IApi } from '../../types';
 import type { ITransformer } from '../../builder/protocol';
+import type { IApi } from '../../types';
 
 export default async (api: IApi) => {
   // collect all bundless loaders

@@ -59,7 +59,7 @@ export default async (fileAbsPath: string, config: IBundlessConfig) => {
         {
           resource: fileAbsPath,
           loaders: [{ loader: matched.loader, options: matched.options }],
-          context: { config },
+          context: { config, fileAbsPath },
           readResource: fs.readFile.bind(fs),
         },
         (err, { result }) => {

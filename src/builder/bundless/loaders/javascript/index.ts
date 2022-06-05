@@ -15,8 +15,7 @@ export function addTransformer(transformer: ITransformer) {
  */
 const jsLoader: ILoader = function (content) {
   const transformer = new transformers[this.config.transformer!](this.config);
-
-  return transformer.process(content);
+  return transformer.process(content, this.fileAbsPath);
 };
 
 export default jsLoader;

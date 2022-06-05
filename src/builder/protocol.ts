@@ -5,7 +5,10 @@ import type { IBundlessConfig } from './config';
  * normal loader type (base on webpack loader)
  */
 export type ILoader = (
-  this: ExtendedLoaderContext & { config: IBundlessConfig },
+  this: ExtendedLoaderContext & {
+    config: IBundlessConfig;
+    fileAbsPath: string;
+  },
   content: RunLoaderResult['resourceBuffer'],
 ) => typeof content;
 
@@ -26,5 +29,6 @@ export interface ITransformer {
    */
   process: (
     content: RunLoaderResult['resourceBuffer'],
+    fileAbsPath: string,
   ) => RunLoaderResult['resourceBuffer'];
 }

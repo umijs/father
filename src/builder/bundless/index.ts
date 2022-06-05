@@ -25,6 +25,11 @@ export default async (opts: {
     ignore: DEFAULT_BUNDLESS_IGNORES,
     nodir: true,
   });
+  const babelTransformRegexp = /\.(t|j)sx?$/;
+
+  function isTransform(path: string) {
+    return babelTransformRegexp.test(path) && !path.endsWith('.d.ts');
+  }
 
   // process all matched items
   for (let item of matches) {
@@ -35,7 +40,7 @@ export default async (opts: {
         config.output!,
         path.relative(config.input, item),
       );
-      const itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+      let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
       const parentPath = path.dirname(itemDistAbsPath);
 
       // create parent directory if not exists
@@ -44,7 +49,10 @@ export default async (opts: {
       }
 
       // get result from loaders
-      const result = await runLoaders(item, config);
+      const result = await runLoaders(item, { ...config });
+      itemDistAbsPath = isTransform(itemDistAbsPath)
+        ? itemDistAbsPath.replace(path.extname(itemDistAbsPath), '.js')
+        : itemDistAbsPath;
 
       if (result) {
         // distribute file with result
