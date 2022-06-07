@@ -58,25 +58,35 @@ export default async (
 
   if (matched) {
     // run matched loader
-    return new Promise<string | undefined>((resolve, reject) => {
-      runLoaders(
-        {
-          resource: fileAbsPath,
-          loaders: [{ loader: matched.loader, options: matched.options }],
-          context: { config: opts.config, pkg: opts.pkg },
-          readResource: fs.readFile.bind(fs),
-        },
-        (err, { result }) => {
-          if (err) {
-            reject(err);
-          } else if (result) {
-            // FIXME: handle buffer type?
-            resolve(result[0] as unknown as string);
-          } else {
-            resolve(void 0);
-          }
-        },
-      );
-    });
+    return new Promise<{ content: string; ext?: string } | undefined>(
+      (resolve, reject) => {
+        let ext: string;
+
+        runLoaders(
+          {
+            resource: fileAbsPath,
+            loaders: [{ loader: matched.loader, options: matched.options }],
+            context: {
+              config: opts.config,
+              pkg: opts.pkg,
+              setOutputExt(e: string) {
+                ext = e;
+              },
+            },
+            readResource: fs.readFile.bind(fs),
+          },
+          (err, { result }) => {
+            if (err) {
+              reject(err);
+            } else if (result) {
+              // FIXME: handle buffer type?
+              resolve({ content: result[0] as unknown as string, ext });
+            } else {
+              resolve(void 0);
+            }
+          },
+        );
+      },
+    );
   }
 };

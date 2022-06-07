@@ -10,6 +10,7 @@ export type ILoader = (
     config: IBundlessConfig;
     fileAbsPath: string;
     pkg: IApi['pkg'];
+    setOutputExt: (ext: string) => void;
   },
   content: RunLoaderResult['resourceBuffer'],
 ) => typeof content;

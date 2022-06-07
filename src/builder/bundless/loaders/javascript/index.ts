@@ -21,6 +21,9 @@ const jsLoader: ILoader = function (content) {
     fileAbsPath: this.resource,
   });
 
+  // TODO: .mjs, .cjs support
+  this.setOutputExt('.js');
+
   return transformer.process(content);
 };
 

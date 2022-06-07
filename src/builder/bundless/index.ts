@@ -10,6 +10,12 @@ const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.{test,e2e,spec}.{js,jsx,ts,tsx}',
 ];
 
+function replacePathExt(filePath: string, ext: string) {
+  const parsed = path.parse(filePath);
+
+  return path.join(parsed.dir, `${parsed.name}${ext}`);
+}
+
 export default async (opts: {
   cwd: string;
   configProvider: BundlessConfigProvider;
@@ -25,18 +31,12 @@ export default async (opts: {
     ignore: DEFAULT_BUNDLESS_IGNORES,
     nodir: true,
   });
-  const babelTransformRegexp = /\.(t|j)sx?$/;
-
-  function isTransform(path: string) {
-    return babelTransformRegexp.test(path) && !path.endsWith('.d.ts');
-  }
-
   // process all matched items
   for (let item of matches) {
     const config = opts.configProvider.getConfigForFile(item);
 
     if (config) {
-      const itemDistPath = path.join(
+      let itemDistPath = path.join(
         config.output!,
         path.relative(config.input, item),
       );
@@ -44,7 +44,7 @@ export default async (opts: {
       const parentPath = path.dirname(itemDistAbsPath);
 
       // create parent directory if not exists
-      if (!fs.existsSync(itemDistAbsPath)) {
+      if (!fs.existsSync(parentPath)) {
         fs.mkdirSync(parentPath, { recursive: true });
       }
 
@@ -53,13 +53,16 @@ export default async (opts: {
         config,
         pkg: opts.configProvider.pkg,
       });
-      itemDistAbsPath = isTransform(itemDistAbsPath)
-        ? itemDistAbsPath.replace(path.extname(itemDistAbsPath), '.js')
-        : itemDistAbsPath;
 
       if (result) {
+        // update ext if loader specified
+        if (result.ext) {
+          itemDistPath = replacePathExt(itemDistPath, result.ext);
+          itemDistAbsPath = replacePathExt(itemDistAbsPath, result.ext);
+        }
+
         // distribute file with result
-        fs.writeFileSync(itemDistAbsPath, result);
+        fs.writeFileSync(itemDistAbsPath, result.content);
       } else {
         // copy file as normal assets
         fs.copyFileSync(item, itemDistAbsPath);
