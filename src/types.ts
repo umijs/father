@@ -1,12 +1,17 @@
 import type { IServicePluginAPI, PluginAPI } from '@umijs/core';
-import type { ITransformer } from './builder/protocol';
+import type { ITransformerItem } from './builder/bundless/loaders/javascript';
+
+export type {
+  IBundlessLoader,
+  IJSTransformer,
+} from './builder/bundless/loaders/types';
 
 export type IApi = PluginAPI &
   IServicePluginAPI & {
     /**
-     * add bundless transformer
+     * add bundless js transformer
      */
-    addTransformer: (transformer: ITransformer) => void;
+    addJSTransformer: (item: ITransformerItem) => void;
   };
 
 export enum IFatherBuildTypes {

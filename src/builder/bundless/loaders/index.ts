@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
-import { IApi } from '../../../types';
-import { IBundlessConfig } from '../../config';
+import type { IApi } from '../../../types';
+import type { IBundlessConfig } from '../../config';
 
 /**
  * loader item type

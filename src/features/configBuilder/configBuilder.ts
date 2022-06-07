@@ -2,11 +2,11 @@ import {
   addLoader as addBundlessLoader,
   ILoaderItem,
 } from '../../builder/bundless/loaders';
-import { addTransformer as addJSTransformer } from '../../builder/bundless/loaders/javascript';
-import babel from '../../builder/bundless/loaders/javascript/babel';
-import esbuild from '../../builder/bundless/loaders/javascript/esbuild';
-import type { ITransformer } from '../../builder/protocol';
-import type { IApi } from '../../types';
+import {
+  addTransformer as addJSTransformer,
+  ITransformerItem,
+} from '../../builder/bundless/loaders/javascript';
+import { IApi, IFatherJSTransformerTypes } from '../../types';
 
 export default async (api: IApi) => {
   // collect all bundless loaders
@@ -25,9 +25,22 @@ export default async (api: IApi) => {
   bundlessLoaders.forEach((l) => addBundlessLoader(l));
 
   // collect all bundless js transformers
-  const jsTransformers: ITransformer[] = await api.applyPlugins({
+  const jsTransformers: ITransformerItem[] = await api.applyPlugins({
     key: 'addJSTransformer',
-    initialValue: [babel, esbuild],
+    initialValue: [
+      {
+        id: IFatherJSTransformerTypes.BABEL,
+        transformer: require.resolve(
+          '../../builder/bundless/loaders/javascript/babel',
+        ),
+      },
+      {
+        id: IFatherJSTransformerTypes.ESBUILD,
+        transformer: require.resolve(
+          '../../builder/bundless/loaders/javascript/esbuild',
+        ),
+      },
+    ],
   });
 
   // register js transformers

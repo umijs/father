@@ -1,30 +1,43 @@
-import { ILoader, ITransformer } from '../../../protocol';
+import type { IBundlessLoader, IJSTransformer } from '../types';
 
-const transformers: Record<string, ITransformer> = {};
+const transformers: Record<string, IJSTransformer> = {};
+
+export interface ITransformerItem {
+  id: string;
+  transformer: string;
+}
 
 /**
  * add javascript tranformer
- * @param transformer
+ * @param item
  */
-export function addTransformer(transformer: ITransformer) {
-  transformers[transformer.id] = transformer;
+export function addTransformer(item: ITransformerItem) {
+  const mod = require(item.transformer);
+  const transformer: IJSTransformer = mod.default || mod;
+
+  transformers[item.id] = transformer;
 }
 
 /**
  * builtin javascript loader
  */
-const jsLoader: ILoader = function (content) {
-  const transformer = new transformers[this.config.transformer!]({
-    config: this.config,
-    cwd: this.resourcePath!,
-    pkg: this.pkg,
-    fileAbsPath: this.resource,
-  });
+const jsLoader: IBundlessLoader = function (content) {
+  const transformer = transformers[this.config.transformer!];
 
   // TODO: .mjs, .cjs support
   this.setOutputExt('.js');
 
-  return transformer.process(content);
+  return transformer.call(
+    {
+      config: this.config,
+      pkg: this.pkg,
+      paths: {
+        cwd: this.resourcePath!,
+        fileAbsPath: this.resource,
+      },
+    },
+    content!.toString(),
+  );
 };
 
 export default jsLoader;

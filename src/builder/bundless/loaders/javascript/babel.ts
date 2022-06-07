@@ -1,85 +1,69 @@
-import {
-  transform as babelTransform,
-  TransformOptions,
-} from '@umijs/bundler-utils/compiled/babel/core';
+import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import path from 'path';
-import { IApi, IFatherJSTransformerTypes } from '../../../../types';
-import type { IBundlessConfig } from '../../../config';
+import type { IJSTransformer } from '../types';
 
 /**
  * babel transformer
  */
-class BabelTransformer {
-  static id = IFatherJSTransformerTypes.BABEL;
+const babelTransformer: IJSTransformer = function (content) {
+  const {
+    extraBabelPlugins = [],
+    extraBabelPresets = [],
+    define,
+    alias: oAlias = {},
+  } = this.config;
 
-  config: TransformOptions;
-
-  constructor(opts: {
-    config: IBundlessConfig;
-    cwd: string;
-    fileAbsPath: string;
-    pkg: IApi['pkg'];
-  }) {
-    this.config = this.getBabelConfig(opts);
-  }
-
-  getBabelConfig(
-    opts: ConstructorParameters<typeof BabelTransformer>[0],
-  ): TransformOptions {
-    const {
-      extraBabelPlugins,
-      extraBabelPresets,
-      define,
-      alias = {},
-    } = opts.config;
-
-    // transform alias to relative path for babel-plugin-module-resolver
-    Object.keys(alias).forEach((key) => {
-      if (path.isAbsolute(alias[key])) {
-        alias[key] = path.relative(opts.cwd, alias[key]);
+  // transform alias to relative path for babel-plugin-module-resolver
+  const alias = Object.entries(oAlias).reduce<typeof oAlias>(
+    (result, [name, target]) => {
+      if (path.isAbsolute(target)) {
+        result[name] = path.relative(this.paths.cwd, target);
 
         // prefix . for same-level path
-        if (!alias[key].startsWith('.')) {
-          alias[key] = `.${path.sep}${alias[key]}`;
+        if (!result[name].startsWith('.')) {
+          result[name] = `.${path.sep}${result[name]}`;
         }
+      } else {
+        result[name] = target;
       }
-    });
 
-    return {
-      filename: opts.fileAbsPath,
-      presets: [
-        [
-          require.resolve('@umijs/babel-preset-umi'),
-          {
-            presetEnv: {},
-            presetReact: {},
-            presetTypeScript: {},
-            pluginTransformRuntime: {
-              absoluteRuntime: false,
-              version: opts.pkg.dependencies?.['@babel/runtime'],
-            },
+      return result;
+    },
+    {},
+  );
+
+  return transform(content, {
+    filename: this.paths.fileAbsPath,
+    presets: [
+      [
+        require.resolve('@umijs/babel-preset-umi'),
+        {
+          presetEnv: {},
+          presetReact: {},
+          presetTypeScript: {},
+          pluginTransformRuntime: {
+            absoluteRuntime: false,
+            version: this.pkg.dependencies?.['@babel/runtime'],
           },
-        ],
-        ...(extraBabelPresets ? extraBabelPresets : []),
+        },
       ],
-      plugins: [
-        [require.resolve('babel-plugin-transform-define'), define || {}],
-        [
-          require.resolve('babel-plugin-module-resolver'),
-          {
-            alias: alias,
-            cwd: opts.cwd,
-            extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.json'],
-          },
-        ],
-        ...(extraBabelPlugins ? extraBabelPlugins : []),
-      ].filter(Boolean),
-    };
-  }
+      ...extraBabelPresets,
+    ],
+    plugins: [
+      [
+        require.resolve('babel-plugin-module-resolver'),
+        {
+          alias: alias,
+          cwd: this.paths.cwd,
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.json'],
+        },
+      ],
+      ...(define
+        ? [[require.resolve('babel-plugin-transform-define'), define]]
+        : []),
+      ...extraBabelPlugins,
+    ],
+  })!.code!;
+};
 
-  process(content: string) {
-    return babelTransform(content, this.config)?.code;
-  }
-}
-
-export default BabelTransformer;
+export default babelTransformer;
