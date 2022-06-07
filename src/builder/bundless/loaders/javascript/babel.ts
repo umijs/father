@@ -2,12 +2,9 @@ import {
   transform as babelTransform,
   TransformOptions,
 } from '@umijs/bundler-utils/compiled/babel/core';
-import {
-  IFatherJSTransformerTypes,
-  IFatherPlatformTypes,
-} from '../../../../types';
+import path from 'path';
+import { IApi, IFatherJSTransformerTypes } from '../../../../types';
 import type { IBundlessConfig } from '../../../config';
-import resolvePath from './resolvePath';
 
 /**
  * babel transformer
@@ -15,19 +12,41 @@ import resolvePath from './resolvePath';
 class BabelTransformer {
   static id = IFatherJSTransformerTypes.BABEL;
 
-  config = {} as TransformOptions;
+  config: TransformOptions;
 
-  constructor(config: IBundlessConfig) {
-    // TODO: create babel instance from config
-    this.config = this.getBabelConfig(config);
+  constructor(opts: {
+    config: IBundlessConfig;
+    cwd: string;
+    fileAbsPath: string;
+    pkg: IApi['pkg'];
+  }) {
+    this.config = this.getBabelConfig(opts);
   }
 
-  getBabelConfig(config: IBundlessConfig): TransformOptions {
-    const { platform, extraBabelPlugins, extraBabelPresets, define, alias } =
-      config;
-    const isBrowser = platform === IFatherPlatformTypes.BROWSER;
+  getBabelConfig(
+    opts: ConstructorParameters<typeof BabelTransformer>[0],
+  ): TransformOptions {
+    const {
+      extraBabelPlugins,
+      extraBabelPresets,
+      define,
+      alias = {},
+    } = opts.config;
+
+    // transform alias to relative path for babel-plugin-module-resolver
+    Object.keys(alias).forEach((key) => {
+      if (path.isAbsolute(alias[key])) {
+        alias[key] = path.relative(opts.cwd, alias[key]);
+
+        // prefix . for same-level path
+        if (!alias[key].startsWith('.')) {
+          alias[key] = `.${path.sep}${alias[key]}`;
+        }
+      }
+    });
 
     return {
+      filename: opts.fileAbsPath,
       presets: [
         [
           require.resolve('@umijs/babel-preset-umi'),
@@ -35,22 +54,22 @@ class BabelTransformer {
             presetEnv: {},
             presetReact: {},
             presetTypeScript: {},
-            pluginTransformRuntime: {},
-            pluginLockCoreJS: {},
-            pluginAutoCSSModules: false,
-            pluginDynamicImportNode: false,
+            pluginTransformRuntime: {
+              absoluteRuntime: false,
+              version: opts.pkg.dependencies?.['@babel/runtime'],
+            },
           },
         ],
         ...(extraBabelPresets ? extraBabelPresets : []),
       ],
       plugins: [
         [require.resolve('babel-plugin-transform-define'), define || {}],
-        isBrowser && [require.resolve('babel-plugin-react-require')],
         [
           require.resolve('babel-plugin-module-resolver'),
           {
-            alias: alias || {},
-            resolvePath,
+            alias: alias,
+            cwd: opts.cwd,
+            extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.json'],
           },
         ],
         ...(extraBabelPlugins ? extraBabelPlugins : []),
@@ -58,13 +77,8 @@ class BabelTransformer {
     };
   }
 
-  process(content: string, fileAbsPath: string) {
-    const config = this.config;
-
-    return babelTransform(content, {
-      filename: fileAbsPath,
-      ...config,
-    })?.code;
+  process(content: string) {
+    return babelTransform(content, this.config)?.code;
   }
 }
 

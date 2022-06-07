@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
+import { IApi } from '../../../types';
 import { IBundlessConfig } from '../../config';
 
 /**
@@ -36,7 +37,10 @@ export function addLoader(item: ILoaderItem) {
 /**
  * loader module base on webpack loader-runner
  */
-export default async (fileAbsPath: string, config: IBundlessConfig) => {
+export default async (
+  fileAbsPath: string,
+  opts: { config: IBundlessConfig; pkg: IApi['pkg'] },
+) => {
   // get matched loader by test
   const matched = loaders.find((item) => {
     switch (typeof item.test) {
@@ -59,7 +63,7 @@ export default async (fileAbsPath: string, config: IBundlessConfig) => {
         {
           resource: fileAbsPath,
           loaders: [{ loader: matched.loader, options: matched.options }],
-          context: { config, fileAbsPath },
+          context: { config: opts.config, pkg: opts.pkg },
           readResource: fs.readFile.bind(fs),
         },
         (err, { result }) => {

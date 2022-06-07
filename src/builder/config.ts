@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { Minimatch } from 'minimatch';
 import {
+  IApi,
   IFatherBaseConfig,
   IFatherBuildTypes,
   IFatherBundleConfig,
@@ -187,6 +188,12 @@ class Minimatcher {
 }
 
 class ConfigProvider {
+  pkg: ConstructorParameters<typeof ConfigProvider>[0];
+
+  constructor(pkg: IApi['pkg']) {
+    this.pkg = pkg;
+  }
+
   onConfigChange() {
     // not implemented
   }
@@ -197,8 +204,11 @@ export class BundleConfigProvider extends ConfigProvider {
 
   configs: IBundleConfig[] = [];
 
-  constructor(configs: IBundleConfig[]) {
-    super();
+  constructor(
+    configs: IBundleConfig[],
+    pkg: ConstructorParameters<typeof ConfigProvider>[0],
+  ) {
+    super(pkg);
     this.configs = configs;
   }
 }
@@ -214,9 +224,11 @@ export class BundlessConfigProvider extends ConfigProvider {
 
   matchers: InstanceType<typeof Minimatcher>[] = [];
 
-  constructor(configs: IBundlessConfig[]) {
-    super();
-
+  constructor(
+    configs: IBundlessConfig[],
+    pkg: ConstructorParameters<typeof ConfigProvider>[0],
+  ) {
+    super(pkg);
     this.configs = configs;
     this.input = configs[0].input;
     this.output = configs[0].output!;
@@ -225,12 +237,15 @@ export class BundlessConfigProvider extends ConfigProvider {
     });
   }
 
-  getConfigForPath(file: string) {
-    return this.configs[this.matchers.findIndex((m) => m.match(file))];
+  getConfigForFile(filePath: string) {
+    return this.configs[this.matchers.findIndex((m) => m.match(filePath))];
   }
 }
 
-export function createConfigProviders(userConfig: IFatherConfig) {
+export function createConfigProviders(
+  userConfig: IFatherConfig,
+  pkg: IApi['pkg'],
+) {
   const providers: {
     bundless?: BundlessConfigProvider;
     bundle?: BundleConfigProvider;
@@ -253,11 +268,11 @@ export function createConfigProviders(userConfig: IFatherConfig) {
   );
 
   if (bundle.length) {
-    providers.bundle = new BundleConfigProvider(bundle);
+    providers.bundle = new BundleConfigProvider(bundle, pkg);
   }
 
   if (bundless.length) {
-    providers.bundless = new BundlessConfigProvider(bundless);
+    providers.bundless = new BundlessConfigProvider(bundless, pkg);
   }
 
   return providers;

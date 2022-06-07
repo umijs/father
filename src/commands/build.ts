@@ -9,6 +9,7 @@ export default (api: IApi) => {
       await builder({
         userConfig: api.userConfig,
         cwd: api.cwd,
+        pkg: api.pkg,
       });
     },
   });

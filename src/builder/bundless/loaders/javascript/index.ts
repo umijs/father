@@ -14,8 +14,14 @@ export function addTransformer(transformer: ITransformer) {
  * builtin javascript loader
  */
 const jsLoader: ILoader = function (content) {
-  const transformer = new transformers[this.config.transformer!](this.config);
-  return transformer.process(content, this.fileAbsPath);
+  const transformer = new transformers[this.config.transformer!]({
+    config: this.config,
+    cwd: this.resourcePath!,
+    pkg: this.pkg,
+    fileAbsPath: this.resource,
+  });
+
+  return transformer.process(content);
 };
 
 export default jsLoader;

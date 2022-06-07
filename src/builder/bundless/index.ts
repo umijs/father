@@ -33,7 +33,7 @@ export default async (opts: {
 
   // process all matched items
   for (let item of matches) {
-    const config = opts.configProvider.getConfigForPath(item);
+    const config = opts.configProvider.getConfigForFile(item);
 
     if (config) {
       const itemDistPath = path.join(
@@ -49,7 +49,10 @@ export default async (opts: {
       }
 
       // get result from loaders
-      const result = await runLoaders(item, { ...config });
+      const result = await runLoaders(item, {
+        config,
+        pkg: opts.configProvider.pkg,
+      });
       itemDistAbsPath = isTransform(itemDistAbsPath)
         ? itemDistAbsPath.replace(path.extname(itemDistAbsPath), '.js')
         : itemDistAbsPath;

@@ -1,4 +1,5 @@
 import type { ExtendedLoaderContext, RunLoaderResult } from 'loader-runner';
+import { IApi } from '../types';
 import type { IBundlessConfig } from './config';
 
 /**
@@ -8,6 +9,7 @@ export type ILoader = (
   this: ExtendedLoaderContext & {
     config: IBundlessConfig;
     fileAbsPath: string;
+    pkg: IApi['pkg'];
   },
   content: RunLoaderResult['resourceBuffer'],
 ) => typeof content;
@@ -16,7 +18,12 @@ export type ILoader = (
  * bundless transformer type
  */
 export interface ITransformer {
-  new (config: IBundlessConfig): ITransformer;
+  new (opts: {
+    config: IBundlessConfig;
+    cwd: string;
+    fileAbsPath: string;
+    pkg: IApi['pkg'];
+  }): ITransformer;
 
   /**
    * transformer identifier
@@ -29,6 +36,5 @@ export interface ITransformer {
    */
   process: (
     content: RunLoaderResult['resourceBuffer'],
-    fileAbsPath: string,
   ) => RunLoaderResult['resourceBuffer'];
 }

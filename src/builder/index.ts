@@ -1,5 +1,5 @@
 import { rimraf } from '@umijs/utils';
-import { IFatherConfig } from '../types';
+import { IApi, IFatherConfig } from '../types';
 import bundle from './bundle';
 import bundless from './bundless';
 import { createConfigProviders } from './config';
@@ -21,8 +21,12 @@ function getProviderOutputs(
   return Array.from(set);
 }
 
-export default async (opts: { userConfig: IFatherConfig; cwd: string }) => {
-  const configProviders = createConfigProviders(opts.userConfig);
+export default async (opts: {
+  userConfig: IFatherConfig;
+  cwd: string;
+  pkg: IApi['pkg'];
+}) => {
+  const configProviders = createConfigProviders(opts.userConfig, opts.pkg);
   const outputs = getProviderOutputs(configProviders);
 
   // clean output directories
