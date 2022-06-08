@@ -2,6 +2,7 @@ import { chalk, glob, logger } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import type { BundlessConfigProvider } from '../config';
+import getDeclarations from './dts';
 import runLoaders from './loaders';
 
 const DEFAULT_BUNDLESS_IGNORES = [
@@ -31,6 +32,8 @@ export default async (opts: {
     ignore: DEFAULT_BUNDLESS_IGNORES,
     nodir: true,
   });
+  const declarationFileMap = new Map<string, string>();
+
   // process all matched items
   for (let item of matches) {
     const config = opts.configProvider.getConfigForFile(item);
@@ -56,9 +59,14 @@ export default async (opts: {
 
       if (result) {
         // update ext if loader specified
-        if (result.ext) {
-          itemDistPath = replacePathExt(itemDistPath, result.ext);
-          itemDistAbsPath = replacePathExt(itemDistAbsPath, result.ext);
+        if (result.options.ext) {
+          itemDistPath = replacePathExt(itemDistPath, result.options.ext);
+          itemDistAbsPath = replacePathExt(itemDistAbsPath, result.options.ext);
+        }
+
+        // prepare for declaration
+        if (result.options.declaration) {
+          declarationFileMap.set(item, parentPath);
         }
 
         // distribute file with result
@@ -69,12 +77,30 @@ export default async (opts: {
       }
 
       logger.event(
-        `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}`,
+        `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
+          result?.options.declaration ? ' (with declaration)' : ''
+        }`,
       );
       count += 1;
     } else {
       // TODO: DEBUG
     }
+  }
+
+  if (declarationFileMap.size) {
+    logger.event(`Generate declaration files...`);
+
+    const declarations = await getDeclarations([...declarationFileMap.keys()], {
+      cwd: opts.cwd,
+    });
+
+    declarations.forEach((item) => {
+      fs.writeFileSync(
+        path.join(declarationFileMap.get(item.sourceFile)!, item.file),
+        item.content,
+        'utf-8',
+      );
+    });
   }
 
   logger.event(

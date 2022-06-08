@@ -25,7 +25,7 @@ const jsLoader: IBundlessLoader = function (content) {
   const transformer = transformers[this.config.transformer!];
 
   // TODO: .mjs, .cjs support
-  this.setOutputExt('.js');
+  this.setOuputOptions({ ext: '.js', declaration: true });
 
   return transformer.call(
     {

@@ -32,6 +32,7 @@
     "babel-plugin-transform-define": "2.0.1",
     "loader-runner": "4.2.0",
     "minimatch": "3.1.2",
+    "typescript": "^4.7.2",
     "v8-compile-cache": "2.3.0"
   },
   "publishConfig": {
@@ -42,6 +43,7 @@
     "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
   ],
   "devDependencies": {
-    "@types/loader-runner": "2.2.4"
+    "@types/loader-runner": "2.2.4",
+    "@zerollup/ts-transform-paths": "1.7.18"
   }
 }

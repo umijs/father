@@ -2,6 +2,14 @@ import type { ExtendedLoaderContext } from 'loader-runner';
 import type { IApi } from '../../../types';
 import type { IBundlessConfig } from '../../config';
 
+export interface ILoaderOuput {
+  result: string;
+  options: {
+    ext?: string;
+    declaration?: boolean;
+  };
+}
+
 export interface ILoaderContext {
   /**
    * final bundless config
@@ -19,7 +27,7 @@ export interface ILoaderContext {
 export type IBundlessLoader = (
   this: ExtendedLoaderContext &
     ILoaderContext & {
-      setOutputExt: (ext: string) => void;
+      setOuputOptions: (options: ILoaderOuput['options']) => void;
     },
   content: string,
 ) => string;

@@ -2,6 +2,7 @@ import fs from 'fs';
 import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
 import type { IBundlessConfig } from '../../config';
+import type { IBundlessLoader, ILoaderOuput } from './types';
 
 /**
  * loader item type
@@ -58,35 +59,39 @@ export default async (
 
   if (matched) {
     // run matched loader
-    return new Promise<{ content: string; ext?: string } | undefined>(
-      (resolve, reject) => {
-        let ext: string;
+    return new Promise<
+      | { content: string; options: { ext?: string; declaration?: boolean } }
+      | undefined
+    >((resolve, reject) => {
+      let outputOpts: ILoaderOuput['options'] = {};
 
-        runLoaders(
-          {
-            resource: fileAbsPath,
-            loaders: [{ loader: matched.loader, options: matched.options }],
-            context: {
-              config: opts.config,
-              pkg: opts.pkg,
-              setOutputExt(e: string) {
-                ext = e;
-              },
+      runLoaders(
+        {
+          resource: fileAbsPath,
+          loaders: [{ loader: matched.loader, options: matched.options }],
+          context: {
+            config: opts.config,
+            pkg: opts.pkg,
+            setOuputOptions(opts) {
+              outputOpts = opts;
             },
-            readResource: fs.readFile.bind(fs),
-          },
-          (err, { result }) => {
-            if (err) {
-              reject(err);
-            } else if (result) {
-              // FIXME: handle buffer type?
-              resolve({ content: result[0] as unknown as string, ext });
-            } else {
-              resolve(void 0);
-            }
-          },
-        );
-      },
-    );
+          } as Partial<ThisParameterType<IBundlessLoader>>,
+          readResource: fs.readFile.bind(fs),
+        },
+        (err, { result }) => {
+          if (err) {
+            reject(err);
+          } else if (result) {
+            // FIXME: handle buffer type?
+            resolve({
+              content: result[0] as unknown as string,
+              options: outputOpts,
+            });
+          } else {
+            resolve(void 0);
+          }
+        },
+      );
+    });
   }
 };

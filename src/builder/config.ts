@@ -49,6 +49,8 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
   const configs: IBuilderConfig[] = [];
   const { umd, esm, ...baseConfig } = userConfig;
 
+  // TODO: convert alias from tsconfig paths
+
   // normalize umd config
   if (umd) {
     const entryConfig = umd.entry;
