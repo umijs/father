@@ -20,10 +20,12 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "dev": "pnpm build -- --watch"
+    "dev": "pnpm build -- --watch",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@umijs/babel-preset-umi": "^4.0.0-beta.1",
+    "@umijs/bundler-utils": "^4.0.0-beta.1",
     "@umijs/bundler-webpack": "^4.0.0-beta.1",
     "@umijs/core": "^4.0.0-beta.1",
     "@umijs/utils": "^4.0.0-beta.1",
@@ -43,7 +45,26 @@
     "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
   ],
   "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
     "@types/loader-runner": "2.2.4",
-    "@zerollup/ts-transform-paths": "1.7.18"
+    "@types/minimatch": "3.0.5",
+    "@zerollup/ts-transform-paths": "1.7.18",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.1",
+    "prettier": "^2.6.2"
+  },
+  "lint-staged": {
+    "*.{js,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }
