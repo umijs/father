@@ -2,7 +2,7 @@ import fs from 'fs';
 import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
 import type { IBundlessConfig } from '../../config';
-import type { IBundlessLoader, ILoaderOuput } from './types';
+import type { IBundlessLoader, ILoaderOutput } from './types';
 
 /**
  * loader item type
@@ -63,7 +63,7 @@ export default async (
       | { content: string; options: { ext?: string; declaration?: boolean } }
       | undefined
     >((resolve, reject) => {
-      let outputOpts: ILoaderOuput['options'] = {};
+      let outputOpts: ILoaderOutput['options'] = {};
 
       runLoaders(
         {

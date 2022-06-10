@@ -28,6 +28,28 @@
     "prepublish": "pnpm clean && pnpm build:release",
     "test": "echo test"
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-packagejson"
+    ],
+    "printWidth": 80,
+    "proseWrap": "never",
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
   "dependencies": {
     "@umijs/babel-preset-umi": "^4.0.0-beta.1",
     "@umijs/bundler-utils": "^4.0.0-beta.1",
@@ -42,13 +64,6 @@
     "typescript": "^4.7.2",
     "v8-compile-cache": "2.3.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)",
-    "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
-  ],
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
@@ -58,20 +73,20 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
+    "prettier-plugin-packagejson": "^2.2.18",
     "rimraf": "^3.0.2"
   },
-  "lint-staged": {
-    "*.{js,md,json}": [
-      "prettier --write"
-    ],
-    "*.ts": [
-      "prettier --parser=typescript --write"
-    ]
+  "publishConfig": {
+    "access": "public"
   },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
     ]
   },
-  "packageManager": "pnpm@6.32.0"
+  "packageManager": "pnpm@6.32.0",
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)",
+    "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
+  ]
 }
