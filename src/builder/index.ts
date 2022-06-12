@@ -8,10 +8,13 @@ function getProviderOutputs(
   providers: ReturnType<typeof createConfigProviders>,
 ) {
   const set = new Set<string>();
-  const types: (keyof typeof providers)[] = ['bundle', 'bundless'];
 
-  types.forEach((type) => {
-    providers[type]?.configs.forEach((config) => {
+  [
+    providers.bundle?.configs,
+    providers.bundless.esm?.configs,
+    providers.bundless.cjs?.configs,
+  ].forEach((configs) => {
+    configs?.forEach((config) => {
       set.add(
         typeof config.output === 'string' ? config.output : config.output!.path,
       );
@@ -40,7 +43,17 @@ export default async (opts: {
     await bundle({ cwd: opts.cwd, configProvider: configProviders.bundle });
   }
 
-  if (configProviders.bundless) {
-    await bundless({ cwd: opts.cwd, configProvider: configProviders.bundless });
+  if (configProviders.bundless.esm) {
+    await bundless({
+      cwd: opts.cwd,
+      configProvider: configProviders.bundless.esm,
+    });
+  }
+
+  if (configProviders.bundless.cjs) {
+    await bundless({
+      cwd: opts.cwd,
+      configProvider: configProviders.bundless.cjs,
+    });
   }
 };

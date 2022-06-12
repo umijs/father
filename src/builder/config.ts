@@ -6,6 +6,7 @@ import {
   IFatherBuildTypes,
   IFatherBundleConfig,
   IFatherBundlessConfig,
+  IFatherBundlessTypes,
   IFatherConfig,
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
@@ -33,6 +34,7 @@ export interface IBundlessConfig
   extends IFatherBaseConfig,
     Omit<IFatherBundlessConfig, 'input' | 'overrides'> {
   type: IFatherBuildTypes.BUNDLESS;
+  format: IFatherBundlessTypes;
   input: string;
 }
 
@@ -47,7 +49,7 @@ export type IBuilderConfig = IBundleConfig | IBundlessConfig;
  */
 export function normalizeUserConfig(userConfig: IFatherConfig) {
   const configs: IBuilderConfig[] = [];
-  const { umd, esm, ...baseConfig } = userConfig;
+  const { umd, esm, cjs, ...baseConfig } = userConfig;
 
   // TODO: convert alias from tsconfig paths
 
@@ -100,11 +102,15 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
   }
 
   // normalize esm config
-  if (esm) {
-    const { overrides = {}, ...esmBaseConfig } = esm;
+  Object.entries({
+    ...(esm ? { esm } : {}),
+    ...(cjs ? { cjs } : {}),
+  }).forEach(([formatName, formatConfig]) => {
+    const { overrides = {}, ...esmBaseConfig } = formatConfig;
     const bundlessPlatform = esmBaseConfig.platform || userConfig.platform;
     const bundlessConfig: Omit<IBundlessConfig, 'input'> = {
       type: IFatherBuildTypes.BUNDLESS,
+      format: formatName as IFatherBundlessTypes,
       ...baseConfig,
       ...esmBaseConfig,
     };
@@ -115,7 +121,7 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
       input: 'src',
 
       // default to output to dist
-      output: 'dist/esm',
+      output: `dist/${formatName}`,
 
       // default to use auto transformer
       transformer:
@@ -155,7 +161,7 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
           .map((i) => `${i}/*`),
       });
     });
-  }
+  });
 
   return configs;
 }
@@ -249,23 +255,23 @@ export function createConfigProviders(
   pkg: IApi['pkg'],
 ) {
   const providers: {
-    bundless?: BundlessConfigProvider;
+    bundless: { esm?: BundlessConfigProvider; cjs?: BundlessConfigProvider };
     bundle?: BundleConfigProvider;
-  } = {};
+  } = { bundless: {} };
   const configs = normalizeUserConfig(userConfig);
   const { bundle, bundless } = configs.reduce(
     (r, config) => {
       if (config.type === IFatherBuildTypes.BUNDLE) {
         r.bundle.push(config);
       } else if (config.type === IFatherBuildTypes.BUNDLESS) {
-        r.bundless.push(config);
+        r.bundless[config.format].push(config);
       }
 
       return r;
     },
-    { bundle: [], bundless: [] } as {
+    { bundle: [], bundless: { esm: [], cjs: [] } } as {
       bundle: IBundleConfig[];
-      bundless: IBundlessConfig[];
+      bundless: { esm: IBundlessConfig[]; cjs: IBundlessConfig[] };
     },
   );
 
@@ -273,8 +279,12 @@ export function createConfigProviders(
     providers.bundle = new BundleConfigProvider(bundle, pkg);
   }
 
-  if (bundless.length) {
-    providers.bundless = new BundlessConfigProvider(bundless, pkg);
+  if (bundless.cjs.length) {
+    providers.bundless.cjs = new BundlessConfigProvider(bundless.cjs, pkg);
+  }
+
+  if (bundless.esm.length) {
+    providers.bundless.esm = new BundlessConfigProvider(bundless.esm, pkg);
   }
 
   return providers;

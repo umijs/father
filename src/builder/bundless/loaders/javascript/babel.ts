@@ -1,5 +1,6 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import path from 'path';
+import { IFatherBundlessTypes } from '../../../../types';
 import type { IJSTransformer } from '../types';
 
 /**
@@ -38,7 +39,10 @@ const babelTransformer: IJSTransformer = function (content) {
       [
         require.resolve('@umijs/babel-preset-umi'),
         {
-          presetEnv: {},
+          presetEnv: {
+            modules:
+              this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
+          },
           presetReact: {},
           presetTypeScript: {},
           pluginTransformRuntime: {

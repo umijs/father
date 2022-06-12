@@ -29,6 +29,11 @@ export enum IFatherPlatformTypes {
   BROWSER = 'browser',
 }
 
+export enum IFatherBundlessTypes {
+  ESM = 'esm',
+  CJS = 'cjs',
+}
+
 export interface IFatherBaseConfig {
   /**
    * compile platform
@@ -145,6 +150,17 @@ export interface IFatherConfig extends IFatherBaseConfig {
     /**
      * output directory
      * @default dist/esm
+     */
+    output?: string;
+  };
+
+  /**
+   * transformer config (cjs)
+   */
+  cjs?: IFatherBundlessConfig & {
+    /**
+     * output directory
+     * @default dist/cjs
      */
     output?: string;
   };

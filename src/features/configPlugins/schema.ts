@@ -28,18 +28,22 @@ function getCommonSchemasJoi(Joi: Root) {
   }, {} as Record<string, SchemaLike | SchemaLike[]>);
 }
 
+function getBundlessSchemas(Joi: Root) {
+  return Joi.object({
+    ...getCommonSchemasJoi(Joi),
+    input: Joi.string(),
+    output: Joi.string(),
+    transformer: Joi.string(),
+    overrides: Joi.object(),
+    ignores: Joi.array().items(Joi.string()),
+  });
+}
+
 export function getSchemas(): Record<string, (Joi: Root) => any> {
   return {
     ...getCommonSchemas(),
-    esm: (Joi) =>
-      Joi.object({
-        ...getCommonSchemasJoi(Joi),
-        input: Joi.string(),
-        output: Joi.string(),
-        transformer: Joi.string(),
-        overrides: Joi.object(),
-        ignores: Joi.array().items(Joi.string()),
-      }),
+    esm: (Joi) => getBundlessSchemas(Joi),
+    cjs: (Joi) => getBundlessSchemas(Joi),
     umd: (Joi) =>
       Joi.object({
         ...getCommonSchemasJoi(Joi),

@@ -22,7 +22,11 @@ export default async (opts: {
   configProvider: BundlessConfigProvider;
 }) => {
   logger.info(
-    `Bundless for ${chalk.yellow(opts.configProvider.input)} directory`,
+    `Bundless for ${chalk.yellow(
+      opts.configProvider.input,
+    )} directory to ${chalk.yellow(
+      opts.configProvider.configs[0].format,
+    )} format`,
   );
 
   let count = 0;
