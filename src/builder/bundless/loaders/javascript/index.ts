@@ -8,7 +8,7 @@ export interface ITransformerItem {
 }
 
 /**
- * add javascript tranformer
+ * add javascript transformer
  * @param item
  */
 export function addTransformer(item: ITransformerItem) {
@@ -25,7 +25,7 @@ const jsLoader: IBundlessLoader = function (content) {
   const transformer = transformers[this.config.transformer!];
 
   // TODO: .mjs, .cjs support
-  this.setOuputOptions({ ext: '.js', declaration: true });
+  this.setOutputOptions({ ext: '.js', declaration: true });
 
   return transformer.call(
     {

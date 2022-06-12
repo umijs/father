@@ -72,7 +72,7 @@ export default async (
           context: {
             config: opts.config,
             pkg: opts.pkg,
-            setOuputOptions(opts) {
+            setOutputOptions(opts) {
               outputOpts = opts;
             },
           } as Partial<ThisParameterType<IBundlessLoader>>,

@@ -27,7 +27,7 @@ export interface ILoaderContext {
 export type IBundlessLoader = (
   this: ExtendedLoaderContext &
     ILoaderContext & {
-      setOuputOptions: (options: ILoaderOutput['options']) => void;
+      setOutputOptions: (options: ILoaderOutput['options']) => void;
     },
   content: string,
 ) => string;
