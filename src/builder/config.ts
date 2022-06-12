@@ -67,7 +67,7 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
         // FIXME: use package name first
         filename: 'index.umd.js',
         // default to output dist
-        path: umd.output || 'dist',
+        path: umd.output || 'dist/umd',
       },
     };
 
@@ -115,7 +115,7 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
       input: 'src',
 
       // default to output to dist
-      output: 'dist',
+      output: 'dist/esm',
 
       // default to use auto transformer
       transformer:

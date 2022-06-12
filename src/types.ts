@@ -32,7 +32,7 @@ export enum IFatherPlatformTypes {
 export interface IFatherBaseConfig {
   /**
    * compile platform
-   * @note
+   * @default browser
    */
   platform?: `${IFatherPlatformTypes}`;
 
@@ -80,7 +80,6 @@ export interface IFatherBundlessConfig extends IFatherBaseConfig {
 
   /**
    * output directory
-   * @default dist
    */
   output?: string;
 
@@ -116,7 +115,7 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
 
   /**
    * bundle output path
-   * @default dist
+   * @default dist/umd
    */
   output?: string;
 
@@ -142,5 +141,11 @@ export interface IFatherConfig extends IFatherBaseConfig {
   /**
    * transformer config (esm)
    */
-  esm?: IFatherBundlessConfig;
+  esm?: IFatherBundlessConfig & {
+    /**
+     * output directory
+     * @default dist/esm
+     */
+    output?: string;
+  };
 }
