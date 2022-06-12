@@ -2,11 +2,11 @@
   "name": "father",
   "version": "4.0.0-alpha.0",
   "description": "father",
-  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/father#readme",
-  "bugs": "https://github.com/umijs/umi-next/issues",
+  "homepage": "https://github.com/umijs/father-next#readme",
+  "bugs": "https://github.com/umijs/father-next/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/umi-next"
+    "url": "https://github.com/umijs/father-next"
   },
   "license": "MIT",
   "main": "dist/index.js",
@@ -16,12 +16,17 @@
   },
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "compiled"
   ],
   "scripts": {
     "build": "pnpm tsc",
     "dev": "pnpm build -- --watch",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "clean": "rimraf dist",
+    "build:release": "pnpm tsc -p tsconfig.build.json",
+    "prepublish": "pnpm clean && pnpm build:release",
+    "test": "echo test"
   },
   "dependencies": {
     "@umijs/babel-preset-umi": "^4.0.0-beta.1",
@@ -52,7 +57,8 @@
     "@zerollup/ts-transform-paths": "1.7.18",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.1",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "rimraf": "^3.0.2"
   },
   "lint-staged": {
     "*.{js,md,json}": [
@@ -66,5 +72,6 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
-  }
+  },
+  "packageManager": "pnpm@6.32.0"
 }

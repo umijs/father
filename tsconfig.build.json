@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declarationMap": false
+  },
+  "exclude": [
+    "**/node_modules",
+    "**/examples",
+    "**/dist",
+    "**/fixtures",
+    "**/*.test.ts",
+    "**/*.e2e.ts"
+  ]
+}
