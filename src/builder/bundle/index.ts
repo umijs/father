@@ -35,6 +35,13 @@ export default async (opts: {
         // postcss config
         extraPostCSSPlugins,
         postcssLoader,
+
+        // compatible with IE11 by default
+        userConfig: {
+          targets: { ie: 11 },
+          jsMinifier: 'terser',
+          cssMinifier: 'cssnano',
+        },
       },
       entry: {
         [path.parse(config.output.filename).name]: path.join(

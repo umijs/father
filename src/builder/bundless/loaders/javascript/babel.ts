@@ -1,6 +1,6 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import path from 'path';
-import { IFatherBundlessTypes } from '../../../../types';
+import { IFatherBundlessTypes, IFatherPlatformTypes } from '../../../../types';
 import type { IJSTransformer } from '../types';
 
 /**
@@ -35,11 +35,16 @@ const babelTransformer: IJSTransformer = function (content) {
 
   return transform(content, {
     filename: this.paths.fileAbsPath,
+    babelrc: false,
     presets: [
       [
         require.resolve('@umijs/babel-preset-umi'),
         {
           presetEnv: {
+            targets:
+              this.config.platform === IFatherPlatformTypes.BROWSER
+                ? { ie: 11 }
+                : { node: 14 },
             modules:
               this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
           },
