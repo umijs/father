@@ -107,10 +107,14 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
     ...(cjs ? { cjs } : {}),
   }).forEach(([formatName, formatConfig]) => {
     const { overrides = {}, ...esmBaseConfig } = formatConfig;
-    const bundlessPlatform = esmBaseConfig.platform || userConfig.platform;
+    const defaultPlatform =
+      formatName === 'esm'
+        ? IFatherPlatformTypes.BROWSER
+        : IFatherPlatformTypes.NODE;
     const bundlessConfig: Omit<IBundlessConfig, 'input'> = {
       type: IFatherBuildTypes.BUNDLESS,
       format: formatName as IFatherBundlessTypes,
+      platform: userConfig.platform || defaultPlatform,
       ...baseConfig,
       ...esmBaseConfig,
     };
@@ -125,7 +129,7 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
 
       // default to use auto transformer
       transformer:
-        bundlessPlatform === IFatherPlatformTypes.NODE
+        bundlessConfig.platform === IFatherPlatformTypes.NODE
           ? IFatherJSTransformerTypes.ESBUILD
           : IFatherJSTransformerTypes.BABEL,
 
@@ -137,7 +141,8 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
 
     // generate config for overrides
     Object.keys(overrides).forEach((oInput) => {
-      const overridePlatform = overrides[oInput].platform || bundlessPlatform;
+      const overridePlatform =
+        overrides[oInput].platform || bundlessConfig.platform;
 
       configs.push({
         // default to use auto transformer
