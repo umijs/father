@@ -27,7 +27,7 @@ const jsLoader: IBundlessLoader = function (content) {
   // TODO: .mjs, .cjs support
   this.setOutputOptions({ ext: '.js', declaration: true });
 
-  return transformer.call(
+  const ret = transformer.call(
     {
       config: this.config,
       pkg: this.pkg,
@@ -38,6 +38,18 @@ const jsLoader: IBundlessLoader = function (content) {
     },
     content!.toString(),
   );
+
+  // handle async transformer
+  if (ret instanceof Promise) {
+    const cb = this.async();
+
+    ret.then(
+      (r) => cb(null, r),
+      (e) => cb(e),
+    );
+  } else {
+    return ret;
+  }
 };
 
 export default jsLoader;

@@ -59,10 +59,7 @@ export default async (
 
   if (matched) {
     // run matched loader
-    return new Promise<
-      | { content: string; options: { ext?: string; declaration?: boolean } }
-      | undefined
-    >((resolve, reject) => {
+    return new Promise<ILoaderOutput | void>((resolve, reject) => {
       let outputOpts: ILoaderOutput['options'] = {};
 
       runLoaders(

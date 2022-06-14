@@ -3,7 +3,7 @@ import type { IApi } from '../../../types';
 import type { IBundlessConfig } from '../../config';
 
 export interface ILoaderOutput {
-  result: string;
+  content: string;
   options: {
     ext?: string;
     declaration?: boolean;
@@ -25,12 +25,23 @@ export interface ILoaderContext {
  * normal loader type (base on webpack loader)
  */
 export type IBundlessLoader = (
-  this: ExtendedLoaderContext &
+  this: Omit<ExtendedLoaderContext, 'async'> &
     ILoaderContext & {
+      /**
+       * configure output options for current file
+       */
       setOutputOptions: (options: ILoaderOutput['options']) => void;
+
+      /**
+       * complete async method type
+       */
+      async: () => (
+        err: Error | null,
+        result?: ILoaderOutput['content'],
+      ) => void;
     },
   content: string,
-) => string;
+) => ILoaderOutput['content'] | void;
 
 /**
  * bundless transformer type
@@ -43,4 +54,4 @@ export type IJSTransformer = (
     };
   },
   content: Parameters<IBundlessLoader>[0],
-) => ReturnType<IBundlessLoader>;
+) => ILoaderOutput['content'] | Promise<ILoaderOutput['content']>;
