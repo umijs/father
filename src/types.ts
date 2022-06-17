@@ -137,6 +137,19 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
   chainWebpack?: (args: any) => any;
 }
 
+export interface IFatherPreBundleConfig {
+  /**
+   * dependencies or entries need to be pre-bundled
+   */
+  deps: string[] | Record<string, { output?: string; minify?: boolean }>;
+
+  /**
+   * extra dependencies & declarations need to be externalized
+   * @note all deps & package.json dependencies will be added to externals by default
+   */
+  extraExternals: Record<string, string>;
+}
+
 export interface IFatherConfig extends IFatherBaseConfig {
   /**
    * bundler config (umd)
@@ -164,4 +177,9 @@ export interface IFatherConfig extends IFatherBaseConfig {
      */
     output?: string;
   };
+
+  /**
+   * deps pre-bundle config
+   */
+  prebundle?: IFatherPreBundleConfig;
 }

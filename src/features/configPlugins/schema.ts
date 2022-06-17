@@ -54,5 +54,14 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         externals: Joi.object().pattern(Joi.string(), Joi.string()),
         chainWebpack: Joi.function().optional(),
       }),
+    prebundle: (Joi) =>
+      Joi.object({
+        deps: Joi.alternatives()
+          .try(Joi.array().items(Joi.string()), Joi.object())
+          .optional(),
+        extraExternals: Joi.object()
+          .pattern(Joi.string(), Joi.string())
+          .optional(),
+      }),
   };
 }
