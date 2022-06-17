@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build:deps": "../../bin/father.js prebundle"
+  },
+  "devDependencies": {
+    "rimraf": "3.0.2"
+  }
+}

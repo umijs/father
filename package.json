@@ -21,10 +21,10 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
+    "build:release": "pnpm tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
     "dev": "pnpm build -- --watch",
     "prepare": "husky install",
-    "clean": "rimraf dist",
-    "build:release": "pnpm tsc -p tsconfig.build.json",
     "prepublish": "pnpm clean && pnpm build:release",
     "test": "echo test"
   },
@@ -56,6 +56,7 @@
     "@umijs/bundler-webpack": "^4.0.0-beta.1",
     "@umijs/core": "^4.0.0-beta.1",
     "@umijs/utils": "^4.0.0-beta.1",
+    "@vercel/ncc": "0.34.0",
     "babel-plugin-module-resolver": "4.1.0",
     "babel-plugin-react-require": "3.1.3",
     "babel-plugin-transform-define": "2.0.1",
@@ -76,15 +77,10 @@
     "prettier-plugin-packagejson": "^2.2.18",
     "rimraf": "^3.0.2"
   },
+  "packageManager": "pnpm@6.32.0",
   "publishConfig": {
     "access": "public"
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "packageManager": "pnpm@6.32.0",
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)",
     "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
