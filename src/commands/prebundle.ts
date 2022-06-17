@@ -3,11 +3,11 @@ import { IApi } from '../types';
 
 export default (api: IApi) => {
   api.registerCommand({
-    name: 'precompile',
-    description: 'precompile',
+    name: 'prebundle',
+    description: 'prebundle',
     fn({ args }) {
       args;
-      logger.info(`precompile`);
+      logger.info(`prebundle`);
     },
   });
 };

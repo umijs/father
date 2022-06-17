@@ -9,7 +9,7 @@ export default (api: IApi) => {
       // commands
       require.resolve('./commands/build'),
       require.resolve('./commands/changelog'),
-      require.resolve('./commands/precompile'),
+      require.resolve('./commands/prebundle'),
       require.resolve('./commands/release'),
       require.resolve('./commands/version'),
 
