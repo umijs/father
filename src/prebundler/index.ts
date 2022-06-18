@@ -7,6 +7,9 @@ import { getConfig } from './config';
 import { Extractor } from '@microsoft/api-extractor';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
+  // patch @microsoft/api-extractor before prepare config
+  await import('./patcher');
+
   const config = getConfig(opts);
   const count = Object.keys(config.deps).length;
   const startTime = Date.now();
