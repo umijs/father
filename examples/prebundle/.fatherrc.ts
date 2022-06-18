@@ -1,5 +1,5 @@
 export default {
   prebundle: {
-    deps: ['rimraf'],
+    deps: ['rimraf', 'minimatch'],
   },
 };

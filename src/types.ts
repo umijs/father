@@ -141,11 +141,18 @@ export interface IFatherPreBundleConfig {
   /**
    * dependencies or entries need to be pre-bundled
    */
-  deps: string[] | Record<string, { output?: string; minify?: boolean }>;
+  deps:
+    | string[]
+    | Record<string, { output?: string; minify?: boolean; dts?: boolean }>;
+
+  /**
+   * extra dep declarations need to be pre-bundled
+   */
+  extraDtsDeps?: string[];
 
   /**
    * extra dependencies & declarations need to be externalized
-   * @note all deps & package.json dependencies will be added to externals by default
+   * @note  all deps & package.json dependencies will be added to externals by default
    */
   extraExternals: Record<string, string>;
 }

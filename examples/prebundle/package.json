@@ -3,6 +3,8 @@
     "build:deps": "../../bin/father.js prebundle"
   },
   "devDependencies": {
+    "@types/minimatch": "3.0.5",
+    "minimatch": "3.1.2",
     "rimraf": "3.0.2"
   }
 }

@@ -59,6 +59,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         deps: Joi.alternatives()
           .try(Joi.array().items(Joi.string()), Joi.object())
           .optional(),
+        extraDtsDeps: Joi.array().items(Joi.string()),
         extraExternals: Joi.object()
           .pattern(Joi.string(), Joi.string())
           .optional(),

@@ -51,6 +51,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
+    "@microsoft/api-extractor": "7.25.1",
     "@umijs/babel-preset-umi": "^4.0.0-beta.1",
     "@umijs/bundler-utils": "^4.0.0-beta.1",
     "@umijs/bundler-webpack": "^4.0.0-beta.1",
