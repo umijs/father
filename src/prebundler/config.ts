@@ -92,12 +92,8 @@ function getDtsConfig(opts: {
         },
         // configure logger
         messages: {
-          compilerMessageReporting: {
-            default: { logLevel: ExtractorLogLevel.Error },
-            // omit typescript version checking
-            // 'console-compiler-version-notice': { logLevel: ExtractorLogLevel.None }
-          },
           extractorMessageReporting: {
+            // only log error by default
             default: { logLevel: ExtractorLogLevel.Error },
             // omit release tag checking
             'ae-missing-release-tag': { logLevel: ExtractorLogLevel.None },
