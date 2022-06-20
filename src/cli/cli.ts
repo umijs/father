@@ -7,7 +7,10 @@ import {
   setNodeTitle,
 } from './node';
 
-interface IOpts {}
+interface IOpts {
+  args?: yParser.Arguments;
+  cwd?: string;
+}
 
 export async function run(_opts?: IOpts) {
   checkNodeVersion();
@@ -15,16 +18,18 @@ export async function run(_opts?: IOpts) {
   setNodeTitle();
   setNoDeprecation();
 
-  const args = yParser(process.argv.slice(2), {
-    alias: {
-      version: ['v'],
-      help: ['h'],
-    },
-    boolean: ['version'],
-  });
+  const args =
+    _opts?.args ||
+    yParser(process.argv.slice(2), {
+      alias: {
+        version: ['v'],
+        help: ['h'],
+      },
+      boolean: ['version'],
+    });
   const command = args._[0];
   try {
-    await new Service().run2({
+    await new Service({ cwd: _opts?.cwd }).run2({
       name: command,
       args,
     });
