@@ -26,7 +26,8 @@
     "dev": "pnpm build -- --watch",
     "prepare": "husky install",
     "prepublish": "pnpm clean && pnpm build:release",
-    "test": "echo test"
+    "test": "jest",
+    "test:cov": "jest --collectCoverage"
   },
   "commitlint": {
     "extends": [
@@ -69,14 +70,18 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
+    "@types/jest": "^27",
     "@types/loader-runner": "2.2.4",
     "@types/minimatch": "3.0.5",
+    "@umijs/test": "^4.0.0-beta.1",
     "@zerollup/ts-transform-paths": "1.7.18",
     "husky": "^8.0.1",
+    "jest": "^27",
     "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
     "prettier-plugin-packagejson": "^2.2.18",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "ts-node": "^10"
   },
   "packageManager": "pnpm@6.32.0",
   "publishConfig": {
