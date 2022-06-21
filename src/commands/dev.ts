@@ -1,5 +1,6 @@
+import { logger } from '@umijs/utils';
 import builder from '../builder';
-import { IApi } from '../types';
+import type { IApi } from '../types';
 
 export default (api: IApi) => {
   api.registerCommand({
@@ -12,10 +13,12 @@ export default (api: IApi) => {
         pkg: api.pkg,
         watch: true,
       });
-      api.service.configManager?.watch({
+
+      api.service.configManager!.watch({
         schemas: api.service.configSchemas,
         onChangeTypes: api.service.configOnChanges,
         async onChange() {
+          logger.wait('Config changed, restarting build...');
           watcher!.close();
           watcher = await builder({
             userConfig: api.userConfig,

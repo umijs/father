@@ -24,42 +24,68 @@ function getProviderOutputs(
   return Array.from(set);
 }
 
-export default async (opts: {
+interface IBuilderOpts {
   userConfig: IFatherConfig;
   cwd: string;
   pkg: IApi['pkg'];
-  watch?: boolean;
-}): Promise<chokidar.FSWatcher | void> => {
+}
+
+interface IWatchBuilderResult {
+  close: chokidar.FSWatcher['close'];
+}
+
+// overload normal/watch mode
+function builder(opts: IBuilderOpts): Promise<void>;
+function builder(
+  opts: IBuilderOpts & { watch: true },
+): Promise<IWatchBuilderResult>;
+
+async function builder(
+  opts: IBuilderOpts & { watch?: true },
+): Promise<IWatchBuilderResult | void> {
   const configProviders = createConfigProviders(opts.userConfig, opts.pkg);
   const outputs = getProviderOutputs(configProviders);
+  const watchers: chokidar.FSWatcher[] = [];
 
   // clean output directories
   outputs.forEach((output) => {
     rimraf.sync(output);
   });
 
-  // TODO: register config change handler
-
-  if (configProviders.bundle) {
-    return await bundle({
+  if (!opts.watch && configProviders.bundle) {
+    await bundle({
       cwd: opts.cwd,
       configProvider: configProviders.bundle,
     });
   }
 
   if (configProviders.bundless.esm) {
-    return await bundless({
+    const watcher = await bundless({
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
     });
+
+    opts.watch && watchers.push(watcher);
   }
 
   if (configProviders.bundless.cjs) {
-    return await bundless({
+    const watcher = await bundless({
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
     });
+
+    opts.watch && watchers.push(watcher);
   }
-};
+
+  if (opts.watch) {
+    return {
+      async close() {
+        await Promise.all(watchers.map((watcher) => watcher.close()));
+      },
+    };
+  }
+}
+
+export default builder;
