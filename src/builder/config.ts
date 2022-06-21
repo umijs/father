@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { Minimatch } from 'minimatch';
 import {
   IApi,
@@ -44,10 +45,20 @@ export interface IBundlessConfig
 export type IBuilderConfig = IBundleConfig | IBundlessConfig;
 
 /**
+ * generate bundle filename by package name
+ */
+function getAutoBundleFilename(pkgName?: string) {
+  return pkgName ? pkgName.replace(/^@[^/]+\//, '') : 'index';
+}
+
+/**
  * normalize user config to bundler configs
  * @param userConfig  config from user
  */
-export function normalizeUserConfig(userConfig: IFatherConfig) {
+export function normalizeUserConfig(
+  userConfig: IFatherConfig,
+  pkg: IApi['pkg'],
+) {
   const configs: IBuilderConfig[] = [];
   const { umd, esm, cjs, ...baseConfig } = userConfig;
 
@@ -66,8 +77,8 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
 
       // generate default output
       output: {
-        // FIXME: use package name first
-        filename: 'index.umd.js',
+        // default to generate filename from package name
+        filename: `${getAutoBundleFilename(pkg.name)}.min.js`,
         // default to output dist
         path: umd.output || 'dist/umd',
       },
@@ -85,7 +96,7 @@ export function normalizeUserConfig(userConfig: IFatherConfig) {
 
           // override output
           output: {
-            filename: `${entry}.umd.js`,
+            filename: `${path.parse(entry).name}.min.js`,
             path: entryConfig[entry].output || bundleConfig.output.path,
           },
         });
@@ -263,7 +274,7 @@ export function createConfigProviders(
     bundless: { esm?: BundlessConfigProvider; cjs?: BundlessConfigProvider };
     bundle?: BundleConfigProvider;
   } = { bundless: {} };
-  const configs = normalizeUserConfig(userConfig);
+  const configs = normalizeUserConfig(userConfig, pkg);
   const { bundle, bundless } = configs.reduce(
     (r, config) => {
       if (config.type === IFatherBuildTypes.BUNDLE) {
