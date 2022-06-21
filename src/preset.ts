@@ -7,6 +7,7 @@ export default (api: IApi) => {
       require.resolve('./registerMethods'),
 
       // commands
+      require.resolve('./commands/dev'),
       require.resolve('./commands/build'),
       require.resolve('./commands/changelog'),
       require.resolve('./commands/prebundle'),
