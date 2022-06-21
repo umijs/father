@@ -1,3 +1,4 @@
+import path from 'path';
 import { chokidar, rimraf } from '@umijs/utils';
 import { IApi, IFatherConfig } from '../types';
 import bundle from './bundle';
@@ -49,7 +50,7 @@ async function builder(
 
   // clean output directories
   outputs.forEach((output) => {
-    rimraf.sync(output);
+    rimraf.sync(path.join(opts.cwd, output));
   });
 
   if (!opts.watch && configProviders.bundle) {

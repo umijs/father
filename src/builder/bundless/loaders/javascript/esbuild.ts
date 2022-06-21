@@ -55,7 +55,9 @@ const esbuildTransformer: IJSTransformer = async function () {
     define: this.config.define,
     target:
       this.config.platform === IFatherPlatformTypes.NODE ? 'node14' : 'es6',
-    entryPoints: [this.paths.fileAbsPath],
+    // esbuild need relative entry path
+    entryPoints: [path.relative(this.paths.cwd, this.paths.fileAbsPath)],
+    absWorkingDir: this.paths.cwd,
     plugins: [
       {
         name: 'plugin-father-alias',

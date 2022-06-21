@@ -37,6 +37,8 @@ async function transformFiles(
   // process all matched items
   for (let item of files) {
     const config = opts.configProvider.getConfigForFile(item);
+    const itemAbsPath = path.join(opts.cwd, item);
+
     if (config) {
       let itemDistPath = path.join(
         config.output!,
@@ -51,7 +53,7 @@ async function transformFiles(
       }
 
       // get result from loaders
-      const result = await runLoaders(item, {
+      const result = await runLoaders(itemAbsPath, {
         config,
         pkg: opts.configProvider.pkg,
       });
@@ -65,14 +67,14 @@ async function transformFiles(
 
         // prepare for declaration
         if (result.options.declaration) {
-          declarationFileMap.set(item, parentPath);
+          declarationFileMap.set(itemAbsPath, parentPath);
         }
 
         // distribute file with result
         fs.writeFileSync(itemDistAbsPath, result.content);
       } else {
         // copy file as normal assets
-        fs.copyFileSync(item, itemDistAbsPath);
+        fs.copyFileSync(itemAbsPath, itemDistAbsPath);
       }
 
       logger.event(

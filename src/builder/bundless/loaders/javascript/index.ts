@@ -32,7 +32,7 @@ const jsLoader: IBundlessLoader = function (content) {
       config: this.config,
       pkg: this.pkg,
       paths: {
-        cwd: this.resourcePath!,
+        cwd: this.context!,
         fileAbsPath: this.resource,
       },
     },

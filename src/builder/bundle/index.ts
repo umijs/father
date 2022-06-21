@@ -12,9 +12,7 @@ export default async (opts: {
 }) => {
   for (const config of opts.configProvider.configs) {
     logger.info(
-      `Bundle from ${chalk.yellow(
-        path.relative(opts.cwd, config.entry),
-      )} to ${chalk.yellow(
+      `Bundle from ${chalk.yellow(config.entry)} to ${chalk.yellow(
         path.join(config.output.path, config.output.filename),
       )}`,
     );
