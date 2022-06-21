@@ -4,6 +4,19 @@ import { IFatherBundlessTypes, IFatherPlatformTypes } from '../../../../types';
 import type { IJSTransformer } from '../types';
 
 /**
+ * parse for stringify define value, use to babel-plugin-transform-define
+ */
+function getParsedDefine(define: Record<string, string>) {
+  return Object.entries(define).reduce<typeof define>(
+    (result, [name, value]) => ({
+      ...result,
+      [name]: JSON.parse(value),
+    }),
+    {},
+  );
+}
+
+/**
  * babel transformer
  */
 const babelTransformer: IJSTransformer = function (content) {
@@ -68,7 +81,12 @@ const babelTransformer: IJSTransformer = function (content) {
         },
       ],
       ...(define
-        ? [[require.resolve('babel-plugin-transform-define'), define]]
+        ? [
+            [
+              require.resolve('babel-plugin-transform-define'),
+              getParsedDefine(define),
+            ],
+          ]
         : []),
       ...extraBabelPlugins,
     ],
