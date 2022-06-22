@@ -1,6 +1,6 @@
-import fs from 'fs';
 import path from 'path';
 import { Minimatch } from 'minimatch';
+import { winPath } from '@umijs/utils';
 import {
   IApi,
   IFatherBaseConfig,
@@ -131,7 +131,7 @@ export function normalizeUserConfig(
     };
 
     // generate config for input
-    configs.push({
+    const rootConfig = {
       // default to transform src
       input: 'src',
 
@@ -147,13 +147,23 @@ export function normalizeUserConfig(
       ...bundlessConfig,
 
       // transform overrides inputs to ignores
-      ignores: Object.keys(overrides).map((i) => `${i}/*`),
-    });
+      ignores: Object.keys(overrides)
+        .map((i) => `${i}/**`)
+        .concat(bundlessConfig.ignores || []),
+    };
+    configs.push(rootConfig);
 
     // generate config for overrides
     Object.keys(overrides).forEach((oInput) => {
       const overridePlatform =
         overrides[oInput].platform || bundlessConfig.platform;
+
+      // validate override input
+      if (!oInput.startsWith(`${rootConfig.input}/`)) {
+        throw new Error(
+          `Override input ${oInput} must be a subpath of ${formatName}.input!`,
+        );
+      }
 
       configs.push({
         // default to use auto transformer
@@ -161,6 +171,11 @@ export function normalizeUserConfig(
           overridePlatform === IFatherPlatformTypes.NODE
             ? IFatherJSTransformerTypes.ESBUILD
             : IFatherJSTransformerTypes.BABEL,
+
+        // default to output relative root config
+        output: `${rootConfig.output}/${winPath(
+          path.relative(rootConfig.input, oInput),
+        )}`,
 
         ...bundlessConfig,
 
@@ -170,11 +185,12 @@ export function normalizeUserConfig(
         // specific different input
         input: oInput,
 
-        // transform another child overides to ignores
+        // transform another child overrides to ignores
         // for support to transform src/a and src/a/child with different configs
         ignores: Object.keys(overrides)
-          .filter((i) => i.startsWith(oInput))
-          .map((i) => `${i}/*`),
+          .filter((i) => !i.startsWith(oInput))
+          .map((i) => `${i}/**`)
+          .concat(bundlessConfig.ignores || []),
       });
     });
   });
@@ -188,9 +204,7 @@ class Minimatcher {
   ignoreMatchers: InstanceType<typeof Minimatch>[] = [];
 
   constructor(pattern: string, ignores: string[] = []) {
-    this.matcher = new Minimatch(
-      fs.lstatSync(pattern).isDirectory() ? `${pattern}/**` : pattern,
-    );
+    this.matcher = new Minimatch(`${pattern}/**`);
     ignores.forEach((i) => {
       this.ignoreMatchers.push(new Minimatch(i, { dot: true }));
 
