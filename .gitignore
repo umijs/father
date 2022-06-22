@@ -5,5 +5,6 @@
 /dist
 .DS_Store
 /coverage
-/tests/fixtures/*/dist
-/tests/fixtures/*/node_modules
+/tests/fixtures/**/dist
+/tests/fixtures/build/*/node_modules
+/tests/fixtures/prebundle/*/compiled

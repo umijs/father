@@ -2,7 +2,6 @@ import path from 'path';
 import { winPath } from '@umijs/utils';
 import {
   ExtractorConfig,
-  ExtractorLogLevel,
   IExtractorConfigPrepareOptions,
 } from '@microsoft/api-extractor';
 import { IApi, IFatherPreBundleConfig } from '../types';
@@ -94,9 +93,9 @@ function getDtsConfig(opts: {
         messages: {
           extractorMessageReporting: {
             // only log error by default
-            default: { logLevel: ExtractorLogLevel.Error },
+            default: { logLevel: 'error' },
             // omit release tag checking
-            'ae-missing-release-tag': { logLevel: ExtractorLogLevel.None },
+            'ae-missing-release-tag': { logLevel: 'none' },
           },
         },
       },
@@ -138,7 +137,7 @@ export function getConfig(opts: {
     // generate bundle config
     config.deps[depEntryPath] = {
       nccConfig: {
-        minify: depConfig.minify || true,
+        minify: depConfig.minify ?? true,
         target: 'es5',
         quiet: true,
         externals: {},

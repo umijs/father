@@ -8,7 +8,9 @@ import { Extractor } from '@microsoft/api-extractor';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
   // patch @microsoft/api-extractor before prepare config
-  await import('./patcher');
+  // use require() rather than import(), to avoid jest runner to fail
+  // ref: https://github.com/nodejs/node/issues/35889
+  require('./patcher');
 
   const config = getConfig(opts);
   const count = Object.keys(config.deps).length;
