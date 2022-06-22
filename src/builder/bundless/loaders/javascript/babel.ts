@@ -1,4 +1,5 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
+import { winPath } from '@umijs/utils';
 import path from 'path';
 import { IFatherBundlessTypes, IFatherPlatformTypes } from '../../../../types';
 import type { IJSTransformer } from '../types';
@@ -31,11 +32,11 @@ const babelTransformer: IJSTransformer = function (content) {
   const alias = Object.entries(oAlias).reduce<typeof oAlias>(
     (result, [name, target]) => {
       if (path.isAbsolute(target)) {
-        result[name] = path.relative(this.paths.cwd, target);
+        result[name] = winPath(path.relative(this.paths.cwd, target));
 
         // prefix . for same-level path
         if (!result[name].startsWith('.')) {
-          result[name] = `.${path.sep}${result[name]}`;
+          result[name] = `./${result[name]}`;
         }
       } else {
         result[name] = target;

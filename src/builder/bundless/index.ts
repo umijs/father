@@ -1,4 +1,12 @@
-import { chalk, chokidar, glob, lodash, logger, rimraf } from '@umijs/utils';
+import {
+  chalk,
+  chokidar,
+  glob,
+  lodash,
+  logger,
+  rimraf,
+  winPath,
+} from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import { WATCH_DEBOUNCE_STEP } from '../../constants';
@@ -67,7 +75,8 @@ async function transformFiles(
 
         // prepare for declaration
         if (result.options.declaration) {
-          declarationFileMap.set(itemAbsPath, parentPath);
+          // use winPath because ts compiler will convert to posix path
+          declarationFileMap.set(winPath(itemAbsPath), parentPath);
         }
 
         // distribute file with result
