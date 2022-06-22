@@ -3,6 +3,28 @@ import { chalk } from '@umijs/utils';
 // @ts-ignore
 import tsPathsTransformer from '../../../../compiled/@zerollup/ts-transform-paths';
 
+/**
+ * get parsed tsconfig.json for specific path
+ */
+export function getTsconfig(cwd: string) {
+  // use require() rather than import(), to avoid jest runner to fail
+  // ref: https://github.com/nodejs/node/issues/35889
+  const ts: typeof import('typescript') = require('typescript');
+  const tsconfigPath = ts.findConfigFile(cwd, ts.sys.fileExists);
+
+  if (tsconfigPath) {
+    const tsconfigFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
+    return ts.parseJsonConfigFileContent(
+      tsconfigFile.config,
+      ts.sys,
+      path.dirname(tsconfigPath),
+    );
+  }
+}
+
+/**
+ * get declarations for specific files
+ */
 export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
@@ -11,16 +33,9 @@ export default async function getDeclarations(
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
-  const tsconfigPath = ts.findConfigFile(opts.cwd, ts.sys.fileExists);
+  const tsconfig = getTsconfig(opts.cwd);
 
-  if (tsconfigPath) {
-    const tsconfigFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
-    const tsconfig = ts.parseJsonConfigFileContent(
-      tsconfigFile.config,
-      ts.sys,
-      path.dirname(tsconfigPath),
-    );
-
+  if (tsconfig) {
     // check tsconfig error
     // istanbul-ignore-if
     if (tsconfig.errors.length) {
@@ -29,6 +44,15 @@ export default async function getDeclarations(
           ts.flattenDiagnosticMessageText(tsconfig.errors[0].messageText, '\n'),
         )}`,
       );
+    }
+
+    // enable declarationMap by default in development mode
+    if (
+      process.env.NODE_ENV === 'development' &&
+      tsconfig.options.declaration &&
+      tsconfig.options.declarationMap !== false
+    ) {
+      tsconfig.options.declarationMap = true;
     }
 
     const tsHost = ts.createCompilerHost(tsconfig.options);
