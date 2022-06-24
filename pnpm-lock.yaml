@@ -20,6 +20,7 @@ specifiers:
   babel-plugin-transform-define: 2.0.1
   husky: ^8.0.1
   jest: ^27
+  jest-mock-process: ^1.5.1
   lint-staged: ^13.0.1
   loader-runner: 4.2.0
   minimatch: 3.1.2
@@ -56,6 +57,7 @@ devDependencies:
   '@zerollup/ts-transform-paths': 1.7.18_typescript@4.7.3
   husky: 8.0.1
   jest: 27.5.1_ts-node@10.8.1
+  jest-mock-process: 1.5.1_jest@27.5.1
   lint-staged: 13.0.1
   prettier: 2.6.2
   prettier-plugin-packagejson: 2.2.18_prettier@2.6.2
@@ -4334,6 +4336,14 @@ packages:
       pretty-format: 27.5.1
       slash: 3.0.0
       stack-utils: 2.0.5
+    dev: true
+
+  /jest-mock-process/1.5.1_jest@27.5.1:
+    resolution: {integrity: sha512-CPu46KyUiVSxE+LkqBuscqGmy1bvW2vJQuNstt83iLtFaFjgrgmp6LY04IKuOhhlGhcrdi86Gqq5/fTE2wG6lg==}
+    peerDependencies:
+      jest: '>=23.4 <29'
+    dependencies:
+      jest: 27.5.1_ts-node@10.8.1
     dev: true
 
   /jest-mock/27.5.1:

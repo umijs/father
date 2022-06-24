@@ -43,6 +43,7 @@ jest.mock('@umijs/utils', () => {
     // ref:
     //  - https://github.com/facebook/jest/issues/6034
     //  - https://github.com/umijs/umi-next/blob/e46748deab90807c8504dfe11f3bb554f4f27ac3/packages/core/src/config/config.ts#L172
+    // TODO: remove this when umi ready
     register: {
       ...originalModule.register,
       getFiles: () => [global.TMP_CASE_CONFIG],

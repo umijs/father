@@ -17,7 +17,7 @@ export default (api: IApi) => {
       }: typeof import('../prebundler') = require('../prebundler');
 
       await preBundle({
-        userConfig: api.userConfig.prebundle,
+        userConfig: api.config.prebundle,
         cwd: api.cwd,
         pkg: api.pkg,
       });

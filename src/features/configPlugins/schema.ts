@@ -42,6 +42,7 @@ function getBundlessSchemas(Joi: Root) {
 export function getSchemas(): Record<string, (Joi: Root) => any> {
   return {
     ...getCommonSchemas(),
+    extends: (Joi) => Joi.string(),
     esm: (Joi) => getBundlessSchemas(Joi),
     cjs: (Joi) => getBundlessSchemas(Joi),
     umd: (Joi) =>

@@ -9,7 +9,7 @@ export default (api: IApi) => {
     description: DEV_COMMAND,
     async fn() {
       const buildWatcher = await builder({
-        userConfig: api.userConfig,
+        userConfig: api.config,
         cwd: api.cwd,
         pkg: api.pkg,
         watch: true,

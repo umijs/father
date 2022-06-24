@@ -158,6 +158,8 @@ export interface IFatherPreBundleConfig {
 }
 
 export interface IFatherConfig extends IFatherBaseConfig {
+  extends?: string;
+
   /**
    * bundler config (umd)
    */
