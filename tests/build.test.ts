@@ -19,9 +19,9 @@ const cases = fs
 for (let name of cases) {
   test(`build: ${name}`, async () => {
     // execute build
+    process.env.APP_ROOT = path.join(CASES_DIR, name);
     await cli.run({
       args: { _: ['build'], $0: 'node' },
-      cwd: path.join(CASES_DIR, name),
     });
 
     // prepare file map

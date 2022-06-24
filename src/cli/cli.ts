@@ -10,7 +10,6 @@ import {
 
 interface IOpts {
   args?: yParser.Arguments;
-  cwd?: string;
 }
 
 export async function run(_opts?: IOpts) {
@@ -37,7 +36,7 @@ export async function run(_opts?: IOpts) {
   }
 
   try {
-    const service = new Service({ cwd: _opts?.cwd });
+    const service = new Service();
 
     await service.run2({
       name: command,

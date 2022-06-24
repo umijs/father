@@ -18,10 +18,10 @@ const cases = fs
 
 for (let name of cases) {
   test(`prebundle: ${name}`, async () => {
-    // execute build
+    // execute prebundle
+    process.env.APP_ROOT = path.join(CASES_DIR, name);
     await cli.run({
       args: { _: ['prebundle'], $0: 'node' },
-      cwd: path.join(CASES_DIR, name),
     });
 
     // prepare file map

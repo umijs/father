@@ -1,10 +1,17 @@
 import { Service as CoreService } from '@umijs/core';
+import path from 'path';
 import * as process from 'process';
 import { DEFAULT_CONFIG_FILES, FRAMEWORK_NAME } from '../constants';
 
 export class Service extends CoreService {
   constructor(opts?: any) {
-    const cwd = opts.cwd || process.cwd();
+    let cwd = process.cwd();
+    const appRoot = process.env.APP_ROOT;
+
+    if (appRoot) {
+      cwd = path.isAbsolute(appRoot) ? appRoot : path.join(cwd, appRoot);
+    }
+
     super({
       ...opts,
       env: process.env.NODE_ENV,
