@@ -6,5 +6,6 @@
 .DS_Store
 /coverage
 /tests/fixtures/**/dist
+/tests/fixtures/dev/node_modules
 /tests/fixtures/build/*/node_modules
 /tests/fixtures/prebundle/*/compiled

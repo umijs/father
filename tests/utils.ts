@@ -2,22 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { winPath } from '@umijs/utils';
 
-// save original methods of fs
-const oFs = Object.keys(fs).reduce((r, k) => {
-  r[k] = fs[k];
-  return r;
-}, {});
-
-/**
- * workaround for a wired issue in fs
- * some unknown logics hack a part method of fs and it will cause test error
- */
-export function restoreFsMethods() {
-  Object.keys(oFs).forEach((k) => {
-    if (oFs[k] !== fs[k]) fs[k] = oFs[k];
-  });
-}
-
 /**
  * read dist directory to file map
  */
@@ -42,4 +26,14 @@ export function distToMap(
   });
 
   return fileMap;
+}
+
+/**
+ * get cases from fixture directory
+ */
+export function getDirCases(dirPath: string) {
+  return fs
+    .readdirSync(dirPath, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
+    .map((d) => d.name);
 }

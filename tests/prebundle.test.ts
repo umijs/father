@@ -1,20 +1,33 @@
 import fs from 'fs';
 import path from 'path';
-import { distToMap, restoreFsMethods } from './utils';
+import { distToMap, getDirCases } from './utils';
 import * as cli from '../src/cli/cli';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/prebundle');
 
+// save original methods of fs
+const oFs = Object.keys(fs).reduce((r, k) => {
+  r[k] = fs[k];
+
+  return r;
+}, {});
+
+beforeAll(() => {
+  jest.resetModules();
+});
+
 // workaround for a wired issue in fs
+// ncc will hack a part method of fs and it will cause test error
 afterEach(() => {
-  restoreFsMethods();
+  Object.keys(oFs).forEach((k) => {
+    if (oFs[k] !== fs[k]) fs[k] = oFs[k];
+  });
+
+  delete process.env.APP_ROOT;
 });
 
 // generate cases
-const cases = fs
-  .readdirSync(CASES_DIR, { withFileTypes: true })
-  .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
-  .map((d) => d.name);
+const cases = getDirCases(CASES_DIR);
 
 for (let name of cases) {
   test(`prebundle: ${name}`, async () => {
