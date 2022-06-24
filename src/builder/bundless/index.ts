@@ -160,22 +160,21 @@ async function bundless(
         ignoreInitial: true,
         ignored: DEFAULT_BUNDLESS_IGNORES,
       })
-      .on('add', (filePath) => {
-        transformFiles([path.relative(opts.cwd, filePath)], opts);
+      .on('add', (rltFilePath) => {
+        transformFiles([rltFilePath], opts);
       })
       .on(
         'change',
         lodash.debounce(
           (filePath: string) => {
-            transformFiles([path.relative(opts.cwd, filePath)], opts);
+            transformFiles([filePath], opts);
           },
           WATCH_DEBOUNCE_STEP,
-          { leading: true, trailing: true },
+          { leading: true, trailing: false },
         ),
       )
-      .on('unlink', (filePath) => {
-        const isTsFile = /\.tsx?$/.test(filePath);
-        const rltFilePath = path.relative(opts.cwd, filePath);
+      .on('unlink', (rltFilePath) => {
+        const isTsFile = /\.tsx?$/.test(rltFilePath);
         const config = opts.configProvider.getConfigForFile(rltFilePath);
         const fileDistAbsPath = path.join(
           opts.cwd,
@@ -203,8 +202,7 @@ async function bundless(
           );
         }
       })
-      .on('unlinkDir', (dirPath: string) => {
-        const rltDirPath = path.relative(opts.cwd, dirPath);
+      .on('unlinkDir', (rltDirPath: string) => {
         const config = opts.configProvider.getConfigForFile(rltDirPath);
         const dirDistAbsPath = path.join(
           opts.cwd,
