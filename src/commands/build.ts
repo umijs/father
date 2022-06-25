@@ -4,7 +4,10 @@ import { IApi } from '../types';
 export default (api: IApi) => {
   api.registerCommand({
     name: 'build',
-    description: 'build',
+    description: 'build for production',
+    options: `
+--no-clean  do not clean all output directories before build
+`,
     async fn({ args }) {
       await builder({
         userConfig: api.config,

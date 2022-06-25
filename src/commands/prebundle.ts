@@ -6,7 +6,7 @@ export default (api: IApi) => {
 
   api.registerCommand({
     name: 'prebundle',
-    description: 'prebundle',
+    description: 'pre-bundle third-party dependencies for project',
     async fn() {
       // require as async to avoid ncc hack fs methods
       // then cause service restart error in dev command
