@@ -1,6 +1,7 @@
+import { defineConfig } from 'father';
 const path = require('path');
 
-export default {
+export default defineConfig({
   esm: {},
   cjs: {},
   umd: {},
@@ -8,4 +9,4 @@ export default {
     '@': path.resolve(__dirname, './src'),
   },
   platform: 'browser',
-};
+});

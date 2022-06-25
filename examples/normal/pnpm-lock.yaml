@@ -1,0 +1,7 @@
+lockfileVersion: 5.3
+
+specifiers:
+  father: link:..\..
+
+dependencies:
+  father: link:../..
