@@ -5,11 +5,12 @@ export default (api: IApi) => {
   api.registerCommand({
     name: 'build',
     description: 'build',
-    async fn() {
+    async fn({ args }) {
       await builder({
         userConfig: api.config,
         cwd: api.cwd,
         pkg: api.pkg,
+        clean: args.clean,
       });
     },
   });
