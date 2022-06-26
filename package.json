@@ -85,6 +85,7 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10"
   },
+  "packageManager": "pnpm@7.3.0",
   "publishConfig": {
     "access": "public"
   },
