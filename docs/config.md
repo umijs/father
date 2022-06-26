@@ -189,12 +189,14 @@ export default {
 
 ```ts
 export default {
-  // 只配置要预打包的依赖
-  deps: ['rimraf'],
+  prebundle: {
+    // 只配置要预打包的依赖
+    deps: ['rimraf'],
 
-  // 配置预打包的依赖并指定详细配置
-  deps: {
-    rimraf: { minify: false },
+    // 配置预打包的依赖并指定详细配置
+    deps: {
+      rimraf: { minify: false },
+    },
   },
 };
 ```
