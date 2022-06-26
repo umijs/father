@@ -6,13 +6,16 @@ import {
   logger,
   rimraf,
   winPath,
+  debug,
 } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
-import { WATCH_DEBOUNCE_STEP } from '../../constants';
+import { WATCH_DEBOUNCE_STEP, DEBUG_BUNDLESS_NAME } from '../../constants';
 import getDeclarations from './dts';
 import runLoaders from './loaders';
 import type { BundlessConfigProvider } from '../config';
+
+const debugLog = debug(DEBUG_BUNDLESS_NAME);
 
 const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',
@@ -93,7 +96,7 @@ async function transformFiles(
       );
       count += 1;
     } else {
-      // TODO: DEBUG LOG
+      debugLog(`No config matches ${chalk.gray(item)}, skip`);
     }
   }
 
