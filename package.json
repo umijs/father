@@ -1,7 +1,7 @@
 {
   "name": "father",
   "version": "4.0.0-alpha.0",
-  "description": "father",
+  "description": "A bundless/bundle build tool",
   "homepage": "https://github.com/umijs/father-next#readme",
   "bugs": "https://github.com/umijs/father-next/issues",
   "repository": {
@@ -85,7 +85,6 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10"
   },
-  "packageManager": "pnpm@6.32.0",
   "publishConfig": {
     "access": "public"
   },
