@@ -1,6 +1,6 @@
 import path from 'path';
 import { Minimatch } from 'minimatch';
-import { winPath } from '@umijs/utils';
+import { logger, winPath } from '@umijs/utils';
 import {
   IApi,
   IFatherBaseConfig,
@@ -12,6 +12,8 @@ import {
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
+import { loadConfig } from 'tsconfig-paths';
+import * as MappingEntry from 'tsconfig-paths/lib/mapping-entry';
 
 /**
  * declare bundler config
@@ -52,6 +54,40 @@ function getAutoBundleFilename(pkgName?: string) {
 }
 
 /**
+ *
+ * convert alias from tsconfig paths
+ * @export
+ * @param {string} cwd
+ */
+export function convertAliasByTsconfigPaths(cwd: string) {
+  const config = loadConfig(cwd);
+  let alias: Record<string, string> = {};
+
+  if (config.resultType === 'success') {
+    const { absoluteBaseUrl, paths } = config;
+
+    let absolutePaths = MappingEntry.getAbsoluteMappingEntries(
+      absoluteBaseUrl,
+      paths,
+      true,
+    );
+
+    absolutePaths.forEach((entry) => {
+      const [physicalPathPattern] = entry.paths;
+      if (entry.pattern.endsWith('/*')) {
+        alias[entry.pattern.replace('/*', '')] = winPath(
+          physicalPathPattern,
+        ).replace('/*', '');
+      } else if (entry.pattern !== '*') {
+        alias[entry.pattern] = winPath(physicalPathPattern);
+      }
+    });
+  }
+
+  return alias;
+}
+
+/**
  * normalize user config to bundler configs
  * @param userConfig  config from user
  */
@@ -61,8 +97,6 @@ export function normalizeUserConfig(
 ) {
   const configs: IBuilderConfig[] = [];
   const { umd, esm, cjs, ...baseConfig } = userConfig;
-
-  // TODO: convert alias from tsconfig paths
 
   // normalize umd config
   if (umd) {
@@ -283,14 +317,22 @@ export class BundlessConfigProvider extends ConfigProvider {
 export function createConfigProviders(
   userConfig: IFatherConfig,
   pkg: IApi['pkg'],
+  cwd: string,
 ) {
   const providers: {
     bundless: { esm?: BundlessConfigProvider; cjs?: BundlessConfigProvider };
     bundle?: BundleConfigProvider;
   } = { bundless: {} };
   const configs = normalizeUserConfig(userConfig, pkg);
+
+  // convert alias from tsconfig paths
+  const alias = convertAliasByTsconfigPaths(cwd);
+  logger.debug('Convert alias from tsconfig.json:', alias);
+
   const { bundle, bundless } = configs.reduce(
     (r, config) => {
+      config.alias = { ...alias, ...config.alias };
+
       if (config.type === IFatherBuildTypes.BUNDLE) {
         r.bundle.push(config);
       } else if (config.type === IFatherBuildTypes.BUNDLESS) {

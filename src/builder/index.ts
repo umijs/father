@@ -45,7 +45,11 @@ function builder(
 async function builder(
   opts: IBuilderOpts & { watch?: true },
 ): Promise<IWatchBuilderResult | void> {
-  const configProviders = createConfigProviders(opts.userConfig, opts.pkg);
+  const configProviders = createConfigProviders(
+    opts.userConfig,
+    opts.pkg,
+    opts.cwd,
+  );
   const outputs = getProviderOutputs(configProviders);
   const watchers: chokidar.FSWatcher[] = [];
 
