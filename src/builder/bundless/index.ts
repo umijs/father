@@ -19,6 +19,8 @@ const debugLog = debug(DEBUG_BUNDLESS_NAME);
 
 const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',
+  '**/*.d.ts',
+  '**/fixtures/**',
   '**/__{test,tests}__/**',
   '**/*.{test,e2e,spec}.{js,jsx,ts,tsx}',
 ];
