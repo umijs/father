@@ -26,6 +26,7 @@ specifiers:
   loader-runner: 4.2.0
   minimatch: 3.1.2
   prettier: ^2.6.2
+  prettier-plugin-organize-imports: ^3.0.0
   prettier-plugin-packagejson: ^2.2.18
   rimraf: ^3.0.2
   ts-node: ^10
@@ -62,6 +63,7 @@ devDependencies:
   jest-mock-process: 1.5.1_jest@27.5.1
   lint-staged: 13.0.1
   prettier: 2.6.2
+  prettier-plugin-organize-imports: 3.0.0_swzprww56tbt6xqyypkb3snuza
   prettier-plugin-packagejson: 2.2.18_prettier@2.6.2
   rimraf: 3.0.2
   ts-node: 10.8.1_w7x2tbnlqsjlyiccdck6zsdv74
@@ -5861,6 +5863,16 @@ packages:
   /prelude-ls/1.1.2:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
     engines: {node: '>= 0.8.0'}
+    dev: true
+
+  /prettier-plugin-organize-imports/3.0.0_swzprww56tbt6xqyypkb3snuza:
+    resolution: {integrity: sha512-juSCJs5TMOqGGPaN/A/1xzWFzRPH2LG1LPLCr64dzKaVnPafJdtgDNmDVlU+8A4LbQzVJg0DTvgA8swBuIUhlg==}
+    peerDependencies:
+      prettier: '>=2.0'
+      typescript: '>=2.9'
+    dependencies:
+      prettier: 2.6.2
+      typescript: 4.7.3
     dev: true
 
   /prettier-plugin-packagejson/2.2.18_prettier@2.6.2:
