@@ -1,7 +1,7 @@
 export default {
   cjs: {
     output: 'dist',
-    ignores: ['src/client/**'],
+    ignores: ['src/client/**', '!src/index.ts', '!src/b/**'],
   },
   esm: {
     input: 'src/client',

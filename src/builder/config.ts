@@ -1,6 +1,6 @@
-import path from 'path';
-import { Minimatch } from 'minimatch';
 import { logger, winPath } from '@umijs/utils';
+import { Minimatch } from 'minimatch';
+import path from 'path';
 import {
   IApi,
   IFatherBaseConfig,
@@ -252,10 +252,29 @@ class Minimatcher {
   }
 
   match(filePath: string) {
-    return (
-      this.matcher!.match(filePath) &&
-      this.ignoreMatchers.every((m) => !m.match(filePath))
-    );
+    let flag = false;
+
+    // check input match
+    if (this.matcher!.match(filePath)) {
+      flag = true;
+
+      for (const m of this.ignoreMatchers) {
+        // mark flag false if filePath match ignore matcher
+        if (m.match(filePath)) {
+          flag = false;
+
+          // stop check if current ignore glob not start with "!"
+          // but for the negate glob, we should continue to find other negate glob which exclude current filePath
+          if (!m.negate) break;
+        } else if (m.negate) {
+          // stop check and mark flag true, if some negate glob exclude current filePath
+          flag = true;
+          break;
+        }
+      }
+    }
+
+    return flag;
   }
 }
 
