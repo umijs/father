@@ -1,7 +1,7 @@
 import { IApi } from './types';
 
 export default (api: IApi) => {
-  ['onFoo'].forEach((name) => {
+  ['addJSTransformer'].forEach((name) => {
     api.registerMethod({ name });
   });
 };
