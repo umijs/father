@@ -1,4 +1,6 @@
 import { logger } from '@umijs/utils';
+import { join } from 'path';
+import { existsSync } from 'fs';
 import { FRAMEWORK_NAME, MIN_NODE_VERSION } from '../constants';
 
 export function checkVersion() {
@@ -12,7 +14,7 @@ export function checkVersion() {
 }
 
 export function checkLocal() {
-  if (__filename.includes(`packages/${FRAMEWORK_NAME}`)) {
+  if (existsSync(join(__dirname, '../../jest.config.ts'))) {
     logger.info('@local');
   }
 }
