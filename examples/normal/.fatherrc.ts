@@ -1,4 +1,4 @@
-import { defineConfig } from 'father';
+import { defineConfig } from '../../dist';
 const path = require('path');
 
 export default defineConfig({
