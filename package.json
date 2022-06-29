@@ -24,6 +24,7 @@
     "dev": "pnpm build --watch",
     "format": "prettier --write .",
     "prepare": "husky install",
+    "release": "esno scripts/release.ts",
     "test": "jest",
     "test:cov": "jest --collectCoverage"
   },
@@ -77,6 +78,8 @@
     "@types/node": "^18.0.0",
     "@umijs/test": "^4.0.0",
     "@zerollup/ts-transform-paths": "1.7.18",
+    "esno": "^0.16.3",
+    "git-repo-info": "^2.1.1",
     "husky": "^8.0.1",
     "jest": "^27",
     "jest-mock-process": "^1.5.1",
@@ -85,7 +88,8 @@
     "prettier-plugin-organize-imports": "^3.0.0",
     "prettier-plugin-packagejson": "^2.2.18",
     "rimraf": "^3.0.2",
-    "ts-node": "^10"
+    "ts-node": "^10",
+    "zx": "^4"
   },
   "packageManager": "pnpm@7.3.0",
   "publishConfig": {
