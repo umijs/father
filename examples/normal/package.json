@@ -1,10 +1,10 @@
 {
   "scripts": {
-    "build": "../../bin/father.js build",
-    "build:no-clean": "../../bin/father.js build --no-clean",
-    "version": "../../bin/father.js version"
+    "build": "father build",
+    "build:no-clean": "father build --no-clean",
+    "version": "father version"
   },
   "dependencies": {
-    "father": "link:..\\.."
+    "father": "workspace:*"
   }
 }

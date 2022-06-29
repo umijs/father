@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "build:deps": "../../bin/father.js prebundle"
+    "build:deps": "father prebundle"
   },
   "devDependencies": {
     "@types/minimatch": "3.0.5",
+    "father": "workspace:*",
     "minimatch": "3.1.2",
     "rimraf": "3.0.2"
   }

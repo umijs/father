@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
+    "strict": true,
+    "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "target": "es2019",
-    "jsx": "react",
+    "declaration": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
     "outDir": "./dist",
     "rootDir": "./src"
   },

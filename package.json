@@ -21,12 +21,9 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:release": "pnpm tsc -p tsconfig.build.json",
-    "clean": "rimraf dist",
     "dev": "pnpm build --watch",
     "format": "prettier --write .",
     "prepare": "husky install",
-    "prepublish": "pnpm clean && pnpm build:release",
     "test": "jest",
     "test:cov": "jest --collectCoverage"
   },

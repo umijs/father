@@ -1,4 +1,6 @@
 /node_modules
+/boilerplate/dist
+/boilerplate/node_modules
 /examples/*/compiled
 /examples/*/dist
 /examples/*/node_modules
