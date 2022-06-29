@@ -28,28 +28,44 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
       )}`,
     );
 
-    await ncc(dep, nccConfig).then(({ code }: { code: string }) => {
-      // create dist path
-      if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
-      }
+    await ncc(dep, nccConfig).then(
+      ({
+        code,
+        assets,
+      }: {
+        code: string;
+        assets: Record<string, { source: string; permissions: number }>;
+      }) => {
+        // create dist path
+        if (!fs.existsSync(outputDir)) {
+          fs.mkdirSync(outputDir, { recursive: true });
+        }
 
-      // TODO: dist content validate
+        // TODO: dist content validate
 
-      // emit dist file
-      fs.writeFileSync(output, code, 'utf-8');
+        // emit dist file
+        fs.writeFileSync(output, code, 'utf-8');
 
-      // emit package.json
-      fs.writeFileSync(
-        path.join(output, '../package.json'),
-        JSON.stringify({
-          name: pkg.name,
-          author: pkg.author,
-          license: pkg.license,
-        }),
-        'utf-8',
-      );
-    });
+        // emit assets
+        Object.entries(assets).forEach(([name, item]) => {
+          fs.writeFileSync(path.join(outputDir, name), item.source, {
+            encoding: 'utf-8',
+            mode: item.permissions,
+          });
+        });
+
+        // emit package.json
+        fs.writeFileSync(
+          path.join(outputDir, 'package.json'),
+          JSON.stringify({
+            name: pkg.name,
+            author: pkg.author,
+            license: pkg.license,
+          }),
+          'utf-8',
+        );
+      },
+    );
   }
 
   // bundle dts
