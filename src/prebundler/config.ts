@@ -1,9 +1,9 @@
-import path from 'path';
-import { winPath } from '@umijs/utils';
 import {
   ExtractorConfig,
   IExtractorConfigPrepareOptions,
 } from '@microsoft/api-extractor';
+import { pkgUp, winPath } from '@umijs/utils';
+import path from 'path';
 import { IApi, IFatherPreBundleConfig } from '../types';
 
 interface IPreBundleConfig {
@@ -107,6 +107,14 @@ function getDtsConfig(opts: {
   };
 }
 
+/**
+ * get package.json path for dependency
+ * @see https://github.com/nodejs/node/issues/33460
+ */
+function getDepPkgPath(dep: string, cwd: string) {
+  return pkgUp.pkgUpSync({ cwd: require.resolve(dep, { paths: [cwd] }) })!;
+}
+
 export function getConfig(opts: {
   userConfig: IFatherPreBundleConfig;
   cwd: string;
@@ -127,9 +135,7 @@ export function getConfig(opts: {
     depConfig = Array.isArray(deps) ? {} : depConfig;
 
     const depEntryPath = require.resolve(depName, { paths: [opts.cwd] });
-    const depPkgPath = require.resolve(`${depName}/package.json`, {
-      paths: [opts.cwd],
-    });
+    const depPkgPath = getDepPkgPath(depName, opts.cwd);
     const depTypeInfo =
       depConfig.dts !== false ? getTypeInfoForPkg(depPkgPath) : null;
     const depPkg = require(depPkgPath);
@@ -170,9 +176,7 @@ export function getConfig(opts: {
 
   // process extraDtsDeps config
   extraDtsDeps.forEach((pkg) => {
-    const depTypeInfo = getTypeInfoForPkg(
-      require.resolve(`${pkg}/package.json`, { paths: [opts.cwd] }),
-    );
+    const depTypeInfo = getTypeInfoForPkg(getDepPkgPath(pkg, opts.cwd));
 
     if (depTypeInfo) {
       config.dts[depTypeInfo.dtsPath] = getDtsConfig({
