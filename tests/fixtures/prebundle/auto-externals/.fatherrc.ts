@@ -1,5 +1,5 @@
 export default {
   prebundle: {
-    deps: ['test'],
+    deps: ['test', 'other'],
   },
 };

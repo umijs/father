@@ -13,6 +13,7 @@ interface IPreBundleConfig {
     {
       pkg: IApi['pkg'];
       output: string;
+      externals: Record<string, string>;
       maeConfig: ExtractorConfig;
       _maePrepareConfig: IExtractorConfigPrepareOptions;
     }
@@ -57,6 +58,9 @@ function getTypeInfoForPkg(pkgPath: string) {
   return info;
 }
 
+/**
+ * get dts rollup config
+ */
 function getDtsConfig(opts: {
   cwd: string;
   pkgPath: string;
@@ -86,7 +90,7 @@ function getDtsConfig(opts: {
               strict: true,
               skipLibCheck: true,
             },
-            include: [opts.cwd],
+            include: [opts.dtsPath],
           },
         },
         // configure logger
@@ -104,6 +108,7 @@ function getDtsConfig(opts: {
     } as IExtractorConfigPrepareOptions,
     // after externals ready, generate final extractor config below
     maeConfig: undefined as any,
+    externals: undefined as any,
   };
 }
 
@@ -113,6 +118,30 @@ function getDtsConfig(opts: {
  */
 function getDepPkgPath(dep: string, cwd: string) {
   return pkgUp.pkgUpSync({ cwd: require.resolve(dep, { paths: [cwd] }) })!;
+}
+
+/**
+ * get relative externals for specific pre-bundle pkg from other pre-bundle deps
+ * @note  for example, "compiled/a" can be externalized in "compiled/b" as "../a"
+ */
+function getRltExternalsFromDeps(
+  depExternals: Record<string, string>,
+  current: { name: string; output: string },
+) {
+  return Object.entries(depExternals).reduce<Record<string, string>>(
+    (r, [dep, target]) => {
+      // skip self
+      if (dep !== current.name) {
+        // transform dep externals path to relative path
+        r[dep] = winPath(
+          path.relative(path.dirname(current.output), path.dirname(target)),
+        );
+      }
+
+      return r;
+    },
+    {},
+  );
 }
 
 export function getConfig(opts: {
@@ -193,19 +222,10 @@ export function getConfig(opts: {
 
   // process externals for deps
   Object.values(config.deps).forEach((depConfig) => {
-    const rltDepExternals = Object.entries(depExternals).reduce<
-      Record<string, string>
-    >((r, [dep, target]) => {
-      // skip self
-      if (dep !== depConfig.pkg.name) {
-        // transform dep externals path to relative path
-        r[dep] = winPath(
-          path.relative(path.dirname(depConfig.output), path.dirname(target)),
-        );
-      }
-
-      return r;
-    }, {});
+    const rltDepExternals = getRltExternalsFromDeps(depExternals, {
+      name: depConfig.pkg.name!,
+      output: depConfig.output,
+    });
 
     depConfig.nccConfig.externals = {
       ...pkgExternals,
@@ -216,6 +236,11 @@ export function getConfig(opts: {
 
   // process externals for dts
   Object.values(config.dts).forEach((dtsConfig) => {
+    const rltDepExternals = getRltExternalsFromDeps(depExternals, {
+      name: dtsConfig.pkg.name!,
+      output: dtsConfig.output,
+    });
+
     // always skip bundle external pkgs
     dtsConfig._maePrepareConfig.configObject.bundledPackages = Object.keys(
       dtsConfig.pkg.dependencies || {},
@@ -224,6 +249,13 @@ export function getConfig(opts: {
 
       return !depExternals[name] && !extraExternals[name];
     });
+
+    // prepare externals config
+    dtsConfig.externals = {
+      ...pkgExternals,
+      ...rltDepExternals,
+      ...extraExternals,
+    };
 
     // generate the final extract config
     dtsConfig.maeConfig = ExtractorConfig.prepare(dtsConfig._maePrepareConfig);

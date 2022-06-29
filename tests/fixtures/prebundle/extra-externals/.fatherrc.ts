@@ -3,6 +3,7 @@ export default {
     deps: ['test'],
     extraExternals: {
       minimatch: 'minimatch',
+      hello: 'world',
     },
   },
 };

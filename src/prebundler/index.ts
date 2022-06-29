@@ -1,10 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+import { Extractor } from '@microsoft/api-extractor';
 import { chalk, logger, winPath } from '@umijs/utils';
 // @ts-ignore
 import ncc from '@vercel/ncc';
+import fs from 'fs';
+import path from 'path';
 import { getConfig } from './config';
-import { Extractor } from '@microsoft/api-extractor';
+import { getSharedData } from './shared';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
   // patch @microsoft/api-extractor before prepare config
@@ -52,13 +53,39 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
   }
 
   // bundle dts
-  Object.keys(config.dts).length &&
+  if (Object.keys(config.dts).length) {
     logger.event(`Generate declaration files...`);
-  for (const dts in config.dts) {
-    Extractor.invoke(config.dts[dts].maeConfig, {
-      localBuild: true,
-      showVerboseMessages: false,
-    });
+
+    for (const dts in config.dts) {
+      Extractor.invoke(config.dts[dts].maeConfig, {
+        localBuild: true,
+        showVerboseMessages: false,
+      });
+
+      let content = getSharedData<string>(config.dts[dts].output);
+      const outputDir = path.dirname(config.dts[dts].output);
+
+      // create dist path
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+
+      // process extra targeted externals
+      Object.entries(config.dts[dts].externals).forEach(([name, value]) => {
+        // only process externals with different targets
+        // such as { a: 'b' }, and skip { a: 'a' }
+        // because normal externals will be processed by api-extractor
+        if (name !== value) {
+          content = content.replace(
+            new RegExp(`from ("|')${name}["']`, 'g'),
+            `from $1${value}$1`,
+          );
+        }
+      });
+
+      // emit dist file
+      fs.writeFileSync(config.dts[dts].output, content, 'utf-8');
+    }
   }
 
   if (count) {

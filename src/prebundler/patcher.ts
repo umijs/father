@@ -5,9 +5,16 @@
  *           to replace legacy export = syntax to esm syntax
  */
 
-import { Extractor, CompilerState } from '@microsoft/api-extractor';
+import { CompilerState, Extractor } from '@microsoft/api-extractor';
+import type { Collector } from '@microsoft/api-extractor/lib/collector/Collector';
+import {
+  DtsRollupGenerator,
+  DtsRollupKind,
+} from '@microsoft/api-extractor/lib/generators/DtsRollupGenerator';
+import { IndentedWriter } from '@microsoft/api-extractor/lib/generators/IndentedWriter';
 import { chalk, logger } from '@umijs/utils';
 import type { CompilerHost } from 'typescript';
+import { setSharedData } from './shared';
 
 // @ts-ignore
 const oCreateCompilerHost = CompilerState._createCompilerHost;
@@ -54,4 +61,19 @@ if (!oCreateCompilerHost.name.includes('father')) {
   // because api-extractor builtin typescript is not latest
   // @ts-ignore
   Extractor._checkCompilerCompatibility = function fatherHackEmpty() {};
+
+  // hijack write file logic
+  DtsRollupGenerator.writeTypingsFile = function fatherHackWriteTypingsFile(
+    collector: Collector,
+    dtsFilename: string,
+    dtsKind: DtsRollupKind,
+  ) {
+    const writer: IndentedWriter = new IndentedWriter();
+    writer.trimLeadingSpaces = true;
+
+    // @ts-ignore
+    DtsRollupGenerator._generateTypingsFileContent(collector, writer, dtsKind);
+
+    setSharedData(dtsFilename, writer.toString());
+  };
 }
