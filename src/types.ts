@@ -1,8 +1,8 @@
-import type { IServicePluginAPI, PluginAPI } from '@umijs/core';
-import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
+import type { Compiler } from '@umijs/bundler-webpack';
 import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
-import type { Compiler } from '@umijs/bundler-webpack';
+import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
+import type { IServicePluginAPI, PluginAPI } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 
 export type {
@@ -54,16 +54,6 @@ export interface IFatherBaseConfig {
    * configure module resolve alias, like webpack
    */
   alias?: Record<string, string>;
-
-  /**
-   * configure postcss
-   */
-  postcssOptions?: IBundlerWebpackConfig['postcssLoader'];
-
-  /**
-   * configure autoprefixer
-   */
-  autoprefixer?: Autoprefixer.Options;
 
   /**
    * configure extra babel presets
@@ -137,6 +127,16 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
     memo: IWebpackChain,
     args: { env: string; webpack: Compiler['webpack'] },
   ) => IWebpackChain;
+
+  /**
+   * configure postcss
+   */
+  postcssOptions?: IBundlerWebpackConfig['postcssLoader'];
+
+  /**
+   * configure autoprefixer
+   */
+  autoprefixer?: Autoprefixer.Options;
 }
 
 export interface IFatherPreBundleConfig {
@@ -156,7 +156,7 @@ export interface IFatherPreBundleConfig {
    * extra dependencies & declarations need to be externalized
    * @note  all deps & package.json dependencies will be added to externals by default
    */
-  extraExternals: Record<string, string>;
+  extraExternals?: Record<string, string>;
 }
 
 export interface IFatherConfig extends IFatherBaseConfig {
