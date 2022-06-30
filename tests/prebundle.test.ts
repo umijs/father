@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { distToMap, getDirCases } from './utils';
 import * as cli from '../src/cli/cli';
+import { distToMap, getDirCases } from './utils';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/prebundle');
 
@@ -37,8 +37,9 @@ for (let name of cases) {
       args: { _: ['prebundle'], $0: 'node' },
     });
 
+    const outputDir = name === 'output' ? 'modules' : 'compiled';
     // prepare file map
-    const fileMap = distToMap(path.join(CASES_DIR, name, 'compiled'));
+    const fileMap = distToMap(path.join(CASES_DIR, name, outputDir));
 
     // check result
     require(`${CASES_DIR}/${name}/expect`).default(fileMap);

@@ -141,11 +141,14 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
 
 export interface IFatherPreBundleConfig {
   /**
+   * output directory
+   * @default compiled
+   */
+  output?: string;
+  /**
    * dependencies or entries need to be pre-bundled
    */
-  deps:
-    | string[]
-    | Record<string, { output?: string; minify?: boolean; dts?: boolean }>;
+  deps: string[] | Record<string, { minify?: boolean; dts?: boolean }>;
 
   /**
    * extra dep declarations need to be pre-bundled

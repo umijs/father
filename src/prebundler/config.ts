@@ -155,7 +155,12 @@ export function getConfig(opts: {
   ).reduce((r, dep) => ({ ...r, [dep]: dep }), {});
   const depExternals: IFatherPreBundleConfig['extraExternals'] = {};
   const config: IPreBundleConfig = { deps: {}, dts: {} };
-  const { deps, extraExternals = {}, extraDtsDeps = [] } = opts.userConfig;
+  const {
+    output,
+    deps,
+    extraExternals = {},
+    extraDtsDeps = [],
+  } = opts.userConfig;
 
   // process deps config
   Object.entries(deps).forEach(([dep, depConfig]) => {
@@ -180,7 +185,7 @@ export function getConfig(opts: {
       pkg: depPkg,
       output: path.resolve(
         opts.cwd,
-        depConfig.output || `${DEFAULT_OUTPUT_DIR}/${depPkg.name}/index.js`,
+        `${output || DEFAULT_OUTPUT_DIR}/${depPkg.name}/index.js`,
       ),
     };
 

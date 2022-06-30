@@ -178,12 +178,19 @@ export default {
 
 预打包支持以下配置项。
 
+#### output
+
+- 类型：`string`
+- 默认值：`compiled`
+
+指定预打包产物的输出目录，默认输出到`compiled`目录。
+
 #### deps
 
-- 类型：`string[]` | `Record<string, { output?: string; minify?: boolean; dts?: boolean }>`
+- 类型：`string[]` | `Record<string, { minify?: boolean; dts?: boolean }>`
 - 默认值：`undefined`
 
-配置需要预打包的三方依赖，默认开启代码压缩、打包类型声明文件（如果是 TypeScript 项目且包含类型声明），且将每个依赖的打包产物输出到 `compiled/[package_name]` 目录下。
+配置需要预打包的三方依赖，默认开启代码压缩、打包类型声明文件（如果是 TypeScript 项目且包含类型声明），且将每个依赖的打包产物输出到 `[output]/[package_name]` 目录下。
 
 也可以单独对每个依赖进行配置，例如：
 
