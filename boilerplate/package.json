@@ -15,7 +15,8 @@
     "create-father": "bin/create-father.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "template"
   ],
   "scripts": {
     "build": "pnpm tsc",
