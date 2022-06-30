@@ -13,6 +13,8 @@ $ mkdir test-father-4
 $ npx create-father test-father-4
 ```
 
+脚手架中仅包含最基础的配置，更多配置项及作用可以参考 [配置项文档](./config.md)。
+
 执行构建：
 
 ```bash
