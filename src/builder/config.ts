@@ -1,6 +1,8 @@
 import { logger, winPath } from '@umijs/utils';
 import { Minimatch } from 'minimatch';
 import path from 'path';
+import { loadConfig } from 'tsconfig-paths';
+import * as MappingEntry from 'tsconfig-paths/lib/mapping-entry';
 import {
   IApi,
   IFatherBaseConfig,
@@ -12,8 +14,6 @@ import {
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
-import { loadConfig } from 'tsconfig-paths';
-import * as MappingEntry from 'tsconfig-paths/lib/mapping-entry';
 
 /**
  * declare bundler config
@@ -355,6 +355,13 @@ export function createConfigProviders(
       if (config.type === IFatherBuildTypes.BUNDLE) {
         r.bundle.push(config);
       } else if (config.type === IFatherBuildTypes.BUNDLESS) {
+        // Handling file suffixes only bundless mode needs to be handled
+        for (let target in config.alias) {
+          // If the file suffix is js remove the suffix
+          const aPath = config.alias[target];
+          config.alias![target] = aPath.replace(/\.(t|j)sx?$/, '');
+        }
+
         r.bundless[config.format].push(config);
       }
 

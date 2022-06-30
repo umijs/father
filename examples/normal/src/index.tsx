@@ -1,5 +1,6 @@
 import content from '@/content';
 import 'hello-a'
+import 'hello-foo'
 /*
 import React from 'react';
 import ReactDOM from 'react-dom';

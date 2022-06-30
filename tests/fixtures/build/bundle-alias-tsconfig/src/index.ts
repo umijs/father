@@ -1,6 +1,6 @@
-import 'alias-module';
+import '@/hello/hello';
 import '@/other';
+import '@components/button';
 import '@umijs/max';
 import '@umijs/utils-test';
-import '@components/button';
-import '@/hello/hello';
+import 'alias-module';

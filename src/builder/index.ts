@@ -1,5 +1,5 @@
+import { chokidar, logger, rimraf } from '@umijs/utils';
 import path from 'path';
-import { chokidar, rimraf, logger } from '@umijs/utils';
 import { IApi, IFatherConfig } from '../types';
 import bundle from './bundle';
 import bundless from './bundless';
