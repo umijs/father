@@ -10,7 +10,7 @@ father 是一款组件/库打包工具，可以帮助开发者将项目源码输
 
 ```bash
 $ mkdir test-father-4
-$ npx create-father test-father4
+$ npx create-father test-father-4
 ```
 
 执行构建：
