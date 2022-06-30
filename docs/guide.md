@@ -1,21 +1,16 @@
 # 指南
 
-> father 当前尚处于 alpha 阶段，脚手架在准备中
+## 介绍
 
-找个空项目，安装 `father@next`：
+father 是一款组件/库打包工具，可以帮助开发者将项目源码输出为 ESModule/CommonJS/UMD 产物用于 NPM 包发布，并且还内置了开箱即用的依赖预打包能力。
+
+## 快速上手
+
+通过 `create-father` 快速创建一个 father 项目：
 
 ```bash
-$ npm i father@next -D
-```
-
-创建配置文件 `.fatherrc.ts`，并参考 [配置项文档](./config.md) 按需进行配置：
-
-```ts
-import { defineConfig } from 'father';
-
-export default defineConfig({
-  ...
-});
+$ mkdir test-father-4
+$ npx create-father test-father4
 ```
 
 执行构建：
