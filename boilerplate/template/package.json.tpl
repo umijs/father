@@ -2,8 +2,10 @@
   "name": "{{{ name }}}",
   "version": "0.0.1",
   "description": "{{{ description }}}",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  {{#isBothNodeBrowser}}"main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js"{{/isBothNodeBrowser}}{{#isNode}}"main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",{{/isNode}}{{#isBrowser}}"module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",{{/isBrowser}}
   "scripts": {
     "dev": "father dev",
     "build": "father build",
