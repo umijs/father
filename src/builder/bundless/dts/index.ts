@@ -1,5 +1,5 @@
+import { chalk, logger } from '@umijs/utils';
 import path from 'path';
-import { chalk } from '@umijs/utils';
 // @ts-ignore
 import tsPathsTransformer from '../../../../compiled/@zerollup/ts-transform-paths';
 
@@ -54,6 +54,21 @@ export default async function getDeclarations(
     ) {
       tsconfig.options.declarationMap = true;
     }
+
+    // remove paths which out of cwd, to avoid transform to relative path by ts-paths-transformer
+    Object.keys(tsconfig.options.paths || {}).forEach((item) => {
+      const pathAbsTarget = path.resolve(
+        tsconfig.options.pathsBasePath as string,
+        tsconfig.options.paths![item][0],
+      );
+
+      if (!pathAbsTarget.startsWith(opts.cwd)) {
+        delete tsconfig.options.paths![item];
+        logger.debug(
+          `Remove ${item} from tsconfig.paths, because it's out of cwd.`,
+        );
+      }
+    });
 
     const tsHost = ts.createCompilerHost(tsconfig.options);
 
