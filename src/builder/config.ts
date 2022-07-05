@@ -61,7 +61,8 @@ function getAutoBundleFilename(pkgName?: string) {
  */
 export function convertAliasByTsconfigPaths(cwd: string) {
   const config = loadConfig(cwd);
-  let alias: Record<string, string> = {};
+  const bundle: Record<string, string> = {};
+  const bundless: typeof bundle = {};
 
   if (config.resultType === 'success') {
     const { absoluteBaseUrl, paths } = config;
@@ -73,18 +74,22 @@ export function convertAliasByTsconfigPaths(cwd: string) {
     );
 
     absolutePaths.forEach((entry) => {
+      if (entry.pattern === '*') return;
+
       const [physicalPathPattern] = entry.paths;
-      if (entry.pattern.endsWith('/*')) {
-        alias[entry.pattern.replace('/*', '')] = winPath(
-          physicalPathPattern,
-        ).replace('/*', '');
-      } else if (entry.pattern !== '*') {
-        alias[entry.pattern] = winPath(physicalPathPattern);
+      const name = entry.pattern.replace(/\/\*$/, '');
+      const target = winPath(physicalPathPattern).replace(/\/\*$/, '');
+
+      bundle[name] = target;
+
+      // for bundless, only convert paths which within cwd
+      if (target.startsWith(`${winPath(cwd)}/`)) {
+        bundless[name] = target;
       }
     });
   }
 
-  return alias;
+  return { bundle, bundless };
 }
 
 /**
@@ -345,16 +350,16 @@ export function createConfigProviders(
   const configs = normalizeUserConfig(userConfig, pkg);
 
   // convert alias from tsconfig paths
-  const alias = convertAliasByTsconfigPaths(cwd);
-  logger.debug('Convert alias from tsconfig.json:', alias);
+  const aliasFromPaths = convertAliasByTsconfigPaths(cwd);
+  logger.debug('Convert alias from tsconfig.json:', aliasFromPaths);
 
   const { bundle, bundless } = configs.reduce(
     (r, config) => {
-      config.alias = { ...alias, ...config.alias };
-
       if (config.type === IFatherBuildTypes.BUNDLE) {
+        config.alias = { ...aliasFromPaths.bundle, ...config.alias };
         r.bundle.push(config);
       } else if (config.type === IFatherBuildTypes.BUNDLESS) {
+        config.alias = { ...aliasFromPaths.bundless, ...config.alias };
         // Handling file suffixes only bundless mode needs to be handled
         for (let target in config.alias) {
           // If the file suffix is js remove the suffix

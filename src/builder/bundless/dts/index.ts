@@ -1,4 +1,4 @@
-import { chalk, logger } from '@umijs/utils';
+import { chalk, logger, winPath } from '@umijs/utils';
 import path from 'path';
 // @ts-ignore
 import tsPathsTransformer from '../../../../compiled/@zerollup/ts-transform-paths';
@@ -62,7 +62,7 @@ export default async function getDeclarations(
         tsconfig.options.paths![item][0],
       );
 
-      if (!pathAbsTarget.startsWith(opts.cwd)) {
+      if (!winPath(pathAbsTarget).startsWith(`${winPath(opts.cwd)}/`)) {
         delete tsconfig.options.paths![item];
         logger.debug(
           `Remove ${item} from tsconfig.paths, because it's out of cwd.`,
