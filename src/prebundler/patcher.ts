@@ -1,8 +1,9 @@
 /**
  * patcher for api-extractor, to support legacy export = syntax
  * @reason https://github.com/microsoft/rushstack/issues/2220
- * @solution hack tsHost.readFile for the CompilerState of api-extractor
- *           to replace legacy export = syntax to esm syntax
+ * @solution hijack tsHost.readFile for the CompilerState of api-extractor
+ *           to replace legacy export = [Specifier] to export { [Specifier] as default }
+ *           and re-export all types within exported namespace
  */
 
 import { CompilerState, Extractor } from '@microsoft/api-extractor';
@@ -12,8 +13,7 @@ import {
   DtsRollupKind,
 } from '@microsoft/api-extractor/lib/generators/DtsRollupGenerator';
 import { IndentedWriter } from '@microsoft/api-extractor/lib/generators/IndentedWriter';
-import { chalk, logger } from '@umijs/utils';
-import type { CompilerHost } from 'typescript';
+import type { CompilerHost, ExportAssignment, Identifier } from 'typescript';
 import { setSharedData } from './shared';
 
 // @ts-ignore
@@ -29,25 +29,68 @@ if (!oCreateCompilerHost.name.includes('father')) {
 
     // hack readFile method to replace legacy export = syntax to esm
     tsHost.readFile = function fatherHackReadFile(...args) {
-      let content = oReadFile.apply(tsHost, args);
-      // regexp to match export = [Symbol];
-      const legacyExportReg = /[\r\n]export\s+=\s+([\w$]+)\s*([;\r\n])/;
-      const exportSymbol = content?.match(legacyExportReg)?.[1];
+      let content = oReadFile.apply(tsHost, args)!;
+      const mayBeLegacyExport = /[\r\n]\s*export\s+=\s+[\w$]+/.test(content);
 
-      if (exportSymbol) {
-        // replace export = [Symbol] => export { [Symbol] as default } if matched
-        content = content!.replace(
-          legacyExportReg,
-          '\nexport { $1 as default }$2',
+      // simple filter with regexp, for performance
+      if (mayBeLegacyExport) {
+        const ts: typeof import('typescript') = require('typescript');
+        const sourceFile = ts.createSourceFile(
+          args[0],
+          content,
+          ts.ScriptTarget.ESNext,
         );
+        const { statements } = sourceFile;
+        const exportEquals = statements.find(
+          (stmt) => ts.isExportAssignment(stmt) && stmt.isExportEquals,
+        ) as ExportAssignment;
 
-        // double-check export statement
-        if (/[\r\n]export\s+=/.test(content)) {
-          logger.warn(
-            `Unhandled legacy export syntax in ${chalk.gray(
-              args[0],
-            )}, please report this issue to father if the d.ts file is unexpected.`,
-          );
+        // strict filter with AST, for precision
+        if (exportEquals) {
+          const declarationIds: string[] = [];
+          const exportSpecifier = (exportEquals.expression as Identifier)
+            .escapedText;
+
+          statements.forEach((stmt) => {
+            // try to find exported namespace
+            if (
+              ts.isModuleDeclaration(stmt) &&
+              ts.isIdentifier(stmt.name) &&
+              stmt.name.escapedText === exportSpecifier &&
+              stmt.body &&
+              // to avoid esbuild-jest to fail
+              // ref: https://github.com/aelbore/esbuild-jest/blob/master/src/index.ts#L33
+              // issue: https://github.com/aelbore/esbuild-jest/issues/57#issuecomment-934679846
+              // prettier-ignore
+              (ts.isModuleBlock)(stmt.body)
+            ) {
+              stmt.body.statements.forEach((s) => {
+                // collect all valid declarations with exported namespace
+                if (
+                  ts.isTypeAliasDeclaration(s) ||
+                  ts.isInterfaceDeclaration(s) ||
+                  ts.isEnumDeclaration(s) ||
+                  ts.isFunctionDeclaration(s) ||
+                  ts.isClassDeclaration(s)
+                ) {
+                  declarationIds.push(s.name!.escapedText!);
+                }
+              });
+            }
+          });
+
+          // replace export = to export { [Specifier] as default }
+          content = `${content.substring(
+            0,
+            exportEquals.pos,
+          )}\nexport { ${exportSpecifier} as default };${content.substring(
+            exportEquals.end,
+          )}`;
+
+          // re-export each types for namespace
+          declarationIds.forEach((id) => {
+            content += `\nexport type ${id} = ${exportSpecifier}.${id};`;
+          });
         }
       }
 
