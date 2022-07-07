@@ -115,6 +115,7 @@ export function getConfig(opts: {
     Object.assign({}, opts.pkg.dependencies, opts.pkg.peerDependencies),
   ).reduce((r, dep) => ({ ...r, [dep]: dep }), {});
   const depExternals: IFatherPreBundleConfig['extraExternals'] = {};
+  const dtsDepExternals: IFatherPreBundleConfig['extraExternals'] = {};
   const config: IPreBundleConfig = { deps: {}, dts: {} };
   const {
     output,
@@ -183,6 +184,8 @@ export function getConfig(opts: {
           `${DEFAULT_OUTPUT_DIR}/${pkg}/index.d.ts`,
         ),
       });
+
+      dtsDepExternals[pkg] = config.dts[depTypeInfo.dtsPath].output;
     }
   });
 
@@ -202,14 +205,21 @@ export function getConfig(opts: {
 
   // process externals for dts
   Object.values(config.dts).forEach((dtsConfig) => {
-    const rltDepExternals = getRltExternalsFromDeps(depExternals, {
-      name: dtsConfig.pkg.name!,
-      output: dtsConfig.output,
-    });
+    const rltDepExternals = getRltExternalsFromDeps(
+      {
+        ...depExternals,
+        ...dtsDepExternals,
+      },
+      {
+        name: dtsConfig.pkg.name!,
+        output: dtsConfig.output,
+      },
+    );
 
     // always skip bundle external pkgs
     const nestedDeps = getNestedDepsForPkg(dtsConfig.pkg.name!, opts.cwd, {
       ...depExternals,
+      ...dtsDepExternals,
       ...extraExternals,
     });
     dtsConfig._maePrepareConfig.configObject.bundledPackages =
