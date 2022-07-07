@@ -23,7 +23,7 @@ father 支持以下配置项。
 - 类型：`string`
 - 默认值：`undefined`
 
-指定继承的父配置文件。
+指定继承的父配置文件路径。
 
 ### extraBabelPlugins
 
@@ -54,7 +54,7 @@ father 支持以下配置项。
 
 ## 构建配置
 
-father 以构建产物类型划分构建配置，其中 其中 `esm`、`cjs` 产物为 Bundless 构建模式，`umd`产物为 Bundle 构建模式，另外依赖预打包 `prebundle` 产物也为 Bundle 构建模式。
+father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 Bundless 构建模式，`umd` 产物为 Bundle 构建模式，另外依赖预打包 `prebundle` 产物也为 Bundle 构建模式。
 
 ### esm/cjs
 
