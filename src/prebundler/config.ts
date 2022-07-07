@@ -213,7 +213,7 @@ export function getConfig(opts: {
       ...extraExternals,
     });
     dtsConfig._maePrepareConfig.configObject.bundledPackages =
-      Object.keys(nestedDeps).slice(1);
+      Object.keys(nestedDeps);
 
     // prepare externals config
     dtsConfig.externals = {

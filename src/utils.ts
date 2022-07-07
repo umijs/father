@@ -10,6 +10,13 @@ export function getTypeFromPkgJson(pkg: IApi['pkg']): string | undefined {
 }
 
 /**
+ * get @types/xxx for xxx
+ */
+export function getPkgNameWithTypesOrg(name: string) {
+  return `@types/${name.replace('@', '').replace('/', '__')}`;
+}
+
+/**
  * get d.ts file path and package path for NPM package.json path
  */
 export function getDtsInfoForPkgPath(pkgPath: string) {
@@ -23,8 +30,10 @@ export function getDtsInfoForPkgPath(pkgPath: string) {
     // resolve @types/xxx pkg
     try {
       info.pkgPath = require.resolve(
-        `@types/${pkg.name.replace('@', '').replace('/', '__')}/package.json`,
-        { paths: [pkgPath] },
+        `${getPkgNameWithTypesOrg(pkg.name)}/package.json`,
+        {
+          paths: [pkgPath],
+        },
       );
       info.dtsPath = path.resolve(
         path.dirname(info.pkgPath),
@@ -43,9 +52,13 @@ export function getDtsInfoForPkgPath(pkgPath: string) {
  * @see https://github.com/nodejs/node/issues/33460
  */
 export function getDepPkgPath(dep: string, cwd: string) {
-  return pkgUp.pkgUpSync({
-    cwd: require.resolve(`${dep}/package.json`, { paths: [cwd] }),
-  })!;
+  try {
+    return require.resolve(`${dep}/package.json`, { paths: [cwd] });
+  } catch {
+    return pkgUp.pkgUpSync({
+      cwd: require.resolve(dep, { paths: [cwd] }),
+    })!;
+  }
 }
 
 /**
@@ -55,15 +68,24 @@ export function getNestedDepsForPkg(
   name: string,
   cwd: string,
   externals: Record<string, string>,
-  deps: Record<string, string> = {},
+  deps?: Record<string, string>,
 ) {
-  if (name in deps || externals[name]) return deps;
+  if (
+    deps &&
+    (name in deps ||
+      externals[name] ||
+      (!name.startsWith('@types') && getPkgNameWithTypesOrg(name) in deps))
+  )
+    return deps;
 
+  const isTopLevel = !deps;
   const pkgPath = getDepPkgPath(name, cwd);
   const pkgJson = require(pkgPath);
-  const pkgDeps: typeof deps = pkgJson.dependencies || {};
+  const pkgDeps: NonNullable<typeof deps> = pkgJson.dependencies || {};
 
-  deps[name] = pkgJson.version;
+  // collect nested packages and exclude self
+  deps ??= {};
+  Object.assign(deps, isTopLevel ? {} : { [name]: pkgJson.version });
   Object.keys(pkgDeps).forEach((name) => {
     getNestedDepsForPkg(name, pkgPath, externals, deps);
   });
