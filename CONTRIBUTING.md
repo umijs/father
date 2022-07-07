@@ -25,8 +25,12 @@ $ pnpm build
 
 ## Test
 
-TODO
+```bash
+$ pnpm test
+```
 
 ## Release
 
-TODO
+```bash
+$ pnpm release
+```
