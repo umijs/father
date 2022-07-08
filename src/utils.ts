@@ -10,6 +10,13 @@ export function getTypeFromPkgJson(pkg: IApi['pkg']): string | undefined {
 }
 
 /**
+ * restore xxx for @types/xxx
+ */
+export function getPkgNameFromTypesOrg(name: string) {
+  return name.replace('@types/', '').replace(/^([^]+?)__([^]+)$/, '@$1/$2');
+}
+
+/**
  * get @types/xxx for xxx
  */
 export function getPkgNameWithTypesOrg(name: string) {
@@ -70,13 +77,14 @@ export function getNestedDepsForPkg(
   externals: Record<string, string>,
   deps?: Record<string, string>,
 ) {
-  if (
-    deps &&
-    (name in deps ||
-      externals[name] ||
-      (!name.startsWith('@types') && getPkgNameWithTypesOrg(name) in deps))
-  )
-    return deps;
+  const isWithinTypes = name.startsWith('@types/');
+  const pkgName = isWithinTypes ? getPkgNameFromTypesOrg(name) : name;
+  const typesPkgName = isWithinTypes ? name : getPkgNameWithTypesOrg(name);
+  const isCollected =
+    deps?.hasOwnProperty(name) || deps?.hasOwnProperty(typesPkgName);
+  const isExternalized = externals[pkgName] || externals[typesPkgName];
+
+  if (deps && (isCollected || isExternalized)) return deps;
 
   const isTopLevel = !deps;
   const pkgPath = getDepPkgPath(name, cwd);
