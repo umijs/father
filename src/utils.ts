@@ -69,9 +69,9 @@ export function getDepPkgPath(dep: string, cwd: string) {
 }
 
 /**
- * get all nested dependencies for specific NPM package
+ * get all nested type dependencies for specific NPM package
  */
-export function getNestedDepsForPkg(
+export function getNestedTypeDepsForPkg(
   name: string,
   cwd: string,
   externals: Record<string, string>,
@@ -87,15 +87,15 @@ export function getNestedDepsForPkg(
   if (deps && (isCollected || isExternalized)) return deps;
 
   const isTopLevel = !deps;
-  const pkgPath = getDepPkgPath(name, cwd);
-  const pkgJson = require(pkgPath);
+  const dtsInfo = getDtsInfoForPkgPath(getDepPkgPath(name, cwd));
+  const pkgJson = dtsInfo ? require(dtsInfo.pkgPath) : {};
   const pkgDeps: NonNullable<typeof deps> = pkgJson.dependencies || {};
 
   // collect nested packages and exclude self
   deps ??= {};
-  Object.assign(deps, isTopLevel ? {} : { [name]: pkgJson.version });
-  Object.keys(pkgDeps).forEach((name) => {
-    getNestedDepsForPkg(name, pkgPath, externals, deps);
+  Object.assign(deps, isTopLevel ? {} : { [pkgJson.name]: pkgJson.version });
+  Object.keys(pkgDeps).forEach((item) => {
+    getNestedTypeDepsForPkg(item, dtsInfo!.pkgPath, externals, deps);
   });
 
   return deps;

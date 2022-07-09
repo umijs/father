@@ -60,6 +60,7 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
           JSON.stringify({
             name: pkg.name,
             author: pkg.author,
+            contributors: pkg.contributors,
             license: pkg.license,
           }),
           'utf-8',

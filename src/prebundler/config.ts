@@ -8,7 +8,7 @@ import { IApi, IFatherPreBundleConfig } from '../types';
 import {
   getDepPkgPath,
   getDtsInfoForPkgPath,
-  getNestedDepsForPkg,
+  getNestedTypeDepsForPkg,
 } from '../utils';
 
 interface IPreBundleConfig {
@@ -217,7 +217,8 @@ export function getConfig(opts: {
     );
 
     // always skip bundle external pkgs
-    const nestedDeps = getNestedDepsForPkg(dtsConfig.pkg.name!, opts.cwd, {
+    const nestedDeps = getNestedTypeDepsForPkg(dtsConfig.pkg.name!, opts.cwd, {
+      ...pkgExternals,
       ...depExternals,
       ...dtsDepExternals,
       ...extraExternals,
