@@ -73,11 +73,17 @@ export default async function getDeclarations(
     const tsHost = ts.createCompilerHost(tsconfig.options);
 
     tsHost.writeFile = (fileName, declaration, _a, _b, sourceFiles) => {
-      output.push({
-        file: path.basename(fileName),
-        content: declaration,
-        sourceFile: sourceFiles![0].fileName,
-      });
+      const sourceFile = sourceFiles![0].fileName;
+
+      // only collect dts for input files, to avoid output error in watch mode
+      // ref: https://github.com/umijs/father-next/issues/43
+      if (inputFiles.includes(sourceFile)) {
+        output.push({
+          file: path.basename(fileName),
+          content: declaration,
+          sourceFile,
+        });
+      }
     };
 
     const program = ts.createProgram(
