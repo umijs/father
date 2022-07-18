@@ -227,7 +227,7 @@ export function normalizeUserConfig(
         // transform another child overrides to ignores
         // for support to transform src/a and src/a/child with different configs
         ignores: Object.keys(overrides)
-          .filter((i) => !i.startsWith(oInput))
+          .filter((i) => i.startsWith(oInput) && i !== oInput)
           .map((i) => `${i}/**`)
           .concat(bundlessConfig.ignores || []),
       });

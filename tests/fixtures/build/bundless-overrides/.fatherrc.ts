@@ -4,6 +4,9 @@ export default {
       'src/client': {
         platform: 'browser',
       },
+      'src/client/node': {
+        platform: 'node',
+      },
     },
   },
 };
