@@ -6,6 +6,7 @@ import rimraf from 'rimraf';
 import 'zx/globals';
 
 const pkgs = ['.', 'boilerplate'];
+const noNextTagPkgs = ['create-father'];
 
 (async () => {
   const { branch } = getGitRepoInfo();
@@ -116,7 +117,9 @@ const pkgs = ['.', 'boilerplate'];
 
   await Promise.all(
     pkgs.map(async (pkg) => {
-      await $`cd ${pkg} && npm publish --tag ${tag} ${otpArg}`;
+      await $`cd ${pkg} && npm publish --tag ${
+        tag === 'next' && noNextTagPkgs.includes(pkg) ? 'latest' : tag
+      } ${otpArg}`;
       logger.info(`+ ${pkg}`);
     }),
   );
