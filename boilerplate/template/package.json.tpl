@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "{{{ description }}}",
   {{#isBothNodeBrowser}}"main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js"{{/isBothNodeBrowser}}{{#isNode}}"main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",{{/isBothNodeBrowser}}{{#isNode}}"main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",{{/isNode}}{{#isBrowser}}"module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",{{/isBrowser}}
   "scripts": {
