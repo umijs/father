@@ -7,6 +7,8 @@
  */
 
 import { CompilerState, Extractor } from '@microsoft/api-extractor';
+import { AstModule } from '@microsoft/api-extractor/lib/analyzer/AstModule';
+import { ExportAnalyzer } from '@microsoft/api-extractor/lib/analyzer/ExportAnalyzer';
 import type { Collector } from '@microsoft/api-extractor/lib/collector/Collector';
 import {
   DtsRollupGenerator,
@@ -111,7 +113,7 @@ if (!oCreateCompilerHost.name.includes('father')) {
     dtsFilename: string,
     dtsKind: DtsRollupKind,
   ) {
-    const writer: IndentedWriter = new IndentedWriter();
+    const writer = new IndentedWriter();
     writer.trimLeadingSpaces = true;
 
     // @ts-ignore
@@ -119,4 +121,38 @@ if (!oCreateCompilerHost.name.includes('father')) {
 
     setSharedData(dtsFilename, writer.toString());
   };
+
+  // hijack ExportAnalyzer to support export * from ambient module
+  // because the rushstack team has not reviewed pull request yet
+  // ref: https://github.com/microsoft/rushstack/pull/3528
+  const _fetchSpecifierAstModule =
+    // @ts-ignore
+    ExportAnalyzer.prototype._fetchSpecifierAstModule;
+  // @ts-ignore
+  ExportAnalyzer.prototype._fetchSpecifierAstModule =
+    function fatherHackFetchSpecifierAstModule(...args: any) {
+      try {
+        return _fetchSpecifierAstModule.apply(this, args);
+      } catch (err: any) {
+        const ts: typeof import('typescript') = require('typescript');
+
+        // return a fake external module for export * from ambient module
+        if (ts.isExportDeclaration(args[0])) {
+          const sourceFile = args[0].getSourceFile();
+
+          return new AstModule({
+            sourceFile,
+            // @ts-ignore
+            moduleSymbol: this._getModuleSymbolFromSourceFile(
+              sourceFile,
+              undefined,
+            ),
+            // @ts-ignore
+            externalModulePath: this._getModuleSpecifier(args[0]),
+          });
+        } else {
+          throw err;
+        }
+      }
+    };
 }
