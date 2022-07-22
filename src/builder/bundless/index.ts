@@ -69,6 +69,7 @@ async function transformFiles(
       const result = await runLoaders(itemAbsPath, {
         config,
         pkg: opts.configProvider.pkg,
+        cwd: opts.cwd,
       });
 
       if (result) {

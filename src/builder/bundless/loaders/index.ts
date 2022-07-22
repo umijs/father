@@ -40,7 +40,7 @@ export function addLoader(item: ILoaderItem) {
  */
 export default async (
   fileAbsPath: string,
-  opts: { config: IBundlessConfig; pkg: IApi['pkg'] },
+  opts: { config: IBundlessConfig; pkg: IApi['pkg']; cwd: string },
 ) => {
   // get matched loader by test
   const matched = loaders.find((item) => {
@@ -67,6 +67,7 @@ export default async (
           resource: fileAbsPath,
           loaders: [{ loader: matched.loader, options: matched.options }],
           context: {
+            cwd: opts.cwd,
             config: opts.config,
             pkg: opts.pkg,
             setOutputOptions(opts) {

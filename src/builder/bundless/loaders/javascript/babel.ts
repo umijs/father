@@ -74,6 +74,7 @@ const babelTransformer: IJSTransformer = function (content) {
 
   return transform(content, {
     filename: this.paths.fileAbsPath,
+    cwd: this.paths.cwd,
     babelrc: false,
     presets: [
       [require.resolve('@umijs/babel-preset-umi'), presetOpts],
