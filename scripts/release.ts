@@ -6,7 +6,7 @@ import rimraf from 'rimraf';
 import 'zx/globals';
 
 const pkgs = ['.', 'boilerplate'];
-const noNextTagPkgs = ['create-father'];
+const noNextTagPkgs = ['boilerplate'];
 
 (async () => {
   const { branch } = getGitRepoInfo();
