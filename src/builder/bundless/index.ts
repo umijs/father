@@ -42,96 +42,114 @@ async function transformFiles(
   opts: {
     cwd: string;
     configProvider: BundlessConfigProvider;
+    watch?: true;
   },
 ) {
-  let count = 0;
-  const declarationFileMap = new Map<string, string>();
+  try {
+    let count = 0;
+    const declarationFileMap = new Map<string, string>();
 
-  // process all matched items
-  for (let item of files) {
-    const config = opts.configProvider.getConfigForFile(item);
-    const itemAbsPath = path.join(opts.cwd, item);
+    // process all matched items
+    for (let item of files) {
+      const config = opts.configProvider.getConfigForFile(item);
+      const itemAbsPath = path.join(opts.cwd, item);
 
-    if (config) {
-      let itemDistPath = path.join(
-        config.output!,
-        path.relative(config.input, item),
-      );
-      let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
-      const parentPath = path.dirname(itemDistAbsPath);
+      if (config) {
+        let itemDistPath = path.join(
+          config.output!,
+          path.relative(config.input, item),
+        );
+        let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+        const parentPath = path.dirname(itemDistAbsPath);
 
-      // create parent directory if not exists
-      if (!fs.existsSync(parentPath)) {
-        fs.mkdirSync(parentPath, { recursive: true });
-      }
-
-      // get result from loaders
-      const result = await runLoaders(itemAbsPath, {
-        config,
-        pkg: opts.configProvider.pkg,
-        cwd: opts.cwd,
-      });
-
-      if (result) {
-        // update ext if loader specified
-        if (result.options.ext) {
-          itemDistPath = replacePathExt(itemDistPath, result.options.ext);
-          itemDistAbsPath = replacePathExt(itemDistAbsPath, result.options.ext);
+        // create parent directory if not exists
+        if (!fs.existsSync(parentPath)) {
+          fs.mkdirSync(parentPath, { recursive: true });
         }
 
-        // prepare for declaration
-        if (result.options.declaration) {
-          // use winPath because ts compiler will convert to posix path
-          declarationFileMap.set(winPath(itemAbsPath), parentPath);
+        // get result from loaders
+        const result = await runLoaders(itemAbsPath, {
+          config,
+          pkg: opts.configProvider.pkg,
+          cwd: opts.cwd,
+        });
+
+        if (result) {
+          // update ext if loader specified
+          if (result.options.ext) {
+            itemDistPath = replacePathExt(itemDistPath, result.options.ext);
+            itemDistAbsPath = replacePathExt(
+              itemDistAbsPath,
+              result.options.ext,
+            );
+          }
+
+          // prepare for declaration
+          if (result.options.declaration) {
+            // use winPath because ts compiler will convert to posix path
+            declarationFileMap.set(winPath(itemAbsPath), parentPath);
+          }
+
+          // distribute file with result
+          fs.writeFileSync(itemDistAbsPath, result.content);
+        } else {
+          // copy file as normal assets
+          fs.copyFileSync(itemAbsPath, itemDistAbsPath);
         }
 
-        // distribute file with result
-        fs.writeFileSync(itemDistAbsPath, result.content);
+        logger.event(
+          `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
+            result?.options.declaration ? ' (with declaration)' : ''
+          }`,
+        );
+        count += 1;
       } else {
-        // copy file as normal assets
-        fs.copyFileSync(itemAbsPath, itemDistAbsPath);
+        debugLog(`No config matches ${chalk.gray(item)}, skip`);
       }
+    }
 
+    if (declarationFileMap.size) {
       logger.event(
-        `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
-          result?.options.declaration ? ' (with declaration)' : ''
-        }`,
+        `Generate declaration file${declarationFileMap.size > 1 ? 's' : ''}...`,
       );
-      count += 1;
+
+      const declarations = await getDeclarations(
+        [...declarationFileMap.keys()],
+        {
+          cwd: opts.cwd,
+        },
+      );
+
+      declarations.forEach((item) => {
+        fs.writeFileSync(
+          path.join(declarationFileMap.get(item.sourceFile)!, item.file),
+          item.content,
+          'utf-8',
+        );
+      });
+    }
+
+    return count;
+  } catch (err: any) {
+    if (opts.watch) {
+      logger.error(err.message);
+      return 0;
     } else {
-      debugLog(`No config matches ${chalk.gray(item)}, skip`);
+      throw err;
     }
   }
-
-  if (declarationFileMap.size) {
-    logger.event(
-      `Generate declaration file${declarationFileMap.size > 1 ? 's' : ''}...`,
-    );
-
-    const declarations = await getDeclarations([...declarationFileMap.keys()], {
-      cwd: opts.cwd,
-    });
-
-    declarations.forEach((item) => {
-      fs.writeFileSync(
-        path.join(declarationFileMap.get(item.sourceFile)!, item.file),
-        item.content,
-        'utf-8',
-      );
-    });
-  }
-
-  return count;
 }
 
 // overload normal/watch mode
-function bundless(opts: Parameters<typeof transformFiles>[1]): Promise<void>;
 function bundless(
-  opts: Parameters<typeof transformFiles>[1] & { watch?: true },
+  opts: Omit<Parameters<typeof transformFiles>[1], 'watch'>,
+): Promise<void>;
+function bundless(
+  opts: Parameters<typeof transformFiles>[1],
 ): Promise<chokidar.FSWatcher>;
 
 async function bundless(
-  opts: Parameters<typeof transformFiles>[1] & { watch?: boolean },
+  opts: Parameters<typeof transformFiles>[1],
 ): Promise<void | chokidar.FSWatcher> {
   logger.info(
     `Bundless for ${chalk.yellow(

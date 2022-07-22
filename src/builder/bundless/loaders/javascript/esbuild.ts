@@ -51,6 +51,7 @@ const esbuildTransformer: IJSTransformer = async function () {
     write: false,
     // enable bundle for trigger onResolve hook, but all deps will be externalized
     bundle: true,
+    logLevel: 'silent',
     format: this.config.format,
     define: this.config.define,
     platform: this.config.platform,
