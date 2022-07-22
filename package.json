@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "4.0.0-rc.4",
+  "version": "4.0.0-rc.5",
   "description": "A bundless/bundle build tool",
   "homepage": "https://github.com/umijs/father-next#readme",
   "bugs": "https://github.com/umijs/father-next/issues",
