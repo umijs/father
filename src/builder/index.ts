@@ -30,6 +30,7 @@ interface IBuilderOpts {
   cwd: string;
   pkg: IApi['pkg'];
   clean?: boolean;
+  quiet?: boolean;
 }
 
 interface IWatchBuilderResult {
@@ -73,6 +74,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
+      quiet: opts.quiet,
     });
 
     opts.watch && watchers.push(watcher);
@@ -83,6 +85,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
+      quiet: opts.quiet,
     });
 
     opts.watch && watchers.push(watcher);

@@ -43,6 +43,7 @@ async function transformFiles(
     cwd: string;
     configProvider: BundlessConfigProvider;
     watch?: true;
+    quiet?: boolean;
   },
 ) {
   try {
@@ -97,11 +98,13 @@ async function transformFiles(
           fs.copyFileSync(itemAbsPath, itemDistAbsPath);
         }
 
-        logger.event(
-          `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
-            result?.options.declaration ? ' (with declaration)' : ''
-          }`,
-        );
+        if (!opts.quiet) {
+          logger.event(
+            `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
+              result?.options.declaration ? ' (with declaration)' : ''
+            }`,
+          );
+        }
         count += 1;
       } else {
         debugLog(`No config matches ${chalk.gray(item)}, skip`);

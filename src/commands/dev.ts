@@ -7,12 +7,13 @@ export default (api: IApi) => {
   api.registerCommand({
     name: DEV_COMMAND,
     description: 'start incremental bundless build in watch mode',
-    async fn() {
+    async fn({ args }) {
       const buildWatcher = await builder({
         userConfig: api.config,
         cwd: api.cwd,
         pkg: api.pkg,
         watch: true,
+        quiet: args.quiet,
       });
 
       // handle config change
