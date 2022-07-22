@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
+import { getCache } from '../../../utils';
 import type { IBundlessConfig } from '../../config';
 import type { IBundlessLoader, ILoaderOutput } from './types';
 
@@ -42,6 +43,18 @@ export default async (
   fileAbsPath: string,
   opts: { config: IBundlessConfig; pkg: IApi['pkg']; cwd: string },
 ) => {
+  const cache = getCache('loader');
+  // format: {path:mtime:config}
+  const cacheKey = [
+    fileAbsPath,
+    fs.statSync(fileAbsPath).mtimeMs,
+    JSON.stringify(opts.config),
+  ].join(':');
+  const cacheRet = await cache.get(cacheKey, '');
+
+  // use cache first
+  if (cacheRet) return Promise.resolve<ILoaderOutput>(cacheRet);
+
   // get matched loader by test
   const matched = loaders.find((item) => {
     switch (typeof item.test) {
@@ -81,10 +94,14 @@ export default async (
             reject(err);
           } else if (result) {
             // FIXME: handle buffer type?
-            resolve({
+            const ret = {
               content: result[0] as unknown as string,
               options: outputOpts,
-            });
+            };
+
+            // save cache then resolve
+            cache.set(cacheKey, ret);
+            resolve(ret);
           } else {
             resolve(void 0);
           }

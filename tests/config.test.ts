@@ -1,7 +1,7 @@
-import path from 'path';
 import { mockProcessExit } from 'jest-mock-process';
-import { distToMap } from './utils';
+import path from 'path';
 import * as cli from '../src/cli/cli';
+import { distToMap } from './utils';
 
 jest.mock('@umijs/utils', () => {
   const originalModule = jest.requireActual('@umijs/utils');
@@ -25,8 +25,13 @@ jest.mock('@umijs/utils', () => {
 const mockExit = mockProcessExit();
 const CASES_DIR = path.join(__dirname, 'fixtures/config');
 
+beforeAll(() => {
+  process.env.FATHER_CACHE = 'none';
+});
+
 afterAll(() => {
   delete process.env.APP_ROOT;
+  delete process.env.FATHER_CACHE;
   mockExit.mockRestore();
 });
 test('config: cyclic extends', async () => {

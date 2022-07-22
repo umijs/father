@@ -1,11 +1,16 @@
 import path from 'path';
-import { distToMap, getDirCases } from './utils';
 import * as cli from '../src/cli/cli';
+import { distToMap, getDirCases } from './utils';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/build');
 
+beforeAll(() => {
+  process.env.FATHER_CACHE = 'none';
+});
+
 afterAll(() => {
   delete process.env.APP_ROOT;
+  delete process.env.FATHER_CACHE;
 });
 
 // generate cases

@@ -1,7 +1,9 @@
 import { chalk, logger, winPath } from '@umijs/utils';
+import fs from 'fs';
 import path from 'path';
 // @ts-ignore
 import tsPathsTransformer from '../../../../compiled/@zerollup/ts-transform-paths';
+import { getCache } from '../../../utils';
 
 /**
  * get parsed tsconfig.json for specific path
@@ -29,6 +31,7 @@ export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
 ) {
+  const cache = getCache('dts');
   const output: { file: string; content: string; sourceFile: string }[] = [];
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
@@ -71,6 +74,19 @@ export default async function getDeclarations(
     });
 
     const tsHost = ts.createCompilerHost(tsconfig.options);
+    const cacheKeys = inputFiles.reduce<Record<string, string>>(
+      (ret, file) => ({
+        ...ret,
+        // format: {path:mtime:config}
+        [file]: [
+          file,
+          fs.lstatSync(file).mtimeMs,
+          JSON.stringify(tsconfig.options),
+        ].join(':'),
+      }),
+      {},
+    );
+    const cacheRets: Record<string, typeof output> = {};
 
     tsHost.writeFile = (fileName, declaration, _a, _b, sourceFiles) => {
       const sourceFile = sourceFiles![0].fileName;
@@ -78,13 +94,28 @@ export default async function getDeclarations(
       // only collect dts for input files, to avoid output error in watch mode
       // ref: https://github.com/umijs/father-next/issues/43
       if (inputFiles.includes(sourceFile)) {
-        output.push({
+        const ret = {
           file: path.basename(fileName),
           content: declaration,
           sourceFile,
-        });
+        };
+
+        output.push(ret);
+
+        // group cache by file (d.ts & d.ts.map)
+        cacheRets[cacheKeys[sourceFile]] ??= [];
+        cacheRets[cacheKeys[sourceFile]].push(ret);
       }
     };
+
+    // use cache first
+    inputFiles = inputFiles.filter((file) => {
+      const cacheRet = cache.getSync(cacheKeys[file], '');
+
+      if (!cacheRet) return true;
+      output.push(...cacheRet);
+      return false;
+    });
 
     const program = ts.createProgram(
       inputFiles,
@@ -111,6 +142,16 @@ export default async function getDeclarations(
         )}`,
       );
     }
+
+    // save cache
+    Object.keys(cacheRets).forEach((key) => cache.setSync(key, cacheRets[key]));
+
+    // process no d.ts inputs, fallback to empty array
+    inputFiles.forEach((file) => {
+      const cacheKey = cacheKeys[file];
+
+      if (!cacheRets[cacheKey]) cache.setSync(cacheKey, []);
+    });
   }
 
   return output;

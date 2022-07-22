@@ -1,6 +1,21 @@
 import { pkgUp } from '@umijs/utils';
+import Cache from 'file-system-cache';
 import path from 'path';
+import { CACHE_PATH } from './constants';
 import { IApi } from './types';
+
+const caches: Record<string, ReturnType<typeof Cache>> = {};
+
+/**
+ * get file-system cache for specific namespace
+ */
+export function getCache(ns: string): typeof caches['0'] {
+  // return fake cache if cache disabled
+  if (process.env.FATHER_CACHE === 'none') {
+    return { set() {}, get() {}, setSync() {}, getSync() {} } as any;
+  }
+  return (caches[ns] ??= Cache({ basePath: CACHE_PATH, ns }));
+}
 
 /**
  * get valid type field value from package.json
