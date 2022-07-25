@@ -16,11 +16,13 @@ export default (api: IApi) => {
         default: preBundle,
       }: typeof import('../prebundler') = require('../prebundler');
 
-      await preBundle({
-        userConfig: api.config.prebundle,
-        cwd: api.cwd,
-        pkg: api.pkg,
-      });
+      if (api.config.prebundle) {
+        await preBundle({
+          userConfig: api.config.prebundle,
+          cwd: api.cwd,
+          pkg: api.pkg,
+        });
+      }
     },
   });
 };
