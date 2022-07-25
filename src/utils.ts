@@ -14,7 +14,7 @@ export function getCache(ns: string): typeof caches['0'] {
   if (process.env.FATHER_CACHE === 'none') {
     return { set() {}, get() {}, setSync() {}, getSync() {} } as any;
   }
-  return (caches[ns] ??= Cache({ basePath: CACHE_PATH, ns }));
+  return (caches[ns] ??= Cache({ basePath: path.join(CACHE_PATH, ns) }));
 }
 
 /**

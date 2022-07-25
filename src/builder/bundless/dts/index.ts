@@ -31,7 +31,7 @@ export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
 ) {
-  const cache = getCache('dts');
+  const cache = getCache('bundless-dts');
   const output: { file: string; content: string; sourceFile: string }[] = [];
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889

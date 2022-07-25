@@ -43,7 +43,7 @@ export default async (
   fileAbsPath: string,
   opts: { config: IBundlessConfig; pkg: IApi['pkg']; cwd: string },
 ) => {
-  const cache = getCache('loader');
+  const cache = getCache('bundless-loader');
   // format: {path:mtime:config}
   const cacheKey = [
     fileAbsPath,
