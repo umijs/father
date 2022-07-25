@@ -1,5 +1,6 @@
 import { chalk, importLazy, logger } from '@umijs/utils';
 import path from 'path';
+import { CACHE_PATH } from '../../constants';
 import type { BundleConfigProvider } from '../config';
 
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
@@ -59,7 +60,17 @@ export default async (opts: {
           memo.target('node');
         }
 
+        // use father version as cache version
+        memo.merge({
+          cache: { version: require('../../../package.json').version },
+        });
+
         return memo;
+      },
+
+      // enable webpack persistent cache
+      cache: {
+        cacheDirectory: path.join(opts.cwd, CACHE_PATH, 'bundle-webpack'),
       },
     });
   }
