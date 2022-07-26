@@ -2,3 +2,5 @@ packages:
   - './'
   - 'examples/*'
   - 'boilerplate'
+  - 'tests/fixtures/build/classic-jsx'
+  - 'tests/fixtures/build/automatic-jsx'
