@@ -12,6 +12,8 @@ export default async (opts: {
   cwd: string;
   configProvider: BundleConfigProvider;
 }) => {
+  const enableCache = process.env.FATHER_CACHE !== 'none';
+
   for (const config of opts.configProvider.configs) {
     logger.info(
       `Bundle from ${chalk.yellow(config.entry)} to ${chalk.yellow(
@@ -72,18 +74,24 @@ export default async (opts: {
           memo.target('node');
         }
 
-        // use father version as cache version
-        memo.merge({
-          cache: { version: require('../../../package.json').version },
-        });
+        if (enableCache) {
+          // use father version as cache version
+          memo.merge({
+            cache: { version: require('../../../package.json').version },
+          });
+        }
 
         return memo;
       },
 
       // enable webpack persistent cache
-      cache: {
-        cacheDirectory: path.join(opts.cwd, CACHE_PATH, 'bundle-webpack'),
-      },
+      ...(enableCache
+        ? {
+            cache: {
+              cacheDirectory: path.join(opts.cwd, CACHE_PATH, 'bundle-webpack'),
+            },
+          }
+        : {}),
     });
   }
 };
