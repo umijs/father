@@ -2,6 +2,7 @@ import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import { winPath } from '@umijs/utils';
 import path from 'path';
 import { IFatherBundlessTypes, IFatherPlatformTypes } from '../../../../types';
+import { getBabelPresetReactOpts } from '../../../utils';
 import type { IJSTransformer } from '../types';
 
 /**
@@ -36,13 +37,8 @@ const babelTransformer: IJSTransformer = function (content) {
           : { node: 14 },
       modules: this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
     },
-    presetReact: {},
-    presetTypeScript: {
-      // TODO: remove this after Umi released
-      // ref: https://github.com/umijs/umi/pull/8289
-      // remove all type imports, to avoid import resolve error in dist files
-      onlyRemoveTypeImports: false,
-    },
+    presetReact: getBabelPresetReactOpts(this.pkg),
+    presetTypeScript: {},
   };
 
   // transform alias to relative path for babel-plugin-module-resolver
