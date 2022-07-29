@@ -10,7 +10,7 @@ export function getBabelPresetReactOpts(pkg: IApi['pkg']) {
   let opts: Record<string, any> = {};
 
   if (reactVer) {
-    const isLTRReact17 = semver.ltr('17.0.0-0', reactVer);
+    const isLTRReact17 = semver.subset(reactVer, '>=17.0.0-0');
 
     opts = {
       // use legacy jsx runtime for react@<17
