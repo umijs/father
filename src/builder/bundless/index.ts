@@ -10,20 +10,16 @@ import {
 } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
-import { DEBUG_BUNDLESS_NAME, WATCH_DEBOUNCE_STEP } from '../../constants';
+import {
+  DEBUG_BUNDLESS_NAME,
+  DEFAULT_BUNDLESS_IGNORES,
+  WATCH_DEBOUNCE_STEP,
+} from '../../constants';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
 import runLoaders from './loaders';
 
 const debugLog = debug(DEBUG_BUNDLESS_NAME);
-
-const DEFAULT_BUNDLESS_IGNORES = [
-  '**/*.md',
-  '**/*.d.ts',
-  '**/fixtures/**',
-  '**/__{test,tests,snapshots}__/**',
-  '**/*.{test,e2e,spec}.{js,jsx,ts,tsx}',
-];
 
 /**
  * replace extension for path

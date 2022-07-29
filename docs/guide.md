@@ -27,4 +27,11 @@ $ npx father build
 $ npx father prebundle
 ```
 
+执行项目检查：
+
+```bash
+# 检查项目的潜在问题
+$ npx father doctor
+```
+
 验证产物并发布 NPM 包。

@@ -39,6 +39,7 @@ export interface IBundlessConfig
   type: IFatherBuildTypes.BUNDLESS;
   format: IFatherBundlessTypes;
   input: string;
+  output: NonNullable<IFatherBundleConfig['output']>;
 }
 
 /**
@@ -161,7 +162,7 @@ export function normalizeUserConfig(
       formatName === 'esm'
         ? IFatherPlatformTypes.BROWSER
         : IFatherPlatformTypes.NODE;
-    const bundlessConfig: Omit<IBundlessConfig, 'input'> = {
+    const bundlessConfig: Omit<IBundlessConfig, 'input' | 'output'> = {
       type: IFatherBuildTypes.BUNDLESS,
       format: formatName as IFatherBundlessTypes,
       platform: userConfig.platform || defaultPlatform,

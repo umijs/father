@@ -8,6 +8,7 @@ export default (api: IApi) => {
 
       // commands
       require.resolve('./commands/dev'),
+      require.resolve('./commands/doctor'),
       require.resolve('./commands/build'),
       require.resolve('./commands/changelog'),
       require.resolve('./commands/prebundle'),
