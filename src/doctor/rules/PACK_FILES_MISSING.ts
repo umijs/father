@@ -6,9 +6,7 @@ export default (api: IApi) => {
   api.addRegularCheckup(
     ({ bundleConfigs, bundlessConfigs, preBundleConfig }) => {
       if (api.pkg.files) {
-        const files: string[] = api.pkg.files.map((f: string) =>
-          path.resolve(f),
-        );
+        const files: string[] = api.pkg.files;
         const entities: string[] = [];
         const errors: IDoctorReport = [];
 
