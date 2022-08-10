@@ -19,6 +19,7 @@ function replaceLib() {
     visitor: {
       ImportDeclaration: replacePath,
       ExportNamedDeclaration: replacePath,
+      ExportAllDeclaration: replacePath,
     },
   };
 }
