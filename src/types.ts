@@ -169,6 +169,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * configure autoprefixer
    */
   autoprefixer?: Autoprefixer.Options;
+
+  /**
+   * output library name
+   */
+  name?: string;
 }
 
 export interface IFatherPreBundleConfig {

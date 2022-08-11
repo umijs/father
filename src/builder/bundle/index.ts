@@ -69,6 +69,10 @@ export default async (opts: {
       chainWebpack(memo: any) {
         memo.output.libraryTarget('umd');
 
+        if (config?.name) {
+          memo.output.library(config.name);
+        }
+
         // modify webpack target
         if (config.platform === 'node') {
           memo.target('node');

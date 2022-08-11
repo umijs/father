@@ -118,6 +118,35 @@ export default {
 
 配置将源码打包为 UMD 产物，支持以下子配置项，也支持覆盖外部的公共配置项。
 
+#### name
+
+- 类型：`string`
+- 默认值：无
+
+指定 umd 包的导出 library 名称，例如：
+
+```ts
+export default {
+  umd: {
+    name: 'fatherDemo',
+  },
+};
+```
+
+默认是全量导出 member exports，需要拆解 `default` 的话，可以通过 `chainWebpack` 配置修改 `libraryExport`，例如：
+
+```ts
+export default {
+  umd: {
+    name: 'fatherDemo',
+    chainWebpack: (memo: any) => {
+      memo.output.libraryExport('default');
+      return memo;
+    },
+  },
+};
+```
+
 #### entry
 
 - 类型：`string` | `Record<string, Config>`
