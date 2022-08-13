@@ -41,17 +41,6 @@
       "prettier --parser=typescript --write"
     ]
   },
-  "prettier": {
-    "pluginSearchDirs": false,
-    "plugins": [
-      "prettier-plugin-organize-imports",
-      "prettier-plugin-packagejson"
-    ],
-    "printWidth": 80,
-    "proseWrap": "never",
-    "singleQuote": true,
-    "trailingComma": "all"
-  },
   "dependencies": {
     "@microsoft/api-extractor": "7.25.1",
     "@umijs/babel-preset-umi": "^4.0.0",
