@@ -1,6 +1,0 @@
-/src/fixtures
-/src/**/*.test.ts
-/src/**/*.e2e.ts
-/lib/**/*.test.js
-/lib/**/*.e2e.js
-/.local
