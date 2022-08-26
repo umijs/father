@@ -10,7 +10,7 @@
     "dev": "father dev",
     "build": "father build",
     "build:deps": "father prebundle",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "father doctor && npm run build"
   },
   "keywords": [],
   "authors": [{{#author}}
