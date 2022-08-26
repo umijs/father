@@ -199,6 +199,10 @@ export default {
 
 配置源码打包过程中额外的 [Autoprefixer 配置项](https://github.com/postcss/autoprefixer#options)。
 
+#### theme
+
+配置 Less 源码打包过程中要注入的 Less 变量。
+
 ### prebundle
 
 配置项目需要预打包的三方依赖，仅用于 Node.js 工具或框架项目降低安装体积、提升项目稳定性，例如 Umi 这类前端开发框架。

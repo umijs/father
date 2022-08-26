@@ -174,6 +174,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * output library name
    */
   name?: string;
+
+  /**
+   * configure less variables
+   */
+  theme?: IBundlerWebpackConfig['theme'];
 }
 
 export interface IFatherPreBundleConfig {

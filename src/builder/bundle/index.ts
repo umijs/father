@@ -38,6 +38,9 @@ export default async (opts: {
         extraPostCSSPlugins,
         postcssLoader,
 
+        // less config
+        theme: config.theme,
+
         // compatible with IE11 by default
         userConfig: {
           targets: { ie: 11 },
