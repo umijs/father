@@ -6,8 +6,8 @@ Loving father and want to get involved? Thanks!
 
 ```bash
 # Clone this repo
-$ git clone git@github.com:umijs/father-next.git
-$ cd father-next
+$ git clone git@github.com:umijs/father.git
+$ cd father
 
 # Install Dependencies
 $ pnpm i

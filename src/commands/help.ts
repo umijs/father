@@ -47,7 +47,7 @@ ${getDeps(commands)}
   );
   console.log(
     `Visit ${chalk.bold(
-      'https://github.com/umijs/father-next',
+      'https://github.com/umijs/father',
     )} to learn more about father.`,
   );
 }

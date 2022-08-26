@@ -92,7 +92,7 @@ export default async function getDeclarations(
       const sourceFile = sourceFiles![0].fileName;
 
       // only collect dts for input files, to avoid output error in watch mode
-      // ref: https://github.com/umijs/father-next/issues/43
+      // ref: https://github.com/umijs/father/issues/43
       if (inputFiles.includes(sourceFile)) {
         const ret = {
           file: path.basename(fileName),

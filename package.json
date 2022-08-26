@@ -2,11 +2,11 @@
   "name": "father",
   "version": "4.0.0",
   "description": "A bundless/bundle build tool",
-  "homepage": "https://github.com/umijs/father-next#readme",
-  "bugs": "https://github.com/umijs/father-next/issues",
+  "homepage": "https://github.com/umijs/father#readme",
+  "bugs": "https://github.com/umijs/father/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/father-next"
+    "url": "https://github.com/umijs/father"
   },
   "license": "MIT",
   "main": "dist/index.js",
