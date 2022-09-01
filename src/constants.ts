@@ -8,7 +8,7 @@ export const DEBUG_BUNDLESS_NAME = 'father:bundless';
 export const CACHE_PATH = 'node_modules/.cache/father';
 export const DEFAULT_BUNDLESS_IGNORES = [
   '**/*.md',
-  '**/*.d.ts',
+  '**/demos/**',
   '**/fixtures/**',
   '**/__{test,tests,snapshots}__/**',
   '**/*.{test,e2e,spec}.{js,jsx,ts,tsx}',
