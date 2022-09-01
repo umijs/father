@@ -23,21 +23,23 @@ export function addTransformer(item: ITransformerItem) {
  * builtin javascript loader
  */
 const jsLoader: IBundlessLoader = function (content) {
-  const isTsFile = /tsx?$/.test(this.resource);
   const transformer = transformers[this.config.transformer!];
   const outputOpts: ILoaderOutput['options'] = {};
 
-  if (isTsFile) {
-    // specific output ext
+  // specify output ext for non-js file
+  if (/\.(jsx|tsx?)$/.test(this.resource)) {
     outputOpts.ext = '.js';
-
-    if (getTsconfig(this.context!)?.options.declaration) {
-      // mark for output declaration file
-      outputOpts.declaration = true;
-    }
-
-    this.setOutputOptions(outputOpts);
   }
+
+  // mark for output declaration file
+  if (
+    /\.tsx?$/.test(this.resource) &&
+    getTsconfig(this.context!)?.options.declaration
+  ) {
+    outputOpts.declaration = true;
+  }
+
+  this.setOutputOptions(outputOpts);
 
   const ret = transformer.call(
     {
