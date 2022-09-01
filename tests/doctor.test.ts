@@ -55,6 +55,11 @@ test('doctor: error checkups', async () => {
     expect.stringContaining('Source depend on'),
   );
 
+  // PHANTOM_DEPS no standard library
+  expect(console.log).toHaveBeenCalledWith(
+    expect.not.stringContaining('child_process'),
+  );
+
   // EFFECTS_IN_SIDE_EFFECTS
   expect(console.log).toHaveBeenCalledWith(
     expect.stringContaining('styles lost'),
