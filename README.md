@@ -13,6 +13,8 @@ father 是一款 NPM 包研发工具，能够帮助开发者更高效、高质�
 
 访问 [指南](./docs/guide/index.md) 及 [配置项](./docs/config.md) 了解更多。
 
+如果你在寻找旧版 father/father-build 的文档，请切换到 [2.x 分支](https://github.com/umijs/father/tree/2.x)，推荐参考 [升级指南](./docs/guide/upgrading.md) 升级到 father 4 以获得更好的研发体验。
+
 ## 贡献指南
 
 查看 [CONTRIBUTING](./CONTRIBUTING.md) 文档。
