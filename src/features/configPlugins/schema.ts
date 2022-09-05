@@ -1,4 +1,4 @@
-import type { Root, SchemaLike } from '@umijs/core/compiled/@hapi/joi';
+import type { Root, SchemaLike } from '@umijs/utils/compiled/@hapi/joi';
 import { IFatherPlatformTypes } from '../../types';
 
 function getCommonSchemas(): Record<string, (Joi: Root) => any> {
