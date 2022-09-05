@@ -1,1 +1,1 @@
-const a = 'replaceMe';
+export const a = 'replaceMe';

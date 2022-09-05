@@ -1,2 +1,1 @@
-// @ts-ignore
-import antd from 'antd';
+console.log(require('antd'));

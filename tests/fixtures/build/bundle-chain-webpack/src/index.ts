@@ -1,2 +1,1 @@
-// @ts-ignore
-import alias from 'alias-module';
+console.log(require('alias-module'));

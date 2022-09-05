@@ -7,6 +7,12 @@ import { getBabelPresetReactOpts } from '../utils';
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
 );
+const {
+  CSSMinifier,
+  JSMinifier,
+}: typeof import('@umijs/bundler-webpack/dist/types') = importLazy(
+  require.resolve('@umijs/bundler-webpack/dist/types'),
+);
 
 export default async (opts: {
   cwd: string;
@@ -42,11 +48,10 @@ export default async (opts: {
         theme: config.theme,
 
         // compatible with IE11 by default
-        userConfig: {
-          targets: { ie: 11 },
-          jsMinifier: 'terser',
-          cssMinifier: 'cssnano',
-        },
+        targets: { ie: 11 },
+        jsMinifier: JSMinifier.terser,
+        cssMinifier: CSSMinifier.cssnano,
+        extraBabelIncludes: [/node_modules/ as any],
       },
       entry: {
         [path.parse(config.output.filename).name]: path.join(

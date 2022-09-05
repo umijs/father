@@ -1,7 +1,14 @@
 import { createConfig } from '@umijs/test';
 
+const defaultConfig = createConfig();
+
 export default {
-  ...createConfig(),
+  ...defaultConfig,
+  moduleNameMapper: {
+    ...defaultConfig.moduleNameMapper,
+    // @umijs/bundler-webpack requireHook not working for jest
+    '^webpack$': '@umijs/bundler-webpack/compiled/webpack',
+  },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!<rootDir>/src/cli/*.ts'],
   modulePathIgnorePatterns: [
     '<rootDir>/tests/fixtures/.+/compiled',
