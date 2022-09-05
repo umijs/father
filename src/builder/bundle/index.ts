@@ -51,7 +51,7 @@ export default async (opts: {
         targets: { ie: 11 },
         jsMinifier: JSMinifier.terser,
         cssMinifier: CSSMinifier.cssnano,
-        extraBabelIncludes: [/node_modules/ as any],
+        extraBabelIncludes: [/node_modules/],
       },
       entry: {
         [path.parse(config.output.filename).name]: path.join(
