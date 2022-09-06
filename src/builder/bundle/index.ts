@@ -70,6 +70,7 @@ export default async (opts: {
           pluginDynamicImportNode: false,
         },
       ],
+      beforeBabelPlugins: [require.resolve('babel-plugin-dynamic-import-node')],
       extraBabelPresets: config.extraBabelPresets,
       extraBabelPlugins: config.extraBabelPlugins,
 
