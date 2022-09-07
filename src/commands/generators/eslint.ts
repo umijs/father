@@ -16,7 +16,7 @@ export default (api: IApi) => {
     description: 'Setup Eslint Configuration',
     type: GeneratorType.enable,
     checkEnable: () => {
-      return glob.sync('.eslintrc?(.js)').length === 0;
+      return glob.sync(join(api.paths.cwd, '.eslintrc?(.js)')).length === 0;
     },
     disabledDescription:
       'Eslint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
