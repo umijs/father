@@ -31,15 +31,16 @@ export default (api: IApi) => {
       const deps = {
         '@commitlint/cli': '^17.1.2',
         '@commitlint/config-conventional': '^17.1.0',
-      } as any;
+        husky: '^8.0.1',
+      };
 
-      if (inGit) {
-        // Git hooks
-        deps['husky'] = '^8.0.1';
-        h.addScript('postinstall', 'husky install');
+      if (!inGit) {
+        logger.warn('仅 git 仓库下可用');
+        return;
       }
 
       h.addDevDeps(deps);
+      h.addScript('prepare', 'husky install');
 
       writeFileSync(
         join(api.cwd, 'commitlint.config.ts'),
