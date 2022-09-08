@@ -1,5 +1,6 @@
 import { GeneratorType } from '@umijs/core';
-import { glob, logger } from '@umijs/utils';
+import { logger } from '@umijs/utils';
+import fg from 'fast-glob';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
@@ -16,7 +17,11 @@ export default (api: IApi) => {
     description: 'Setup Eslint Configuration',
     type: GeneratorType.enable,
     checkEnable: () => {
-      return glob.sync(join(api.paths.cwd, '.eslintrc?(.js)')).length === 0;
+      return (
+        fg.sync('.eslintrc?(.js)', {
+          cwd: api.paths.cwd,
+        }).length === 0
+      );
     },
     disabledDescription:
       'Eslint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
