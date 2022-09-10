@@ -1,7 +1,8 @@
 import { GeneratorType } from '@umijs/core';
-import { getNpmClient, glob, logger } from '@umijs/utils';
-import { exec } from 'child_process';
-import { existsSync, writeFileSync } from 'fs';
+import { getNpmClient, logger } from '@umijs/utils';
+import { execSync } from 'child_process';
+import fg from 'fast-glob';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';
@@ -17,50 +18,50 @@ export default (api: IApi) => {
     description: 'Setup Commitlint Configuration',
     type: GeneratorType.enable,
     checkEnable: () => {
+      const pkg = JSON.parse(
+        readFileSync(join(api.paths.cwd, 'package.json'), 'utf-8'),
+      );
       return (
-        glob.sync('.commitlintrc?(.*)').length === 0 &&
-        glob.sync('commitlint.config.*').length === 0
+        ['.commitlintrc?(.*)', 'commitlint.config.*'].every(
+          (pattern) =>
+            fg.sync(pattern, {
+              cwd: api.paths.cwd,
+            }).length === 0,
+        ) && !pkg['commitlint']
       );
     },
     disabledDescription:
       'Commitlint has already enabled. You can remove commitlint config, then run this again to re-setup.',
     fn: async () => {
+      const inGit = existsSync(join(api.paths.cwd, '.git'));
+      if (!inGit) {
+        logger.warn('仅 git 仓库下可用');
+        return;
+      }
+
       const h = new GeneratorHelper(api);
 
-      const inGit = existsSync(join(api.paths.cwd, '.git'));
       const deps = {
         '@commitlint/cli': '^17.1.2',
         '@commitlint/config-conventional': '^17.1.0',
         husky: '^8.0.1',
       };
 
-      if (!inGit) {
-        logger.warn('仅 git 仓库下可用');
-        return;
-      }
-
       h.addDevDeps(deps);
       h.addScript('prepare', 'husky install');
 
-      writeFileSync(
-        join(api.cwd, 'commitlint.config.ts'),
-        `
-export default {
-  extends: ['@commitlint/config-conventional'],
-};
-`.trimStart(),
-      );
-
-      logger.info('Write commitlint.config.ts');
+      api.pkg['commitlint'] = {
+        extends: ['@commitlint/config-conventional'],
+      };
+      writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
+      logger.info('Update package.json for commitlint');
 
       h.installDeps();
-
-      if (inGit) {
-        const npmClient = getNpmClient({ cwd: api.cwd });
-        exec(
-          `${npmClient} husky add .husky/commit-msg '${npmClient} commitlint --edit $1'`,
-        );
-      }
+      const npmClient = getNpmClient({ cwd: api.cwd });
+      execSync(
+        `${npmClient} husky add .husky/commit-msg '${npmClient} commitlint --edit $1'`,
+      );
+      logger.info('Create a hook for commitlint');
     },
   });
 };
