@@ -89,6 +89,8 @@ describe('lint generator', () => {
     await cli.run({
       args: { _: ['g', 'commitlint'], $0: 'node' },
     });
-    expect(warnSpy.mock.calls[0][1]).toBe('仅 git 仓库下可用');
+    expect(warnSpy.mock.calls[0][1]).toBe(
+      'Only available for git project, exit',
+    );
   });
 });

@@ -35,7 +35,7 @@ export default (api: IApi) => {
     fn: async () => {
       const inGit = existsSync(join(api.paths.cwd, '.git'));
       if (!inGit) {
-        logger.warn('仅 git 仓库下可用');
+        logger.warn('Only available for git project, exit');
         return;
       }
 
