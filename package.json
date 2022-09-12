@@ -70,6 +70,7 @@
     "@umijs/test": "^4.0.17",
     "@zerollup/ts-transform-paths": "1.7.18",
     "esno": "^0.16.3",
+    "fast-glob": "^3.2.11",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.1",
     "jest": "^27",
