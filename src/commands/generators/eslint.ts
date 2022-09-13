@@ -13,8 +13,8 @@ export default (api: IApi) => {
 
   api.registerGenerator({
     key: 'eslint',
-    name: 'Enable Eslint',
-    description: 'Setup Eslint Configuration',
+    name: 'Enable ESLint',
+    description: 'Setup ESLint Configuration',
     type: GeneratorType.enable,
     checkEnable: () => {
       return (
@@ -24,7 +24,7 @@ export default (api: IApi) => {
       );
     },
     disabledDescription:
-      'Eslint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
+      'ESLint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
     fn: async () => {
       const h = new GeneratorHelper(api);
 

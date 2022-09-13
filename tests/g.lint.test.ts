@@ -53,7 +53,7 @@ describe('lint generator', () => {
         args: { _: ['g', 'eslint'], $0: 'node' },
       });
       expect(warnSpy.mock.calls[0][1]).toBe(
-        'Eslint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
+        'ESLint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
       );
     });
   });
