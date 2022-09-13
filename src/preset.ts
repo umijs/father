@@ -17,6 +17,9 @@ export default (api: IApi) => {
       require.resolve('./commands/help'),
       require.resolve('./commands/generators/jest'),
       require.resolve('./commands/generators/commitlint'),
+      require.resolve('./commands/generators/eslint'),
+      require.resolve('./commands/generators/stylelint'),
+      require.resolve('./commands/generators/lint'),
 
       // features
       require.resolve('./features/configBuilder/configBuilder'),
