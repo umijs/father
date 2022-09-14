@@ -44,11 +44,15 @@ export default async (
   opts: { config: IBundlessConfig; pkg: IApi['pkg']; cwd: string },
 ) => {
   const cache = getCache('bundless-loader');
-  // format: {path:mtime:config}
+  // format: {path:mtime:config:pkgDeps}
   const cacheKey = [
     fileAbsPath,
     fs.statSync(fileAbsPath).mtimeMs,
     JSON.stringify(opts.config),
+    // use for babel opts generator in src/builder/utils.ts
+    JSON.stringify(
+      Object.assign({}, opts.pkg.dependencies, opts.pkg.peerDependencies),
+    ),
   ].join(':');
   const cacheRet = await cache.get(cacheKey, '');
 
