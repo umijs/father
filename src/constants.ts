@@ -12,4 +12,5 @@ export const DEFAULT_BUNDLESS_IGNORES = [
   '**/fixtures/**',
   '**/__{test,tests,snapshots}__/**',
   '**/*.{test,e2e,spec}.{js,jsx,ts,tsx}',
+  '**/tsconfig.json',
 ];
