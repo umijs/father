@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "2.30.22",
+  "version": "2.30.23",
   "description": "Library toolkit based on rollup, docz, storybook, jest and eslint.",
   "homepage": "http://github.com/umijs/father",
   "bugs": "http://github.com/umijs/father/issues",
@@ -34,7 +34,7 @@
     "docz-core": "1.2.0",
     "docz-plugin-umi-css": "^0.14.1",
     "docz-theme-umi": "^2.0.0",
-    "father-build": "1.22.4",
+    "father-build": "1.22.5",
     "fs-extra": "^8.0.1",
     "gh-pages": "2.0.1",
     "lodash": "^4.17.20",
