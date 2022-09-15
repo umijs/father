@@ -25,7 +25,7 @@ father 产出的 Node.js 产物默认兼容到 Node.js v14，Browser 产物默�
 $ npx create-father my-father-project
 ```
 
-> 脚手架中仅包含最基础的配置，更多配置项及作用可以参考 [配置项文档](./config.md)。
+> 脚手架中仅包含最基础的配置，更多配置项及作用可以参考 [配置项文档](../config.md)。
 
 执行构建：
 
