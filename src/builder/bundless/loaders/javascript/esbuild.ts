@@ -44,13 +44,17 @@ function createAliasReplacer(opts: { alias: IFatherBundlessConfig['alias'] }) {
 const esbuildTransformer: IJSTransformer = async function () {
   const replacer = createAliasReplacer({ alias: this.config.alias });
 
-  const {
-    outputFiles: [result],
-  } = await build({
+  let { outputFiles } = await build({
     // do not emit file
     write: false,
     // enable bundle for trigger onResolve hook, but all deps will be externalized
     bundle: true,
+    // write false will not write file to file system，but sourcemap need this to get sources
+    outdir: path.relative(
+      this.paths.cwd,
+      path.dirname(this.paths.itemDistAbsPath),
+    ),
+    sourcemap: this.config.sourcemap && 'linked',
     logLevel: 'silent',
     format: this.config.format,
     define: this.config.define,
@@ -84,7 +88,12 @@ const esbuildTransformer: IJSTransformer = async function () {
     ],
   });
 
-  return result.text;
+  if (outputFiles.length === 2) {
+    const [map, result] = outputFiles;
+    return [result.text, map.text];
+  }
+
+  return [outputFiles[0].text];
 };
 
 export default esbuildTransformer;

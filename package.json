@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "dev": "pnpm build --watch",
+    "dev": "pnpm build --watch --sourcemap",
     "format": "prettier --write .",
     "prepare": "husky install",
     "release": "esno scripts/release.ts",

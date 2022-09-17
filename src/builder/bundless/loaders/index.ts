@@ -41,7 +41,12 @@ export function addLoader(item: ILoaderItem) {
  */
 export default async (
   fileAbsPath: string,
-  opts: { config: IBundlessConfig; pkg: IApi['pkg']; cwd: string },
+  opts: {
+    config: IBundlessConfig;
+    pkg: IApi['pkg'];
+    cwd: string;
+    itemDistAbsPath: string;
+  },
 ) => {
   const cache = getCache('bundless-loader');
   // format: {path:mtime:config}
@@ -83,6 +88,7 @@ export default async (
             cwd: opts.cwd,
             config: opts.config,
             pkg: opts.pkg,
+            itemDistAbsPath: opts.itemDistAbsPath,
             setOutputOptions(opts) {
               outputOpts = opts;
             },

@@ -15,6 +15,7 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
     autoprefixer: (Joi) => Joi.object().optional(),
     extraBabelPresets: (Joi) => Joi.array().optional(),
     extraBabelPlugins: (Joi) => Joi.array().optional(),
+    sourcemap: (Joi) => Joi.boolean().optional(),
   };
 }
 
