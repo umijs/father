@@ -52,6 +52,15 @@ father 支持以下配置项。
 
 > 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物兼容性为 ES6 而不是 IE11。
 
+### sourcemap
+
+- 类型：`boolean` | `undefined`
+- 默认值：`undefined`
+
+生成`sourcemap`文件
+
+> 注：Bundless 模式下 map 对象的 file 字段为空
+
 ## 构建配置
 
 father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 Bundless 构建模式，`umd` 产物为 Bundle 构建模式，另外依赖预打包 `prebundle` 产物也为 Bundle 构建模式。
