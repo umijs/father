@@ -1,9 +1,7 @@
 import { defineConfig } from '../../../../src';
 
 export default defineConfig({
-  esm: {
-    transformer: 'esbuild',
-  },
+  esm: {},
   cjs: {},
   umd: {},
   sourcemap: true,

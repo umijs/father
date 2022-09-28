@@ -54,10 +54,10 @@ father 支持以下配置项。
 
 ### sourcemap
 
-- 类型：`boolean` | `undefined`
-- 默认值：`undefined`
+- 类型：`boolean`
+- 默认值：`false`
 
-生成`sourcemap`文件
+为 JavaScript 构建产物生成 `sourcemap` 文件。
 
 > 注：Bundless 模式下 map 对象的 file 字段为空
 

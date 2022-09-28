@@ -7,7 +7,7 @@ export default (files: Record<string, string>) => {
     '//# sourceMappingURL=index.min.js.map',
   );
 
-  // esm transform by esbuild
+  // esm transform by babel
   expect('esm/index.js.map' in files).toBe(true);
   const map1 = JSON.parse(
     readFileSync(join(__dirname, 'dist/esm/index.js.map'), 'utf-8'),
@@ -19,7 +19,7 @@ export default (files: Record<string, string>) => {
   );
   expect(map2.sources[0]).toEqual('../../../src/utils/index.ts');
 
-  // cjs transform by babel
+  // cjs transform by esbuild
   expect('cjs/index.js.map' in files).toBe(true);
   const map3 = JSON.parse(
     readFileSync(join(__dirname, 'dist/cjs/index.js.map'), 'utf-8'),
