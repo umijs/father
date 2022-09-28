@@ -152,7 +152,7 @@ export default {
 - 类型：`boolean`
 - 默认值：`true`
 
-指定是否提取 CSS 为单独的文件，可通过设置 `extractCSS: false` 关闭
+指定是否提取 CSS 为单独的文件，可通过设置 `extractCSS: false` 关闭。
 
 #### entry
 
