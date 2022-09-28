@@ -44,6 +44,8 @@ export default async (opts: {
         extraPostCSSPlugins,
         postcssLoader,
 
+        styleLoader: config.extractCSS ?? true ? undefined : {},
+
         // less config
         theme: config.theme,
 
