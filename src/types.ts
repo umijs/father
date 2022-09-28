@@ -152,6 +152,12 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
   output?: string;
 
   /**
+   * extract CSS
+   * @default true
+   */
+  extractCSS?: boolean;
+
+  /**
    * external dependencies
    * @note  like umi externals
    */
