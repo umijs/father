@@ -69,6 +69,7 @@ async function transformFiles(
           config,
           pkg: opts.configProvider.pkg,
           cwd: opts.cwd,
+          itemDistAbsPath,
         });
 
         if (result) {
@@ -85,6 +86,13 @@ async function transformFiles(
           if (result.options.declaration) {
             // use winPath because ts compiler will convert to posix path
             declarationFileMap.set(winPath(itemAbsPath), parentPath);
+          }
+
+          if (result.options.map) {
+            const map = result.options.map;
+            const mapLoc = `${itemDistAbsPath}.map`;
+
+            fs.writeFileSync(mapLoc, map);
           }
 
           // distribute file with result

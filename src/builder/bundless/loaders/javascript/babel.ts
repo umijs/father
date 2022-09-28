@@ -18,6 +18,14 @@ function getParsedDefine(define: Record<string, string>) {
   );
 }
 
+function addSourceMappingUrl(code: string, loc: string) {
+  return (
+    code +
+    '\n//# sourceMappingURL=' +
+    path.basename(loc.replace(/\.(jsx|tsx?)$/, '.js'))
+  );
+}
+
 /**
  * babel transformer
  */
@@ -67,11 +75,17 @@ const babelTransformer: IJSTransformer = function (content) {
     };
   }
   // TODO: recommend install @babel/runtime in doctor
-
-  return transform(content, {
+  const { code, map } = transform(content, {
     filename: this.paths.fileAbsPath,
     cwd: this.paths.cwd,
     babelrc: false,
+    sourceMaps: this.config.sourcemap,
+    sourceFileName: this.config.sourcemap
+      ? path.relative(
+          path.dirname(this.paths.itemDistAbsPath),
+          this.paths.fileAbsPath,
+        )
+      : undefined,
     presets: [
       [require.resolve('@umijs/babel-preset-umi'), presetOpts],
       ...extraBabelPresets,
@@ -95,7 +109,14 @@ const babelTransformer: IJSTransformer = function (content) {
         : []),
       ...extraBabelPlugins,
     ],
-  })!.code!;
+  })!;
+  if (map) {
+    return [
+      addSourceMappingUrl(code!, this.paths.itemDistAbsPath),
+      JSON.stringify(map),
+    ];
+  }
+  return [code!];
 };
 
 export default babelTransformer;

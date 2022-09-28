@@ -39,8 +39,6 @@ const jsLoader: IBundlessLoader = function (content) {
     outputOpts.declaration = true;
   }
 
-  this.setOutputOptions(outputOpts);
-
   const ret = transformer.call(
     {
       config: this.config,
@@ -48,6 +46,7 @@ const jsLoader: IBundlessLoader = function (content) {
       paths: {
         cwd: this.cwd,
         fileAbsPath: this.resource,
+        itemDistAbsPath: this.itemDistAbsPath,
       },
     },
     content!.toString(),
@@ -58,11 +57,17 @@ const jsLoader: IBundlessLoader = function (content) {
     const cb = this.async();
 
     ret.then(
-      (r) => cb(null, r),
+      (r) => {
+        outputOpts.map = r[1];
+        this.setOutputOptions(outputOpts);
+        cb(null, r[0]);
+      },
       (e) => cb(e),
     );
   } else {
-    return ret;
+    outputOpts.map = ret[1];
+    this.setOutputOptions(outputOpts);
+    return ret[0];
   }
 };
 

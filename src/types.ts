@@ -96,6 +96,11 @@ export interface IFatherBaseConfig {
    * configure extra babel plugins
    */
   extraBabelPlugins?: IBundlerWebpackConfig['extraBabelPlugins'];
+
+  /**
+   * output sourcemap
+   */
+  sourcemap?: boolean;
 }
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {

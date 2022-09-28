@@ -37,6 +37,7 @@ export default async (opts: {
         autoprefixer: config.autoprefixer,
         chainWebpack: config.chainWebpack,
         define: config.define,
+        devtool: config.sourcemap && 'source-map',
         externals: config.externals,
         outputPath: config.output.path,
 
