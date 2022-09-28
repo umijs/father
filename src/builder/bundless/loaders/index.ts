@@ -3,6 +3,7 @@ import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
 import { getCache } from '../../../utils';
 import type { IBundlessConfig } from '../../config';
+import { getTsconfig } from '../dts';
 import type { IBundlessLoader, ILoaderOutput } from './types';
 
 /**
@@ -62,7 +63,17 @@ export default async (
   const cacheRet = await cache.get(cacheKey, '');
 
   // use cache first
-  if (cacheRet) return Promise.resolve<ILoaderOutput>(cacheRet);
+  if (cacheRet)
+    return Promise.resolve<ILoaderOutput>({
+      ...cacheRet,
+      outputOpts: {
+        ...cacheRet.outputOpts,
+        // FIXME: shit code for avoid invalid declaration value when tsconfig changed
+        declaration: /\.tsx?$/.test(fileAbsPath)
+          ? getTsconfig(opts.cwd)?.options.declaration
+          : false,
+      },
+    });
 
   // get matched loader by test
   const matched = loaders.find((item) => {
