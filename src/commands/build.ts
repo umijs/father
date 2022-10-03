@@ -15,6 +15,10 @@ export default (api: IApi) => {
         pkg: api.pkg,
         clean: args.clean,
         quiet: args.quiet,
+        buildDependencies: [
+          api.pkgPath,
+          api.service.configManager!.mainConfigFile,
+        ].filter(Boolean) as string[],
       });
     },
   });

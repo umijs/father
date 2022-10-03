@@ -17,6 +17,7 @@ const {
 export default async (opts: {
   cwd: string;
   configProvider: BundleConfigProvider;
+  buildDependencies?: string[];
 }) => {
   const enableCache = process.env.FATHER_CACHE !== 'none';
 
@@ -104,6 +105,7 @@ export default async (opts: {
       ...(enableCache
         ? {
             cache: {
+              buildDependencies: opts.buildDependencies,
               cacheDirectory: path.join(opts.cwd, CACHE_PATH, 'bundle-webpack'),
             },
           }
