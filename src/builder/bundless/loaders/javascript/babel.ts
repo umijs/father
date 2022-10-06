@@ -2,7 +2,11 @@ import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import { winPath } from '@umijs/utils';
 import path from 'path';
 import { IFatherBundlessTypes, IFatherPlatformTypes } from '../../../../types';
-import { getBabelPresetReactOpts } from '../../../utils';
+import {
+  addSourceMappingUrl,
+  ensureRelativePath,
+  getBabelPresetReactOpts,
+} from '../../../utils';
 import type { IJSTransformer } from '../types';
 
 /**
@@ -15,14 +19,6 @@ function getParsedDefine(define: Record<string, string>) {
       [name]: JSON.parse(value),
     }),
     {},
-  );
-}
-
-function addSourceMappingUrl(code: string, loc: string) {
-  return (
-    code +
-    '\n//# sourceMappingURL=' +
-    path.basename(loc.replace(/\.(jsx|tsx?)$/, '.js'))
   );
 }
 
@@ -54,11 +50,7 @@ const babelTransformer: IJSTransformer = function (content) {
     (result, [name, target]) => {
       if (path.isAbsolute(target)) {
         result[name] = winPath(path.relative(this.paths.cwd, target));
-
-        // prefix . for same-level path
-        if (!result[name].startsWith('.')) {
-          result[name] = `./${result[name]}`;
-        }
+        result[name] = ensureRelativePath(result[name]);
       } else {
         result[name] = target;
       }

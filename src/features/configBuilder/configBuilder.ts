@@ -40,6 +40,12 @@ export default async (api: IApi) => {
           '../../builder/bundless/loaders/javascript/esbuild',
         ),
       },
+      {
+        id: IFatherJSTransformerTypes.SWC,
+        transformer: require.resolve(
+          '../../builder/bundless/loaders/javascript/swc',
+        ),
+      },
     ],
   });
 
