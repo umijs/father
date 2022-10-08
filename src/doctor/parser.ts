@@ -47,6 +47,12 @@ export default async (
               };
             }
           });
+
+          // TODO: support collect imports from style style pre-processor files
+          builder.onLoad({ filter: /\.(less|scss|sass|styl)$/ }, () => {
+            // omit all style pre-processor files to avoid esbuild report no loader error
+            return { contents: '', loader: 'css' };
+          });
         },
       },
     ],
