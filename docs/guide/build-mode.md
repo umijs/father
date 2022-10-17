@@ -81,7 +81,7 @@ export default {
     └── index.min.css
 ```
 
-可以发现，在 Bundless 模式下，father 会对源码进行打包，最后输出压缩后的 JavaScript 产物和 CSS 产物。
+可以发现，在 Bundle 模式下，father 会对源码进行打包，最后输出压缩后的 JavaScript 产物和 CSS 产物。
 
 ### 如何选择
 
