@@ -1,3 +1,4 @@
+import type { BuildOptions } from '@umijs/bundler-utils/compiled/esbuild';
 import type { Compiler } from '@umijs/bundler-webpack';
 import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
@@ -86,6 +87,13 @@ export interface IFatherBaseConfig {
    * configure module resolve alias, like webpack
    */
   alias?: Record<string, string>;
+
+  /**
+   * configure esbuild
+   */
+  esbuild?: BuildOptions & {
+    aliasPlugin?: boolean;
+  };
 
   /**
    * configure extra babel presets

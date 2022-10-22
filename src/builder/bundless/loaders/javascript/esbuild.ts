@@ -1,3 +1,4 @@
+import type { Plugin } from '@umijs/bundler-utils/compiled/esbuild';
 import { build } from '@umijs/bundler-utils/compiled/esbuild';
 import { winPath } from '@umijs/utils';
 import path from 'path';
@@ -43,10 +44,36 @@ function createAliasReplacer(opts: { alias: IFatherBundlessConfig['alias'] }) {
  */
 const esbuildTransformer: IJSTransformer = async function () {
   const replacer = createAliasReplacer({ alias: this.config.alias });
+  const { aliasPlugin = true, ...extraOptions } = this.config.esbuild || {};
+  const plugins = [
+    ...(aliasPlugin
+      ? [
+          {
+            name: 'plugin-father-alias',
+            setup: (builder) => {
+              builder.onResolve({ filter: /.*/ }, (args) => {
+                if (args.kind === 'entry-point') {
+                  // skip entry point
+                  return { path: path.join(args.resolveDir, args.path) };
+                } else if (args.path.startsWith('.')) {
+                  // skip relative module
+                  return { path: args.path, external: true };
+                }
+
+                // try to replace alias to relative path
+                return {
+                  path: replacer(args.resolveDir, args.path),
+                  external: true,
+                };
+              });
+            },
+          } as Plugin,
+        ]
+      : []),
+    ...(extraOptions.plugins || []),
+  ];
 
   let { outputFiles } = await build({
-    // do not emit file
-    write: false,
     // enable bundle for trigger onResolve hook, but all deps will be externalized
     bundle: true,
     // write false will not write file to file system，but sourcemap need this to get sources
@@ -64,28 +91,10 @@ const esbuildTransformer: IJSTransformer = async function () {
     // esbuild need relative entry path
     entryPoints: [path.relative(this.paths.cwd, this.paths.fileAbsPath)],
     absWorkingDir: this.paths.cwd,
-    plugins: [
-      {
-        name: 'plugin-father-alias',
-        setup: (builder) => {
-          builder.onResolve({ filter: /.*/ }, (args) => {
-            if (args.kind === 'entry-point') {
-              // skip entry point
-              return { path: path.join(args.resolveDir, args.path) };
-            } else if (args.path.startsWith('.')) {
-              // skip relative module
-              return { path: args.path, external: true };
-            }
-
-            // try to replace alias to relative path
-            return {
-              path: replacer(args.resolveDir, args.path),
-              external: true,
-            };
-          });
-        },
-      },
-    ],
+    ...extraOptions,
+    plugins,
+    // do not emit file
+    write: false,
   });
 
   if (outputFiles.length === 2) {

@@ -13,6 +13,7 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
     alias: (Joi) => Joi.object().pattern(Joi.string(), Joi.string()).optional(),
     postcssOptions: (Joi) => Joi.object().optional(),
     autoprefixer: (Joi) => Joi.object().optional(),
+    esbuild: (Joi) => Joi.object().optional(),
     extraBabelPresets: (Joi) => Joi.array().optional(),
     extraBabelPlugins: (Joi) => Joi.array().optional(),
     sourcemap: (Joi) => Joi.boolean().optional(),
