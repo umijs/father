@@ -43,6 +43,15 @@ father 支持以下配置项。
 
 > 注：在 Bundless 模式下、且 `transformer` 为 `esbuild` 时，该配置不生效。
 
+### esbuild
+
+- 类型：`object`
+- 默认值：`<auto>`
+
+配置源码打包过程中额外的 [esbuild 配置项](https://esbuild.github.io/api/#build-api)，并将与 father 的内部 esbuild 配置合并。father 内置一个 alias 插件，可配置 `aliasPlugin: false` 禁用该插件，禁用后 `alias` 配置不生效。
+
+> 注：在 Bundle 模式或 Bundless 模式且 `transformer` 为 `babel` 时，该配置不生效。
+
 ### platform
 
 - 类型：`browser` | `node`
