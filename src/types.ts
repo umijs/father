@@ -58,6 +58,7 @@ export enum IFatherBuildTypes {
 export enum IFatherJSTransformerTypes {
   BABEL = 'babel',
   ESBUILD = 'esbuild',
+  SWC = 'swc',
 }
 
 export enum IFatherPlatformTypes {
