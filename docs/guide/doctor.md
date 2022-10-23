@@ -51,7 +51,7 @@ $ father doctor
 - 级别：警告 ⚠️
 - 说明：
 
-建议安装 `@babel/runtme` 到 `dependencies`，以节省构建产物大小。
+建议安装 `@babel/runtime` 到 `dependencies`，以节省构建产物大小。
 
 > 注：该规则仅在 `transformer` 是 `babel` 且 `platform` 是 `browser` 时生效
 
