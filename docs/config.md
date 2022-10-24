@@ -32,7 +32,7 @@ father 支持以下配置项。
 
 指定要额外挂载的 babel 插件。
 
-> 注：在 Bundless 模式下、且 `transformer` 为 `esbuild` 时，该配置不生效。
+> 注：在 Bundless 模式下、且 `transformer` 为 `esbuild` 或 `swc` 时，该配置不生效。
 
 ### extraBabelPresets
 
@@ -41,7 +41,7 @@ father 支持以下配置项。
 
 指定要额外挂载的 babel 插件集。
 
-> 注：在 Bundless 模式下、且 `transformer` 为 `esbuild` 时，该配置不生效。
+> 注：在 Bundless 模式下、且 `transformer` 为 `esbuild` 或 `swc` 时，该配置不生效。
 
 ### platform
 
@@ -88,7 +88,7 @@ father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 
 
 #### transformer
 
-- 类型：`babel` | `esbuild`
+- 类型：`babel` | `esbuild` | `swc`
 - 默认值：`<auto>`
 
 指定源码的编译工具，当 `platform` 为 `node` 时，默认值为 `esbuild`，当 `platform` 为 `browser` 时，默认值为 `babel`。
