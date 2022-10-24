@@ -59,9 +59,12 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
           path.join(outputDir, 'package.json'),
           JSON.stringify({
             name: pkg.name,
+            version: pkg.version,
             author: pkg.author,
+            authors: pkg.authors,
             contributors: pkg.contributors,
             license: pkg.license,
+            _lastModified: new Date().toISOString(),
           }),
           'utf-8',
         );
