@@ -2,7 +2,7 @@ import type { Compiler } from '@umijs/bundler-webpack';
 import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
-import type { IAdd, IServicePluginAPI, PluginAPI } from '@umijs/core';
+import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type { IBundleConfig, IBundlessConfig } from './builder/config';
 import type { IDoctorReport } from './doctor';
@@ -15,7 +15,10 @@ export type {
 } from './builder/bundless/loaders/types';
 
 export type IApi = PluginAPI &
-  IServicePluginAPI & {
+  Omit<
+    IServicePluginAPI,
+    'modifyConfig' | 'modifyDefaultConfig' | 'config' | 'userConfig'
+  > & {
     /**
      * add bundless js transformer
      */
@@ -48,6 +51,18 @@ export type IApi = PluginAPI &
       },
       IDoctorReport | IDoctorReport[0] | void
     >;
+
+    /**
+     * config modify methods definition
+     */
+    modifyConfig: IModify<Omit<IFatherConfig, 'extends'>, null>;
+    modifyDefaultConfig: IModify<Omit<IFatherConfig, 'extends'>, null>;
+
+    /**
+     * config definition
+     */
+    config: Omit<IFatherConfig, 'extends'>;
+    userConfig: IFatherConfig;
   };
 
 export enum IFatherBuildTypes {
@@ -250,4 +265,14 @@ export interface IFatherConfig extends IFatherBaseConfig {
    * deps pre-bundle config
    */
   prebundle?: IFatherPreBundleConfig;
+
+  /**
+   * extra plugins
+   */
+  plugins?: string[];
+
+  /**
+   * extra presets
+   */
+  presets?: string[];
 }

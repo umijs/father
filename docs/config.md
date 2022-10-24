@@ -271,3 +271,54 @@ export default {
 
 1. 预打包的所有目标依赖，并自动 external 到输出目录
 2. 当前项目 `package.json` 中声明的 `dependencies`
+
+## 其他配置
+
+### plugins
+
+- 类型：`string[]`
+- 默认值：`undefined`
+
+配置额外的 father 插件，可以是插件的路径或者 NPM 包名，如果是相对路径则会从项目根目录开始找。
+
+插件编写方式与 Umi 插件类似，可以在插件函数体中接收 `api` 参数来控制 father 的行为，例如写一个插件修改默认配置：
+
+```ts
+// plugin.ts
+import type { IApi } from 'father';
+
+export default (api: IApi) => {
+  api.modifyConfig((memo) => {
+    // 修改 father 配置
+    return memo;
+  });
+};
+
+// .fatherrc.ts
+import { defineConfig } from 'father';
+
+export default defineConfig({
+  plugins: ['./plugin.ts'],
+});
+```
+
+### presets
+
+- 类型：`string[]`
+- 默认值：`undefined`
+
+配置额外的 father 插件集，可以是插件集的路径或者 NPM 包名，如果是相对路径则会从项目根目录开始找。
+
+插件集的编写方式与 Umi 插件集类似，可以在插件集函数中返回插件配置，例如：
+
+```ts
+// preset.ts
+import type { IApi } from 'father';
+
+export default (api: IApi) => {
+  return {
+    presets: [require.resolve('./other-preset')],
+    plugins: [require.resolve('./plugin-a'), require.resolve('./plugin-b')],
+  };
+};
+```
