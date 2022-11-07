@@ -61,6 +61,7 @@ const esbuildTransformer: IJSTransformer = async function () {
     define: this.config.define,
     platform: this.config.platform,
     target: getBundlessTargets(this.config),
+    charset: 'utf8',
     // esbuild need relative entry path
     entryPoints: [path.relative(this.paths.cwd, this.paths.fileAbsPath)],
     absWorkingDir: this.paths.cwd,
