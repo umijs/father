@@ -26,7 +26,7 @@ father 产出的 Node.js 产物默认兼容到 Node.js v14，Browser 产物默�
 $ npx create-father my-father-project
 ```
 
-> 脚手架中仅包含最基础的配置，更多配置项及作用可以参考 [配置项文档](../config.md)。
+> 脚手架中仅包含最基础的配置，更多配置项及作用可以参考 [配置项文档](./config.md)。
 
 执行构建：
 
@@ -38,10 +38,10 @@ $ npx father build
 
 接下来，你可以查看其它文档了解 father 的更多功能：
 
-- [Bundless 与 Bundle 构建模式](./build-mode.md)
-- [构建 ESModule 和 CommonJS 产物](./esm-cjs.md)
-- [构建 UMD 产物](./umd.md)
-- [依赖预打包](./pre-bundle.md)
-- [执行项目体检](./doctor.md)
-- [开发指南](./dev.md)
-- [发布指南](./release.md)
+- [Bundless 与 Bundle 构建模式](./guide/build-mode.md)
+- [构建 ESModule 和 CommonJS 产物](./guide/esm-cjs.md)
+- [构建 UMD 产物](./guide/umd.md)
+- [依赖预打包](./guide/pre-bundle.md)
+- [执行项目体检](./guide/doctor.md)
+- [开发指南](./guide/dev.md)
+- [发布指南](./guide/release.md)
