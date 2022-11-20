@@ -4,7 +4,9 @@ import { chalk, logger, winPath } from '@umijs/utils';
 import ncc from '@vercel/ncc';
 import fs from 'fs';
 import path from 'path';
+import { IFatherPrebundleTransformerTypes } from 'src/types';
 import { getConfig } from './config';
+import { esbuildTransformer } from './esbuild';
 import { getSharedData } from './shared';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
@@ -28,47 +30,51 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
       )}`,
     );
 
-    await ncc(dep, nccConfig).then(
-      ({
-        code,
-        assets,
-      }: {
-        code: string;
-        assets: Record<string, { source: string; permissions: number }>;
-      }) => {
-        // create dist path
-        if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true });
-        }
+    if (config.transformer === IFatherPrebundleTransformerTypes.ESBUILD) {
+      await esbuildTransformer(dep, config.deps[dep]);
+    } else {
+      await ncc(dep, nccConfig).then(
+        ({
+          code,
+          assets,
+        }: {
+          code: string;
+          assets: Record<string, { source: string; permissions: number }>;
+        }) => {
+          // create dist path
+          if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+          }
 
-        // TODO: dist content validate
+          // TODO: dist content validate
 
-        // emit dist file
-        fs.writeFileSync(output, code, 'utf-8');
+          // emit dist file
+          fs.writeFileSync(output, code, 'utf-8');
 
-        // emit assets
-        Object.entries(assets).forEach(([name, item]) => {
-          fs.writeFileSync(path.join(outputDir, name), item.source, {
-            encoding: 'utf-8',
-            mode: item.permissions,
+          // emit assets
+          Object.entries(assets).forEach(([name, item]) => {
+            fs.writeFileSync(path.join(outputDir, name), item.source, {
+              encoding: 'utf-8',
+              mode: item.permissions,
+            });
           });
-        });
+        },
+      );
+    }
 
-        // emit package.json
-        fs.writeFileSync(
-          path.join(outputDir, 'package.json'),
-          JSON.stringify({
-            name: pkg.name,
-            version: pkg.version,
-            author: pkg.author,
-            authors: pkg.authors,
-            contributors: pkg.contributors,
-            license: pkg.license,
-            _lastModified: new Date().toISOString(),
-          }),
-          'utf-8',
-        );
-      },
+    // emit package.json
+    fs.writeFileSync(
+      path.join(outputDir, 'package.json'),
+      JSON.stringify({
+        name: pkg.name,
+        version: pkg.version,
+        author: pkg.author,
+        authors: pkg.authors,
+        contributors: pkg.contributors,
+        license: pkg.license,
+        _lastModified: new Date().toISOString(),
+      }),
+      'utf-8',
     );
   }
 

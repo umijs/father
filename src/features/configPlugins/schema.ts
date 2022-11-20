@@ -69,6 +69,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         extraExternals: Joi.object()
           .pattern(Joi.string(), Joi.string())
           .optional(),
+        transformer: Joi.string(),
       }),
     plugins: (Joi) => Joi.array().items(Joi.string()),
     presets: (Joi) => Joi.array().items(Joi.string()),

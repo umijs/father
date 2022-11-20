@@ -4,7 +4,11 @@ import {
 } from '@microsoft/api-extractor';
 import { winPath } from '@umijs/utils';
 import path from 'path';
-import { IApi, IFatherPreBundleConfig } from '../types';
+import {
+  IApi,
+  IFatherPreBundleConfig,
+  IFatherPrebundleTransformerTypes,
+} from '../types';
 import {
   getDepPkgPath,
   getDtsInfoForPkgPath,
@@ -12,6 +16,7 @@ import {
 } from '../utils';
 
 export interface IPreBundleConfig {
+  transformer: `${IFatherPrebundleTransformerTypes}`;
   deps: Record<string, { pkg: IApi['pkg']; output: string; nccConfig: any }>;
   dts: Record<
     string,
@@ -116,7 +121,12 @@ export function getConfig(opts: {
   ).reduce((r, dep) => ({ ...r, [dep]: dep }), {});
   const depExternals: IFatherPreBundleConfig['extraExternals'] = {};
   const dtsDepExternals: IFatherPreBundleConfig['extraExternals'] = {};
-  const config: IPreBundleConfig = { deps: {}, dts: {} };
+  const config: IPreBundleConfig = {
+    deps: {},
+    dts: {},
+    transformer:
+      opts.userConfig.transformer ?? IFatherPrebundleTransformerTypes.NCC,
+  };
   const {
     output,
     deps = [],

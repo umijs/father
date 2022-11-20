@@ -76,6 +76,11 @@ export enum IFatherJSTransformerTypes {
   SWC = 'swc',
 }
 
+export enum IFatherPrebundleTransformerTypes {
+  NCC = 'ncc',
+  ESBUILD = 'esbuild',
+}
+
 export enum IFatherPlatformTypes {
   NODE = 'node',
   BROWSER = 'browser',
@@ -229,6 +234,11 @@ export interface IFatherPreBundleConfig {
    * @note  all deps & package.json dependencies will be added to externals by default
    */
   extraExternals?: Record<string, string>;
+
+  /**
+   * specific transformer
+   */
+  transformer?: `${IFatherPrebundleTransformerTypes}`;
 }
 
 export interface IFatherConfig extends IFatherBaseConfig {
