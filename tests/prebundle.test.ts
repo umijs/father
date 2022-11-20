@@ -29,6 +29,8 @@ afterEach(() => {
 // generate cases
 const cases = getDirCases(CASES_DIR);
 
+// TODO:: esbuild transformer not support `fs.readFile(...)` assets extract...
+
 for (let name of cases) {
   test(`prebundle: ${name}`, async () => {
     // execute prebundle
@@ -37,7 +39,10 @@ for (let name of cases) {
       args: { _: ['prebundle'], $0: 'node' },
     });
 
-    const outputDir = name === 'output' ? 'modules' : 'compiled';
+    const outputDir = ['output', 'esbuild-output'].includes(name)
+      ? 'modules'
+      : 'compiled';
+
     // prepare file map
     const fileMap = distToMap(path.join(CASES_DIR, name, outputDir));
 
