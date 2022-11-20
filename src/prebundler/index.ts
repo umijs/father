@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import { IFatherPrebundleTransformerTypes } from 'src/types';
 import { getConfig } from './config';
-import { esbuildTransformer } from './esbuild';
 import { getSharedData } from './shared';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
@@ -31,6 +30,9 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
     );
 
     if (config.transformer === IFatherPrebundleTransformerTypes.ESBUILD) {
+      const {
+        esbuildTransformer,
+      }: typeof import('./esbuild') = require('./esbuild');
       await esbuildTransformer(dep, config.deps[dep]);
     } else {
       await ncc(dep, nccConfig).then(
