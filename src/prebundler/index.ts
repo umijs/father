@@ -4,7 +4,7 @@ import { chalk, logger, winPath } from '@umijs/utils';
 import ncc from '@vercel/ncc';
 import fs from 'fs';
 import path from 'path';
-import { IFatherPrebundleTransformerTypes } from 'src/types';
+import { IFatherPrebundleTransformerTypes } from '../types';
 import { getConfig } from './config';
 import { getSharedData } from './shared';
 
