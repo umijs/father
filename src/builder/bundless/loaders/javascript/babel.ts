@@ -36,7 +36,9 @@ const babelTransformer: IJSTransformer = function (content) {
   const presetOpts: any = {
     presetEnv: {
       targets:
-        this.config.platform === IFatherPlatformTypes.BROWSER
+        typeof this.config.targets === 'object'
+          ? this.config.targets
+          : this.config.platform === IFatherPlatformTypes.BROWSER
           ? { ie: 11 }
           : { node: 14 },
       modules: this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',

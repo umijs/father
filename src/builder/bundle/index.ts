@@ -52,7 +52,7 @@ export default async (opts: {
         theme: config.theme,
 
         // compatible with IE11 by default
-        targets: { ie: 11 },
+        targets: config.targets || { ie: 11 },
         jsMinifier: JSMinifier.terser,
         cssMinifier: CSSMinifier.cssnano,
         extraBabelIncludes: [/node_modules/],
@@ -66,7 +66,9 @@ export default async (opts: {
       babelPreset: [
         require.resolve('@umijs/babel-preset-umi'),
         {
-          presetEnv: {},
+          presetEnv: {
+            targets: config.targets || { ie: 11 },
+          },
           presetReact: getBabelPresetReactOpts(opts.configProvider.pkg),
           presetTypeScript: {},
           pluginTransformRuntime: {},

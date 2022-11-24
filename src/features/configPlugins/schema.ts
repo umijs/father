@@ -37,6 +37,7 @@ function getBundlessSchemas(Joi: Root) {
     transformer: Joi.string(),
     overrides: Joi.object(),
     ignores: Joi.array().items(Joi.string()),
+    targets: Joi.alternatives().try(Joi.object(), Joi.string()).optional(),
   });
 }
 
@@ -58,6 +59,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         extractCSS: Joi.boolean().optional(),
         name: Joi.string().optional(),
         theme: Joi.object().pattern(Joi.string(), Joi.string()),
+        targets: Joi.object().optional(),
       }),
     prebundle: (Joi) =>
       Joi.object({

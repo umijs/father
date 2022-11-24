@@ -48,9 +48,9 @@ father 支持以下配置项。
 - 类型：`browser` | `node`
 - 默认值：`<auto>`
 
-指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认兼容至 Node.js v14，兼容性不支持配置。
+指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认默认兼容至 Node.js v14。
 
-> 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物兼容性为 ES6 而不是 IE11。
+> 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物默认兼容性为 ES6 而不是 IE11。
 
 ### sourcemap
 
@@ -92,6 +92,22 @@ father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 
 - 默认值：`<auto>`
 
 指定源码的编译工具，当 `platform` 为 `node` 时，默认值为 `esbuild`，当 `platform` 为 `browser` 时，默认值为 `babel`。
+
+#### targets
+
+- 类型: `string` | `object`
+- 默认值：`undefined`
+
+指定源码编译产物的兼容性，目前仅支持 `babel` 和 `esbuild` 编译模式。以下是 `platform` 和 `transformer` 设置为不同值时传递的属性值示例
+
+| `platform` | `transformer` | `targets` example |
+| ---------- | ------------- | ----------------- |
+| `browser`  | `babel`       | `{ chrome: 80 }`  |
+| `browser`  | `esbuild`     | `es2017`          |
+| `browser`  | `swc`         | --                |
+| `node`     | `babel`       | `{ node: 14 }`    |
+| `node`     | `esbuild`     | `node14`          |
+| `node`     | `swc`         | --                |
 
 #### overrides
 
@@ -189,6 +205,13 @@ export default {
 - 默认值：`dist/umd`
 
 指定产物的输出目录，输出文件名暂不支持配置，单 `entry` 时默认以 NPM 包名命名、多 `entry` 时默认与源码文件同名。
+
+#### targets
+
+- 类型: `object`
+- 默认值: `undefined`
+
+指定产物的兼容性，覆盖默认的 `{ ie: 11 }`
 
 #### externals
 

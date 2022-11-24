@@ -149,6 +149,15 @@ export interface IFatherBundlessConfig extends IFatherBaseConfig {
    * ignore specific directories & files via ignore syntax
    */
   ignores?: string[];
+
+  /**
+   * bundless compile targets
+   * - browser:
+   *    - esbuild: es6, es2017, etc.
+   *    - babel: { chrome: 80, ... }
+   * - node: node14, node16, etc.
+   */
+  targets?: Record<string, string | number> | string;
 }
 
 export interface IFatherBundleConfig extends IFatherBaseConfig {
@@ -206,6 +215,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * configure less variables
    */
   theme?: IBundlerWebpackConfig['theme'];
+
+  /**
+   * bundle compile targets
+   */
+  targets?: Record<string, string | number>;
 }
 
 export interface IFatherPreBundleConfig {
