@@ -1,5 +1,5 @@
 import type { Root, SchemaLike } from '@umijs/utils/compiled/@hapi/joi';
-import { IFatherPlatformTypes } from '../../types';
+import { IFatherJSTransformerTypes, IFatherPlatformTypes } from '../../types';
 
 function getCommonSchemas(): Record<string, (Joi: Root) => any> {
   return {
@@ -34,10 +34,32 @@ function getBundlessSchemas(Joi: Root) {
     ...getCommonSchemasJoi(Joi),
     input: Joi.string(),
     output: Joi.string(),
-    transformer: Joi.string(),
+    transformer: Joi.equal(
+      IFatherJSTransformerTypes.BABEL,
+      IFatherJSTransformerTypes.ESBUILD,
+      IFatherJSTransformerTypes.SWC,
+    ).optional(),
     overrides: Joi.object(),
     ignores: Joi.array().items(Joi.string()),
-    targets: Joi.alternatives().try(Joi.object(), Joi.string()).optional(),
+    targets: Joi.alternatives().conditional('transformer', {
+      switch: [
+        {
+          is: IFatherJSTransformerTypes.BABEL,
+          then: Joi.object(),
+        },
+        {
+          is: IFatherJSTransformerTypes.ESBUILD,
+          then: Joi.alternatives().try(
+            Joi.string(),
+            Joi.array().items(Joi.string()),
+          ),
+        },
+        {
+          is: IFatherJSTransformerTypes.SWC,
+          then: Joi.string(),
+        },
+      ],
+    }),
   });
 }
 

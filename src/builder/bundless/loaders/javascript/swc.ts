@@ -143,7 +143,9 @@ const swcTransformer: IJSTransformer = async function (content) {
         ...(!isTSFile && isJSXFile ? { jsx: true } : {}),
       },
       target:
-        this.config.platform === IFatherPlatformTypes.BROWSER
+        typeof this.config.targets === 'string'
+          ? (this.config.targets as any)
+          : this.config.platform === IFatherPlatformTypes.BROWSER
           ? 'es5'
           : 'es2019',
       transform: {

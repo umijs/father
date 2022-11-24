@@ -60,7 +60,8 @@ const esbuildTransformer: IJSTransformer = async function () {
     define: this.config.define,
     platform: this.config.platform,
     target:
-      typeof this.config.targets === 'string'
+      typeof this.config.targets === 'string' ||
+      Array.isArray(this.config.targets)
         ? this.config.targets
         : this.config.platform === IFatherPlatformTypes.NODE
         ? 'node14'

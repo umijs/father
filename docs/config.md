@@ -95,19 +95,16 @@ father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 
 
 #### targets
 
-- 类型: `string` | `object`
+- 类型: `string` | `string[]` | `object`
 - 默认值：`undefined`
 
-指定源码编译产物的兼容性，目前仅支持 `babel` 和 `esbuild` 编译模式。以下是 `platform` 和 `transformer` 设置为不同值时传递的属性值示例
+指定源码编译产物的兼容性，不同编译模式的类型不同，以下是 `transformer` 设置为不同值时传递的属性值示例
 
-| `platform` | `transformer` | `targets` example |
-| ---------- | ------------- | ----------------- |
-| `browser`  | `babel`       | `{ chrome: 80 }`  |
-| `browser`  | `esbuild`     | `es2017`          |
-| `browser`  | `swc`         | --                |
-| `node`     | `babel`       | `{ node: 14 }`    |
-| `node`     | `esbuild`     | `node14`          |
-| `node`     | `swc`         | --                |
+| `transformer` | `targets` example        |
+| ------------- | ------------------------ |
+| `babel`       | `{ chrome: 80 }`         |
+| `esbuild`     | `es2017` or `['es2017']` |
+| `swc`         | `es2017`                 |
 
 #### overrides
 
@@ -211,7 +208,7 @@ export default {
 - 类型: `object`
 - 默认值: `undefined`
 
-指定产物的兼容性，覆盖默认的 `{ ie: 11 }`
+指定 umd 产物的兼容性，覆盖默认的 `{ ie: 11 }`
 
 #### externals
 
