@@ -48,7 +48,7 @@ father 支持以下配置项。
 - 类型：`browser` | `node`
 - 默认值：`<auto>`
 
-指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认默认兼容至 Node.js v14。
+指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认兼容至 Node.js v14。
 
 > 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物默认兼容性为 ES6 而不是 IE11。
 
