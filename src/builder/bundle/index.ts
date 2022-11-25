@@ -2,7 +2,7 @@ import { chalk, importLazy, logger } from '@umijs/utils';
 import path from 'path';
 import { CACHE_PATH } from '../../constants';
 import type { BundleConfigProvider } from '../config';
-import { getBabelPresetReactOpts } from '../utils';
+import { getBabelPresetReactOpts, getBundleTargets } from '../utils';
 
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
@@ -52,7 +52,7 @@ export default async (opts: {
         theme: config.theme,
 
         // compatible with IE11 by default
-        targets: config.targets || { ie: 11 },
+        targets: getBundleTargets(config),
         jsMinifier: JSMinifier.terser,
         cssMinifier: CSSMinifier.cssnano,
         extraBabelIncludes: [/node_modules/],
@@ -67,7 +67,7 @@ export default async (opts: {
         require.resolve('@umijs/babel-preset-umi'),
         {
           presetEnv: {
-            targets: config.targets || { ie: 11 },
+            targets: getBundleTargets(config),
           },
           presetReact: getBabelPresetReactOpts(opts.configProvider.pkg),
           presetTypeScript: {},

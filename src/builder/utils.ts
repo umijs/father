@@ -2,6 +2,7 @@ import { semver } from '@umijs/utils';
 import path from 'path';
 import {
   IApi,
+  IFatherBaseConfig,
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
@@ -68,6 +69,23 @@ export function ensureRelativePath(relativePath: string) {
   return relativePath;
 }
 
+// transfer string to object, for babel preset targets
+const normalizeBabelTargets = (targets?: IFatherBaseConfig['targets']) => {
+  if (!targets) return undefined;
+
+  const targetList = typeof targets === 'string' ? [targets] : targets;
+  return targetList.reduce((prev, curr) => {
+    const [, key, value] = /^([a-z_-]+)(\d+)$/i.exec(curr) || ([] as string[]);
+    return { ...prev, [key]: +value || 0 };
+  }, {} as Record<string, number>);
+};
+
+export function getBundleTargets(
+  config: IFatherBaseConfig,
+): Record<string, number> {
+  return normalizeBabelTargets(config.targets) || { ie: 11 };
+}
+
 const defaultBundlessTargets: Record<
   IFatherPlatformTypes,
   Record<IFatherJSTransformerTypes, any>
@@ -97,19 +115,19 @@ export function getBundlessTargets(config: IBundlessConfig) {
         : IFatherJSTransformerTypes.ESBUILD;
   }
 
-  // targets is undefined
-  if (!targets) {
+  // targets is undefined or empty
+  if (!targets || !targets.length) {
     return defaultBundlessTargets[platform][transformer];
   }
 
+  // swc accept only one target
   if (transformer === 'swc') {
-    if (typeof targets === 'string') return targets;
+    return typeof targets === 'string' ? targets : targets[0];
   }
+  // esbuild accept string or string[]
   if (transformer === 'esbuild') {
-    if (typeof targets === 'string' || Array.isArray(targets)) return targets;
+    return targets;
   }
-  if (typeof targets === 'object') return targets;
-
-  // targets if invalid, fallback to default
-  return defaultBundlessTargets[platform][transformer];
+  // babel accept object
+  return normalizeBabelTargets(targets);
 }

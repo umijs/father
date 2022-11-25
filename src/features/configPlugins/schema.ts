@@ -16,6 +16,8 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
     extraBabelPresets: (Joi) => Joi.array().optional(),
     extraBabelPlugins: (Joi) => Joi.array().optional(),
     sourcemap: (Joi) => Joi.boolean().optional(),
+    targets: (Joi) =>
+      Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())),
   };
 }
 
@@ -41,25 +43,6 @@ function getBundlessSchemas(Joi: Root) {
     ).optional(),
     overrides: Joi.object(),
     ignores: Joi.array().items(Joi.string()),
-    targets: Joi.alternatives().conditional('transformer', {
-      switch: [
-        {
-          is: IFatherJSTransformerTypes.BABEL,
-          then: Joi.object(),
-        },
-        {
-          is: IFatherJSTransformerTypes.ESBUILD,
-          then: Joi.alternatives().try(
-            Joi.string(),
-            Joi.array().items(Joi.string()),
-          ),
-        },
-        {
-          is: IFatherJSTransformerTypes.SWC,
-          then: Joi.string(),
-        },
-      ],
-    }),
   });
 }
 
@@ -81,7 +64,6 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         extractCSS: Joi.boolean().optional(),
         name: Joi.string().optional(),
         theme: Joi.object().pattern(Joi.string(), Joi.string()),
-        targets: Joi.object().optional(),
       }),
     prebundle: (Joi) =>
       Joi.object({

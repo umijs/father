@@ -1,4 +1,3 @@
-import type { JscTarget } from '@swc/core';
 import type { Compiler } from '@umijs/bundler-webpack';
 import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
@@ -118,12 +117,14 @@ export interface IFatherBaseConfig {
    * output sourcemap
    */
   sourcemap?: boolean;
+
+  /**
+   * compile targets
+   */
+  targets?: string | string[];
 }
 
-export type IFatherBundlessConfig = IFatherBundlessBaseConfig &
-  IFatherBundlessExtendConfig;
-
-interface IFatherBundlessBaseConfig extends IFatherBaseConfig {
+export interface IFatherBundlessConfig extends IFatherBaseConfig {
   /**
    * source code directory
    * @default src
@@ -154,32 +155,6 @@ interface IFatherBundlessBaseConfig extends IFatherBaseConfig {
    */
   ignores?: string[];
 }
-
-type IFatherBundlessExtendConfig =
-  | {
-      transformer: `${IFatherJSTransformerTypes.ESBUILD}`;
-      /**
-       * Documentation: https://esbuild.github.io/api/#target
-       * @default 'es6' for browser platform, 'node14' for node platform
-       */
-      targets?: string | string[];
-    }
-  | {
-      transformer: `${IFatherJSTransformerTypes.SWC}`;
-      /**
-       * swc compile targets
-       * @default 'es5' for browser platform, 'es2019' for node platform
-       */
-      targets?: JscTarget;
-    }
-  | {
-      transformer?: `${IFatherJSTransformerTypes.BABEL}`;
-      /**
-       * babel compile targets
-       * @default `{ ie: 11 }` for browser platform, `{ node: 14 }` for node platform
-       */
-      targets?: Record<string, string | number>;
-    };
 
 export interface IFatherBundleConfig extends IFatherBaseConfig {
   /**
@@ -236,11 +211,6 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * configure less variables
    */
   theme?: IBundlerWebpackConfig['theme'];
-
-  /**
-   * bundle compile targets
-   */
-  targets?: Record<string, string | number>;
 }
 
 export interface IFatherPreBundleConfig {

@@ -61,6 +61,25 @@ father 支持以下配置项。
 
 > 注：Bundless 模式下 map 对象的 file 字段为空
 
+### targets
+
+- 类型: `string` | `string[]`
+- 默认值：`<auto>`
+
+指定源码编译产物的兼容性，不同编译模式和目标平台的传值略有区别：
+
+| `transformer` | example                              |
+| ------------- | ------------------------------------ |
+| `babel`       | `chrome85`, `['chrome85', 'node14']` |
+| `esbuild`     | `es2017`, `['es2017', 'chrome85']`   |
+| `swc`         | `es2017`, `es5`                      |
+
+> 注：
+>
+> 1. `babel` 编译模式下仅支持传容器版本，例如 `chrome85`, `ie11`, `node14` 等，不支持 `es2015` 等语言版本；
+> 2. `swc` 编译模式下仅支持语言版本，如 `es2017`, `es5` 等，不支持容器版本，且仅支持单个值，如果传入数组，则只取第一个；
+> 3. `umd` 构建产物仅支持 `babel` 编译模式，即只能传容器版本
+
 ## 构建配置
 
 father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 Bundless 构建模式，`umd` 产物为 Bundle 构建模式，另外依赖预打包 `prebundle` 产物也为 Bundle 构建模式。
@@ -92,19 +111,6 @@ father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 
 - 默认值：`<auto>`
 
 指定源码的编译工具，当 `platform` 为 `node` 时，默认值为 `esbuild`，当 `platform` 为 `browser` 时，默认值为 `babel`。
-
-#### targets
-
-- 类型: `string` | `string[]` | `object`
-- 默认值：`undefined`
-
-指定源码编译产物的兼容性，不同编译模式的类型不同，以下是 `transformer` 设置为不同值时传递的属性值示例
-
-| `transformer` | `targets` example        |
-| ------------- | ------------------------ |
-| `babel`       | `{ chrome: 80 }`         |
-| `esbuild`     | `es2017` or `['es2017']` |
-| `swc`         | `es2017`                 |
 
 #### overrides
 
@@ -202,13 +208,6 @@ export default {
 - 默认值：`dist/umd`
 
 指定产物的输出目录，输出文件名暂不支持配置，单 `entry` 时默认以 NPM 包名命名、多 `entry` 时默认与源码文件同名。
-
-#### targets
-
-- 类型: `object`
-- 默认值: `undefined`
-
-指定 umd 产物的兼容性，覆盖默认的 `{ ie: 11 }`
 
 #### externals
 
