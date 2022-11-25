@@ -1,6 +1,11 @@
 import { semver } from '@umijs/utils';
 import path from 'path';
-import { IApi } from '../types';
+import {
+  IApi,
+  IFatherJSTransformerTypes,
+  IFatherPlatformTypes,
+} from '../types';
+import type { IBundlessConfig } from './config';
 
 export function addSourceMappingUrl(code: string, loc: string) {
   return (
@@ -61,4 +66,50 @@ export function ensureRelativePath(relativePath: string) {
     relativePath = `./${relativePath}`;
   }
   return relativePath;
+}
+
+const defaultBundlessTargets: Record<
+  IFatherPlatformTypes,
+  Record<IFatherJSTransformerTypes, any>
+> = {
+  [IFatherPlatformTypes.BROWSER]: {
+    babel: { ie: 11 },
+    esbuild: 'es6',
+    swc: 'es5',
+  },
+  [IFatherPlatformTypes.NODE]: {
+    babel: { node: 14 },
+    esbuild: 'node14',
+    swc: 'es2019',
+  },
+};
+
+export function getBundlessTargets(config: IBundlessConfig) {
+  let {
+    platform = IFatherPlatformTypes.BROWSER,
+    transformer,
+    targets,
+  } = config;
+  if (!transformer) {
+    transformer =
+      platform === IFatherPlatformTypes.BROWSER
+        ? IFatherJSTransformerTypes.BABEL
+        : IFatherJSTransformerTypes.ESBUILD;
+  }
+
+  // targets is undefined
+  if (!targets) {
+    return defaultBundlessTargets[platform][transformer];
+  }
+
+  if (transformer === 'swc') {
+    if (typeof targets === 'string') return targets;
+  }
+  if (transformer === 'esbuild') {
+    if (typeof targets === 'string' || Array.isArray(targets)) return targets;
+  }
+  if (typeof targets === 'object') return targets;
+
+  // targets if invalid, fallback to default
+  return defaultBundlessTargets[platform][transformer];
 }

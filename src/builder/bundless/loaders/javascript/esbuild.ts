@@ -1,7 +1,8 @@
 import { build } from '@umijs/bundler-utils/compiled/esbuild';
 import { winPath } from '@umijs/utils';
 import path from 'path';
-import { IFatherBundlessConfig, IFatherPlatformTypes } from '../../../../types';
+import { IFatherBundlessConfig } from '../../../../types';
+import { getBundlessTargets } from '../../../utils';
 import type { IJSTransformer } from '../types';
 
 /**
@@ -59,13 +60,7 @@ const esbuildTransformer: IJSTransformer = async function () {
     format: this.config.format,
     define: this.config.define,
     platform: this.config.platform,
-    target:
-      typeof this.config.targets === 'string' ||
-      Array.isArray(this.config.targets)
-        ? this.config.targets
-        : this.config.platform === IFatherPlatformTypes.NODE
-        ? 'node14'
-        : 'es6',
+    target: getBundlessTargets(this.config),
     // esbuild need relative entry path
     entryPoints: [path.relative(this.paths.cwd, this.paths.fileAbsPath)],
     absWorkingDir: this.paths.cwd,

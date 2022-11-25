@@ -1,14 +1,11 @@
 import { winPath } from '@umijs/utils';
 import { lstatSync } from 'fs';
 import path from 'path';
-import {
-  IFatherBundlessConfig,
-  IFatherBundlessTypes,
-  IFatherPlatformTypes,
-} from '../../../../types';
+import { IFatherBundlessConfig, IFatherBundlessTypes } from '../../../../types';
 import {
   addSourceMappingUrl,
   ensureRelativePath,
+  getBundlessTargets,
   getSWCTransformReactOpts,
 } from '../../../utils';
 import { IJSTransformer } from '../types';
@@ -142,12 +139,7 @@ const swcTransformer: IJSTransformer = async function (content) {
         ...(isTSFile && isJSXFile ? { tsx: true } : {}),
         ...(!isTSFile && isJSXFile ? { jsx: true } : {}),
       },
-      target:
-        typeof this.config.targets === 'string'
-          ? (this.config.targets as any)
-          : this.config.platform === IFatherPlatformTypes.BROWSER
-          ? 'es5'
-          : 'es2019',
+      target: getBundlessTargets(this.config),
       transform: {
         react: getSWCTransformReactOpts(this.pkg),
       },
