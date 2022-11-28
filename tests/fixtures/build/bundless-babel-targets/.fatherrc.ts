@@ -1,10 +1,10 @@
 export default {
   cjs: {
     transformer: 'babel',
-    targets: 'chrome85',
+    targets: { chrome: 85 },
   },
   esm: {
     transformer: 'babel',
-    targets: ['ie11', 'chrome60'],
+    targets: { ie: 11, chrome: 60 },
   },
 };

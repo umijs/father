@@ -16,8 +16,7 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
     extraBabelPresets: (Joi) => Joi.array().optional(),
     extraBabelPlugins: (Joi) => Joi.array().optional(),
     sourcemap: (Joi) => Joi.boolean().optional(),
-    targets: (Joi) =>
-      Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())),
+    targets: (Joi) => Joi.object().optional(),
   };
 }
 

@@ -121,7 +121,7 @@ export interface IFatherBaseConfig {
   /**
    * compile targets
    */
-  targets?: string | string[];
+  targets?: Record<string, number>;
 }
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {

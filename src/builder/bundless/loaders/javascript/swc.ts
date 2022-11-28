@@ -130,6 +130,9 @@ const swcTransformer: IJSTransformer = async function (content) {
         )
       : undefined,
     sourceMaps: this.config.sourcemap,
+    env: {
+      targets: getBundlessTargets(this.config),
+    },
 
     jsc: {
       baseUrl: this.paths.cwd,
@@ -139,7 +142,6 @@ const swcTransformer: IJSTransformer = async function (content) {
         ...(isTSFile && isJSXFile ? { tsx: true } : {}),
         ...(!isTSFile && isJSXFile ? { jsx: true } : {}),
       },
-      target: getBundlessTargets(this.config),
       transform: {
         react: getSWCTransformReactOpts(this.pkg),
       },

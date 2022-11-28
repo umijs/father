@@ -63,22 +63,19 @@ father 支持以下配置项。
 
 ### targets
 
-- 类型: `string` | `string[]`
+- 类型: `Record<string, number>`
 - 默认值：`<auto>`
 
-指定源码编译产物的兼容性，不同编译模式和目标平台的传值略有区别：
+指定源码编译产物的兼容性，不同目标平台和编译模式下的默认值如下：
 
-| `transformer` | example                              |
-| ------------- | ------------------------------------ |
-| `babel`       | `chrome85`, `['chrome85', 'node14']` |
-| `esbuild`     | `es2017`, `['es2017', 'chrome85']`   |
-| `swc`         | `es2017`, `es5`                      |
-
-> 注：
->
-> 1. `babel` 编译模式下仅支持传容器版本，例如 `chrome85`, `ie11`, `node14` 等，不支持 `es2015` 等语言版本；
-> 2. `swc` 编译模式下仅支持语言版本，如 `es2017`, `es5` 等，不支持容器版本，且仅支持单个值，如果传入数组，则只取第一个；
-> 3. `umd` 构建产物仅支持 `babel` 编译模式，即只能传容器版本
+| `platform` | `transformer` | default value    |
+| ---------- | ------------- | ---------------- |
+| `browser`  | `babel`       | `{ ie: 11 }`     |
+| `browser`  | `esbuild`     | `{ chrome: 65 }` |
+| `browser`  | `swc`         | `{ chrome: 65 }` |
+| `node`     | `babel`       | `{ node: 14 }`   |
+| `node`     | `esbuild`     | `{ node: 14 }`   |
+| `node`     | `babel`       | `{ node: 14 }`   |
 
 ## 构建配置
 

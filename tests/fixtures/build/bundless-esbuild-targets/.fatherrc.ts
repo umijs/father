@@ -2,10 +2,10 @@ export default {
   targets: 'es6',
   cjs: {
     transformer: 'esbuild',
-    targets: ['es2017', 'chrome85'],
+    targets: { chrome: 85 },
   },
   esm: {
     transformer: 'esbuild',
-    // targets: 'es6',
+    targets: { chrome: 45 },
   },
 };

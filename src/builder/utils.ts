@@ -69,38 +69,31 @@ export function ensureRelativePath(relativePath: string) {
   return relativePath;
 }
 
-// transfer string to object, for babel preset targets
-const normalizeBabelTargets = (targets?: IFatherBaseConfig['targets']) => {
-  if (!targets) return undefined;
-
-  const targetList = typeof targets === 'string' ? [targets] : targets;
-  return targetList.reduce((prev, curr) => {
-    const [, key, value] = /^([a-z_-]+)(\d+)$/i.exec(curr) || ([] as string[]);
-    return { ...prev, [key]: +value || 0 };
-  }, {} as Record<string, number>);
-};
-
-export function getBundleTargets(
-  config: IFatherBaseConfig,
-): Record<string, number> {
-  return normalizeBabelTargets(config.targets) || { ie: 11 };
-}
-
-const defaultBundlessTargets: Record<
+const defaultCompileTarget: Record<
   IFatherPlatformTypes,
   Record<IFatherJSTransformerTypes, any>
 > = {
   [IFatherPlatformTypes.BROWSER]: {
-    babel: { ie: 11 },
-    esbuild: 'es6',
-    swc: 'es5',
+    [IFatherJSTransformerTypes.BABEL]: { ie: 11 },
+    [IFatherJSTransformerTypes.ESBUILD]: ['chrome65'],
+    [IFatherJSTransformerTypes.SWC]: { chrome: 65 },
   },
   [IFatherPlatformTypes.NODE]: {
-    babel: { node: 14 },
-    esbuild: 'node14',
-    swc: 'es2019',
+    [IFatherJSTransformerTypes.BABEL]: { node: 14 },
+    [IFatherJSTransformerTypes.ESBUILD]: ['node14'],
+    [IFatherJSTransformerTypes.SWC]: { node: 14 },
   },
 };
+
+export function getBundleTargets({ targets }: IFatherBaseConfig) {
+  if (!targets || !Object.keys(targets).length) {
+    return defaultCompileTarget[IFatherPlatformTypes.BROWSER][
+      IFatherJSTransformerTypes.BABEL
+    ];
+  }
+
+  return targets;
+}
 
 export function getBundlessTargets(config: IBundlessConfig) {
   let {
@@ -115,19 +108,14 @@ export function getBundlessTargets(config: IBundlessConfig) {
         : IFatherJSTransformerTypes.ESBUILD;
   }
 
-  // targets is undefined or empty
-  if (!targets || !targets.length) {
-    return defaultBundlessTargets[platform][transformer];
-  }
-
-  // swc accept only one target
-  if (transformer === 'swc') {
-    return typeof targets === 'string' ? targets : targets[0];
+  // targets is undefined or empty, fallback to default
+  if (!targets || !Object.keys(targets).length) {
+    return defaultCompileTarget[platform][transformer];
   }
   // esbuild accept string or string[]
-  if (transformer === 'esbuild') {
-    return targets;
+  if (transformer === IFatherJSTransformerTypes.ESBUILD) {
+    return Object.keys(targets).map((name) => `${name}${targets![name]}`);
   }
-  // babel accept object
-  return normalizeBabelTargets(targets);
+
+  return targets;
 }

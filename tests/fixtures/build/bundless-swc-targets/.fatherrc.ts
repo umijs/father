@@ -1,10 +1,10 @@
 export default {
   cjs: {
     transformer: 'swc',
-    targets: 'es2017',
+    targets: { chrome: 85 },
   },
   esm: {
     transformer: 'swc',
-    targets: 'es5',
+    targets: { ie: 11 },
   },
 };
