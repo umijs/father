@@ -9,6 +9,8 @@ export default (files: Record<string, string>) => {
 
   // esm transform by babel
   expect('esm/index.js.map' in files).toBe(true);
+  expect(files['esm/index.js']).toContain('//# sourceMappingURL=index.js.map');
+
   const map1 = JSON.parse(
     readFileSync(join(__dirname, 'dist/esm/index.js.map'), 'utf-8'),
   );
@@ -21,6 +23,7 @@ export default (files: Record<string, string>) => {
 
   // cjs transform by esbuild
   expect('cjs/index.js.map' in files).toBe(true);
+  expect(files['cjs/index.js']).toContain('//# sourceMappingURL=index.js.map');
   const map3 = JSON.parse(
     readFileSync(join(__dirname, 'dist/cjs/index.js.map'), 'utf-8'),
   );
