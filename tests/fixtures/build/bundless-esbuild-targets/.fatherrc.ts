@@ -6,6 +6,6 @@ export default {
   },
   esm: {
     transformer: 'esbuild',
-    targets: { chrome: 45 },
+    targets: { chrome: 54 },
   },
 };
