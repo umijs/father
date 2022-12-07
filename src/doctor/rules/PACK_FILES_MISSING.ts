@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import path from 'path';
 import type { IDoctorReport } from '..';
 import type { IApi } from '../../types';
@@ -14,10 +15,14 @@ export default (api: IApi) => {
         bundleConfigs.forEach((c) => entities.push(c.output.path));
         bundlessConfigs.forEach((c) => entities.push(c.output));
         Object.values(preBundleConfig.deps).forEach((c) =>
-          entities.push(path.basename(c.output)),
+          entities.push(
+            winPath(path.relative(api.cwd, path.dirname(c.output))),
+          ),
         );
         Object.values(preBundleConfig.dts).forEach((c) =>
-          entities.push(path.basename(c.output)),
+          entities.push(
+            winPath(path.relative(api.cwd, path.basename(c.output))),
+          ),
         );
 
         // TODO: main/module entities

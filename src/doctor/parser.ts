@@ -56,7 +56,9 @@ export default async (
 
           // omit non-js files(such as svg), to avoid throw error
           builder.onLoad(
-            { filter: /.(svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot|mp3|mp4)$/ },
+            {
+              filter: /.(svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot|mp3|mp4|tpl)$/,
+            },
             () => {
               return { contents: '', loader: 'text' };
             },
