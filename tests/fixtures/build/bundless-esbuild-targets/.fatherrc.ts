@@ -1,5 +1,5 @@
 export default {
-  targets: 'es6',
+  targets: { chrome: 70 },
   cjs: {
     transformer: 'esbuild',
     targets: { chrome: 85 },
