@@ -96,21 +96,11 @@ export function getBundleTargets({ targets }: IFatherBaseConfig) {
 }
 
 export function getBundlessTargets(config: IBundlessConfig) {
-  let {
-    platform = IFatherPlatformTypes.BROWSER,
-    transformer,
-    targets,
-  } = config;
-  if (!transformer) {
-    transformer =
-      platform === IFatherPlatformTypes.BROWSER
-        ? IFatherJSTransformerTypes.BABEL
-        : IFatherJSTransformerTypes.ESBUILD;
-  }
+  const { platform, transformer, targets } = config;
 
   // targets is undefined or empty, fallback to default
   if (!targets || !Object.keys(targets).length) {
-    return defaultCompileTarget[platform][transformer];
+    return defaultCompileTarget[platform!][transformer!];
   }
   // esbuild accept string or string[]
   if (transformer === IFatherJSTransformerTypes.ESBUILD) {
