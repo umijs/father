@@ -334,6 +334,7 @@ export class BundlessConfigProvider extends ConfigProvider {
     });
   }
 
+  // TODO 这里匹配有问题，会先匹配到全局的，例如 src/async 会被 src/** 匹配到
   getConfigForFile(filePath: string) {
     return this.configs[this.matchers.findIndex((m) => m.match(filePath))];
   }

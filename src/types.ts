@@ -117,6 +117,11 @@ export interface IFatherBaseConfig {
    * output sourcemap
    */
   sourcemap?: boolean;
+
+  /**
+   * compile targets
+   */
+  targets?: Record<string, number>;
 }
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {

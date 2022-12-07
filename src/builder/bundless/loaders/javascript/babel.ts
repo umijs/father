@@ -1,11 +1,12 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import { winPath } from '@umijs/utils';
 import path from 'path';
-import { IFatherBundlessTypes, IFatherPlatformTypes } from '../../../../types';
+import { IFatherBundlessTypes } from '../../../../types';
 import {
   addSourceMappingUrl,
   ensureRelativePath,
   getBabelPresetReactOpts,
+  getBundlessTargets,
 } from '../../../utils';
 import type { IJSTransformer } from '../types';
 
@@ -35,10 +36,7 @@ const babelTransformer: IJSTransformer = function (content) {
   // TODO: correct optional in umi types and replace any here
   const presetOpts: any = {
     presetEnv: {
-      targets:
-        this.config.platform === IFatherPlatformTypes.BROWSER
-          ? { ie: 11 }
-          : { node: 14 },
+      targets: getBundlessTargets(this.config),
       modules: this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
     },
     presetReact: getBabelPresetReactOpts(this.pkg),

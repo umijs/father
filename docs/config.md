@@ -48,9 +48,9 @@ father 支持以下配置项。
 - 类型：`browser` | `node`
 - 默认值：`<auto>`
 
-指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认兼容至 Node.js v14，兼容性不支持配置。
+指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认兼容至 Node.js v14。
 
-> 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物兼容性为 ES6 而不是 IE11。
+> 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物默认兼容性为 Chrome65 而不是 IE11。
 
 ### sourcemap
 
@@ -60,6 +60,22 @@ father 支持以下配置项。
 为 JavaScript 构建产物生成 `sourcemap` 文件。
 
 > 注：Bundless 模式下 map 对象的 file 字段为空
+
+### targets
+
+- 类型: `Record<string, number>`
+- 默认值：`<auto>`
+
+指定源码编译产物的兼容性，不同目标平台和编译模式下的默认值如下：
+
+| `platform` | `transformer` | default value    |
+| ---------- | ------------- | ---------------- |
+| `browser`  | `babel`       | `{ ie: 11 }`     |
+| `browser`  | `esbuild`     | `{ chrome: 65 }` |
+| `browser`  | `swc`         | `{ chrome: 65 }` |
+| `node`     | `babel`       | `{ node: 14 }`   |
+| `node`     | `esbuild`     | `{ node: 14 }`   |
+| `node`     | `babel`       | `{ node: 14 }`   |
 
 ## 构建配置
 

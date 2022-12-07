@@ -1,6 +1,12 @@
 import { semver } from '@umijs/utils';
 import path from 'path';
-import { IApi } from '../types';
+import {
+  IApi,
+  IFatherBaseConfig,
+  IFatherJSTransformerTypes,
+  IFatherPlatformTypes,
+} from '../types';
+import type { IBundlessConfig } from './config';
 
 export function addSourceMappingUrl(code: string, loc: string) {
   return (
@@ -61,4 +67,45 @@ export function ensureRelativePath(relativePath: string) {
     relativePath = `./${relativePath}`;
   }
   return relativePath;
+}
+
+const defaultCompileTarget: Record<
+  IFatherPlatformTypes,
+  Record<IFatherJSTransformerTypes, any>
+> = {
+  [IFatherPlatformTypes.BROWSER]: {
+    [IFatherJSTransformerTypes.BABEL]: { ie: 11 },
+    [IFatherJSTransformerTypes.ESBUILD]: ['chrome65'],
+    [IFatherJSTransformerTypes.SWC]: { chrome: 65 },
+  },
+  [IFatherPlatformTypes.NODE]: {
+    [IFatherJSTransformerTypes.BABEL]: { node: 14 },
+    [IFatherJSTransformerTypes.ESBUILD]: ['node14'],
+    [IFatherJSTransformerTypes.SWC]: { node: 14 },
+  },
+};
+
+export function getBundleTargets({ targets }: IFatherBaseConfig) {
+  if (!targets || !Object.keys(targets).length) {
+    return defaultCompileTarget[IFatherPlatformTypes.BROWSER][
+      IFatherJSTransformerTypes.BABEL
+    ];
+  }
+
+  return targets;
+}
+
+export function getBundlessTargets(config: IBundlessConfig) {
+  const { platform, transformer, targets } = config;
+
+  // targets is undefined or empty, fallback to default
+  if (!targets || !Object.keys(targets).length) {
+    return defaultCompileTarget[platform!][transformer!];
+  }
+  // esbuild accept string or string[]
+  if (transformer === IFatherJSTransformerTypes.ESBUILD) {
+    return Object.keys(targets).map((name) => `${name}${targets![name]}`);
+  }
+
+  return targets;
 }
