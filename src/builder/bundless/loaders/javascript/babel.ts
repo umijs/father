@@ -39,7 +39,10 @@ const babelTransformer: IJSTransformer = function (content) {
       targets: getBundlessTargets(this.config),
       modules: this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
     },
-    presetReact: getBabelPresetReactOpts(this.pkg),
+    presetReact: getBabelPresetReactOpts(
+      this.pkg,
+      path.dirname(this.paths.fileAbsPath),
+    ),
     presetTypeScript: {},
   };
 
@@ -68,7 +71,6 @@ const babelTransformer: IJSTransformer = function (content) {
       version: this.pkg.dependencies?.['@babel/runtime'],
     };
   }
-  // TODO: recommend install @babel/runtime in doctor
   const { code, map } = transform(content, {
     filename: this.paths.fileAbsPath,
     cwd: this.paths.cwd,

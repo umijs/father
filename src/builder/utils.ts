@@ -6,6 +6,7 @@ import {
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
+import { getTsconfig } from './bundless/dts';
 import type { IBundlessConfig } from './config';
 
 export function addSourceMappingUrl(code: string, loc: string) {
@@ -16,16 +17,7 @@ export function addSourceMappingUrl(code: string, loc: string) {
   );
 }
 
-export function getIsLTRReact17(pkg: IApi['pkg']) {
-  const reactVer = Object.assign(
-    {},
-    pkg.dependencies,
-    pkg.peerDependencies,
-  ).react;
-  return semver.subset(reactVer, '>=17.0.0-0');
-}
-
-export function getBaseTransformReactOpts(pkg: IApi['pkg']) {
+export function getBaseTransformReactOpts(pkg: IApi['pkg'], cwd: string) {
   const reactVer = Object.assign(
     {},
     pkg.dependencies,
@@ -34,30 +26,44 @@ export function getBaseTransformReactOpts(pkg: IApi['pkg']) {
   let opts: Record<string, any> = {};
 
   if (reactVer) {
-    const isLTRReact17 = getIsLTRReact17(pkg);
+    let isNewJSX: boolean;
+    const tsconfig = getTsconfig(cwd);
+
+    // istanbul-ignore-else
+    if (tsconfig) {
+      // respect tsconfig first, `4` means `react-jsx`
+      isNewJSX = tsconfig.options?.jsx === 4;
+    } else {
+      // fallback to match react versions which support new JSX transform
+      // ref: https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#how-to-upgrade-to-the-new-jsx-transform
+      isNewJSX = semver.subset(
+        reactVer,
+        '>=17.0.0-0||^16.14.0||^15.7.0||^0.14.10',
+      );
+    }
 
     opts = {
       // force use production mode, to make sure dist of dev/build are consistent
       // ref: https://github.com/umijs/umi/blob/6f63435d42f8ef7110f73dcf33809e6cda750332/packages/babel-preset-umi/src/index.ts#L45
       development: false,
-      // use legacy jsx runtime for react@<17
-      runtime: isLTRReact17 ? 'automatic' : 'classic',
-      ...(isLTRReact17 ? {} : { importSource: undefined }),
+      // set jsx runtime automatically
+      runtime: isNewJSX ? 'automatic' : 'classic',
+      ...(isNewJSX ? {} : { importSource: undefined }),
     };
   }
 
   return opts;
 }
 
-export function getBabelPresetReactOpts(pkg: IApi['pkg']) {
+export function getBabelPresetReactOpts(pkg: IApi['pkg'], cwd: string) {
   return {
-    ...getBaseTransformReactOpts(pkg),
+    ...getBaseTransformReactOpts(pkg, cwd),
   };
 }
 
-export function getSWCTransformReactOpts(pkg: IApi['pkg']) {
+export function getSWCTransformReactOpts(pkg: IApi['pkg'], cwd: string) {
   return {
-    ...getBaseTransformReactOpts(pkg),
+    ...getBaseTransformReactOpts(pkg, cwd),
   };
 }
 

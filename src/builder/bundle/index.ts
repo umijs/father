@@ -69,7 +69,10 @@ export default async (opts: {
           presetEnv: {
             targets: getBundleTargets(config),
           },
-          presetReact: getBabelPresetReactOpts(opts.configProvider.pkg),
+          presetReact: getBabelPresetReactOpts(
+            opts.configProvider.pkg,
+            opts.cwd,
+          ),
           presetTypeScript: {},
           pluginTransformRuntime: {},
           pluginLockCoreJS: {},
