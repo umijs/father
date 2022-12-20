@@ -143,7 +143,10 @@ const swcTransformer: IJSTransformer = async function (content) {
         ...(!isTSFile && isJSXFile ? { jsx: true } : {}),
       },
       transform: {
-        react: getSWCTransformReactOpts(this.pkg),
+        react: getSWCTransformReactOpts(
+          this.pkg,
+          path.dirname(this.paths.fileAbsPath),
+        ),
       },
     },
     module: {
