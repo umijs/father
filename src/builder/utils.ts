@@ -30,7 +30,7 @@ export function getBaseTransformReactOpts(pkg: IApi['pkg'], cwd: string) {
     const tsconfig = getTsconfig(cwd);
 
     /* istanbul ignore else -- @preserve */
-    if (tsconfig) {
+    if (tsconfig?.options?.jsx !== undefined) {
       // respect tsconfig first, `4` means `react-jsx`
       isNewJSX = tsconfig.options?.jsx === 4;
     } else {
