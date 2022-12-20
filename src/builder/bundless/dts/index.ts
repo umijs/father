@@ -40,7 +40,7 @@ export default async function getDeclarations(
 
   if (tsconfig) {
     // check tsconfig error
-    /* istanbul ignore if -- @preserve */
+    // istanbul-ignore-if
     if (tsconfig.errors.length) {
       throw new Error(
         `Error parsing tsconfig.json content: ${chalk.redBright(
@@ -131,7 +131,7 @@ export default async function getDeclarations(
     });
 
     // check compile error
-    /* istanbul ignore if -- @preserve */
+    // istanbul-ignore-if
     if (result.diagnostics.length) {
       result.diagnostics.forEach((d) => {
         const loc = ts.getLineAndCharacterOfPosition(d.file!, d.start!);
