@@ -68,8 +68,6 @@ export default defineConfig({
 -   file: 'xxx',
     # 已废弃，统一生成 min 版本
 -   minFile: true,
-    # 暂不支持，有特殊需要可走 chainWebpack 配置
--   sourcemap: true,
   },
   # 已废弃，不支持配置
 - cssModules: true,
@@ -85,8 +83,9 @@ export default defineConfig({
 - nodeVersion: 14,
   # 已废弃，改为约定式，只要 dependencies 里包含 @babel/runtime 则默认为 true
 - runtimeHelpers: true,
-  # 已废弃，默认提取 CSS 为单独文件，有特殊需要可走 chainWebpack 配置
+  # 仅 umd 构建支持，改用 umd: { extractCSS: boolean }，默认值为 true
 - extractCSS: true,
+  # 已废弃，和 extractCSS 作用重复
 - injectCSS: true,
   # 已废弃，不再关心 monorepo
 - pkgFilter: {},
@@ -160,7 +159,7 @@ export default defineConfig({
 
 ### precommit
 
-不再内置，未来将通过 `father g lint`、`father g commitlint` 等命令来生成各类提交预检查脚本。
+不再内置，可通过 `father g lint`、`father g commitlint` 等命令生成各类提交预检查脚本。
 
 ## 升级验证
 
