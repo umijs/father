@@ -75,7 +75,7 @@ father 支持以下配置项。
 | `browser`  | `swc`         | `{ chrome: 65 }` |
 | `node`     | `babel`       | `{ node: 14 }`   |
 | `node`     | `esbuild`     | `{ node: 14 }`   |
-| `node`     | `babel`       | `{ node: 14 }`   |
+| `node`     | `swc`         | `{ node: 14 }`   |
 
 ## 构建配置
 
@@ -164,7 +164,7 @@ export default {
 export default {
   umd: {
     name: 'fatherDemo',
-    chainWebpack: (memo: any) => {
+    chainWebpack: (memo) => {
       memo.output.libraryExport('default');
       return memo;
     },
@@ -234,6 +234,12 @@ export default {
 #### theme
 
 配置 Less 源码打包过程中要注入的 Less 变量。
+
+```ts
+export default {
+  theme: { 'primary-color': '#1890ff' },
+}
+```
 
 ### prebundle
 
