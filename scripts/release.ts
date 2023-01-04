@@ -155,5 +155,5 @@ async function upgradeUmijsDeps() {
   });
   fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf-8');
   logger.info(`upgrade umijs deps to ^${latestVersion}`);
-  $`pnpm i`;
+  await $`pnpm i`;
 }
