@@ -47,28 +47,9 @@ export default async (
               };
             }
           });
-
-          // TODO: support collect imports from style style pre-processor files
-          builder.onLoad({ filter: /\.(less|scss|sass|styl)$/ }, () => {
-            // omit all style pre-processor files to avoid esbuild report no loader error
-            return { contents: '', loader: 'css' };
-          });
-
-          // omit non-js files(such as svg), to avoid throw error
-          builder.onLoad(
-            {
-              filter: /.(svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot|mp3|mp4|tpl)$/,
-            },
-            () => {
-              return { contents: '', loader: 'text' };
-            },
-          );
         },
       },
     ],
-    supported: {
-      'regexp-lookbehind-assertions': true,
-    },
   });
 
   cache.set(cacheKey, ret);

@@ -127,6 +127,10 @@ export default async (api: IApi): Promise<IDoctorReport> => {
   const importsReport: IDoctorReport = [];
 
   for (const file of sourceFiles) {
+    // skip non-javascript files
+    // TODO: support collect imports from style style pre-processor files
+    if (!/\.(j|t)sx?$/.test(file)) continue;
+
     importsReport.push(
       ...(await api.applyPlugins({
         key: 'addImportsCheckup',
