@@ -207,43 +207,51 @@ async function bundless(
       .on('unlink', (rltFilePath) => {
         const isTsFile = /\.tsx?$/.test(rltFilePath);
         const config = opts.configProvider.getConfigForFile(rltFilePath);
-        const fileDistAbsPath = path.join(
-          opts.cwd,
-          config.output!,
-          path.relative(config.input, rltFilePath),
-        );
-        // TODO: collect real emit files
-        const relatedFiles = isTsFile
-          ? [
-              replacePathExt(fileDistAbsPath, '.js'),
-              replacePathExt(fileDistAbsPath, '.d.ts'),
-              replacePathExt(fileDistAbsPath, '.d.ts.map'),
-            ]
-          : [fileDistAbsPath];
-        const relatedMainFile = relatedFiles.find((item) =>
-          fs.existsSync(item),
-        );
 
-        if (relatedMainFile) {
-          relatedFiles.forEach((file) => rimraf.sync(file));
-          logger.event(
-            `Bundless ${chalk.gray(
-              path.relative(opts.cwd, relatedMainFile),
-            )} is removed`,
+        // no config means it was ignored in current compile-time
+        // such as esm file in cjs compile-time
+        if (config) {
+          const fileDistAbsPath = path.join(
+            opts.cwd,
+            config.output!,
+            path.relative(config.input, rltFilePath),
           );
+          // TODO: collect real emit files
+          const relatedFiles = isTsFile
+            ? [
+                replacePathExt(fileDistAbsPath, '.js'),
+                replacePathExt(fileDistAbsPath, '.d.ts'),
+                replacePathExt(fileDistAbsPath, '.d.ts.map'),
+              ]
+            : [fileDistAbsPath];
+          const relatedMainFile = relatedFiles.find((item) =>
+            fs.existsSync(item),
+          );
+
+          if (relatedMainFile) {
+            relatedFiles.forEach((file) => rimraf.sync(file));
+            logger.event(
+              `Bundless ${chalk.gray(
+                path.relative(opts.cwd, relatedMainFile),
+              )} is removed`,
+            );
+          }
         }
       })
       .on('unlinkDir', (rltDirPath: string) => {
         const config = opts.configProvider.getConfigForFile(rltDirPath);
-        const dirDistAbsPath = path.join(
-          opts.cwd,
-          config.output!,
-          path.relative(config.input, rltDirPath),
-        );
 
-        if (fs.existsSync(dirDistAbsPath)) {
-          rimraf.sync(dirDistAbsPath);
+        // no config means it was ignored in current compile-time
+        // such as esm file in cjs compile-time
+        if (config) {
+          const dirDistAbsPath = path.join(
+            opts.cwd,
+            config.output!,
+            path.relative(config.input, rltDirPath),
+          );
+
           // there are file removal logs above, so we don't need to log here
+          rimraf.sync(dirDistAbsPath);
         }
       });
 
