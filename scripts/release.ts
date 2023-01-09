@@ -47,6 +47,9 @@ const noNextTagPkgs = ['boilerplate'];
     }),
   );
 
+  // upgrade umijs deps
+  await upgradeUmijsDeps();
+
   // clean
   logger.event('clean');
   pkgs.forEach((pkg) => {
@@ -136,3 +139,21 @@ const noNextTagPkgs = ['boilerplate'];
   );
   $.verbose = true;
 })();
+
+async function upgradeUmijsDeps() {
+  const pkgPath = join(__dirname, '../package.json');
+  const pkg = require(pkgPath);
+  const latestVersion: string = (
+    await fetch(`https://registry.npmjs.com/umi/latest`).then((res) =>
+      res.json(),
+    )
+  ).version;
+  Object.keys(pkg.dependencies).forEach((name) => {
+    if (name.startsWith('@umijs/')) {
+      pkg.dependencies[name] = `^${latestVersion}`;
+    }
+  });
+  fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf-8');
+  logger.info(`upgrade umijs deps to ^${latestVersion}`);
+  await $`pnpm i`;
+}
