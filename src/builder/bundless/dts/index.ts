@@ -50,9 +50,10 @@ export default async function getDeclarations(
     }
 
     // warn if noEmit is false
-    if (tsconfig.options.declaration && tsconfig.options.noEmit === false) {
+    // istanbul-ignore-if
+    if (tsconfig.options.declaration && tsconfig.options.noEmit === true) {
       logger.warn(
-        'tsconfig.json `noEmit` is false, will not emit declaration files!',
+        'tsconfig.json `noEmit` is true, will not emit declaration files!',
       );
 
       return output;
