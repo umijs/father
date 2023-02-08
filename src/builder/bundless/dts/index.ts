@@ -40,13 +40,23 @@ export default async function getDeclarations(
 
   if (tsconfig) {
     // check tsconfig error
-    // istanbul-ignore-if
+    /* istanbul ignore if -- @preserve */
     if (tsconfig.errors.length) {
       throw new Error(
         `Error parsing tsconfig.json content: ${chalk.redBright(
           ts.flattenDiagnosticMessageText(tsconfig.errors[0].messageText, '\n'),
         )}`,
       );
+    }
+
+    // warn if noEmit is false
+    /* istanbul ignore if -- @preserve */
+    if (tsconfig.options.declaration && tsconfig.options.noEmit === true) {
+      logger.warn(
+        'tsconfig.json `noEmit` is true, will not emit declaration files!',
+      );
+
+      return output;
     }
 
     // enable declarationMap by default in development mode
