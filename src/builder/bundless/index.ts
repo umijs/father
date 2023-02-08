@@ -185,25 +185,27 @@ async function bundless(
     // watching for watch mode
     logger.event(`Start watching ${opts.configProvider.input} directory...`);
 
+    // debounce transform to combine multiple changes
+    const handleTransform = (() => {
+      const pendingSet = new Set<string>();
+      const startTransform = lodash.debounce(() => {
+        transformFiles([...pendingSet], opts);
+        pendingSet.clear();
+      }, WATCH_DEBOUNCE_STEP);
+
+      return (filePath: string) => {
+        pendingSet.add(filePath);
+        startTransform();
+      };
+    })();
     const watcher = chokidar
       .watch(opts.configProvider.input, {
         cwd: opts.cwd,
         ignoreInitial: true,
         ignored: DEFAULT_BUNDLESS_IGNORES,
       })
-      .on('add', (rltFilePath) => {
-        transformFiles([rltFilePath], opts);
-      })
-      .on(
-        'change',
-        lodash.debounce(
-          (filePath: string) => {
-            transformFiles([filePath], opts);
-          },
-          WATCH_DEBOUNCE_STEP,
-          { leading: true, trailing: false },
-        ),
-      )
+      .on('add', handleTransform)
+      .on('change', handleTransform)
       .on('unlink', (rltFilePath) => {
         const isTsFile = /\.tsx?$/.test(rltFilePath);
         const config = opts.configProvider.getConfigForFile(rltFilePath);
