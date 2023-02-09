@@ -71,7 +71,6 @@
     "@types/minimatch": "3.0.5",
     "@types/node": "^18.0.0",
     "@umijs/test": "^4.0.17",
-    "@zerollup/ts-transform-paths": "1.7.18",
     "esno": "^0.16.3",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.1",
