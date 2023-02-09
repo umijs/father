@@ -42,7 +42,7 @@
     ]
   },
   "dependencies": {
-    "@microsoft/api-extractor": "7.29.5",
+    "@microsoft/api-extractor": "7.34.3",
     "@umijs/babel-preset-umi": "^4.0.42",
     "@umijs/bundler-utils": "^4.0.42",
     "@umijs/bundler-webpack": "^4.0.42",
@@ -58,7 +58,8 @@
     "loader-runner": "4.2.0",
     "minimatch": "3.1.2",
     "tsconfig-paths": "4.0.0",
-    "typescript": "~4.7.4",
+    "typescript": "~4.8.4",
+    "typescript-transform-paths": "3.4.6",
     "v8-compile-cache": "2.3.0"
   },
   "devDependencies": {
@@ -70,7 +71,6 @@
     "@types/minimatch": "3.0.5",
     "@types/node": "^18.0.0",
     "@umijs/test": "^4.0.17",
-    "@zerollup/ts-transform-paths": "1.7.18",
     "esno": "^0.16.3",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.1",
