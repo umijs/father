@@ -1,8 +1,7 @@
 import { chalk, logger, winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
-// @ts-ignore
-import tsPathsTransformer from '../../../../compiled/@zerollup/ts-transform-paths';
+import tsPathsTransformer from 'typescript-transform-paths';
 import { getCache } from '../../../utils';
 
 /**
@@ -127,7 +126,9 @@ export default async function getDeclarations(
     // reason: https://github.com/microsoft/TypeScript/issues/30952
     // ref: https://www.npmjs.com/package/@zerollup/ts-transform-paths
     const result = program.emit(undefined, undefined, undefined, true, {
-      afterDeclarations: [tsPathsTransformer(program).afterDeclarations],
+      afterDeclarations: [
+        tsPathsTransformer(program, { afterDeclarations: true }),
+      ],
     });
 
     // check compile error
