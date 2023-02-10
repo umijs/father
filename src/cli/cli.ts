@@ -31,6 +31,9 @@ export async function run(_opts?: IOpts) {
 
   if (command === DEV_COMMAND) {
     process.env.NODE_ENV = 'development';
+    // handle ctrl+c and exit with 0, to avoid pnpm exit with error
+    /* istanbul ignore next -- @preserve */
+    process.on('SIGINT', () => process.exit(0));
   } else if (BUILD_COMMANDS.includes(command)) {
     process.env.NODE_ENV = 'production';
   }
