@@ -1,8 +1,9 @@
-import { chalk, importLazy, logger } from '@umijs/utils';
+import { chalk, importLazy } from '@umijs/utils';
 import path from 'path';
 import { CACHE_PATH } from '../../constants';
 import type { BundleConfigProvider } from '../config';
 import { getBabelPresetReactOpts, getBundleTargets } from '../utils';
+import { logger } from '../../utils';
 
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),

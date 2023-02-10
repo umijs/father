@@ -1,11 +1,7 @@
-import {
-  getNpmClient,
-  installWithNpmClient,
-  logger,
-  prompts,
-} from '@umijs/utils';
+import { getNpmClient, installWithNpmClient, prompts } from '@umijs/utils';
 import { writeFileSync } from 'fs';
 import { IApi } from '../../types';
+import { logger } from '../../utils';
 
 export class GeneratorHelper {
   constructor(readonly api: IApi) {}
@@ -17,14 +13,14 @@ export class GeneratorHelper {
       ...deps,
     };
     writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Write package.json');
+    logger.quietExpect.info('Write package.json');
   }
 
   addScript(name: string, cmd: string) {
     const { api } = this;
     this.addScriptToPkg(name, cmd);
     writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Update package.json for scripts');
+    logger.quietExpect.info('Update package.json for scripts');
   }
 
   private addScriptToPkg(name: string, cmd: string) {
@@ -48,7 +44,7 @@ export class GeneratorHelper {
     installWithNpmClient({
       npmClient,
     });
-    logger.info(`Install dependencies with ${npmClient}`);
+    logger.quietExpect.info(`Install dependencies with ${npmClient}`);
   }
 }
 

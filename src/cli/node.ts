@@ -1,4 +1,4 @@
-import { logger } from '@umijs/utils';
+import { logger } from '../utils';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { FRAMEWORK_NAME, MIN_NODE_VERSION } from '../constants';

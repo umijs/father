@@ -14,7 +14,6 @@ export default (api: IApi) => {
         cwd: api.cwd,
         pkg: api.pkg,
         clean: args.clean,
-        quiet: args.quiet,
         buildDependencies: [
           api.pkgPath,
           api.service.configManager!.mainConfigFile,

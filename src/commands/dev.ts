@@ -1,7 +1,7 @@
-import { logger } from '@umijs/utils';
 import builder from '../builder';
 import { DEV_COMMAND } from '../constants';
 import type { IApi } from '../types';
+import { logger } from '../utils';
 
 export default (api: IApi) => {
   api.registerCommand({
@@ -13,7 +13,6 @@ export default (api: IApi) => {
         cwd: api.cwd,
         pkg: api.pkg,
         watch: true,
-        quiet: args.quiet,
       });
 
       // handle config change

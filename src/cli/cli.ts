@@ -1,6 +1,7 @@
-import { deepmerge, logger, yParser } from '@umijs/utils';
+import { deepmerge, yParser } from '@umijs/utils';
 import { BUILD_COMMANDS, DEV_COMMAND } from '../constants';
 import { Service } from '../service/service';
+import { logger } from '../utils';
 import {
   checkLocal,
   checkVersion as checkNodeVersion,
@@ -37,6 +38,9 @@ export async function run(_opts?: IOpts) {
   } else if (BUILD_COMMANDS.includes(command)) {
     process.env.NODE_ENV = 'production';
   }
+
+  // set quiet mode for logger
+  if (args.quiet) logger.setQuiet(args.quiet);
 
   try {
     const service = new Service();

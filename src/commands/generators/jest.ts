@@ -1,5 +1,5 @@
 import { GeneratorType } from '@umijs/core';
-import { logger } from '@umijs/utils';
+import { logger } from '../../utils';
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
@@ -60,7 +60,7 @@ export default (api: IApi) => {
           `import '@testing-library/jest-dom';
           `.trimStart(),
         );
-        logger.info('Write jest-setup.ts');
+        logger.quietExpect.info('Write jest-setup.ts');
       }
 
       const collectCoverageFrom = ['src/**/*.{ts,js,tsx,jsx}'];
@@ -92,7 +92,7 @@ export default {
 `.trimStart(),
       );
 
-      logger.info('Write jest.config.ts');
+      logger.quietExpect.info('Write jest.config.ts');
 
       h.installDeps();
     },
