@@ -1,7 +1,7 @@
 import { chokidar, rimraf } from '@umijs/utils';
 import path from 'path';
 import { IApi, IFatherConfig } from '../types';
-import bundle from './bundle';
+import bundle, { type IBundleWatcher } from './bundle';
 import bundless from './bundless';
 import { createConfigProviders } from './config';
 import { logger } from '../utils';
@@ -53,7 +53,7 @@ async function builder(
     opts.cwd,
   );
   const outputs = getProviderOutputs(configProviders);
-  const watchers: chokidar.FSWatcher[] = [];
+  const watchers: (chokidar.FSWatcher | IBundleWatcher)[] = [];
 
   if (opts.clean !== false) {
     // clean output directories
@@ -63,12 +63,15 @@ async function builder(
     });
   }
 
-  if (!opts.watch && configProviders.bundle) {
-    await bundle({
+  if (configProviders.bundle) {
+    const watcher = await bundle({
       cwd: opts.cwd,
       configProvider: configProviders.bundle,
       buildDependencies: opts.buildDependencies,
+      watch: opts.watch,
     });
+
+    opts.watch && watchers.push(watcher);
   }
 
   if (configProviders.bundless.esm) {

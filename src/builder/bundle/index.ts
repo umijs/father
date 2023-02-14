@@ -1,4 +1,5 @@
-import { chalk, importLazy } from '@umijs/utils';
+import type { webpack } from '@umijs/bundler-webpack';
+import { chalk, importLazy, lodash } from '@umijs/utils';
 import path from 'path';
 import { CACHE_PATH } from '../../constants';
 import type { BundleConfigProvider } from '../config';
@@ -15,25 +16,41 @@ const {
   require.resolve('@umijs/bundler-webpack/dist/types'),
 );
 
-export default async (opts: {
+export interface IBundleWatcher {
+  close: () => void;
+}
+
+interface IBundlessOpts {
   cwd: string;
   configProvider: BundleConfigProvider;
   buildDependencies?: string[];
-}) => {
+  watch?: boolean;
+}
+
+function bundless(opts: Omit<IBundlessOpts, 'watch'>): Promise<void>;
+function bundless(opts: IBundlessOpts): Promise<IBundleWatcher>;
+async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
+  const closeHandlers: webpack.Watching['close'][] = [];
 
   for (const config of opts.configProvider.configs) {
-    logger.info(
-      `Bundle from ${chalk.yellow(config.entry)} to ${chalk.yellow(
-        path.join(config.output.path, config.output.filename),
-      )}`,
-    );
-
     const { plugins: extraPostCSSPlugins, ...postcssLoader } =
       config.postcssOptions || {};
+    // workaround for combine continuous onBuildComplete log in watch mode
+    const logStatus = lodash.debounce(
+      () =>
+        logger.info(
+          `Bundle from ${chalk.yellow(config.entry)} to ${chalk.yellow(
+            path.join(config.output.path, config.output.filename),
+          )}`,
+        ),
+      100,
+      { leading: true, trailing: false },
+    );
 
     await bundler.build({
       cwd: opts.cwd,
+      watch: opts.watch,
       config: {
         alias: config.alias,
         autoprefixer: config.autoprefixer,
@@ -104,6 +121,9 @@ export default async (opts: {
           });
         }
 
+        // disable progress bar
+        memo.plugins.delete('progress-plugin');
+
         return memo;
       },
 
@@ -116,6 +136,30 @@ export default async (opts: {
             },
           }
         : {}),
+
+      // collect close handlers for watch mode
+      ...(opts.watch
+        ? {
+            onBuildComplete({ isFirstCompile, close }: any) {
+              if (isFirstCompile) closeHandlers.push(close);
+              else logStatus();
+            },
+          }
+        : {}),
     });
+
+    // return watching closer for watch mode
+    if (opts.watch)
+      return {
+        close() {
+          return Promise.all(
+            closeHandlers.map(
+              (handler) => new Promise((resolve) => handler(resolve)),
+            ),
+          );
+        },
+      };
   }
-};
+}
+
+export default bundless;

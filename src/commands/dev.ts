@@ -6,8 +6,8 @@ import { logger } from '../utils';
 export default (api: IApi) => {
   api.registerCommand({
     name: DEV_COMMAND,
-    description: 'start incremental bundless build in watch mode',
-    async fn({ args }) {
+    description: 'start incremental build in watch mode',
+    async fn() {
       const buildWatcher = await builder({
         userConfig: api.config,
         cwd: api.cwd,
