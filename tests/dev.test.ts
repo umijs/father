@@ -20,6 +20,21 @@ const wait = (
 global.TMP_WATCHERS = [];
 global.TMP_CASE_CONFIG = CASE_CONFIG;
 
+jest.mock('../src/builder/bundle/index.ts', () => {
+  const originalModule = jest.requireActual('../src/builder/bundle/index.ts');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    // mock bundle for save watcher
+    default: async (args: any) => {
+      const watcher = await originalModule.default(args);
+      global.TMP_WATCHERS.push(watcher);
+      return watcher;
+    },
+  };
+});
+
 jest.mock('@umijs/utils', () => {
   const originalModule = jest.requireActual('@umijs/utils');
 
@@ -105,6 +120,9 @@ test('dev: file output', () => {
 
   // expect generate d.ts.map in development mode by default
   expect(fileMap['esm/index.d.ts.map']).not.toBeUndefined();
+
+  // expect umd file
+  expect(fileMap['umd/index.min.js']).not.toBeUndefined();
 });
 
 test('dev: file change', async () => {
@@ -117,12 +135,37 @@ test('dev: file change', async () => {
     'utf-8',
   );
 
-  // wait for watch debounce and compile
-  await wait(WATCH_DEBOUNCE_STEP + 500);
+  await Promise.all([
+    // wait for watch debounce and compile
+    wait(WATCH_DEBOUNCE_STEP + 500),
+    // wait for webpack compilation done
+    new Promise<void>((resolve) => {
+      const logSpy = jest.spyOn(console, 'log');
+      const handler = () => {
+        try {
+          expect(console.log).toHaveBeenCalledWith(
+            // badge
+            expect.stringContaining('-'),
+            // time
+            expect.stringContaining('['),
+            // content
+            expect.stringContaining('Bundle '),
+          );
+          logSpy.mockRestore();
+          resolve();
+        } catch {
+          setTimeout(handler, 500);
+        }
+      };
+
+      handler();
+    }),
+  ]);
 
   const fileMap = distToMap(CASE_DIST);
 
   expect(fileMap['esm/index.js']).toContain(content);
+  expect(fileMap['umd/index.min.js']).toContain('=1');
 });
 
 test('dev: file add', async () => {
