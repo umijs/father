@@ -4,7 +4,6 @@ import {
   debug,
   glob,
   lodash,
-  logger,
   rimraf,
   winPath,
 } from '@umijs/utils';
@@ -18,6 +17,7 @@ import {
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
 import runLoaders from './loaders';
+import { logger } from '../../utils';
 
 const debugLog = debug(DEBUG_BUNDLESS_NAME);
 
@@ -39,7 +39,6 @@ async function transformFiles(
     cwd: string;
     configProvider: BundlessConfigProvider;
     watch?: true;
-    quiet?: boolean;
   },
 ) {
   try {
@@ -102,13 +101,11 @@ async function transformFiles(
           fs.copyFileSync(itemAbsPath, itemDistAbsPath);
         }
 
-        if (!opts.quiet) {
-          logger.event(
-            `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
-              result?.options.declaration ? ' (with declaration)' : ''
-            }`,
-          );
-        }
+        logger.quietExpect.event(
+          `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
+            result?.options.declaration ? ' (with declaration)' : ''
+          }`,
+        );
         count += 1;
       } else {
         debugLog(`No config matches ${chalk.gray(item)}, skip`);
@@ -116,7 +113,7 @@ async function transformFiles(
     }
 
     if (declarationFileMap.size) {
-      logger.event(
+      logger.quietExpect.event(
         `Generate declaration file${declarationFileMap.size > 1 ? 's' : ''}...`,
       );
 
@@ -158,13 +155,13 @@ function bundless(
 async function bundless(
   opts: Parameters<typeof transformFiles>[1],
 ): Promise<void | chokidar.FSWatcher> {
-  logger.info(
-    `Bundless for ${chalk.yellow(
-      opts.configProvider.input,
-    )} directory to ${chalk.yellow(
-      opts.configProvider.configs[0].format,
-    )} format`,
-  );
+  const statusText = `Bundless for ${chalk.yellow(
+    opts.configProvider.input,
+  )} directory to ${chalk.yellow(
+    opts.configProvider.configs[0].format,
+  )} format`;
+
+  logger.info(statusText);
 
   const startTime = Date.now();
   const matches = glob.sync(`${opts.configProvider.input}/**`, {
@@ -176,14 +173,16 @@ async function bundless(
 
   if (!opts.watch) {
     // output result for normal mode
-    logger.event(
+    logger.quietExpect.event(
       `Transformed successfully in ${
         Date.now() - startTime
       } ms (${count} files)`,
     );
   } else {
     // watching for watch mode
-    logger.event(`Start watching ${opts.configProvider.input} directory...`);
+    logger.quietExpect.event(
+      `Start watching ${opts.configProvider.input} directory...`,
+    );
 
     // debounce transform to combine multiple changes
     const handleTransform = (() => {
@@ -191,6 +190,7 @@ async function bundless(
       const startTransform = lodash.debounce(() => {
         transformFiles([...pendingSet], opts);
         pendingSet.clear();
+        logger.quietOnly.info(statusText);
       }, WATCH_DEBOUNCE_STEP);
 
       return (filePath: string) => {
@@ -232,7 +232,7 @@ async function bundless(
 
           if (relatedMainFile) {
             relatedFiles.forEach((file) => rimraf.sync(file));
-            logger.event(
+            logger.quietExpect.event(
               `Bundless ${chalk.gray(
                 path.relative(opts.cwd, relatedMainFile),
               )} is removed`,

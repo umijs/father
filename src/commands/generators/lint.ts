@@ -1,7 +1,8 @@
 import { GeneratorType } from '@umijs/core';
-import { getNpmClient, logger } from '@umijs/utils';
+import { getNpmClient } from '@umijs/utils';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';
+import { logger } from '../../utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -26,7 +27,7 @@ export default (api: IApi) => {
           await generator.fn();
         } else {
           allEnable = false;
-          logger.warn(generator.disabledDescription);
+          logger.quietExpect.warn(generator.disabledDescription);
         }
       }
 

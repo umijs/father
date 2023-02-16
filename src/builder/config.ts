@@ -1,4 +1,4 @@
-import { logger, winPath } from '@umijs/utils';
+import { winPath } from '@umijs/utils';
 import { Minimatch } from 'minimatch';
 import path from 'path';
 import { loadConfig } from 'tsconfig-paths';
@@ -14,6 +14,7 @@ import {
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
+import { logger } from '../utils';
 
 /**
  * declare bundler config

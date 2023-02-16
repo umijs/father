@@ -1,4 +1,4 @@
-import { pkgUp } from '@umijs/utils';
+import { pkgUp, chalk, logger as umiLogger } from '@umijs/utils';
 import Cache from 'file-system-cache';
 import path from 'path';
 import { CACHE_PATH } from './constants';
@@ -115,3 +115,71 @@ export function getNestedTypeDepsForPkg(
 
   return deps;
 }
+
+/**
+ * wrap umi logger for quiet & timestamp
+ */
+type IUmiLogger = typeof umiLogger;
+type IFatherLogger = IUmiLogger & {
+  quietOnly: IUmiLogger;
+  quietExpect: IUmiLogger;
+  setQuiet: (quiet: boolean) => void;
+  _quiet: boolean;
+};
+export const logger: Omit<IFatherLogger, '_quiet'> = new Proxy<IFatherLogger>(
+  {} as IFatherLogger,
+  {
+    get(target, prop: keyof typeof logger, receiver) {
+      // implement setQuiet
+      if (prop === 'setQuiet') {
+        return (quiet: boolean) => {
+          target._quiet = quiet;
+        };
+      }
+
+      // implement quietOnly
+      if (prop === 'quietOnly') {
+        return new Proxy(
+          {},
+          {
+            get: (_, prop: keyof IFatherLogger) => {
+              return target._quiet
+                ? this.get!(target, prop, receiver)
+                : () => {};
+            },
+          },
+        );
+      }
+
+      // implement quietExpect
+      if (prop === 'quietExpect') {
+        return new Proxy(
+          {},
+          {
+            get: (_, prop: keyof IFatherLogger) => {
+              return target._quiet
+                ? () => {}
+                : this.get!(target, prop, receiver);
+            },
+          },
+        );
+      }
+
+      // prefix time for development
+      if (
+        prop in umiLogger.prefixes &&
+        process.env.NODE_ENV === 'development'
+      ) {
+        return umiLogger[prop as keyof typeof umiLogger.prefixes].bind(
+          umiLogger,
+          chalk.gray(
+            `[${new Date().toLocaleTimeString(undefined, { hour12: false })}]`,
+          ),
+        );
+      }
+
+      // fallback to return normal logger
+      return umiLogger[prop];
+    },
+  },
+);

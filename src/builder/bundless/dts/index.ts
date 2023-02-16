@@ -1,8 +1,8 @@
-import { chalk, logger, winPath } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
-import { getCache } from '../../../utils';
+import { getCache, logger } from '../../../utils';
 
 /**
  * get parsed tsconfig.json for specific path

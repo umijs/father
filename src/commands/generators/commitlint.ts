@@ -1,11 +1,12 @@
 import { GeneratorType } from '@umijs/core';
-import { getNpmClient, logger } from '@umijs/utils';
+import { getNpmClient } from '@umijs/utils';
 import { execSync } from 'child_process';
 import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';
+import { logger } from '../../utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -54,14 +55,14 @@ export default (api: IApi) => {
         extends: ['@commitlint/config-conventional'],
       };
       writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-      logger.info('Update package.json for commitlint');
+      logger.quietExpect.info('Update package.json for commitlint');
 
       h.installDeps();
       const npmClient = getNpmClient({ cwd: api.cwd });
       execSync(
         `${npmClient} husky add .husky/commit-msg '${npmClient} commitlint --edit $1'`,
       );
-      logger.info('Create a hook for commitlint');
+      logger.quietExpect.info('Create a hook for commitlint');
     },
   });
 };

@@ -1,9 +1,9 @@
 import { GeneratorType } from '@umijs/core';
-import { logger } from '@umijs/utils';
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';
+import { logger } from '../../utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -43,7 +43,7 @@ export default (api: IApi) => {
 `.trimStart(),
       );
 
-      logger.info('Write .stylelintrc');
+      logger.quietExpect.info('Write .stylelintrc');
 
       h.installDeps();
     },

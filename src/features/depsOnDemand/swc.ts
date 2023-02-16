@@ -2,6 +2,7 @@ import { resolve } from '@umijs/utils';
 import { join } from 'path';
 import { GeneratorHelper } from '../../commands/generators/utils';
 import { IApi, IFatherJSTransformerTypes } from '../../types';
+import { logger } from '../../utils';
 
 export default (api: IApi) => {
   api.onStart(() => {
@@ -16,7 +17,7 @@ export default (api: IApi) => {
     } catch {}
 
     if (hasSwcConfig && !swcInstalled) {
-      api.logger.info('Since swc is used, install @swc/core on demand.');
+      logger.info('Since swc is used, install @swc/core on demand.');
 
       const h = new GeneratorHelper(api);
       h.addDevDeps({

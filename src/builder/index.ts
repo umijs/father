@@ -1,9 +1,10 @@
-import { chokidar, logger, rimraf } from '@umijs/utils';
+import { chokidar, rimraf } from '@umijs/utils';
 import path from 'path';
 import { IApi, IFatherConfig } from '../types';
 import bundle from './bundle';
 import bundless from './bundless';
 import { createConfigProviders } from './config';
+import { logger } from '../utils';
 
 function getProviderOutputs(
   providers: ReturnType<typeof createConfigProviders>,
@@ -30,7 +31,6 @@ interface IBuilderOpts {
   cwd: string;
   pkg: IApi['pkg'];
   clean?: boolean;
-  quiet?: boolean;
   buildDependencies?: string[];
 }
 
@@ -57,7 +57,7 @@ async function builder(
 
   if (opts.clean !== false) {
     // clean output directories
-    logger.info('Clean output directories');
+    logger.quietExpect.info('Clean output directories');
     outputs.forEach((output) => {
       rimraf.sync(path.join(opts.cwd, output));
     });
@@ -76,7 +76,6 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
-      quiet: opts.quiet,
     });
 
     opts.watch && watchers.push(watcher);
@@ -87,7 +86,6 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
-      quiet: opts.quiet,
     });
 
     opts.watch && watchers.push(watcher);

@@ -1,5 +1,5 @@
 import { GeneratorType } from '@umijs/core';
-import { logger } from '@umijs/utils';
+import { logger } from '../../utils';
 import fg from 'fast-glob';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
@@ -45,7 +45,7 @@ module.exports = {
 `.trimStart(),
       );
 
-      logger.info('Write .eslintrc.js');
+      logger.quietExpect.info('Write .eslintrc.js');
 
       h.installDeps();
     },

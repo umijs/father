@@ -1,4 +1,4 @@
-import { logger } from '@umijs/utils';
+import { logger } from '../utils';
 import { IApi } from '../types';
 
 export default (api: IApi) => {

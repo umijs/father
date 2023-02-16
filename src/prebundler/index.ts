@@ -1,11 +1,12 @@
 import { Extractor } from '@microsoft/api-extractor';
-import { chalk, logger, winPath } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 // @ts-ignore
 import ncc from '@vercel/ncc';
 import fs from 'fs';
 import path from 'path';
 import { getConfig } from './config';
 import { getSharedData } from './shared';
+import { logger } from '../utils';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
   // patch @microsoft/api-extractor before prepare config
@@ -74,7 +75,7 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
 
   // bundle dts
   if (Object.keys(config.dts).length) {
-    logger.event(`Generate declaration files...`);
+    logger.quietExpect.event(`Generate declaration files...`);
 
     for (const dts in config.dts) {
       Extractor.invoke(config.dts[dts].maeConfig, {
@@ -109,7 +110,7 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
   }
 
   if (count) {
-    logger.event(
+    logger.quietExpect.event(
       `Pre-bundled successfully in ${
         Date.now() - startTime
       } ms (${count} deps)`,
