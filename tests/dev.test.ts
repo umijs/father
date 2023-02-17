@@ -81,14 +81,12 @@ jest.mock('./fixtures/dev/.fatherrc.ts', () => {
   };
 });
 
-// increase hook timeout
-jest.setTimeout(50000);
-
 beforeAll(async () => {
   fs.rmSync(path.join(CASE_SRC, 'child'), { recursive: true, force: true });
 
   // execute dev
   process.env.APP_ROOT = path.join(CASE_DIR);
+  process.env.COMPRESS = 'none';
   await cli.run({
     args: { _: ['dev'], $0: 'node' },
   });
@@ -104,6 +102,7 @@ afterAll(async () => {
   delete global.TMP_CASE_CONFIG;
   delete global.TMP_TRANSFORMER;
   delete process.env.APP_ROOT;
+  delete process.env.COMPRESS;
 
   // restore file content
   fs.writeFileSync(path.join(CASE_SRC, 'index.ts'), '', 'utf-8');
@@ -168,7 +167,7 @@ test('dev: file change', async () => {
   const fileMap = distToMap(CASE_DIST);
 
   expect(fileMap['esm/index.js']).toContain(content);
-  expect(fileMap['umd/index.min.js']).toContain('=1');
+  expect(fileMap['umd/index.min.js']).toContain(content);
 });
 
 test('dev: file add', async () => {
