@@ -81,6 +81,9 @@ jest.mock('./fixtures/dev/.fatherrc.ts', () => {
   };
 });
 
+// increase hook timeout
+jest.setTimeout(50000);
+
 beforeAll(async () => {
   fs.rmSync(path.join(CASE_SRC, 'child'), { recursive: true, force: true });
 
