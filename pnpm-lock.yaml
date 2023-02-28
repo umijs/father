@@ -12,12 +12,12 @@ importers:
       '@types/loader-runner': 2.2.4
       '@types/minimatch': 3.0.5
       '@types/node': ^18.0.0
-      '@umijs/babel-preset-umi': ^4.0.52
-      '@umijs/bundler-utils': ^4.0.52
-      '@umijs/bundler-webpack': ^4.0.52
-      '@umijs/core': ^4.0.52
+      '@umijs/babel-preset-umi': ^4.0.53
+      '@umijs/bundler-utils': ^4.0.53
+      '@umijs/bundler-webpack': ^4.0.53
+      '@umijs/core': ^4.0.53
       '@umijs/test': ^4.0.17
-      '@umijs/utils': ^4.0.52
+      '@umijs/utils': ^4.0.53
       '@vercel/ncc': 0.33.3
       babel-plugin-dynamic-import-node: 2.3.3
       babel-plugin-module-resolver: 4.1.0
@@ -45,11 +45,11 @@ importers:
       zx: ^4
     dependencies:
       '@microsoft/api-extractor': 7.34.3_@types+node@18.0.0
-      '@umijs/babel-preset-umi': 4.0.52
-      '@umijs/bundler-utils': 4.0.52
-      '@umijs/bundler-webpack': 4.0.52_typescript@4.8.4
-      '@umijs/core': 4.0.52
-      '@umijs/utils': 4.0.52
+      '@umijs/babel-preset-umi': 4.0.53
+      '@umijs/bundler-utils': 4.0.53
+      '@umijs/bundler-webpack': 4.0.53_typescript@4.8.4
+      '@umijs/core': 4.0.53
+      '@umijs/utils': 4.0.53
       '@vercel/ncc': 0.33.3
       babel-plugin-dynamic-import-node: 2.3.3
       babel-plugin-module-resolver: 4.1.0
@@ -2100,13 +2100,13 @@ packages:
     dependencies:
       '@types/yargs-parser': 21.0.0
 
-  /@umijs/babel-preset-umi/4.0.52:
-    resolution: {integrity: sha512-CADYO9Ld42XE3+upsmO81OH+kxAkmj+Ler9S7Xi+kRc6blY2TLO0NDcipZ59Q6qZoRkZbn3O79ogoZ+cUNYIRg==}
+  /@umijs/babel-preset-umi/4.0.53:
+    resolution: {integrity: sha512-j2fp7PUtlx/v2UIaAH2i7tozGMJQfsklpkBFUqpmh6JMVHBm62dgr6D9hMIOl58R+BruU/uSqH0mNTn8lHcN/A==}
     dependencies:
       '@babel/runtime': 7.20.7
       '@bloomberg/record-tuple-polyfill': 0.0.4
-      '@umijs/bundler-utils': 4.0.52
-      '@umijs/utils': 4.0.52
+      '@umijs/bundler-utils': 4.0.53
+      '@umijs/utils': 4.0.53
       babel-plugin-styled-components: 2.0.7
       core-js: 3.27.1
     transitivePeerDependencies:
@@ -2114,12 +2114,12 @@ packages:
       - supports-color
     dev: false
 
-  /@umijs/bundler-esbuild/4.0.52:
-    resolution: {integrity: sha512-GN7fSfvfCLwvNDEyQa657PQTWMwIQ+bCwRyTS+Ga+5Pq7Eg/DQBUdmRfzKQiuOyQTLJzRbAlckcuwJ1uglaaqg==}
+  /@umijs/bundler-esbuild/4.0.53:
+    resolution: {integrity: sha512-dmFWjf077CIFKb0REwCRO2czaVnBT9WmEAgJj+/QRyCD0992OZf3IKb1JGdYXVYoI0vJ3tI6m3fG4qmGSgIlMA==}
     hasBin: true
     dependencies:
-      '@umijs/bundler-utils': 4.0.52
-      '@umijs/utils': 4.0.52
+      '@umijs/bundler-utils': 4.0.53
+      '@umijs/utils': 4.0.53
       enhanced-resolve: 5.9.3
       postcss: 8.4.21
       postcss-flexbugs-fixes: 5.0.2_postcss@8.4.21
@@ -2140,10 +2140,10 @@ packages:
       - supports-color
     dev: true
 
-  /@umijs/bundler-utils/4.0.52:
-    resolution: {integrity: sha512-dgs1+5t8+MDecTx0OP+uJRTMRjGQz4IPsGg/uB33M7xWqvd0y/9fMx0SYCky3FjGcaimwzey8w5chykfM2NEUw==}
+  /@umijs/bundler-utils/4.0.53:
+    resolution: {integrity: sha512-Lqxb1RunThcDBrN6zaJQ8z6U2ROe7kVaSf6bxDfvW7vKtNGZ/MCWCRhNV+SgTNEtgNrR0MW7cokrbuu9BetYUw==}
     dependencies:
-      '@umijs/utils': 4.0.52
+      '@umijs/utils': 4.0.53
       esbuild: 0.16.17
       regenerate: 1.4.2
       regenerate-unicode-properties: 10.1.0
@@ -2152,8 +2152,8 @@ packages:
       - supports-color
     dev: false
 
-  /@umijs/bundler-webpack/4.0.52_typescript@4.8.4:
-    resolution: {integrity: sha512-etJH+RhMJ2HIpl/RakNScpEDi59wwsTyV6OL2YeMzGrKTus4ef1FUwepByhSWHyCmWPP2qpNMvP6IaRskS6JAg==}
+  /@umijs/bundler-webpack/4.0.53_typescript@4.8.4:
+    resolution: {integrity: sha512-QdPzEBhBJnycXWpfXIMEqcschyScBRuq0P5zUM/q6RBAVGZEQk8lgJOV19NeeggnbWDqFcYPXgNm6HZBn2wS1Q==}
     hasBin: true
     dependencies:
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.7_react-refresh@0.14.0
@@ -2161,11 +2161,11 @@ packages:
       '@svgr/plugin-jsx': 6.2.1_@svgr+core@6.2.1
       '@svgr/plugin-svgo': 6.2.0_@svgr+core@6.2.1
       '@types/hapi__joi': 17.1.9
-      '@umijs/babel-preset-umi': 4.0.52
-      '@umijs/bundler-utils': 4.0.52
+      '@umijs/babel-preset-umi': 4.0.53
+      '@umijs/bundler-utils': 4.0.53
       '@umijs/case-sensitive-paths-webpack-plugin': 1.0.1
-      '@umijs/mfsu': 4.0.52
-      '@umijs/utils': 4.0.52
+      '@umijs/mfsu': 4.0.53
+      '@umijs/utils': 4.0.53
       cors: 2.8.5
       css-loader: 6.7.1
       es5-imcompatible-versions: 0.1.73
@@ -2195,21 +2195,21 @@ packages:
     resolution: {integrity: sha512-kDKJ8yTarxwxGJDInG33hOpaQRZ//XpNuuznQ/1Mscypw6kappzFmrBr2dOYave++K7JHouoANF354UpbEQw0Q==}
     dev: false
 
-  /@umijs/core/4.0.52:
-    resolution: {integrity: sha512-qsVaCkyDflu3Wxy0xMt9K1xvXXPMswev+eJqvoIgNI5lx3mDoNmCK3cGS2Edm9Qp2sL3YM3aG/q3DR6qOnPtoQ==}
+  /@umijs/core/4.0.53:
+    resolution: {integrity: sha512-UenArdqqgw2RZn59UY5qto50bqYp74JKTIGBxZHAqGL6moP8ALg0LO6CZb2nU1VUcu8QYVjP8jnW/HfA2V7nBg==}
     dependencies:
-      '@umijs/bundler-utils': 4.0.52
-      '@umijs/utils': 4.0.52
+      '@umijs/bundler-utils': 4.0.53
+      '@umijs/utils': 4.0.53
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@umijs/mfsu/4.0.52:
-    resolution: {integrity: sha512-WQhkOkeLP5sy+7C4JiSaY4ZZZqf47seBNoD5uIXCtpePrfB7QIIPZaksjIB0XeYXi9DqmGhG1QoCbU1+q0GuCA==}
+  /@umijs/mfsu/4.0.53:
+    resolution: {integrity: sha512-u9SdBxSyk9xVG2Mjo+nCeXZmEOl14Eh5b2E29MtaaH+Cz9PNEFvSfJvy/jl5vZXBBGnblb5jDkLbbgWK3d/sUw==}
     dependencies:
-      '@umijs/bundler-esbuild': 4.0.52
-      '@umijs/bundler-utils': 4.0.52
-      '@umijs/utils': 4.0.52
+      '@umijs/bundler-esbuild': 4.0.53
+      '@umijs/bundler-utils': 4.0.53
+      '@umijs/utils': 4.0.53
       enhanced-resolve: 5.9.3
       is-equal: 1.6.4
     transitivePeerDependencies:
@@ -2246,8 +2246,8 @@ packages:
       pino: 7.11.0
     dev: true
 
-  /@umijs/utils/4.0.52:
-    resolution: {integrity: sha512-Dh7Xlt+N16HzCYatGMFEsGHZv0LJldkAI6R552wS38PH+5miCKop4JrFKpFznUFHccAZVrp0drkEpmn8Xp3dig==}
+  /@umijs/utils/4.0.53:
+    resolution: {integrity: sha512-yT/LEFfVYM9j36brWJlI/trG960tCoRsnnbdtjMQCfR7F8hUUodWQn9sqWJJGq/jWADlkzYXN6D8DESrz62SKA==}
     dependencies:
       chokidar: 3.5.3
       pino: 7.11.0
