@@ -58,7 +58,11 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
           .try(Joi.string(), Joi.object().pattern(Joi.string(), Joi.object()))
           .optional(),
         output: Joi.string().optional(),
-        externals: Joi.object().pattern(Joi.string(), Joi.string()),
+        externals: Joi.alternatives().try(
+          Joi.object(),
+          Joi.string(),
+          Joi.array(),
+        ),
         chainWebpack: Joi.function().optional(),
         extractCSS: Joi.boolean().optional(),
         name: Joi.string().optional(),
