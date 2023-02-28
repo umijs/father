@@ -151,6 +151,7 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
         : {}),
     });
   }
+
   // return watching closer for watch mode
   if (opts.watch) {
     return {
