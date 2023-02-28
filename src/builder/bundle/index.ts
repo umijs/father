@@ -48,6 +48,8 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
       { leading: true, trailing: false },
     );
 
+    // log for normal build
+    !opts.watch && logStatus();
     await bundler.build({
       cwd: opts.cwd,
       watch: opts.watch,
@@ -142,23 +144,24 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
         ? {
             onBuildComplete({ isFirstCompile, close }: any) {
               if (isFirstCompile) closeHandlers.push(close);
+              // log for watch mode
               else logStatus();
             },
           }
         : {}),
     });
-
-    // return watching closer for watch mode
-    if (opts.watch)
-      return {
-        close() {
-          return Promise.all(
-            closeHandlers.map(
-              (handler) => new Promise((resolve) => handler(resolve)),
-            ),
-          );
-        },
-      };
+  }
+  // return watching closer for watch mode
+  if (opts.watch) {
+    return {
+      close() {
+        return Promise.all(
+          closeHandlers.map(
+            (handler) => new Promise((resolve) => handler(resolve)),
+          ),
+        );
+      },
+    };
   }
 }
 
