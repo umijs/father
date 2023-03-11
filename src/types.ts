@@ -158,7 +158,8 @@ export interface IFatherBaseConfig {
 }
 
 export interface IFatherBundlessConfig
-  extends Omit<IFatherBaseConfig & IFatherCSSConfig, 'css'> {
+  extends Omit<IFatherBaseConfig, 'css'>,
+    IFatherCSSConfig {
   /**
    * source code directory
    * @default src
@@ -191,7 +192,8 @@ export interface IFatherBundlessConfig
 }
 
 export interface IFatherBundleConfig
-  extends Omit<IFatherBaseConfig & IFatherCSSConfig, 'css'> {
+  extends Omit<IFatherBaseConfig, 'css'>,
+    IFatherCSSConfig {
   /**
    * bundle entry config
    * @default src/index.{js,ts,jsx,tsx}
