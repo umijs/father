@@ -76,6 +76,11 @@ export enum IFatherJSTransformerTypes {
   SWC = 'swc',
 }
 
+export enum IFatherCSSPreprocessorTypes {
+  LESS = 'less',
+  SASS = 'sass',
+}
+
 export enum IFatherPlatformTypes {
   NODE = 'node',
   BROWSER = 'browser',
@@ -84,6 +89,30 @@ export enum IFatherPlatformTypes {
 export enum IFatherBundlessTypes {
   ESM = 'esm',
   CJS = 'cjs',
+}
+
+export interface IFatherCSSConfig {
+  /**
+   * configure css preprocessor
+   * @note father will automatically select a preprocessor when configured with an empty object `{}`.
+   * Otherwise, father will not use any preprocessor.
+   */
+  preprocessors?: Record<
+    IFatherCSSPreprocessorTypes,
+    IBundlerWebpackConfig[`${IFatherCSSPreprocessorTypes}Loader`]
+  >;
+  /**
+   * configure postcss
+   */
+  postcssOptions?: IBundlerWebpackConfig['postcssLoader'];
+  /**
+   * configure autoprefixer
+   */
+  autoprefixer?: Autoprefixer.Options;
+  /**
+   * configure less variables
+   */
+  theme?: IBundlerWebpackConfig['theme'];
 }
 
 export interface IFatherBaseConfig {
@@ -122,9 +151,14 @@ export interface IFatherBaseConfig {
    * compile targets
    */
   targets?: Record<string, number>;
+  /**
+   * configure css
+   */
+  css?: IFatherCSSConfig;
 }
 
-export interface IFatherBundlessConfig extends IFatherBaseConfig {
+export interface IFatherBundlessConfig
+  extends Omit<IFatherBaseConfig & IFatherCSSConfig, 'css'> {
   /**
    * source code directory
    * @default src
@@ -156,7 +190,8 @@ export interface IFatherBundlessConfig extends IFatherBaseConfig {
   ignores?: string[];
 }
 
-export interface IFatherBundleConfig extends IFatherBaseConfig {
+export interface IFatherBundleConfig
+  extends Omit<IFatherBaseConfig & IFatherCSSConfig, 'css'> {
   /**
    * bundle entry config
    * @default src/index.{js,ts,jsx,tsx}
@@ -193,24 +228,9 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
   ) => IWebpackChain;
 
   /**
-   * configure postcss
-   */
-  postcssOptions?: IBundlerWebpackConfig['postcssLoader'];
-
-  /**
-   * configure autoprefixer
-   */
-  autoprefixer?: Autoprefixer.Options;
-
-  /**
    * output library name
    */
   name?: string;
-
-  /**
-   * configure less variables
-   */
-  theme?: IBundlerWebpackConfig['theme'];
 }
 
 export interface IFatherPreBundleConfig {
