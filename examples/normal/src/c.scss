@@ -1,0 +1,8 @@
+$class-prefix-button: 'adm-button';
+
+.#{$class-prefix-button} {
+  display: inline-block;
+  &:focus {
+    outline: none;
+  }
+}

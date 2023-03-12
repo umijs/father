@@ -2,6 +2,9 @@ import { defineConfig } from '../../dist';
 const path = require('path');
 
 export default defineConfig({
+  css: {
+    preprocessors: {},
+  },
   esm: {},
   cjs: {},
   umd: {},
