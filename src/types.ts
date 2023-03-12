@@ -97,9 +97,11 @@ export interface IFatherCSSConfig {
    * @note father will automatically select a preprocessor when configured with an empty object `{}`.
    * Otherwise, father will not use any preprocessor.
    */
-  preprocessors?: Record<
-    IFatherCSSPreprocessorTypes,
-    IBundlerWebpackConfig[`${IFatherCSSPreprocessorTypes}Loader`]
+  preprocessors?: Partial<
+    Record<
+      IFatherCSSPreprocessorTypes,
+      IBundlerWebpackConfig[`${IFatherCSSPreprocessorTypes}Loader`]
+    >
   >;
   /**
    * configure postcss
