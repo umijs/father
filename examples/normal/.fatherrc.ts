@@ -4,6 +4,9 @@ const path = require('path');
 export default defineConfig({
   css: {
     preprocessorsOptions: {},
+    theme: {
+      'class-prefix-button': 'adm-btn',
+    },
   },
   esm: {},
   cjs: {},

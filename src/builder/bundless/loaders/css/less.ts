@@ -1,7 +1,7 @@
 // import type Less from 'less';
 import path from 'path';
-import { addSourceMappingUrl, loadPreprocessor } from '../../../utils';
 import { IFatherCSSPreprocessorTypes } from '../../../../types';
+import { addSourceMappingUrl, loadPreprocessor } from '../../../utils';
 import type { ICSSPreprocessor } from '../types';
 
 const lessPreprocessor: ICSSPreprocessor = async function (content: string) {
@@ -11,12 +11,14 @@ const lessPreprocessor: ICSSPreprocessor = async function (content: string) {
   );
 
   const { sourcemap, css: cssConfig } = this.config ?? {};
-  const { preprocessorsOptions } = cssConfig ?? {};
+  const { preprocessorsOptions, theme = {} } = cssConfig ?? {};
   const { less: userOptions = {} } = preprocessorsOptions ?? {};
 
   const options: Less.Options = {
     filename: this.paths.itemDistAbsPath,
     plugins: [...(userOptions.plugins ?? [])],
+    modifyVars: theme,
+    javascriptEnabled: true,
     ...(sourcemap
       ? {
           sourceMap: {
