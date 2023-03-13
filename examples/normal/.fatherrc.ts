@@ -3,7 +3,7 @@ const path = require('path');
 
 export default defineConfig({
   css: {
-    preprocessors: {},
+    preprocessorsOptions: {},
   },
   esm: {},
   cjs: {},
