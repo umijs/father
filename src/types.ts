@@ -8,6 +8,8 @@ import type { IBundleConfig, IBundlessConfig } from './builder/config';
 import type { IDoctorReport } from './doctor';
 import type { IDoctorSourceParseResult } from './doctor/parser';
 import type { IPreBundleConfig } from './prebundler/config';
+import type Sass from 'sass';
+// import type Less from 'less';
 
 export type {
   IBundlessLoader,
@@ -97,12 +99,10 @@ export interface IFatherCSSConfig {
    * @note father will automatically select a preprocessor when configured with an empty object `{}`.
    * Otherwise, father will not use any preprocessor.
    */
-  preprocessors?: Partial<
-    Record<
-      IFatherCSSPreprocessorTypes,
-      IBundlerWebpackConfig[`${IFatherCSSPreprocessorTypes}Loader`]
-    >
-  >;
+  preprocessorsOptions?: {
+    [IFatherCSSPreprocessorTypes.LESS]?: Less.Options;
+    [IFatherCSSPreprocessorTypes.SASS]?: Sass.Options;
+  };
   /**
    * configure postcss
    */
