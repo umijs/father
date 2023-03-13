@@ -6,7 +6,15 @@ import {
   addTransformer as addJSTransformer,
   ITransformerItem,
 } from '../../builder/bundless/loaders/javascript';
-import { IApi, IFatherJSTransformerTypes } from '../../types';
+import {
+  addPreprocessor as addCSSPreprocessor,
+  IPreprocessorItem,
+} from '../../builder/bundless/loaders/css';
+import {
+  IApi,
+  IFatherJSTransformerTypes,
+  IFatherCSSPreprocessorTypes,
+} from '../../types';
 
 export default async (api: IApi) => {
   // collect all bundless loaders
@@ -17,6 +25,11 @@ export default async (api: IApi) => {
         id: 'js-loader',
         test: /((?<!\.d)\.ts|\.(jsx?|tsx))$/,
         loader: require.resolve('../../builder/bundless/loaders/javascript'),
+      },
+      {
+        id: 'css-loader',
+        test: /\.(le|sa|sc)ss$/,
+        loader: require.resolve('../../builder/bundless/loaders/css'),
       },
     ],
   });
@@ -51,4 +64,24 @@ export default async (api: IApi) => {
 
   // register js transformers
   jsTransformers.forEach((t) => addJSTransformer(t));
+
+  const cssPreprocessors: IPreprocessorItem[] = await api.applyPlugins({
+    key: 'addCSSPreprocessor',
+    initialValue: [
+      {
+        id: IFatherCSSPreprocessorTypes.LESS,
+        preprocessor: require.resolve(
+          '../../builder/bundless/loaders/css/less',
+        ),
+      },
+      {
+        id: IFatherCSSPreprocessorTypes.SASS,
+        preprocessor: require.resolve(
+          '../../builder/bundless/loaders/css/sass',
+        ),
+      },
+    ],
+  });
+
+  cssPreprocessors.forEach((p) => addCSSPreprocessor(p));
 };

@@ -1,6 +1,15 @@
 import type { Root, SchemaLike } from '@umijs/utils/compiled/@hapi/joi';
 import { IFatherJSTransformerTypes, IFatherPlatformTypes } from '../../types';
 
+function getCSSSchemas(): Record<string, (Joi: Root) => any> {
+  return {
+    preprocessorsOptions: (Joi) => Joi.object().optional(),
+    postcssOptions: (Joi) => Joi.object().optional(),
+    autoprefixer: (Joi) => Joi.object().optional(),
+    theme: (Joi) => Joi.object().pattern(Joi.string(), Joi.string()),
+  };
+}
+
 function getCommonSchemas(): Record<string, (Joi: Root) => any> {
   return {
     platform: (Joi) =>
@@ -17,22 +26,28 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
     extraBabelPlugins: (Joi) => Joi.array().optional(),
     sourcemap: (Joi) => Joi.boolean().optional(),
     targets: (Joi) => Joi.object().optional(),
+    css: (Joi) =>
+      Joi.object({
+        ...getSchemasJoi(getCSSSchemas(), Joi),
+      }).optional(),
   };
 }
 
-function getCommonSchemasJoi(Joi: Root) {
-  const schemas = getCommonSchemas();
+function getSchemasJoi(schemas: Record<string, (Joi: Root) => any>, Joi: Root) {
+  return Object.keys(schemas).reduce<Record<string, SchemaLike | SchemaLike[]>>(
+    (jois, key) => {
+      jois[key] = schemas[key](Joi);
 
-  return Object.keys(schemas).reduce((jois, key) => {
-    jois[key] = schemas[key](Joi);
-
-    return jois;
-  }, {} as Record<string, SchemaLike | SchemaLike[]>);
+      return jois;
+    },
+    {},
+  );
 }
 
 function getBundlessSchemas(Joi: Root) {
   return Joi.object({
-    ...getCommonSchemasJoi(Joi),
+    ...getSchemasJoi(getCommonSchemas(), Joi),
+    ...getSchemasJoi(getCSSSchemas(), Joi),
     input: Joi.string(),
     output: Joi.string(),
     transformer: Joi.equal(
@@ -53,7 +68,8 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
     cjs: (Joi) => getBundlessSchemas(Joi),
     umd: (Joi) =>
       Joi.object({
-        ...getCommonSchemasJoi(Joi),
+        ...getSchemasJoi(getCommonSchemas(), Joi),
+        ...getSchemasJoi(getCSSSchemas(), Joi),
         entry: Joi.alternatives()
           .try(Joi.string(), Joi.object().pattern(Joi.string(), Joi.object()))
           .optional(),
@@ -66,7 +82,6 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         chainWebpack: Joi.function().optional(),
         extractCSS: Joi.boolean().optional(),
         name: Joi.string().optional(),
-        theme: Joi.object().pattern(Joi.string(), Joi.string()),
       }),
     prebundle: (Joi) =>
       Joi.object({
