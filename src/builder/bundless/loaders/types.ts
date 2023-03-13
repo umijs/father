@@ -65,3 +65,19 @@ export type IJSTransformer = (
   },
   content: Parameters<IBundlessLoader>[0],
 ) => IJSTransformerResult | Promise<IJSTransformerResult>;
+
+type ICSSPreprocessorResult = [ILoaderOutput['content'], SourceMap?];
+
+/**
+ * bundless preprocessor type
+ */
+export type ICSSPreprocessor = (
+  this: ILoaderContext & {
+    paths: {
+      cwd: string;
+      fileAbsPath: string;
+      itemDistAbsPath: string;
+    };
+  },
+  content: Parameters<IBundlessLoader>[0],
+) => ICSSPreprocessorResult | Promise<ICSSPreprocessorResult>;

@@ -1,8 +1,11 @@
 import { semver } from '@umijs/utils';
+import type Less from 'less';
 import path from 'path';
+import type Sass from 'sass';
 import {
   IApi,
   IFatherBaseConfig,
+  IFatherCSSPreprocessorTypes,
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
@@ -10,10 +13,20 @@ import { getTsconfig } from './bundless/dts';
 import type { IBundlessConfig } from './config';
 
 export function addSourceMappingUrl(code: string, loc: string) {
+  // support css preprocessors
+  if (/\.(le|sa|sc)ss$/.test(loc)) {
+    return (
+      code +
+      `/*# sourceMappingURL=${path.basename(
+        loc.replace(/\.(le|sa|sc)ss$/, '.css.map'),
+      )} */`
+    );
+  }
+
   return (
     code +
     '\n//# sourceMappingURL=' +
-    path.basename(loc.replace(/\.(jsx|tsx?)$/, '.js.map'))
+    path.basename(loc.replace(/\.(j|t)sx?$/, '.js.map'))
   );
 }
 
@@ -114,4 +127,45 @@ export function getBundlessTargets(config: IBundlessConfig) {
   }
 
   return targets;
+}
+
+const loadedPreprocessors: Partial<Record<IFatherCSSPreprocessorTypes, any>> =
+  {};
+
+export function loadPreprocessor(
+  lang: IFatherCSSPreprocessorTypes.SASS,
+  cwd: string,
+): typeof Sass;
+export function loadPreprocessor(
+  lang: IFatherCSSPreprocessorTypes.LESS,
+  cwd: string,
+): typeof Less;
+export function loadPreprocessor(
+  lang: `${IFatherCSSPreprocessorTypes}`,
+  cwd: string,
+) {
+  if (lang in loadedPreprocessors) {
+    return loadedPreprocessors[lang];
+  }
+
+  try {
+    const paths = require.resolve.paths?.(lang) || [];
+    // Search in the root directory first, and fallback to the default require paths.
+    paths.unshift(cwd);
+
+    const resolved = require.resolve(lang, { paths });
+    return (loadedPreprocessors[lang] = require(resolved));
+  } catch (e: any) {
+    if (e.code === 'MODULE_NOT_FOUND') {
+      throw new Error(
+        `Preprocessor dependency "${lang}" not found. Did you install it?`,
+      );
+    } else {
+      const message = new Error(
+        `Preprocessor dependency "${lang}" failed to load:\n${e.message}`,
+      );
+      message.stack = e.stack + '\n' + message.stack;
+      throw message;
+    }
+  }
 }
