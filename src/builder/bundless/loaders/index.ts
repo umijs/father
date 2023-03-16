@@ -66,8 +66,8 @@ export default async (
   if (cacheRet)
     return Promise.resolve<ILoaderOutput>({
       ...cacheRet,
-      outputOpts: {
-        ...cacheRet.outputOpts,
+      options: {
+        ...cacheRet.options,
         // FIXME: shit code for avoid invalid declaration value when tsconfig changed
         declaration: /\.tsx?$/.test(fileAbsPath)
           ? getTsconfig(opts.cwd)?.options.declaration
