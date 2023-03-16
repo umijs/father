@@ -123,6 +123,13 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
           });
         }
 
+        // also bundle svg as asset, because father force disable svgr
+        const imgRule = memo.module.rule('asset').oneOf('image');
+
+        imgRule.test(
+          new RegExp(imgRule.get('test').source.replace(/(\|png)/, '$1|svg')),
+        );
+
         // disable progress bar
         memo.plugins.delete('progress-plugin');
 
