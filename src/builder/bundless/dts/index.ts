@@ -137,7 +137,14 @@ export default async function getDeclarations(
     // ref: https://www.npmjs.com/package/typescript-transform-paths
     const result = program.emit(undefined, undefined, undefined, true, {
       afterDeclarations: [
-        tsPathsTransformer(program, { afterDeclarations: true }),
+        tsPathsTransformer(
+          program,
+          { afterDeclarations: true },
+          // specific typescript instance, because this plugin is incompatible with typescript@4.9.x currently
+          // but some project may declare typescript and some dependency manager will hoist project's typescript
+          // rather than father's typescript for this plugin
+          { ts },
+        ),
       ],
     });
 
