@@ -79,8 +79,6 @@ export default defineConfig({
 - file: 'xxx',
   # 已废弃，Bundless 模式不再编译非 JavaScript 文件
 - lessInBabelMode: {},
-  # 已废弃，默认兼容到 Node.js v14，暂不支持配置
-- nodeVersion: 14,
   # 已废弃，改为约定式，只要 dependencies 里包含 @babel/runtime 则默认为 true
 - runtimeHelpers: true,
   # 仅 umd 构建支持，改用 umd: { extractCSS: boolean }，默认值为 true
@@ -137,6 +135,8 @@ export default defineConfig({
 - extraPostCSSPlugins: []
   # 仅 umd 构建支持，改用 umd: { entry: { 'src/xx': {} } }
 - overridesByEntry: {},
+  # 改用 targets 配置项
+- nodeVersion: 14,
   # 改用 platform 配置项
 - target: 'node',
   # 改用 esm/cjs: { overrides: {}, ignores: [] } 实现
