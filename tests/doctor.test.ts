@@ -42,6 +42,11 @@ test('doctor: warn checkups', async () => {
   expect(console.log).toHaveBeenCalledWith(
     expect.stringContaining('CSS Modules'),
   );
+
+  // PREFER_PEER_DEPS
+  expect(console.log).toHaveBeenCalledWith(
+    expect.stringContaining('multi-instance risk'),
+  );
 });
 
 test('doctor: error checkups', async () => {

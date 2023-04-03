@@ -3,7 +3,8 @@
     "*.css"
   ],
   "dependencies": {
-    "hello": "0.0.0"
+    "hello": "0.0.0",
+    "react": "16.9.0"
   },
   "peerDependencies": {
     "hello": "0.0.0"
