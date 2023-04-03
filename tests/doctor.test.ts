@@ -76,9 +76,13 @@ test('doctor: error checkups', async () => {
   );
 
   // CASE_SENSITIVE_PATHS
-  expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('the corresponding path'),
-  );
+  // why only win32 and drawin?
+  // because Windows and macOS are case-insensitive by default
+  if (['win32', 'drawin'].includes(process.platform)) {
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining('the corresponding path'),
+    );
+  }
 
   // process.exit(1)
   expect(mockExit).toHaveBeenCalledWith(1);
