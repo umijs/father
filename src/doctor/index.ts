@@ -2,13 +2,13 @@ import { glob, lodash } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import {
+  createConfigProviders,
   IBundleConfig,
   IBundlessConfig,
-  normalizeUserConfig as getBuildConfig,
 } from '../builder/config';
 import { DEFAULT_BUNDLESS_IGNORES } from '../constants';
 import { getConfig as getPreBundleConfig } from '../prebundler/config';
-import { IFatherBuildTypes, type IApi } from '../types';
+import type { IApi } from '../types';
 import sourceParser from './parser';
 
 export type IDoctorReport = {
@@ -49,21 +49,23 @@ export function getSourceDirs(
 
 export default async (api: IApi): Promise<IDoctorReport> => {
   // generate configs
-  const [bundleConfigs, bundlessConfigs] = getBuildConfig(
-    api.config,
-    api.pkg,
-  ).reduce<[IBundleConfig[], IBundlessConfig[]]>(
-    (ret, config) => {
-      if (config.type === IFatherBuildTypes.BUNDLE) {
-        ret[0].push(config);
-      } else {
-        ret[1].push(config);
-      }
+  const configProviders = createConfigProviders(api.config, api.pkg, api.cwd);
+  const bundleConfigs: IBundleConfig[] = [];
+  const bundlessConfigs: IBundlessConfig[] = [];
+  const bundleProviders = [configProviders.bundle!].filter(Boolean);
+  const bundlessProviders = [
+    configProviders.bundless.esm!,
+    configProviders.bundless.cjs!,
+  ].filter(Boolean);
 
-      return ret;
-    },
-    [[], []],
+  // extract configs from configProviders
+  bundleProviders.forEach((provider) =>
+    bundleConfigs.push(...provider.configs),
   );
+  bundlessProviders.forEach((provider) =>
+    bundlessConfigs.push(...provider.configs),
+  );
+
   const preBundleConfig = getPreBundleConfig({
     userConfig: api.config.prebundle || { deps: [] },
     pkg: api.pkg,
@@ -72,17 +74,25 @@ export default async (api: IApi): Promise<IDoctorReport> => {
 
   // collect all source files
   const sourceDirs = getSourceDirs(bundleConfigs, bundlessConfigs);
-  const sourceFiles = sourceDirs.reduce<string[]>(
-    (ret, dir) =>
-      ret.concat(
-        glob.sync(`${dir}/**`, {
-          cwd: api.cwd,
-          ignore: DEFAULT_BUNDLESS_IGNORES,
-          nodir: true,
-        }),
-      ),
-    [],
-  );
+  const sourceFiles = sourceDirs
+    .reduce<string[]>(
+      (ret, dir) =>
+        ret.concat(
+          glob.sync(`${dir}/**`, {
+            cwd: api.cwd,
+            ignore: DEFAULT_BUNDLESS_IGNORES,
+            nodir: true,
+          }),
+        ),
+      [],
+    )
+    .filter(
+      (f) =>
+        // include all files if bundle only
+        !bundlessProviders.length ||
+        // skip custom ignore files if has bundless config
+        bundlessProviders.some((p) => p.getConfigForFile(f)),
+    );
 
   // collect all alias & externals
   // TODO: split bundle & bundless checkup, because externals not work for bundle
