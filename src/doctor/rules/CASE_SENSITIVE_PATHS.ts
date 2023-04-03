@@ -33,7 +33,8 @@ export default (api: IApi) => {
         // try to resolve import to absolute file path
         try {
           res = resolver(i.resolveDir, i.path);
-        } catch {
+        } catch (e) {
+          console.log(e);
           /* skip if module not found */
         }
 
