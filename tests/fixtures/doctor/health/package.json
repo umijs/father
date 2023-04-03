@@ -4,5 +4,8 @@
   ],
   "dependencies": {
     "hello.world": "0.0.0"
+  },
+  "optionalDependencies": {
+    "optional": "0.0.0"
   }
 }
