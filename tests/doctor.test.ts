@@ -75,6 +75,11 @@ test('doctor: error checkups', async () => {
     expect.stringContaining('will not be published'),
   );
 
+  // CASE_SENSITIVE_PATHS
+  expect(console.log).toHaveBeenCalledWith(
+    expect.stringContaining('the corresponding path'),
+  );
+
   // process.exit(1)
   expect(mockExit).toHaveBeenCalledWith(1);
 });
