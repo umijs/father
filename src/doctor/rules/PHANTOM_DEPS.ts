@@ -17,6 +17,7 @@ export default (api: IApi) => {
         api.pkg.name !== pkgName &&
         !api.pkg.dependencies?.[pkgName] &&
         !api.pkg.peerDependencies?.[pkgName] &&
+        !api.pkg.optionalDependencies?.[pkgName] &&
         aliasKeys.every((k) => k !== i.path && !i.path.startsWith(`${k}/`)) &&
         !mergedExternals[i.path]
       ) {
