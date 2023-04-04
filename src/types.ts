@@ -4,7 +4,11 @@ import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain'
 import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
-import type { IBundleConfig, IBundlessConfig } from './builder/config';
+import type {
+  IBundleConfig,
+  IBundlessConfig,
+  createConfigProviders,
+} from './builder/config';
 import type { IDoctorReport } from './doctor';
 import type { IDoctorSourceParseResult } from './doctor/parser';
 import type { IPreBundleConfig } from './prebundler/config';
@@ -48,6 +52,7 @@ export type IApi = PluginAPI &
         imports: IDoctorSourceParseResult['imports'];
         mergedAlias: Record<string, string[]>;
         mergedExternals: Record<string, string>;
+        configProviders: ReturnType<typeof createConfigProviders>;
       },
       IDoctorReport | IDoctorReport[0] | void
     >;
