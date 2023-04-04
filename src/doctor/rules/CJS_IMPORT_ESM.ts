@@ -40,6 +40,7 @@ export default (api: IApi) => {
                   vm.runInContext(`require('${res}')`, sandbox);
                 }
               } catch (e: any) {
+                console.log(e);
                 if (e.code === 'ERR_REQUIRE_ESM') {
                   errors.push({
                     type: 'error',
