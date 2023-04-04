@@ -57,7 +57,7 @@ test('doctor: error checkups', async () => {
 
   // PHANTOM_DEPS
   expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('Source depend on'),
+    expect.stringContaining('Source depends on'),
   );
 
   // PHANTOM_DEPS no standard library
@@ -74,6 +74,15 @@ test('doctor: error checkups', async () => {
   expect(console.log).toHaveBeenCalledWith(
     expect.stringContaining('will not be published'),
   );
+
+  // CASE_SENSITIVE_PATHS
+  // why only win32 and drawin?
+  // because Windows and macOS are case-insensitive by default
+  if (['win32', 'drawin'].includes(process.platform)) {
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining('the corresponding path'),
+    );
+  }
 
   // process.exit(1)
   expect(mockExit).toHaveBeenCalledWith(1);
