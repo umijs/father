@@ -10,6 +10,6 @@ export default {
       alias: 'alias',
       '@org/alias': '@org/alias',
     },
-    ignores: ['./src/ignore.ts'],
+    ignores: ['./src/ignore.ts', 'src/__dir__/**'],
   },
 };

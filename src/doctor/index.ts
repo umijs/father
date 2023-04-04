@@ -74,13 +74,24 @@ export default async (api: IApi): Promise<IDoctorReport> => {
 
   // collect all source files
   const sourceDirs = getSourceDirs(bundleConfigs, bundlessConfigs);
+  // ignore files
+  const ignoreFiles = [
+    ...new Set(
+      DEFAULT_BUNDLESS_IGNORES.concat(
+        bundlessConfigs.flatMap((c) =>
+          c.ignores ? c.ignores.map((ignore) => path.normalize(ignore)) : [],
+        ),
+      ),
+    ),
+  ];
+
   const sourceFiles = sourceDirs
     .reduce<string[]>(
       (ret, dir) =>
         ret.concat(
           glob.sync(`${dir}/**`, {
             cwd: api.cwd,
-            ignore: DEFAULT_BUNDLESS_IGNORES,
+            ignore: ignoreFiles,
             nodir: true,
           }),
         ),
