@@ -35,6 +35,7 @@ beforeAll(() => {
 afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
+  jest.unmock('@umijs/utils');
 });
 
 const CASES_DIR = path.join(__dirname, 'fixtures/deps');

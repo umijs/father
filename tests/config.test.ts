@@ -33,6 +33,7 @@ afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
   mockExit.mockRestore();
+  jest.unmock('@umijs/utils');
 });
 test('config: cyclic extends', async () => {
   // execute build
