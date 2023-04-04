@@ -49,7 +49,7 @@ export default (api: IApi) => {
                 .replace(/`.+?`/, `\`${i.path}\``)}
             ${chalk.gray(`at ${file}`)}`,
               solution:
-                'Make sure the import path and the filesystem path are exactly the same',
+                'Make sure that import path and filesystem path are exactly the same',
             });
           }
         }

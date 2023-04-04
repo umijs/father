@@ -35,10 +35,10 @@ export default (api: IApi) => {
         if (resolvedPath.includes('node_modules')) {
           errors.push({
             type: 'error',
-            problem: `Source depend on \`${pkgName}\` but it is not in the \`dependencies\` or \`peerDependencies\`
+            problem: `Source depends on \`${pkgName}\`, but there is no declaration of it
             ${chalk.gray(`at ${file}`)}`,
             solution:
-              'Add it to the `dependencies` or `peerDependencies` of the package.json file',
+              'Add it to one of `dependencies`, `peerDependencies` and `optionalDependencies` in the package.json file',
           });
         }
       }
