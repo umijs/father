@@ -1,6 +1,6 @@
 import type { IApi } from '../../types';
 import vm from 'vm';
-import { chalk } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 import type { IDoctorReport } from '..';
 import { getPkgNameFromPath } from '../utils';
 import enhancedResolve from 'enhanced-resolve';
@@ -37,7 +37,7 @@ export default (api: IApi) => {
                 // why check node_modules?
                 // because some alias may point to src but also like package name
                 if (res && res.includes('node_modules')) {
-                  vm.runInContext(`require('${res}')`, sandbox);
+                  vm.runInContext(`require('${winPath(res)}')`, sandbox);
                 }
               } catch (e: any) {
                 console.log(e);
