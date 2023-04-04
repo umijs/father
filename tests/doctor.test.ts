@@ -57,7 +57,7 @@ test('doctor: error checkups', async () => {
 
   // PHANTOM_DEPS
   expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('Source depend on'),
+    expect.stringContaining('Source depends on'),
   );
 
   // PHANTOM_DEPS no standard library
