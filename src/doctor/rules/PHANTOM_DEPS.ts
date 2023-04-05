@@ -1,15 +1,14 @@
 import { chalk } from '@umijs/utils';
 import type { IDoctorReport } from '..';
 import type { IApi } from '../../types';
+import { getPkgNameFromPath } from '../utils';
 
 export default (api: IApi) => {
   api.addImportsCheckup(({ file, imports, mergedAlias, mergedExternals }) => {
     const errors: IDoctorReport = [];
 
     imports.forEach((i) => {
-      const pkgName = i.path.match(
-        /^(?:@[a-z\d][\w-.]*\/)?[a-z\d][\w-.]*/i,
-      )?.[0];
+      const pkgName = getPkgNameFromPath(i.path);
       const aliasKeys = Object.keys(mergedAlias);
 
       if (

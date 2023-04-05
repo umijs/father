@@ -149,6 +149,7 @@ export default async (api: IApi): Promise<IDoctorReport> => {
           imports: (await sourceParser(path.join(api.cwd, file))).imports,
           mergedAlias,
           mergedExternals,
+          configProviders,
         },
       })),
     );

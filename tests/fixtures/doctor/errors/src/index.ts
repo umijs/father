@@ -6,6 +6,7 @@ import path from 'child_process';
 import externals from 'externals';
 import hello from 'hello';
 import BigCamelCase from './CamelCase';
+import esm from 'esm';
 import './index.less';
 
 // to avoid esbuild tree-shaking
@@ -17,4 +18,5 @@ console.log(
   orgExternals,
   path,
   BigCamelCase,
+  esm,
 );

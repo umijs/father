@@ -112,6 +112,7 @@ afterAll(async () => {
 
   jest.unmock('@umijs/utils');
   jest.unmock('./fixtures/dev/.fatherrc.ts');
+  jest.unmock('../src/builder/bundle/index.ts');
 });
 
 test('dev: file output', () => {
