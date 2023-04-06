@@ -149,7 +149,7 @@ async function upgradeUmijsDeps() {
     )
   ).version;
   Object.keys(pkg.dependencies).forEach((name) => {
-    if (name.startsWith('@umijs/')) {
+    if (name.startsWith('@umijs/') && !name.endsWith('-webpack-plugin')) {
       pkg.dependencies[name] = `^${latestVersion}`;
     }
   });
