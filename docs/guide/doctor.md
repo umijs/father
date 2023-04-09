@@ -32,6 +32,20 @@ $ father doctor
 
 源码中使用了某个依赖，但却没有声明在 `dependencies` 中，这会导致项目引用到[幽灵依赖](https://rushjs.io/pages/advanced/phantom_deps/)，它可能不存在，也可能是错误的版本，使得项目存在运行失败的风险。
 
+## CASE_SENSITIVE_PATHS
+
+- 级别：错误 ❌
+- 说明：
+
+源码中引入路径的文件大小写与磁盘上的大小写不符，如果开发者使用的是大小写不敏感的操作系统（比如 Windows 和 macOS 的默认配置），由于编译不会报错，可能不会发现该问题，但 NPM 包发布后在大小写敏感的操作系统上编译时则会找不到模块。
+
+## CJS_IMPORT_ESM
+
+- 级别：错误 ❌
+- 说明：
+
+源码中使用了 pure esm 的依赖且配置了 cjs 产物输出，这会导致发包实际运行时出现 `ERR_REQUIRE_ESM` 报错，需要更换有 cjs 产物的依赖版本或使用 `await import` 引入依赖。
+
 ## PREFER_PACK_FILES
 
 - 级别：警告 ⚠️
@@ -63,3 +77,11 @@ $ father doctor
 `peerDependencies` 和 `dependencies` 里有相同依赖，建议根据项目实际需要去掉其中一个。
 
 如果你有其他的 NPM 包的研发建议，欢迎评论到 [issue](https://github.com/umijs/father-next/issues/36) 中，规则讨论通过后将会被添加。
+
+## PREFER_PEER_DEPS
+
+- 级别：警告 ⚠️
+- 说明：
+
+有多实例风险的依赖声明应该放入 `peerDependencies` 而不是 `dependencies`，比如 `react`、`antd`。
+
