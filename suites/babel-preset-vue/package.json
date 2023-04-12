@@ -1,0 +1,35 @@
+{
+  "name": "@fatherjs/babel-preset-vue",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "father build",
+    "dev": "father dev",
+    "prepublishOnly": "father doctor && npm run build"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.20.6",
+    "@bloomberg/record-tuple-polyfill": "0.0.4",
+    "@umijs/bundler-utils": "^4.0.64",
+    "@umijs/utils": "^4.0.64",
+    "@vue/babel-plugin-jsx": "1.1.1",
+    "@vue/babel-preset-jsx": "1.4.0",
+    "core-js": "3.26.1"
+  },
+  "devDependencies": {
+    "father": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "xiaopingdan <xierenyuan@qq.com> (https://github.com/xierenyuan)"
+  ]
+}
