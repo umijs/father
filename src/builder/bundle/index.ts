@@ -78,7 +78,7 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
         extraBabelIncludes: [/node_modules/],
       },
       entry: {
-        [path.parse(config.output.filename).name]: path.join(
+        [path.parse(config.name || config.output.filename).name]: path.join(
           opts.cwd,
           config.entry,
         ),
