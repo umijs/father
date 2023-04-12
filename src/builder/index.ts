@@ -1,6 +1,6 @@
 import { chokidar, rimraf } from '@umijs/utils';
 import path from 'path';
-import { IApi, IFatherConfig } from '../types';
+import { IApi, IFatherConfig, IBundlerWebpackConfig } from '../types';
 import bundle, { type IBundleWatcher } from './bundle';
 import bundless from './bundless';
 import { createConfigProviders } from './config';
@@ -32,6 +32,8 @@ interface IBuilderOpts {
   pkg: IApi['pkg'];
   clean?: boolean;
   buildDependencies?: string[];
+  babelPreset: IBundlerWebpackConfig['extraBabelPresets'];
+  chainWebpack?: IBundlerWebpackConfig['chainWebpack'];
 }
 
 interface IWatchBuilderResult {
@@ -69,6 +71,8 @@ async function builder(
       configProvider: configProviders.bundle,
       buildDependencies: opts.buildDependencies,
       watch: opts.watch,
+      babelPreset: opts.babelPreset,
+      chainWebpack: opts.chainWebpack,
     });
 
     opts.watch && watchers.push(watcher);

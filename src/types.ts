@@ -1,8 +1,9 @@
-import type { Compiler } from '@umijs/bundler-webpack';
+import type { Compiler, webpack } from '@umijs/bundler-webpack';
 import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
+import { Env } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type {
   IBundleConfig,
@@ -17,6 +18,8 @@ export type {
   IBundlessLoader,
   IJSTransformer,
 } from './builder/bundless/loaders/types';
+
+export type { IBundlerWebpackConfig };
 
 export type IApi = PluginAPI &
   Omit<
@@ -57,11 +60,26 @@ export type IApi = PluginAPI &
       IDoctorReport | IDoctorReport[0] | void
     >;
 
+    addBabelPresets: IAdd<null, IBundlerWebpackConfig['extraBabelPresets']>;
+
     /**
      * config modify methods definition
      */
     modifyConfig: IModify<Omit<IFatherConfig, 'extends'>, null>;
     modifyDefaultConfig: IModify<Omit<IFatherConfig, 'extends'>, null>;
+
+    chainWebpack: {
+      (fn: {
+        (
+          memo: IWebpackChain,
+          args: {
+            env: Env;
+            webpack: typeof webpack;
+            config: IBundleConfig;
+          },
+        ): void;
+      }): void;
+    };
 
     /**
      * config definition

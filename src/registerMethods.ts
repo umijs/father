@@ -6,6 +6,9 @@ export default (api: IApi) => {
     'addRegularCheckup',
     'addSourceCheckup',
     'addImportsCheckup',
+    'addBabelPresets',
+    'modifyBabelPresetOpts',
+    'chainWebpack',
   ].forEach((name) => {
     api.registerMethod({ name });
   });

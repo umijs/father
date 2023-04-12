@@ -5,6 +5,7 @@ import { CACHE_PATH } from '../../constants';
 import type { BundleConfigProvider } from '../config';
 import { getBabelPresetReactOpts, getBundleTargets } from '../utils';
 import { logger } from '../../utils';
+import { IBundlerWebpackConfig } from '../../types';
 
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
@@ -25,6 +26,8 @@ interface IBundlessOpts {
   configProvider: BundleConfigProvider;
   buildDependencies?: string[];
   watch?: boolean;
+  babelPreset: IBundlerWebpackConfig['extraBabelPresets'];
+  chainWebpack?: IBundlerWebpackConfig['chainWebpack'];
 }
 
 function bundless(opts: Omit<IBundlessOpts, 'watch'>): Promise<void>;
@@ -83,7 +86,7 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
           config.entry,
         ),
       },
-      babelPreset: [
+      babelPreset: opts.babelPreset || [
         require.resolve('@umijs/babel-preset-umi'),
         {
           presetEnv: {
@@ -104,7 +107,7 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
       extraBabelPlugins: config.extraBabelPlugins,
 
       // configure library related options
-      chainWebpack(memo: any) {
+      chainWebpack(memo: any, args: any) {
         memo.output.libraryTarget('umd');
 
         if (config?.name) {
@@ -132,6 +135,8 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
 
         // disable progress bar
         memo.plugins.delete('progress-plugin');
+
+        opts.chainWebpack && opts.chainWebpack(memo, { ...args, config });
 
         return memo;
       },
