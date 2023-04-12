@@ -1,0 +1,29 @@
+{
+  "name": "@fatherjs/plugin-vue",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "father build",
+    "dev": "father dev",
+    "prepublishOnly": "father doctor && npm run build"
+  },
+  "devDependencies": {
+    "father": "workspace:*"
+  },
+  "peerDependencies": {
+    "father": "^4.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "xiaopingdan <xierenyuan@qq.com> (https://github.com/xierenyuan)"
+  ]
+}
