@@ -3,6 +3,7 @@ import path from 'path';
 import {
   IApi,
   IFatherBaseConfig,
+  IFatherBundlessTypes,
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
@@ -114,4 +115,23 @@ export function getBundlessTargets(config: IBundlessConfig) {
   }
 
   return targets;
+}
+
+export function getBundlessTransformRuntime (config: IBundlessConfig) {
+  try {
+    const pkg = require.resolve('@babel/runtime/package.json')
+
+    if (pkg) {
+      return {
+        absoluteRuntime: false,
+        // still use legacy esm helpers, to avoid double imports of runtime helpers
+        // from webpack 4 bundlers, such as Umi 3, antd-tools & etc.
+        useESModules:
+          config.format === IFatherBundlessTypes.ESM ? true : false,
+        version: pkg.version,
+      }
+    }
+  } catch (error) {
+    // don't do anything, disabled @babel/runtime helpers
+  }
 }

@@ -7,6 +7,7 @@ import {
   ensureRelativePath,
   getBabelPresetReactOpts,
   getBundlessTargets,
+  getBundlessTransformRuntime,
 } from '../../../utils';
 import type { IJSTransformer } from '../types';
 
@@ -61,16 +62,8 @@ const babelTransformer: IJSTransformer = function (content) {
     {},
   );
 
-  if (this.pkg.dependencies?.['@babel/runtime']) {
-    presetOpts.pluginTransformRuntime = {
-      absoluteRuntime: false,
-      // still use legacy esm helpers, to avoid double imports of runtime helpers
-      // from webpack 4 bundlers, such as Umi 3, antd-tools & etc.
-      useESModules:
-        this.config.format === IFatherBundlessTypes.ESM ? true : false,
-      version: this.pkg.dependencies?.['@babel/runtime'],
-    };
-  }
+  presetOpts.pluginTransformRuntime = getBundlessTransformRuntime(this.config)
+
   const { code, map } = transform(content, {
     filename: this.paths.fileAbsPath,
     cwd: this.paths.cwd,
