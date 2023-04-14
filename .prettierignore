@@ -1,3 +1,4 @@
 dist
 compiled
 *.yaml
+node_modules

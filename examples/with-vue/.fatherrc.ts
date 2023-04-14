@@ -2,13 +2,13 @@ import { defineConfig } from 'father';
 import path from 'path';
 
 export default defineConfig({
-  // esm: {},
+  esm: {},
   // cjs: {},
-  umd: {
-    externals: {
-      vue: 'vue',
-    },
-  },
+  // umd: {
+  //   externals: {
+  //     vue: 'vue',
+  //   },
+  // },
   alias: {
     '@': path.resolve(__dirname, './src'),
   },

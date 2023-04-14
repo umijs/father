@@ -1,6 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "baseUrl": "./"
-  }
+  },
+  "include": ["src/**/*"]
 }

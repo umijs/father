@@ -5,3 +5,8 @@ export type {
   IFatherConfig,
   IJSTransformer,
 } from './types';
+
+export type {
+  ILoaderOutput,
+  ILoaderContext,
+} from './builder/bundless/loaders/types';

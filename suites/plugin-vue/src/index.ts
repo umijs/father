@@ -37,4 +37,12 @@ export default (api: IApi) => {
     getConfig(memo);
     return memo;
   });
+
+  api.addBundlessLoader(() => [
+    {
+      id: 'vue-loader',
+      test: /\.vue$/,
+      loader: require.resolve('./vueLoader/index'),
+    },
+  ]);
 };

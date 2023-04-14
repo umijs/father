@@ -18,11 +18,21 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { emptyProps } from './empty';
+// import { emptyProps } from './empty';
 
 import type { CSSProperties } from 'vue';
 
-const props = defineProps(emptyProps);
+const props = defineProps({
+  image: {
+    type: String,
+    default: '',
+  },
+  imageSize: Number,
+  description: {
+    type: String,
+    default: '',
+  },
+});
 
 const emptyDescription = computed(() => props.description);
 const imageStyle = computed<CSSProperties>(() => ({

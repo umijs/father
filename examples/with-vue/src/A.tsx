@@ -1,4 +1,4 @@
-import ElEmpty from './Empty.vue';
+import ElEmpty from './Empty.vue.b';
 import type { CSSProperties, FunctionalComponent } from 'vue';
 
 type EmptyRendererProps = {

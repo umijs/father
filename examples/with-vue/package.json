@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "father build",
+    "build": "rm -rf ./node_modules/.cache && father build",
     "build:no-clean": "father build --no-clean",
     "dev": "father dev",
     "doctor": "father doctor",

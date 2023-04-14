@@ -13,6 +13,7 @@ import type {
 import type { IDoctorReport } from './doctor';
 import type { IDoctorSourceParseResult } from './doctor/parser';
 import type { IPreBundleConfig } from './prebundler/config';
+import { ILoaderItem } from './builder/bundless/loaders';
 
 export type {
   IBundlessLoader,
@@ -61,6 +62,8 @@ export type IApi = PluginAPI &
     >;
 
     addBabelPresets: IAdd<null, IBundlerWebpackConfig['extraBabelPresets']>;
+
+    addBundlessLoader: IAdd<null, ILoaderItem[]>;
 
     /**
      * config modify methods definition
