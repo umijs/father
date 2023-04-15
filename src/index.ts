@@ -6,7 +6,11 @@ export type {
   IJSTransformer,
 } from './types';
 
+export { IFatherBundlessTypes } from './types';
+
 export type {
   ILoaderOutput,
   ILoaderContext,
 } from './builder/bundless/loaders/types';
+
+export type { IBundlessConfig } from './builder/config';

@@ -3,7 +3,7 @@ import path from 'path';
 
 export default defineConfig({
   esm: {},
-  // cjs: {},
+  cjs: {},
   // umd: {
   //   externals: {
   //     vue: 'vue',

@@ -1,12 +1,6 @@
 import type { IBundlessLoader, ILoaderOutput } from 'father';
 import { transformer } from './transformer';
 
-// let transformer: typeof import('./transformer').transformer;
-
-// (async () => {
-//   ({ transformer } = await import('./transformer/index.js'));
-// })();
-
 /**
  * builtin vue loader
  */

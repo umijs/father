@@ -164,6 +164,9 @@ importers:
 
   examples/with-vue:
     dependencies:
+      '@babel/runtime':
+        specifier: 7.21.0
+        version: 7.21.0
       father:
         specifier: workspace:*
         version: link:../..

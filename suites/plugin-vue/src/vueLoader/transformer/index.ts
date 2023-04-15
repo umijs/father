@@ -1,45 +1,58 @@
-import type { IVueTransformer } from './type';
+import type { IVueTransformer } from './types';
+import { IFatherBundlessTypes } from 'father';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-import { dirname } from 'path';
+import { getConfig } from './config';
+import { generateExternal } from './utils';
 
-export const transformer: IVueTransformer = async function (content) {
+const FORMAT_MAP = {
+  [IFatherBundlessTypes.ESM]: 'es',
+  [IFatherBundlessTypes.CJS]: 'cjs',
+};
+
+export const transformer: IVueTransformer = async function () {
   try {
-    const { build: viteBuilder } = await import('vite');
+    const { mergeConfig, build: viteBuilder } = await import('vite');
+    const viteUserConfig = await getConfig(this);
 
-    console.log(dirname(this.paths.fileAbsPath));
+    const format = FORMAT_MAP[this.config.format] ?? 'es';
 
-    const [{ output }] = (await viteBuilder({
-      root: this.paths.cwd,
-      mode: 'development',
-      resolve: {
-        alias: [
-          {
-            find: '@',
-            replacement: this.paths.cwd,
+    const viteConfig = mergeConfig(
+      {
+        root: this.paths.cwd,
+        // TODO 需要确定这里的 mode 是否需要和 father 的 mode 保持一致
+        mode: 'development',
+        build: {
+          sourcemap: this.config.sourcemap,
+          write: false,
+          lib: {
+            entry: this.paths.fileAbsPath,
+            formats: [format],
           },
-        ],
-      },
-      build: {
-        sourcemap: true,
-        write: false,
-        lib: {
-          entry: this.paths.fileAbsPath,
-          formats: ['es'],
-        },
-        rollupOptions: {
-          external: ['vue'],
-          output: {
-            entryFileNames: `[name].js`,
-            globals: {
-              vue: 'Vue',
+          rollupOptions: {
+            external: await generateExternal(this.pkg),
+            output: {
+              entryFileNames: `[name].js`,
             },
           },
         },
+        plugins: [
+          vue({
+            isProduction: false,
+          }),
+          vueJsx(),
+        ],
       },
-      plugins: [vue(), vueJsx()],
-    })) as any[];
-    return [output[0].code, JSON.stringify(output[0].map)];
+      viteUserConfig,
+    );
+
+    const [{ output }] = (await viteBuilder(viteConfig)) as any[];
+
+    if (output[0].map) {
+      return [output[0].code, JSON.stringify(output[0].map)];
+    }
+
+    return [output[0].code];
   } catch (e) {
     throw e;
   }
