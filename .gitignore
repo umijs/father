@@ -12,3 +12,5 @@
 /tests/fixtures/build/*/node_modules
 /tests/fixtures/prebundle/*/compiled
 /tests/fixtures/prebundle/*/modules
+/suites/**/dist
+/suites/**/node_modules

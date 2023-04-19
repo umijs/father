@@ -1,0 +1,38 @@
+{
+  "name": "@fatherjs/plugin-vue",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "father build",
+    "dev": "father dev",
+    "prepublishOnly": "father doctor && npm run build"
+  },
+  "dependencies": {
+    "@fatherjs/babel-preset-vue": "workspace:*",
+    "@umijs/bundler-webpack": "^4.0.65",
+    "@umijs/utils": "^4.0.65",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "@vitejs/plugin-vue-jsx": "^3.0.1",
+    "vite": "^4.2.1",
+    "vue-loader": "17.0.1"
+  },
+  "devDependencies": {
+    "father": "workspace:*"
+  },
+  "peerDependencies": {
+    "father": "^4.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "xiaopingdan <xierenyuan@qq.com> (https://github.com/xierenyuan)"
+  ]
+}

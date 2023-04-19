@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "build": "rm -rf ./node_modules/.cache && father build",
+    "build:no-clean": "father build --no-clean",
+    "dev": "father dev",
+    "doctor": "father doctor",
+    "version": "father version"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.21.0",
+    "father": "workspace:*",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@fatherjs/plugin-vue": "workspace:*"
+  }
+}
