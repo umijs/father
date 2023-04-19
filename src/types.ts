@@ -227,7 +227,7 @@ export interface IFatherPreBundleConfig {
   /**
    * dependencies or entries need to be pre-bundled
    */
-  deps?: string[] | Record<string, { minify?: boolean; dts?: boolean }>;
+  deps: string[] | Record<string, { minify?: boolean; dts?: boolean }>;
 
   /**
    * extra dep declarations need to be pre-bundled
