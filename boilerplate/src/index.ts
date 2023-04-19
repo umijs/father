@@ -54,6 +54,7 @@ export default async ({
   const isNode = platform === 'node';
   const isBrowser = platform === 'browser';
   const isBothNodeBrowser = platform === 'both';
+  const isNodeOrBoth = isNode || isBothNodeBrowser;
   const generator = new BaseGenerator({
     path: join(__dirname, '../template'),
     target,
@@ -63,6 +64,7 @@ export default async ({
       isNode,
       isBrowser,
       isBothNodeBrowser,
+      isNodeOrBoth,
       registry,
     },
     questions: [
