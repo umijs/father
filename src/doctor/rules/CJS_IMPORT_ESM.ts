@@ -9,6 +9,12 @@ export default (api: IApi) => {
   const sandbox = vm.createContext({ require });
   let resolver: ReturnType<typeof enhancedResolve['create']['sync']>;
 
+  api.describe({
+    // disable temporarily
+    // ref: https://github.com/umijs/father/issues/624
+    enableBy: () => false,
+  });
+
   api.addImportsCheckup(
     ({ file, imports, configProviders, mergedExternals, mergedAlias }) => {
       const errors: IDoctorReport = [];
