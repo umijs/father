@@ -33,7 +33,8 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const closeHandlers: webpack.Watching['close'][] = [];
 
-  for (const config of opts.configProvider.configs) {
+  for (let i = 0; i < opts.configProvider.configs.length; i += 1) {
+    const config = opts.configProvider.configs[i];
     const { plugins: extraPostCSSPlugins, ...postcssLoader } =
       config.postcssOptions || {};
     // workaround for combine continuous onBuildComplete log in watch mode
@@ -132,6 +133,16 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
 
         // disable progress bar
         memo.plugins.delete('progress-plugin');
+
+        // auto bump analyze port
+        /* istanbul ignore if -- @preserve */
+        if (process.env.ANALYZE) {
+          memo.plugin('webpack-bundle-analyzer').tap((args: any) => {
+            args[0].analyzerPort += i;
+
+            return args;
+          });
+        }
 
         return memo;
       },
