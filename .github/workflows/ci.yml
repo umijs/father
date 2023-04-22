@@ -40,8 +40,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.2
+        uses: pnpm/action-setup@v2.2.4
         with:
+          version: 8
           run_install: false
 
       - name: Get pnpm store directory
