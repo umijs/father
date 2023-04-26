@@ -1,4 +1,5 @@
 import { semver } from '@umijs/utils';
+import { createHash } from 'crypto';
 import path from 'path';
 import {
   IApi,
@@ -114,4 +115,26 @@ export function getBundlessTargets(config: IBundlessConfig) {
   }
 
   return targets;
+}
+
+export function getBabelStyledComponentsOpts(pkg: IApi['pkg']) {
+  let opts: false | { fileName: boolean; namespace?: string } = false;
+
+  // enable styled-components plugin for styled-components-based projects
+  if (pkg.dependencies?.['styled-components']) {
+    opts = { fileName: false };
+
+    // set namespace for avoid className conflicts
+    if (pkg.name) {
+      const [name, org] = pkg.name.split('/').reverse();
+      // hash org to make namespace clear
+      const suffix = org
+        ? `-${createHash('md5').update(org).digest('hex').slice(0, 4)}`
+        : '';
+
+      opts.namespace = `${name}${suffix}`;
+    }
+  }
+
+  return opts;
 }

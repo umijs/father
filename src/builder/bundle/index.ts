@@ -2,9 +2,13 @@ import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
 import path from 'path';
 import { CACHE_PATH } from '../../constants';
-import type { BundleConfigProvider } from '../config';
-import { getBabelPresetReactOpts, getBundleTargets } from '../utils';
 import { logger } from '../../utils';
+import type { BundleConfigProvider } from '../config';
+import {
+  getBabelPresetReactOpts,
+  getBabelStyledComponentsOpts,
+  getBundleTargets,
+} from '../utils';
 
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
@@ -98,6 +102,9 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
           pluginTransformRuntime: {},
           pluginLockCoreJS: {},
           pluginDynamicImportNode: false,
+          pluginStyledComponents: getBabelStyledComponentsOpts(
+            opts.configProvider.pkg,
+          ),
         },
       ],
       beforeBabelPlugins: [require.resolve('babel-plugin-dynamic-import-node')],
