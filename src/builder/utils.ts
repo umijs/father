@@ -130,7 +130,8 @@ export function getBabelStyledComponentsOpts(pkg: IApi['pkg']) {
       // hash org to make namespace clear
       const suffix = org
         ? `-${createHash('md5').update(org).digest('hex').slice(0, 4)}`
-        : '';
+        : /* istanbul ignore next -- @preserve */
+          '';
 
       opts.namespace = `${name}${suffix}`;
     }
