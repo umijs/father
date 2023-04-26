@@ -1,0 +1,7 @@
+{
+  "name": "@org/some-lib",
+  "dependencies": {
+    "styled-components": "^6.0.0-beta.15",
+    "stylis": "^4.1.3"
+  }
+}

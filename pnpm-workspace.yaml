@@ -4,3 +4,4 @@ packages:
   - 'boilerplate'
   - 'tests/fixtures/build/classic-jsx'
   - 'tests/fixtures/build/automatic-jsx'
+  - 'tests/fixtures/build/styled-components'
