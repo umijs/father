@@ -66,6 +66,6 @@ export async function run(_opts?: IOpts) {
     }
   } catch (e: any) {
     logger.error(e);
-    process.exit(1);
+    // process.exit(1);
   }
 }

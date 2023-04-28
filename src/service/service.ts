@@ -1,4 +1,5 @@
 import { Service as CoreService } from '@umijs/core';
+import { resolve } from '@umijs/utils';
 import path from 'path';
 import * as process from 'process';
 import { DEFAULT_CONFIG_FILES, FRAMEWORK_NAME } from '../constants';
@@ -18,7 +19,12 @@ export class Service extends CoreService {
       cwd,
       defaultConfigFiles: DEFAULT_CONFIG_FILES,
       frameworkName: FRAMEWORK_NAME,
-      presets: [require.resolve('../preset')],
+      presets: [
+        resolve.sync('../preset', {
+          basedir: __dirname,
+          extensions: ['.ts', '.js'],
+        }),
+      ],
     });
   }
 

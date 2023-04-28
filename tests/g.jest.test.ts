@@ -1,27 +1,27 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
 
 let useRTL = false;
-jest.doMock('../src/commands/generators/utils', () => {
-  const originalModule = jest.requireActual('../src/commands/generators/utils');
+vi.doMock('../src/commands/generators/utils', () => {
+  const originalModule = vi.requireActual('../src/commands/generators/utils');
   return {
     __esModule: true,
     ...originalModule,
-    promptsExitWhenCancel: jest.fn(() => ({ useRTL })),
+    promptsExitWhenCancel: vi.fn(() => ({ useRTL })),
   };
 });
 
-const mockInstall = jest.fn();
-jest
-  .spyOn(GeneratorHelper.prototype, 'installDeps')
-  .mockImplementation(mockInstall);
+const mockInstall = vi.fn();
+vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
+  mockInstall,
+);
 
 const CASES_DIR = path.join(__dirname, 'fixtures/generator');
 describe('jest generator', function () {
   process.env.APP_ROOT = path.join(CASES_DIR);
-  const jestConfPath = path.join(CASES_DIR, 'jest.config.ts');
+  const jestConfPath = path.join(CASES_DIR, 'vi.config.ts');
   const jestSetupPath = path.join(CASES_DIR, 'jest-setup.ts');
   afterEach(() => {
     [jestConfPath, jestSetupPath].forEach((path) => {
@@ -76,12 +76,12 @@ describe('jest generator', function () {
 
   test('warning when jest config exists', async () => {
     writeFileSync(jestConfPath, '{}');
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     await cli.run({
       args: { _: ['g', 'jest'], $0: 'node' },
     });
     expect(warnSpy.mock.calls[0][1]).toBe(
-      'Jest has already enabled. You can remove jest.config.{ts,js}, then run this again to re-setup.',
+      'Jest has already enabled. You can remove vi.config.{ts,js}, then run this again to re-setup.',
     );
   });
 });

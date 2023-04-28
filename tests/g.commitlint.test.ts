@@ -7,18 +7,18 @@ import {
   writeFileSync,
 } from 'fs';
 import path from 'path';
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
 
-const mockInstall = jest.fn();
-jest
-  .spyOn(GeneratorHelper.prototype, 'installDeps')
-  .mockImplementation(mockInstall);
+const mockInstall = vi.fn();
+vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
+  mockInstall,
+);
 
-const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-const mockExecSync = jest.fn();
-jest.doMock('child_process', () => {
-  const originalModule = jest.requireActual('child_process');
+const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const mockExecSync = vi.fn();
+vi.doMock('child_process', () => {
+  const originalModule = vi.requireActual('child_process');
   return {
     __esModule: true,
     ...originalModule,

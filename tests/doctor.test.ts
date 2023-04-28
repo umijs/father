@@ -1,16 +1,16 @@
 import { mockProcessExit } from 'jest-mock-process';
 import path from 'path';
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/doctor');
 const mockExit = mockProcessExit();
-const logSpy = jest.spyOn(console, 'log');
+const logSpy = vi.spyOn(console, 'log');
 
 /**
  * jest will intercept ERR_REQUIRE_ESM to show transformer hint
  * so we need to mock esm module to throw real error
  */
-jest.mock('./fixtures/doctor/errors/node_modules/esm/index.js', () => {
+vi.mock('./fixtures/doctor/errors/node_modules/esm/index.js', () => {
   throw new (class extends Error {
     code = 'ERR_REQUIRE_ESM';
   })();
@@ -20,7 +20,7 @@ afterAll(() => {
   logSpy.mockRestore();
   mockExit.mockRestore();
   delete process.env.APP_ROOT;
-  jest.unmock('./fixtures/doctor/errors/node_modules/esm/index.js');
+  vi.unmock('./fixtures/doctor/errors/node_modules/esm/index.js');
 });
 
 test('doctor: warn checkups', async () => {

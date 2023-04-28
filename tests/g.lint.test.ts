@@ -1,14 +1,14 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
 
-const mockInstall = jest.fn();
-jest
-  .spyOn(GeneratorHelper.prototype, 'installDeps')
-  .mockImplementation(mockInstall);
+const mockInstall = vi.fn();
+vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
+  mockInstall,
+);
 
-const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
 const CASES_DIR = path.join(__dirname, 'fixtures/generator');
 

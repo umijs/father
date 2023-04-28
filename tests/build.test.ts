@@ -1,5 +1,6 @@
 import path from 'path';
-import * as cli from '../src/cli/cli';
+import { it } from 'vitest';
+import * as cli from '../dist/cli/cli';
 import { distToMap, getDirCases } from './utils';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/build');
@@ -17,7 +18,7 @@ afterAll(() => {
 const cases = getDirCases(CASES_DIR);
 
 for (let name of cases) {
-  test(`build: ${name}`, async () => {
+  it(`build: ${name}`, async () => {
     // execute build
     process.env.APP_ROOT = path.join(CASES_DIR, name);
     await cli.run({
@@ -28,6 +29,6 @@ for (let name of cases) {
     const fileMap = distToMap(path.join(CASES_DIR, name, 'dist'));
 
     // check result
-    require(`${CASES_DIR}/${name}/expect`).default(fileMap);
+    (await import(`${CASES_DIR}/${name}/expect`)).default(fileMap);
   });
 }

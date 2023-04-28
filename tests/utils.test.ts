@@ -1,20 +1,20 @@
-import { logger } from '../src/utils';
 import { logger as umiLogger } from '@umijs/utils';
+import { logger } from '../dist/utils';
 
-jest.mock('@umijs/utils', () => {
-  const originalModule = jest.requireActual('@umijs/utils');
+vi.mock('@umijs/utils', () => {
+  const originalModule = vi.requireActual('@umijs/utils');
 
   return {
     ...originalModule,
     logger: {
       ...originalModule.logger,
-      info: jest.fn(),
+      info: vi.fn(),
     },
   };
 });
 
 afterAll(() => {
-  jest.unmock('@umijs/utils');
+  vi.unmock('@umijs/utils');
 });
 
 describe('logger', () => {

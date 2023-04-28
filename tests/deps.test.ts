@@ -1,33 +1,32 @@
+import * as utils from '@umijs/utils';
 import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import process from 'process';
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
 
-jest.mock('@umijs/utils', () => {
-  const originalModule = jest.requireActual('@umijs/utils');
-
+vi.mock('@umijs/utils', () => {
   return {
     __esModule: true,
-    ...originalModule,
-    installWithNpmClient: jest.fn(),
+    ...utils,
+    installWithNpmClient: vi.fn(),
     resolve: {
-      ...originalModule.resolve,
+      ...utils.resolve,
       sync: (id, opts) => {
         if (id === '@swc/core') {
           throw new Error('not resolve');
         }
 
-        return originalModule.resolve.sync(id, opts);
+        return utils.resolve.sync(id, opts);
       },
     },
   };
 });
 
-const mockInstall = jest.fn();
-jest
-  .spyOn(GeneratorHelper.prototype, 'installDeps')
-  .mockImplementation(mockInstall);
+const mockInstall = vi.fn();
+vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
+  mockInstall,
+);
 
 beforeAll(() => {
   process.env.FATHER_CACHE = 'none';
@@ -35,7 +34,7 @@ beforeAll(() => {
 afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
-  jest.unmock('@umijs/utils');
+  vi.unmock('@umijs/utils');
 });
 
 const CASES_DIR = path.join(__dirname, 'fixtures/deps');

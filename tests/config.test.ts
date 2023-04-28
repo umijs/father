@@ -1,10 +1,10 @@
 import { mockProcessExit } from 'jest-mock-process';
 import path from 'path';
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 import { distToMap } from './utils';
 
-jest.mock('@umijs/utils', () => {
-  const originalModule = jest.requireActual('@umijs/utils');
+vi.mock('@umijs/utils', () => {
+  const originalModule = vi.requireActual('@umijs/utils');
 
   return {
     __esModule: true,
@@ -33,7 +33,7 @@ afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
   mockExit.mockRestore();
-  jest.unmock('@umijs/utils');
+  vi.unmock('@umijs/utils');
 });
 test('config: cyclic extends', async () => {
   // execute build
@@ -50,7 +50,7 @@ test('config: cyclic extends', async () => {
   expect(mockExit).toHaveBeenCalledWith(1);
 
   // restore mock
-  jest.unmock('@umijs/utils');
+  vi.unmock('@umijs/utils');
   delete global.TMP_CASE_CONFIG;
 });
 
@@ -79,5 +79,5 @@ test('config: nested extends', async () => {
   );
 
   // check result
-  require(`${process.env.APP_ROOT}/expect`).default(fileMap);
+  (await import(`${process.env.APP_ROOT}/expect`)).default(fileMap);
 });

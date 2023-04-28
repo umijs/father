@@ -1,7 +1,7 @@
-import * as cli from '../src/cli/cli';
+import * as cli from '../dist/cli/cli';
 
-const logSpy = jest.spyOn(console, 'log');
-const errorSpy = jest.spyOn(console, 'error');
+const logSpy = vi.spyOn(console, 'log');
+const errorSpy = vi.spyOn(console, 'error');
 
 afterAll(() => {
   logSpy.mockRestore();

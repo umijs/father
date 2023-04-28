@@ -1,7 +1,7 @@
-import { logger } from '../utils';
-import { join } from 'path';
 import { existsSync } from 'fs';
+import { join } from 'path';
 import { FRAMEWORK_NAME, MIN_NODE_VERSION } from '../constants';
+import { logger } from '../utils';
 
 export function checkVersion() {
   const v = parseInt(process.version.slice(1));
@@ -14,7 +14,7 @@ export function checkVersion() {
 }
 
 export function checkLocal() {
-  if (existsSync(join(__dirname, '../../jest.config.ts'))) {
+  if (existsSync(join(__dirname, '../../vitest.config.ts'))) {
     logger.info('@local');
   }
 }
