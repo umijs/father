@@ -178,7 +178,11 @@ importers:
     dependencies:
       styled-components:
         specifier: ^6.0.0-beta.15
-        version: 6.0.0-beta.15(react-dom@18.2.0)(react@18.2.0)(stylis@4.1.3)
+        version: 6.0.0-beta.15(react-dom@18.2.0)(react@16.14.0)(shallowequal@1.1.0)(stylis@4.1.3)
+    devDependencies:
+      shallowequal:
+        specifier: ^1.1.0
+        version: 1.1.0
       stylis:
         specifier: ^4.1.3
         version: 4.1.3
@@ -8463,7 +8467,6 @@ packages:
 
   /shallowequal@1.1.0:
     resolution: {integrity: sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==}
-    dev: false
 
   /shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
@@ -8805,7 +8808,7 @@ packages:
       supports-color: 5.5.0
     dev: false
 
-  /styled-components@6.0.0-beta.15(react-dom@18.2.0)(react@18.2.0)(stylis@4.1.3):
+  /styled-components@6.0.0-beta.15(react-dom@18.2.0)(react@16.14.0)(shallowequal@1.1.0)(stylis@4.1.3):
     resolution: {integrity: sha512-VRyBVFnBQ97Ouj2acqwzp+n8cuTWlVpRXtP3P1hPoYwtTPB4a+s8ZI3oRS3KnIAumbK53P16AaqiXZIcl01TjA==}
     engines: {node: '>= 14'}
     peerDependencies:
@@ -8837,8 +8840,9 @@ packages:
       '@babel/traverse': 7.21.3(supports-color@5.5.0)
       '@emotion/unitless': 0.8.0
       css-to-react-native: 3.2.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 16.14.0
+      react-dom: 18.2.0(react@16.14.0)
+      shallowequal: 1.1.0
       stylis: 4.1.3
     transitivePeerDependencies:
       - supports-color
@@ -8846,7 +8850,6 @@ packages:
 
   /stylis@4.1.3:
     resolution: {integrity: sha512-GP6WDNWf+o403jrEp9c5jibKavrtLW+/qYGhFxFrG8maXhwTBI7gLLhiBb0o7uFccWN+EOS9aMO6cGHWAO07OA==}
-    dev: false
 
   /supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
