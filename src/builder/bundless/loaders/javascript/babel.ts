@@ -6,6 +6,7 @@ import {
   addSourceMappingUrl,
   ensureRelativePath,
   getBabelPresetReactOpts,
+  getBabelStyledComponentsOpts,
   getBundlessTargets,
 } from '../../../utils';
 import type { IJSTransformer } from '../types';
@@ -44,6 +45,7 @@ const babelTransformer: IJSTransformer = function (content) {
       path.dirname(this.paths.fileAbsPath),
     ),
     presetTypeScript: {},
+    pluginStyledComponents: getBabelStyledComponentsOpts(this.pkg),
   };
 
   // transform alias to relative path for babel-plugin-module-resolver
@@ -71,6 +73,7 @@ const babelTransformer: IJSTransformer = function (content) {
       version: this.pkg.dependencies?.['@babel/runtime'],
     };
   }
+
   const { code, map } = transform(content, {
     filename: this.paths.fileAbsPath,
     cwd: this.paths.cwd,

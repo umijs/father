@@ -43,7 +43,7 @@ describe('lint generator', () => {
     if (existsSync(commitlintConfPath)) {
       unlinkSync(commitlintConfPath);
     }
-    writeFileSync(path.join(CASES_DIR, 'package.json'), '{}');
+    writeFileSync(path.join(CASES_DIR, 'package.json'), '{}\n', 'utf-8');
     warnSpy.mockReset();
   });
 

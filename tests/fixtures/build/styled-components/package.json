@@ -1,0 +1,11 @@
+{
+  "name": "@org/some-lib",
+  "dependencies": {
+    "styled-components": "^6.0.0-beta.15"
+  },
+  "devDependencies": {
+    "shallowequal": "^1.1.0",
+    "stylis": "^4.1.3"
+  },
+  "FIXME": "Wait for styled-components fix, ref: https://github.com/styled-components/styled-components/pull/3995"
+}
