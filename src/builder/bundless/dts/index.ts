@@ -1,8 +1,8 @@
-import { chalk, winPath } from '@umijs/utils';
-import fs from 'fs';
+import { chalk, fsExtra, winPath } from '@umijs/utils';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
-import { getCache, logger } from '../../../utils';
+import { CACHE_PATH } from '../../../constants';
+import { logger } from '../../../utils';
 
 /**
  * get parsed tsconfig.json for specific path
@@ -30,7 +30,13 @@ export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
 ) {
-  const cache = getCache('bundless-dts');
+  const enableCache = process.env.FATHER_CACHE !== 'none';
+  const tscCacheDir = path.join(opts.cwd, CACHE_PATH, 'tsc');
+  if (enableCache) {
+    // make tsc cache dir
+    fsExtra.ensureDirSync(tscCacheDir);
+  }
+
   const output: { file: string; content: string; sourceFile: string }[] = [];
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
@@ -81,64 +87,48 @@ export default async function getDeclarations(
         );
       }
     });
+    // enable incremental for cache
+    if (enableCache && typeof tsconfig.options.incremental === 'undefined') {
+      tsconfig.options.incremental = true;
+      tsconfig.options.tsBuildInfoFile = path.join(
+        tscCacheDir,
+        'tsconfig.tsbuildinfo',
+      );
+    }
 
-    const tsHost = ts.createCompilerHost(tsconfig.options);
-    const cacheKeys = inputFiles.reduce<Record<string, string>>(
-      (ret, file) => ({
-        ...ret,
-        // format: {path:mtime:config}
-        [file]: [
-          file,
-          fs.lstatSync(file).mtimeMs,
-          JSON.stringify(tsconfig.options),
-        ].join(':'),
-      }),
-      {},
-    );
-    const cacheRets: Record<string, typeof output> = {};
+    const tsHost = ts.createIncrementalCompilerHost(tsconfig.options);
 
-    tsHost.writeFile = (fileName, declaration, _a, _b, sourceFiles) => {
-      const sourceFile = sourceFiles![0].fileName;
+    tsHost.writeFile = (fileName, content, _a, _b, sourceFiles) => {
+      const sourceFile = sourceFiles?.[0].fileName;
 
       // only collect dts for input files, to avoid output error in watch mode
       // ref: https://github.com/umijs/father/issues/43
-      if (inputFiles.includes(sourceFile)) {
+      if (sourceFile && inputFiles.includes(sourceFile)) {
         const ret = {
           file: path.basename(fileName),
-          content: declaration,
+          content,
           sourceFile,
         };
 
         output.push(ret);
-
-        // group cache by file (d.ts & d.ts.map)
-        cacheRets[cacheKeys[sourceFile]] ??= [];
-        cacheRets[cacheKeys[sourceFile]].push(ret);
+      } else if (fileName === tsconfig.options.tsBuildInfoFile) {
+        fsExtra.writeFileSync(tsconfig.options.tsBuildInfoFile, content);
       }
     };
 
-    // use cache first
-    inputFiles = inputFiles.filter((file) => {
-      const cacheRet = cache.getSync(cacheKeys[file], '');
-
-      if (!cacheRet) return true;
-      output.push(...cacheRet);
-      return false;
+    const incrProgram = ts.createIncrementalProgram({
+      rootNames: inputFiles,
+      options: tsconfig.options as any,
+      host: tsHost,
     });
-
-    const program = ts.createProgram(
-      inputFiles,
-      tsconfig.options as any,
-      tsHost,
-    );
 
     // using ts-paths-transformer to transform tsconfig paths to relative path
     // reason: https://github.com/microsoft/TypeScript/issues/30952
     // ref: https://www.npmjs.com/package/typescript-transform-paths
-    const result = program.emit(undefined, undefined, undefined, true, {
+    const result = incrProgram.emit(undefined, undefined, undefined, true, {
       afterDeclarations: [
         tsPathsTransformer(
-          program,
+          incrProgram.getProgram(),
           { afterDeclarations: true },
           // specific typescript instance, because this plugin is incompatible with typescript@4.9.x currently
           // but some project may declare typescript and some dependency manager will hoist project's typescript
@@ -165,16 +155,6 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
-
-    // save cache
-    Object.keys(cacheRets).forEach((key) => cache.setSync(key, cacheRets[key]));
-
-    // process no d.ts inputs, fallback to empty array
-    inputFiles.forEach((file) => {
-      const cacheKey = cacheKeys[file];
-
-      if (!cacheRets[cacheKey]) cache.setSync(cacheKey, []);
-    });
   }
 
   return output;
