@@ -13,6 +13,7 @@ import {
   IFatherConfig,
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
+  IBabelConfig,
 } from '../types';
 import { logger } from '../utils';
 
@@ -41,6 +42,12 @@ export interface IBundlessConfig
   format: IFatherBundlessTypes;
   input: string;
   output: NonNullable<IFatherBundleConfig['output']>;
+
+  __userBabelConfig?: {
+    babelPresetOpts: IBabelConfig['presetOpts'];
+    extraBabelPresets: IBabelConfig['presets'];
+    extraBabelPlugins: IBabelConfig['plugins'];
+  };
 }
 
 /**

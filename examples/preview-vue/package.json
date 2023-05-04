@@ -1,0 +1,17 @@
+{
+  "name": "@example/preview-vue",
+  "scripts": {
+    "build": "vue-tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.21.0",
+    "@example/with-vue": "workspace:*",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.1.0",
+    "vite": "^4.3.3"
+  }
+}

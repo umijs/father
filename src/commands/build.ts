@@ -9,8 +9,19 @@ export default (api: IApi) => {
 --no-clean  do not clean all output directories before build
 `,
     async fn({ args }) {
-      const babelPreset = await api.applyPlugins({
-        key: 'addBabelPresets',
+      const babelPresetOpts = await api.applyPlugins({
+        key: 'modifyBabelPresetOpts',
+        initialValue: {},
+      });
+
+      const extraBabelPresets = await api.applyPlugins({
+        key: 'addExtraBabelPresets',
+        initialValue: [],
+      });
+
+      const extraBabelPlugins = await api.applyPlugins({
+        key: 'addExtraBabelPlugins',
+        initialValue: [],
       });
 
       const chainWebpack = async (memo: any, args: Object) => {
@@ -31,7 +42,9 @@ export default (api: IApi) => {
           api.pkgPath,
           api.service.configManager!.mainConfigFile,
         ].filter(Boolean) as string[],
-        babelPreset: babelPreset.length > 0 ? babelPreset : undefined,
+        babelPresetOpts,
+        extraBabelPresets,
+        extraBabelPlugins,
         chainWebpack,
       });
     },

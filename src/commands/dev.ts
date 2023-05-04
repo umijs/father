@@ -8,8 +8,19 @@ export default (api: IApi) => {
     name: DEV_COMMAND,
     description: 'start incremental build in watch mode',
     async fn() {
-      const babelPreset = await api.applyPlugins({
-        key: 'addBabelPresets',
+      const babelPresetOpts = await api.applyPlugins({
+        key: 'modifyBabelPresetOpts',
+        initialValue: {},
+      });
+
+      const extraBabelPresets = await api.applyPlugins({
+        key: 'addExtraBabelPresets',
+        initialValue: [],
+      });
+
+      const extraBabelPlugins = await api.applyPlugins({
+        key: 'addExtraBabelPlugins',
+        initialValue: [],
       });
 
       const chainWebpack = async (memo: any, args: Object) => {
@@ -26,8 +37,10 @@ export default (api: IApi) => {
         cwd: api.cwd,
         pkg: api.pkg,
         watch: true,
-        babelPreset: babelPreset.length > 0 ? babelPreset : undefined,
+        babelPresetOpts,
         chainWebpack,
+        extraBabelPresets,
+        extraBabelPlugins,
       });
 
       // handle config change

@@ -1,4 +1,8 @@
 {
+  "name": "@example/with-vue",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "scripts": {
     "build": "rm -rf ./node_modules/.cache && father build",
     "build:no-clean": "father build --no-clean",
@@ -13,5 +17,6 @@
   },
   "devDependencies": {
     "@fatherjs/plugin-vue": "workspace:*"
-  }
+  },
+  "esnext": "dist/index.js"
 }

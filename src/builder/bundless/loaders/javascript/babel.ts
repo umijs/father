@@ -33,6 +33,7 @@ const babelTransformer: IJSTransformer = function (content) {
     define,
     alias: oAlias = {},
   } = this.config;
+
   // TODO: correct optional in umi types and replace any here
   const presetOpts: any = {
     presetEnv: {
@@ -44,6 +45,7 @@ const babelTransformer: IJSTransformer = function (content) {
       path.dirname(this.paths.fileAbsPath),
     ),
     presetTypeScript: {},
+    ...this.config.__userBabelConfig?.babelPresetOpts,
   };
 
   // transform alias to relative path for babel-plugin-module-resolver
@@ -84,6 +86,7 @@ const babelTransformer: IJSTransformer = function (content) {
       : undefined,
     presets: [
       [require.resolve('@umijs/babel-preset-umi'), presetOpts],
+      ...this.config.__userBabelConfig?.extraBabelPresets!,
       ...extraBabelPresets,
     ],
     plugins: [
@@ -103,6 +106,7 @@ const babelTransformer: IJSTransformer = function (content) {
             ],
           ]
         : []),
+      ...this.config.__userBabelConfig?.extraBabelPlugins!,
       ...extraBabelPlugins,
     ],
   })!;

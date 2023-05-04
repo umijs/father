@@ -5,6 +5,7 @@ import { getCache } from '../../../utils';
 import type { IBundlessConfig } from '../../config';
 import { getTsconfig } from '../dts';
 import type { IBundlessLoader, ILoaderOutput } from './types';
+import { IBabelConfig } from '../../../types';
 
 /**
  * loader item type

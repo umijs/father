@@ -22,6 +22,7 @@ export const transformer: IVueTransformer = async function () {
         root: this.paths.cwd,
         // TODO 需要确定这里的 mode 是否需要和 father 的 mode 保持一致
         mode: 'development',
+        logLevel: 'error',
         build: {
           sourcemap: this.config.sourcemap,
           write: false,

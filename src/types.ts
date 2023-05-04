@@ -61,15 +61,24 @@ export type IApi = PluginAPI &
       IDoctorReport | IDoctorReport[0] | void
     >;
 
-    addBabelPresets: IAdd<null, IBundlerWebpackConfig['extraBabelPresets']>;
-
     addBundlessLoader: IAdd<null, ILoaderItem[]>;
+
+    addExtraBabelPresets: IAdd<
+      null,
+      IBundlerWebpackConfig['extraBabelPresets']
+    >;
+
+    addExtraBabelPlugins: IAdd<
+      null,
+      IBundlerWebpackConfig['extraBabelPlugins']
+    >;
 
     /**
      * config modify methods definition
      */
     modifyConfig: IModify<Omit<IFatherConfig, 'extends'>, null>;
     modifyDefaultConfig: IModify<Omit<IFatherConfig, 'extends'>, null>;
+    modifyBabelPresetOpts: IModify<any, null>;
 
     chainWebpack: {
       (fn: {
@@ -306,4 +315,10 @@ export interface IFatherConfig extends IFatherBaseConfig {
    * extra presets
    */
   presets?: string[];
+}
+
+export interface IBabelConfig {
+  presetOpts: Record<string, any>;
+  presets?: any[];
+  plugins?: any[];
 }

@@ -5,7 +5,7 @@ import { CACHE_PATH } from '../../constants';
 import type { BundleConfigProvider } from '../config';
 import { getBabelPresetReactOpts, getBundleTargets } from '../utils';
 import { logger } from '../../utils';
-import { IBundlerWebpackConfig } from '../../types';
+import { IBabelConfig, IBundlerWebpackConfig } from '../../types';
 
 const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
@@ -26,7 +26,9 @@ interface IBundlessOpts {
   configProvider: BundleConfigProvider;
   buildDependencies?: string[];
   watch?: boolean;
-  babelPreset: IBundlerWebpackConfig['extraBabelPresets'];
+  babelPresetOpts: IBabelConfig['presetOpts'];
+  extraBabelPresets: IBabelConfig['presets'];
+  extraBabelPlugins: IBabelConfig['plugins'];
   chainWebpack?: IBundlerWebpackConfig['chainWebpack'];
 }
 
@@ -86,7 +88,7 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
           config.entry,
         ),
       },
-      babelPreset: opts.babelPreset || [
+      babelPreset: [
         require.resolve('@umijs/babel-preset-umi'),
         {
           presetEnv: {
@@ -100,11 +102,18 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
           pluginTransformRuntime: {},
           pluginLockCoreJS: {},
           pluginDynamicImportNode: false,
+          ...opts.babelPresetOpts,
         },
       ],
       beforeBabelPlugins: [require.resolve('babel-plugin-dynamic-import-node')],
-      extraBabelPresets: config.extraBabelPresets,
-      extraBabelPlugins: config.extraBabelPlugins,
+      extraBabelPresets: [
+        ...(opts.extraBabelPresets || []),
+        ...(config.extraBabelPresets || []),
+      ],
+      extraBabelPlugins: [
+        ...(opts.extraBabelPlugins || []),
+        ...(config.extraBabelPlugins || []),
+      ],
 
       // configure library related options
       chainWebpack(memo: any, args: any) {

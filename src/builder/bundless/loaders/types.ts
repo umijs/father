@@ -1,6 +1,7 @@
 import type { ExtendedLoaderContext } from 'loader-runner';
 import type { IApi } from '../../../types';
 import type { IBundlessConfig } from '../../config';
+import { IBabelConfig } from '../../../types';
 
 type SourceMap = string | null | undefined;
 

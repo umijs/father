@@ -1,6 +1,11 @@
 import { chokidar, rimraf } from '@umijs/utils';
 import path from 'path';
-import { IApi, IFatherConfig, IBundlerWebpackConfig } from '../types';
+import {
+  IApi,
+  IFatherConfig,
+  IBundlerWebpackConfig,
+  IBabelConfig,
+} from '../types';
 import bundle, { type IBundleWatcher } from './bundle';
 import bundless from './bundless';
 import { createConfigProviders } from './config';
@@ -32,7 +37,9 @@ interface IBuilderOpts {
   pkg: IApi['pkg'];
   clean?: boolean;
   buildDependencies?: string[];
-  babelPreset: IBundlerWebpackConfig['extraBabelPresets'];
+  babelPresetOpts: IBabelConfig['presetOpts'];
+  extraBabelPresets: IBabelConfig['presets'];
+  extraBabelPlugins: IBabelConfig['plugins'];
   chainWebpack?: IBundlerWebpackConfig['chainWebpack'];
 }
 
@@ -71,8 +78,10 @@ async function builder(
       configProvider: configProviders.bundle,
       buildDependencies: opts.buildDependencies,
       watch: opts.watch,
-      babelPreset: opts.babelPreset,
       chainWebpack: opts.chainWebpack,
+      babelPresetOpts: opts.babelPresetOpts,
+      extraBabelPresets: opts.extraBabelPresets,
+      extraBabelPlugins: opts.extraBabelPlugins,
     });
 
     opts.watch && watchers.push(watcher);
@@ -83,6 +92,9 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
+      babelPresetOpts: opts.babelPresetOpts,
+      extraBabelPresets: opts.extraBabelPresets,
+      extraBabelPlugins: opts.extraBabelPlugins,
     });
 
     opts.watch && watchers.push(watcher);
@@ -93,6 +105,9 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
+      babelPresetOpts: opts.babelPresetOpts,
+      extraBabelPresets: opts.extraBabelPresets,
+      extraBabelPlugins: opts.extraBabelPlugins,
     });
 
     opts.watch && watchers.push(watcher);

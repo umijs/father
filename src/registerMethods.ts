@@ -5,9 +5,10 @@ export default (api: IApi) => {
     'addRegularCheckup',
     'addSourceCheckup',
     'addImportsCheckup',
-    'addBabelPresets',
     'addBundlessLoader',
     'addJSTransformer',
+    'addExtraBabelPresets',
+    'addExtraBabelPlugins',
 
     'modifyBabelPresetOpts',
     'chainWebpack',

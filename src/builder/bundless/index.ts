@@ -18,6 +18,7 @@ import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
 import runLoaders from './loaders';
 import { logger } from '../../utils';
+import { IBabelConfig } from '../../types';
 
 const debugLog = debug(DEBUG_BUNDLESS_NAME);
 
@@ -39,6 +40,9 @@ async function transformFiles(
     cwd: string;
     configProvider: BundlessConfigProvider;
     watch?: true;
+    babelPresetOpts: IBabelConfig['presetOpts'];
+    extraBabelPresets: IBabelConfig['presets'];
+    extraBabelPlugins: IBabelConfig['plugins'];
   },
 ) {
   try {
@@ -49,6 +53,13 @@ async function transformFiles(
     for (let item of files) {
       const config = opts.configProvider.getConfigForFile(item);
       const itemAbsPath = path.join(opts.cwd, item);
+
+      // 挂在私有属性, 减少透传
+      config.__userBabelConfig = {
+        babelPresetOpts: opts.babelPresetOpts,
+        extraBabelPlugins: opts.extraBabelPlugins,
+        extraBabelPresets: opts.extraBabelPresets,
+      };
 
       if (config) {
         let itemDistPath = path.join(

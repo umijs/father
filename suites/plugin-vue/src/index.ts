@@ -17,21 +17,20 @@ export default (api: IApi) => {
     logger.event('start vue compile');
   });
 
-  api.addBabelPresets(async () => {
-    const babelPresetOpts = await api.applyPlugins({
-      key: 'modifyBabelPresetOpts',
-      initialValue: {
-        presetEnv: {},
-        presetTypeScript: {},
-        pluginTransformRuntime: {},
-        pluginLockCoreJS: {},
-        pluginDynamicImportNode: false,
-        pluginAutoCSSModules: true,
-      },
-    });
+  api.modifyBabelPresetOpts((memo) => {
+    memo.presetTypeScript = {
+      // 支持 vue 后缀
+      allExtensions: true,
+      // 支持 tsx
+      isTSX: true,
+    };
 
-    return [require.resolve('@fatherjs/babel-preset-vue'), babelPresetOpts];
+    // 禁用 react
+    memo.presetReact = false;
+    return memo;
   });
+
+  api.addExtraBabelPlugins(() => [require.resolve('@vue/babel-plugin-jsx')]);
 
   api.chainWebpack((memo, { config }) => {
     getConfig(memo);
