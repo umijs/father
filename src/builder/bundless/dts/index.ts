@@ -1,7 +1,6 @@
-import { chalk, fsExtra, winPath } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
-import { CACHE_PATH } from '../../../constants';
 import { logger } from '../../../utils';
 
 /**
@@ -30,13 +29,6 @@ export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
 ) {
-  const enableCache = process.env.FATHER_CACHE !== 'none';
-  const tscCacheDir = path.join(opts.cwd, CACHE_PATH, 'tsc');
-  if (enableCache) {
-    // make tsc cache dir
-    fsExtra.ensureDirSync(tscCacheDir);
-  }
-
   const output: { file: string; content: string; sourceFile: string }[] = [];
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
@@ -87,16 +79,8 @@ export default async function getDeclarations(
         );
       }
     });
-    // enable incremental for cache
-    if (enableCache && typeof tsconfig.options.incremental === 'undefined') {
-      tsconfig.options.incremental = true;
-      tsconfig.options.tsBuildInfoFile = path.join(
-        tscCacheDir,
-        'tsconfig.tsbuildinfo',
-      );
-    }
 
-    const tsHost = ts.createIncrementalCompilerHost(tsconfig.options);
+    const tsHost = ts.createCompilerHost(tsconfig.options);
 
     tsHost.writeFile = (fileName, content, _a, _b, sourceFiles) => {
       const sourceFile = sourceFiles?.[0].fileName;
@@ -111,12 +95,10 @@ export default async function getDeclarations(
         };
 
         output.push(ret);
-      } else if (fileName === tsconfig.options.tsBuildInfoFile) {
-        fsExtra.writeFileSync(tsconfig.options.tsBuildInfoFile, content);
       }
     };
 
-    const incrProgram = ts.createIncrementalProgram({
+    const program = ts.createProgram({
       rootNames: inputFiles,
       options: tsconfig.options as any,
       host: tsHost,
@@ -125,10 +107,10 @@ export default async function getDeclarations(
     // using ts-paths-transformer to transform tsconfig paths to relative path
     // reason: https://github.com/microsoft/TypeScript/issues/30952
     // ref: https://www.npmjs.com/package/typescript-transform-paths
-    const result = incrProgram.emit(undefined, undefined, undefined, true, {
+    const result = program.emit(undefined, undefined, undefined, true, {
       afterDeclarations: [
         tsPathsTransformer(
-          incrProgram.getProgram(),
+          program,
           { afterDeclarations: true },
           // specific typescript instance, because this plugin is incompatible with typescript@4.9.x currently
           // but some project may declare typescript and some dependency manager will hoist project's typescript
