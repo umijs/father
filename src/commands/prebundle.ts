@@ -12,9 +12,8 @@ export default (api: IApi) => {
       // then cause service restart error in dev command
       // use require() rather than import(), to avoid jest runner to fail
       // ref: https://github.com/nodejs/node/issues/35889
-      const {
-        default: preBundle,
-      }: typeof import('../prebundler') = require('../prebundler');
+      const { default: preBundle }: typeof import('../prebundler') =
+        await import('../prebundler');
 
       if (api.config.prebundle) {
         await preBundle({
