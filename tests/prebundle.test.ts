@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import * as cli from '../dist/cli/cli';
+import * as cli from '../src/cli/cli';
 import { distToMap, getDirCases } from './utils';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/prebundle');

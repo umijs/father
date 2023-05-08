@@ -11,7 +11,7 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": ["vitest"]
+    "types": ["vitest/globals"]
   },
   "include": ["src"]
 }

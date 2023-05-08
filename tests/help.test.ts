@@ -1,4 +1,4 @@
-import * as cli from '../dist/cli/cli';
+import * as cli from '../src/cli/cli';
 
 const logSpy = vi.spyOn(console, 'log');
 const errorSpy = vi.spyOn(console, 'error');

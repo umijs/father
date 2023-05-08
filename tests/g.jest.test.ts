@@ -1,27 +1,33 @@
+import { resolve } from '@umijs/utils';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
-import * as cli from '../dist/cli/cli';
+import * as cli from '../src/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
+import { mockModule } from './utils';
+
+const requireResolve = (path: string) => {
+  return resolve.sync(path, {
+    basedir: __dirname,
+    extensions: ['.ts', '.js'],
+  });
+};
 
 let useRTL = false;
-vi.doMock('../src/commands/generators/utils', () => {
-  const originalModule = vi.requireActual('../src/commands/generators/utils');
-  return {
-    __esModule: true,
-    ...originalModule,
-    promptsExitWhenCancel: vi.fn(() => ({ useRTL })),
-  };
-});
-
 const mockInstall = vi.fn();
+
 vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
   mockInstall,
 );
+const utilsPath = requireResolve('../src/commands/generators/utils');
+mockModule(utilsPath, {
+  promptsExitWhenCancel: vi.fn(() => ({ useRTL })),
+  GeneratorHelper,
+});
 
 const CASES_DIR = path.join(__dirname, 'fixtures/generator');
 describe('jest generator', function () {
   process.env.APP_ROOT = path.join(CASES_DIR);
-  const jestConfPath = path.join(CASES_DIR, 'vi.config.ts');
+  const jestConfPath = path.join(CASES_DIR, 'jest.config.ts');
   const jestSetupPath = path.join(CASES_DIR, 'jest-setup.ts');
   afterEach(() => {
     [jestConfPath, jestSetupPath].forEach((path) => {
@@ -81,7 +87,7 @@ describe('jest generator', function () {
       args: { _: ['g', 'jest'], $0: 'node' },
     });
     expect(warnSpy.mock.calls[0][1]).toBe(
-      'Jest has already enabled. You can remove vi.config.{ts,js}, then run this again to re-setup.',
+      'Jest has already enabled. You can remove jest.config.{ts,js}, then run this again to re-setup.',
     );
   });
 });

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import * as cli from '../dist/cli/cli';
-import { WATCH_DEBOUNCE_STEP } from '../dist/constants';
+import * as cli from '../src/cli/cli';
+import { WATCH_DEBOUNCE_STEP } from '../src/constants';
 import { distToMap } from './utils';
 
 const CASE_DIR = path.join(__dirname, 'fixtures/dev');
@@ -20,7 +20,7 @@ const wait = (
 global.TMP_WATCHERS = [];
 global.TMP_CASE_CONFIG = CASE_CONFIG;
 
-vi.mock('../src/builder/bundle/index.ts', () => {
+vi.doMock('../src/builder/bundle/index.ts', () => {
   const originalModule = vi.requireActual('../src/builder/bundle/index.ts');
 
   return {
@@ -35,7 +35,7 @@ vi.mock('../src/builder/bundle/index.ts', () => {
   };
 });
 
-vi.mock('@umijs/utils', () => {
+vi.doMock('@umijs/utils', () => {
   const originalModule = vi.requireActual('@umijs/utils');
 
   return {
@@ -68,7 +68,7 @@ vi.mock('@umijs/utils', () => {
 
 // workaround to fix require cache in jest
 // to make sure father load the latest config
-vi.mock('./fixtures/dev/.fatherrc.ts', () => {
+vi.doMock('./fixtures/dev/.fatherrc.ts', () => {
   const originalModule = vi.requireActual(global.TMP_CASE_CONFIG);
 
   if (global.TMP_TRANSFORMER) {

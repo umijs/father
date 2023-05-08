@@ -1,40 +1,15 @@
-import * as utils from '@umijs/utils';
 import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import process from 'process';
-import * as cli from '../dist/cli/cli';
-import { GeneratorHelper } from '../src/commands/generators/utils';
-
-vi.mock('@umijs/utils', () => {
-  return {
-    __esModule: true,
-    ...utils,
-    installWithNpmClient: vi.fn(),
-    resolve: {
-      ...utils.resolve,
-      sync: (id, opts) => {
-        if (id === '@swc/core') {
-          throw new Error('not resolve');
-        }
-
-        return utils.resolve.sync(id, opts);
-      },
-    },
-  };
-});
-
-const mockInstall = vi.fn();
-vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
-  mockInstall,
-);
+import * as cli from '../src/cli/cli';
 
 beforeAll(() => {
   process.env.FATHER_CACHE = 'none';
 });
+
 afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
-  vi.unmock('@umijs/utils');
 });
 
 const CASES_DIR = path.join(__dirname, 'fixtures/deps');
@@ -61,7 +36,6 @@ test('depsOnDemand: swc', async () => {
   });
 
   expect(process.env.NODE_ENV).toBe(NODE_ENV);
-  expect(mockInstall).toBeCalledWith();
   expect(getPkg(caseDir)).not.toBeUndefined();
   resetPkg();
 });

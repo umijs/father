@@ -1,8 +1,8 @@
 import { logger as umiLogger } from '@umijs/utils';
-import { logger } from '../dist/utils';
+import { logger } from '../src/utils';
 
-vi.mock('@umijs/utils', () => {
-  const originalModule = vi.requireActual('@umijs/utils');
+vi.mock('@umijs/utils', async () => {
+  const originalModule = await vi.importActual('@umijs/utils');
 
   return {
     ...originalModule,

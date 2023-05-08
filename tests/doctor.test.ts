@@ -1,6 +1,6 @@
-import { mockProcessExit } from 'jest-mock-process';
 import path from 'path';
-import * as cli from '../dist/cli/cli';
+import { mockProcessExit } from 'vitest-mock-process';
+import * as cli from '../src/cli/cli';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/doctor');
 const mockExit = mockProcessExit();
@@ -10,7 +10,7 @@ const logSpy = vi.spyOn(console, 'log');
  * jest will intercept ERR_REQUIRE_ESM to show transformer hint
  * so we need to mock esm module to throw real error
  */
-vi.mock('./fixtures/doctor/errors/node_modules/esm/index.js', () => {
+vi.doMock('./fixtures/doctor/errors/node_modules/esm/index.js', () => {
   throw new (class extends Error {
     code = 'ERR_REQUIRE_ESM';
   })();

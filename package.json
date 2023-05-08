@@ -73,7 +73,6 @@
     "esno": "^0.16.3",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.3",
-    "jest-mock-process": "^1.5.1",
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.7",
     "prettier-plugin-organize-imports": "^3.2.2",
@@ -81,6 +80,7 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
     "vitest": "0.30.1",
+    "vitest-mock-process": "^1.0.4",
     "zx": "^4.3.0"
   },
   "packageManager": "pnpm@7.3.0",

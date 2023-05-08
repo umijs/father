@@ -1,6 +1,7 @@
+import esbuild from '@umijs/bundler-utils/compiled/esbuild';
+import { register } from '@umijs/utils';
 import { getTsconfig } from '../../dts';
 import type { IBundlessLoader, IJSTransformer, ILoaderOutput } from '../types';
-
 const transformers: Record<string, IJSTransformer> = {};
 
 export interface ITransformerItem {
@@ -13,7 +14,14 @@ export interface ITransformerItem {
  * @param item
  */
 export function addTransformer(item: ITransformerItem) {
+  register.register({
+    implementor: esbuild,
+    exts: ['.ts', '.mjs'],
+  });
+  register.clearFiles();
   const mod = require(item.transformer);
+  register.restore();
+
   const transformer: IJSTransformer = mod.default || mod;
 
   transformers[item.id] = transformer;
