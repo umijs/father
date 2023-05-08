@@ -70,6 +70,7 @@
     "@types/loader-runner": "2.2.4",
     "@types/minimatch": "3.0.5",
     "@types/node": "^18.15.13",
+    "@vitest/coverage-c8": "^0.31.0",
     "esno": "^0.16.3",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.3",
