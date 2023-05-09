@@ -1,10 +1,9 @@
 import path from 'path';
-// TODO: why vitest-mock-process no work?
-// import { mockProcessExit } from 'vitest-mock-process';
+import { mockProcessExit } from 'vitest-mock-process';
 import * as cli from '../src/cli/cli';
 import { distToMap } from './utils';
 
-// const mockExit = mockProcessExit();
+const mockExit = mockProcessExit();
 const CASES_DIR = path.join(__dirname, 'fixtures/config');
 
 beforeAll(() => {
@@ -14,7 +13,7 @@ beforeAll(() => {
 afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
-  // mockExit.mockRestore();
+  mockExit.mockRestore();
 });
 test('config: cyclic extends', async () => {
   // execute build
@@ -32,7 +31,7 @@ test('config: cyclic extends', async () => {
   }
 
   // expect process.exit(1) called
-  // expect(mockExit).toHaveBeenCalledWith(1);
+  expect(mockExit).toHaveBeenCalledWith(1);
 
   delete global.TMP_CASE_CONFIG;
 });
@@ -46,7 +45,7 @@ test('config: nonexistent extends', async () => {
   });
 
   // expect process.exit(1) called
-  // expect(mockExit).toHaveBeenCalledWith(1);
+  expect(mockExit).toHaveBeenCalledWith(1);
 });
 
 test('config: nested extends', async () => {
