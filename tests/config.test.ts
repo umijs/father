@@ -22,13 +22,9 @@ test('config: cyclic extends', async () => {
   // workaround for get config file path
   global.TMP_CASE_CONFIG = path.join(process.env.APP_ROOT, '.fatherrc.ts');
 
-  try {
-    await cli.run({
-      args: { _: ['build'], $0: 'node' },
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  await cli.run({
+    args: { _: ['build'], $0: 'node' },
+  });
 
   // expect process.exit(1) called
   expect(mockExit).toHaveBeenCalledWith(1);

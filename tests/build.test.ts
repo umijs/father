@@ -17,7 +17,7 @@ afterAll(() => {
 const cases = getDirCases(CASES_DIR);
 
 for (let name of cases) {
-  it(`build: ${name}`, async () => {
+  test(`build: ${name}`, async () => {
     // execute build
     process.env.APP_ROOT = path.join(CASES_DIR, name);
     await cli.run({

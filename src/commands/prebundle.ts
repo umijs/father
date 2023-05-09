@@ -1,12 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { register, resolve } from '@umijs/utils';
+import { register } from '@umijs/utils';
 import { IApi } from '../types';
-export const requireResolve = (path: string) => {
-  return resolve.sync(path, {
-    basedir: __dirname,
-    extensions: ['.ts', '.js'],
-  });
-};
 
 export default (api: IApi) => {
   // to avoid conflict with schema

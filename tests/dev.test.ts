@@ -20,8 +20,10 @@ const wait = (
 global.TMP_WATCHERS = [];
 global.TMP_CASE_CONFIG = CASE_CONFIG;
 
-vi.doMock('../src/builder/bundle/index.ts', () => {
-  const originalModule = vi.requireActual('../src/builder/bundle/index.ts');
+vi.doMock('../src/builder/bundle/index.ts', async () => {
+  const originalModule = await vi.importActual(
+    '../src/builder/bundle/index.ts',
+  );
 
   return {
     __esModule: true,
@@ -35,8 +37,8 @@ vi.doMock('../src/builder/bundle/index.ts', () => {
   };
 });
 
-vi.doMock('@umijs/utils', () => {
-  const originalModule = vi.requireActual('@umijs/utils');
+vi.doMock('@umijs/utils', async () => {
+  const originalModule = await vi.importActual('@umijs/utils');
 
   return {
     __esModule: true,
@@ -69,7 +71,7 @@ vi.doMock('@umijs/utils', () => {
 // workaround to fix require cache in jest
 // to make sure father load the latest config
 vi.doMock('./fixtures/dev/.fatherrc.ts', () => {
-  const originalModule = vi.requireActual(global.TMP_CASE_CONFIG);
+  const originalModule = vi.importActual(global.TMP_CASE_CONFIG);
 
   if (global.TMP_TRANSFORMER) {
     originalModule.default.esm.transformer = global.TMP_TRANSFORMER;
