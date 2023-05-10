@@ -1,8 +1,9 @@
 import { chalk, fsExtra, winPath } from '@umijs/utils';
+import fs from 'fs';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
 import { CACHE_PATH } from '../../../constants';
-import { logger } from '../../../utils';
+import { getCache, logger } from '../../../utils';
 
 /**
  * get parsed tsconfig.json for specific path
@@ -30,6 +31,7 @@ export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
 ) {
+  const cache = getCache('bundless-dts');
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const tscCacheDir = path.join(opts.cwd, CACHE_PATH, 'tsc');
   if (enableCache) {
@@ -97,6 +99,19 @@ export default async function getDeclarations(
     }
 
     const tsHost = ts.createIncrementalCompilerHost(tsconfig.options);
+    const cacheKeys = inputFiles.reduce<Record<string, string>>(
+      (ret, file) => ({
+        ...ret,
+        // format: {path:mtime:config}
+        [file]: [
+          file,
+          fs.lstatSync(file).mtimeMs,
+          JSON.stringify(tsconfig.options),
+        ].join(':'),
+      }),
+      {},
+    );
+    const cacheRets: Record<string, typeof output> = {};
 
     tsHost.writeFile = (fileName, content, _a, _b, sourceFiles) => {
       const sourceFile = sourceFiles?.[0].fileName;
@@ -109,12 +124,30 @@ export default async function getDeclarations(
           content,
           sourceFile,
         };
+        const index = output.findIndex(
+          (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
+        );
+        if (index > -1) {
+          output.splice(index, 1, ret);
+        } else {
+          output.push(ret);
+        }
 
-        output.push(ret);
+        // group cache by file (d.ts & d.ts.map)
+        cacheRets[cacheKeys[sourceFile]] ??= [];
+        cacheRets[cacheKeys[sourceFile]].push(ret);
       } else if (fileName === tsconfig.options.tsBuildInfoFile) {
         fsExtra.writeFileSync(tsconfig.options.tsBuildInfoFile, content);
       }
     };
+
+    // use cache first
+    inputFiles.forEach((file) => {
+      const cacheRet = cache.getSync(cacheKeys[file], '');
+      if (cacheRet) {
+        output.push(...cacheRet);
+      }
+    });
 
     const incrProgram = ts.createIncrementalProgram({
       rootNames: inputFiles,
@@ -155,6 +188,9 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
+
+    // save cache
+    Object.keys(cacheRets).forEach((key) => cache.setSync(key, cacheRets[key]));
   }
 
   return output;
