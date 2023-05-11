@@ -6,7 +6,8 @@ import path from 'child_process';
 import esm from 'esm';
 import externals from 'externals';
 import hello from 'hello';
-import BigCamelCase from './camelCase';
+// @ts-ignore
+import BigCamelCase from './CamelCase';
 import './index.less';
 
 // to avoid esbuild tree-shaking
