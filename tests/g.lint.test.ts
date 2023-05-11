@@ -2,13 +2,13 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
-import { mockModule, requireResolve, unMockModule } from './utils';
+import { mockModule } from './utils';
 
 const mockInstall = vi.fn();
 const installSync = vi
   .spyOn(GeneratorHelper.prototype, 'installDeps')
   .mockImplementation(mockInstall);
-const utilsPath = requireResolve('../src/commands/generators/utils');
+const utilsPath = require.resolve('../src/commands/generators/utils');
 mockModule(utilsPath, {
   GeneratorHelper,
 });
@@ -31,87 +31,91 @@ describe('lint generator', () => {
     warnSpy.mockReset();
     installSync.mockReset();
   });
-  afterAll(async () => {
-    unMockModule('child_process');
-  });
-  test('g eslint', async () => {
-    await cli.run({
-      args: { _: ['g', 'eslint'], $0: 'node' },
+
+  describe('eslint', function () {
+    test('g eslint', async () => {
+      await cli.run({
+        args: { _: ['g', 'eslint'], $0: 'node' },
+      });
+
+      const pkg = JSON.parse(
+        readFileSync(path.join(CASES_DIR, 'package.json'), 'utf-8'),
+      );
+
+      expect(existsSync(eslintConfPath)).toBeTruthy();
+      expect(pkg['scripts']).toMatchObject({
+        'lint:es': 'eslint "{src,test}/**/*.{js,jsx,ts,tsx}"',
+      });
+      expect(pkg['devDependencies']).toMatchObject({
+        '@umijs/lint': '^4',
+        eslint: '^8.23.0',
+      });
+      expect(mockInstall).toBeCalled();
     });
 
-    const pkg = JSON.parse(
-      readFileSync(path.join(CASES_DIR, 'package.json'), 'utf-8'),
-    );
-
-    expect(existsSync(eslintConfPath)).toBeTruthy();
-    expect(pkg['scripts']).toMatchObject({
-      'lint:es': 'eslint "{src,test}/**/*.{js,jsx,ts,tsx}"',
+    test('warning when eslint config exists', async () => {
+      writeFileSync(eslintConfPath, '{}');
+      await cli.run({
+        args: { _: ['g', 'eslint'], $0: 'node' },
+      });
+      expect(warnSpy.mock.calls[0][1]).toBe(
+        'ESLint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
+      );
     });
-    expect(pkg['devDependencies']).toMatchObject({
-      '@umijs/lint': '^4',
-      eslint: '^8.23.0',
-    });
-    expect(mockInstall).toBeCalled();
-  });
-
-  test('warning when eslint config exists', async () => {
-    writeFileSync(eslintConfPath, '{}');
-    await cli.run({
-      args: { _: ['g', 'eslint'], $0: 'node' },
-    });
-    expect(warnSpy.mock.calls[0][1]).toBe(
-      'ESLint has already enabled. You can remove .eslintrc, then run this again to re-setup.',
-    );
-  });
-
-  test('g stylelint', async () => {
-    await cli.run({
-      args: { _: ['g', 'stylelint'], $0: 'node' },
-    });
-
-    const pkg = JSON.parse(
-      readFileSync(path.join(CASES_DIR, 'package.json'), 'utf-8'),
-    );
-
-    expect(existsSync(styleConfPath)).toBeTruthy();
-    expect(pkg['scripts']).toMatchObject({
-      'lint:css': 'stylelint "{src,test}/**/*.{css,less}"',
-    });
-    expect(pkg['devDependencies']).toMatchObject({
-      '@umijs/lint': '^4',
-      stylelint: '^14.11.0',
-    });
-    expect(mockInstall).toBeCalled();
   });
 
-  test('warning when stylelint config exists', async () => {
-    writeFileSync(styleConfPath, '{}');
-    await cli.run({
-      args: { _: ['g', 'stylelint'], $0: 'node' },
+  describe('stylelint', function () {
+    test('g stylelint', async () => {
+      await cli.run({
+        args: { _: ['g', 'stylelint'], $0: 'node' },
+      });
+
+      const pkg = JSON.parse(
+        readFileSync(path.join(CASES_DIR, 'package.json'), 'utf-8'),
+      );
+
+      expect(existsSync(styleConfPath)).toBeTruthy();
+      expect(pkg['scripts']).toMatchObject({
+        'lint:css': 'stylelint "{src,test}/**/*.{css,less}"',
+      });
+      expect(pkg['devDependencies']).toMatchObject({
+        '@umijs/lint': '^4',
+        stylelint: '^14.11.0',
+      });
+      expect(mockInstall).toBeCalled();
     });
-    expect(warnSpy.mock.calls[0][1]).toBe(
-      'Stylelint has already enabled. You can remove .stylelintrc/stylelint.config.js, then run this again to re-setup.',
-    );
+
+    test('warning when stylelint config exists', async () => {
+      writeFileSync(styleConfPath, '{}');
+      await cli.run({
+        args: { _: ['g', 'stylelint'], $0: 'node' },
+      });
+      expect(warnSpy.mock.calls[0][1]).toBe(
+        'Stylelint has already enabled. You can remove .stylelintrc/stylelint.config.js, then run this again to re-setup.',
+      );
+    });
   });
 
-  test('g lint', async () => {
-    await cli.run({
-      args: { _: ['g', 'lint'], $0: 'node' },
-    });
+  describe('lint', function () {
+    test('g lint', async () => {
+      await cli.run({
+        args: { _: ['g', 'lint'], $0: 'node' },
+      });
 
-    const pkg = JSON.parse(
-      readFileSync(path.join(CASES_DIR, 'package.json'), 'utf-8'),
-    );
+      const pkg = JSON.parse(
+        readFileSync(path.join(CASES_DIR, 'package.json'), 'utf-8'),
+      );
 
-    expect(existsSync(styleConfPath)).toBeTruthy();
-    expect(pkg['scripts']).toMatchObject({
-      lint: 'pnpm run lint:es && pnpm run lint:css',
+      expect(existsSync(styleConfPath)).toBeTruthy();
+      expect(pkg['scripts']).toMatchObject({
+        lint: 'pnpm run lint:es && pnpm run lint:css',
+      });
+      expect(pkg['devDependencies']).toMatchObject({
+        '@umijs/lint': '^4',
+        eslint: '^8.23.0',
+        stylelint: '^14.11.0',
+      });
+      expect(mockInstall).toBeCalled();
     });
-    expect(pkg['devDependencies']).toMatchObject({
-      '@umijs/lint': '^4',
-      eslint: '^8.23.0',
-      stylelint: '^14.11.0',
-    });
-    expect(mockInstall).toBeCalled();
   });
 });

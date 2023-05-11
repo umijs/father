@@ -1,5 +1,3 @@
-import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { register } from '@umijs/utils';
 import { IApi } from '../types';
 
 export default (api: IApi) => {
@@ -14,15 +12,10 @@ export default (api: IApi) => {
       // then cause service restart error in dev command
       // use require() rather than import(), to avoid jest runner to fail
       // ref: https://github.com/nodejs/node/issues/35889
-      register.register({
-        implementor: esbuild,
-        exts: ['.ts', '.mjs'],
-      });
-      register.clearFiles();
       const {
         default: preBundle,
       }: typeof import('../prebundler') = require('../prebundler');
-      register.restore();
+
       if (api.config.prebundle) {
         await preBundle({
           userConfig: api.config.prebundle,

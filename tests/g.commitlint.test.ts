@@ -9,13 +9,13 @@ import {
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
-import { mockModule, requireResolve, unMockModule } from './utils';
+import { mockModule, unMockModule } from './utils';
 
 const mockInstall = vi.fn();
 const installSync = vi
   .spyOn(GeneratorHelper.prototype, 'installDeps')
   .mockImplementation(mockInstall);
-const utilsPath = requireResolve('../src/commands/generators/utils');
+const utilsPath = require.resolve('../src/commands/generators/utils');
 mockModule(utilsPath, {
   GeneratorHelper,
 });

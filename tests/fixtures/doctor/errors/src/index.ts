@@ -3,10 +3,10 @@ import orgAlias from '@org/alias';
 import orgExternals from '@org/externals';
 import alias from 'alias';
 import path from 'child_process';
+import esm from 'esm';
 import externals from 'externals';
 import hello from 'hello';
-import BigCamelCase from './CamelCase';
-import esm from 'esm';
+import BigCamelCase from './camelCase';
 import './index.less';
 
 // to avoid esbuild tree-shaking

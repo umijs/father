@@ -1,16 +1,8 @@
-import { resolve } from '@umijs/utils';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
 import { mockModule } from './utils';
-
-const requireResolve = (path: string) => {
-  return resolve.sync(path, {
-    basedir: __dirname,
-    extensions: ['.ts', '.js'],
-  });
-};
 
 let useRTL = false;
 const mockInstall = vi.fn();
@@ -18,7 +10,7 @@ const mockInstall = vi.fn();
 vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
   mockInstall,
 );
-const utilsPath = requireResolve('../src/commands/generators/utils');
+const utilsPath = require.resolve('../src/commands/generators/utils');
 mockModule(utilsPath, {
   promptsExitWhenCancel: vi.fn(() => ({ useRTL })),
   GeneratorHelper,

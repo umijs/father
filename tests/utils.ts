@@ -1,4 +1,4 @@
-import { resolve, winPath } from '@umijs/utils';
+import { winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 
@@ -77,10 +77,3 @@ export function resetAllMockModules() {
     require.cache[key] = moduleCache[key];
   });
 }
-
-export const requireResolve = (path: string) => {
-  return resolve.sync(path, {
-    basedir: __dirname,
-    extensions: ['.ts', '.js'],
-  });
-};

@@ -1,6 +1,5 @@
 import { Extractor } from '@microsoft/api-extractor';
-import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { chalk, register, winPath } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 // @ts-ignore
 import ncc from '@vercel/ncc';
 import fs from 'fs';
@@ -13,13 +12,7 @@ export default async (opts: Parameters<typeof getConfig>[0]) => {
   // patch @microsoft/api-extractor before prepare config
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
-  register.register({
-    implementor: esbuild,
-    exts: ['.ts', '.mjs'],
-  });
-  register.clearFiles();
   require('./patcher');
-  register.restore();
 
   const config = getConfig(opts);
   const count = Object.keys(config.deps).length;
