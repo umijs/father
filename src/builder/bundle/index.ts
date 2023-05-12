@@ -174,6 +174,7 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
             },
           }
         : {}),
+      disableCopy: true,
     });
   }
 
