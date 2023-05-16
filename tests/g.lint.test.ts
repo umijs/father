@@ -2,13 +2,18 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
+import { mockModule } from './utils';
 
-const mockInstall = jest.fn();
-jest
+const mockInstall = vi.fn();
+const installSync = vi
   .spyOn(GeneratorHelper.prototype, 'installDeps')
   .mockImplementation(mockInstall);
+const utilsPath = require.resolve('../src/commands/generators/utils');
+mockModule(utilsPath, {
+  GeneratorHelper,
+});
 
-const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
 const CASES_DIR = path.join(__dirname, 'fixtures/generator');
 
@@ -24,6 +29,7 @@ describe('lint generator', () => {
     });
     writeFileSync(path.join(CASES_DIR, 'package.json'), '{}');
     warnSpy.mockReset();
+    installSync.mockReset();
   });
 
   describe('eslint', function () {

@@ -1,16 +1,16 @@
-import { mockProcessExit } from 'jest-mock-process';
 import path from 'path';
+import { mockProcessExit } from 'vitest-mock-process';
 import * as cli from '../src/cli/cli';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/doctor');
 const mockExit = mockProcessExit();
-const logSpy = jest.spyOn(console, 'log');
+const logSpy = vi.spyOn(console, 'log');
 
 /**
  * jest will intercept ERR_REQUIRE_ESM to show transformer hint
  * so we need to mock esm module to throw real error
  */
-jest.mock('./fixtures/doctor/errors/node_modules/esm/index.js', () => {
+vi.doMock('./fixtures/doctor/errors/node_modules/esm/index.js', () => {
   throw new (class extends Error {
     code = 'ERR_REQUIRE_ESM';
   })();
@@ -20,7 +20,7 @@ afterAll(() => {
   logSpy.mockRestore();
   mockExit.mockRestore();
   delete process.env.APP_ROOT;
-  jest.unmock('./fixtures/doctor/errors/node_modules/esm/index.js');
+  vi.unmock('./fixtures/doctor/errors/node_modules/esm/index.js');
 });
 
 test('doctor: warn checkups', async () => {
@@ -30,32 +30,30 @@ test('doctor: warn checkups', async () => {
   });
 
   // DUP_IN_PEER_DEPS
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('peerDependency'),
   );
 
   // EFFECTS_IN_SIDE_EFFECTS
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('sideEffect syntax'),
   );
 
   // PREFER_BABEL_RUNTIME
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('@babel/runtime'),
   );
 
   // PREFER_PACK_FILES
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('No `files` field'),
   );
 
   // PREFER_NO_CSS_MODULES
-  expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('CSS Modules'),
-  );
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('CSS Modules'));
 
   // PREFER_PEER_DEPS
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('multi-instance risk'),
   );
 });
@@ -67,22 +65,20 @@ test('doctor: error checkups', async () => {
   });
 
   // PHANTOM_DEPS
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('Source depends on'),
   );
 
   // PHANTOM_DEPS no standard library
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.not.stringContaining('child_process'),
   );
 
   // EFFECTS_IN_SIDE_EFFECTS
-  expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('styles lost'),
-  );
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('styles lost'));
 
   // PACK_FILES_MISSING
-  expect(console.log).toHaveBeenCalledWith(
+  expect(logSpy).toHaveBeenCalledWith(
     expect.stringContaining('will not be published'),
   );
 
@@ -90,7 +86,7 @@ test('doctor: error checkups', async () => {
   // why only win32 and drawin?
   // because Windows and macOS are case-insensitive by default
   if (['win32', 'drawin'].includes(process.platform)) {
-    expect(console.log).toHaveBeenCalledWith(
+    expect(logSpy).toHaveBeenCalledWith(
       expect.stringContaining('the corresponding path'),
     );
   }
@@ -110,7 +106,5 @@ test('doctor: health', async () => {
     args: { _: ['doctor'], $0: 'node' },
   });
 
-  expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('looks fine'),
-  );
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('looks fine'));
 });

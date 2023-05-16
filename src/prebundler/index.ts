@@ -4,9 +4,9 @@ import { chalk, winPath } from '@umijs/utils';
 import ncc from '@vercel/ncc';
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../utils';
 import { getConfig } from './config';
 import { getSharedData } from './shared';
-import { logger } from '../utils';
 
 export default async (opts: Parameters<typeof getConfig>[0]) => {
   // patch @microsoft/api-extractor before prepare config

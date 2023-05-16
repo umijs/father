@@ -1,6 +1,7 @@
 import path from 'path';
+import { defineConfig } from '../../../../src';
 
-export default {
+export default defineConfig({
   umd: {
     chainWebpack(config) {
       config.resolve.alias.set(
@@ -11,4 +12,4 @@ export default {
       return config;
     },
   },
-};
+});

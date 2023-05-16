@@ -20,8 +20,10 @@ const wait = (
 global.TMP_WATCHERS = [];
 global.TMP_CASE_CONFIG = CASE_CONFIG;
 
-jest.mock('../src/builder/bundle/index.ts', () => {
-  const originalModule = jest.requireActual('../src/builder/bundle/index.ts');
+vi.doMock('../src/builder/bundle/index.ts', async () => {
+  const originalModule = await vi.importActual(
+    '../src/builder/bundle/index.ts',
+  );
 
   return {
     __esModule: true,
@@ -35,8 +37,8 @@ jest.mock('../src/builder/bundle/index.ts', () => {
   };
 });
 
-jest.mock('@umijs/utils', () => {
-  const originalModule = jest.requireActual('@umijs/utils');
+vi.doMock('@umijs/utils', async () => {
+  const originalModule = await vi.importActual('@umijs/utils');
 
   return {
     __esModule: true,
@@ -68,8 +70,8 @@ jest.mock('@umijs/utils', () => {
 
 // workaround to fix require cache in jest
 // to make sure father load the latest config
-jest.mock('./fixtures/dev/.fatherrc.ts', () => {
-  const originalModule = jest.requireActual(global.TMP_CASE_CONFIG);
+vi.doMock('./fixtures/dev/.fatherrc.ts', () => {
+  const originalModule = vi.importActual(global.TMP_CASE_CONFIG);
 
   if (global.TMP_TRANSFORMER) {
     originalModule.default.esm.transformer = global.TMP_TRANSFORMER;
@@ -110,9 +112,9 @@ afterAll(async () => {
   // restore config
   fs.writeFileSync(CASE_CONFIG, CASE_CONFIG_CONTENT, 'utf-8');
 
-  jest.unmock('@umijs/utils');
-  jest.unmock('./fixtures/dev/.fatherrc.ts');
-  jest.unmock('../src/builder/bundle/index.ts');
+  vi.unmock('@umijs/utils');
+  vi.unmock('./fixtures/dev/.fatherrc.ts');
+  vi.unmock('../src/builder/bundle/index.ts');
 });
 
 test('dev: file output', () => {
@@ -143,7 +145,7 @@ test('dev: file change', async () => {
     wait(WATCH_DEBOUNCE_STEP + 500),
     // wait for webpack compilation done
     new Promise<void>((resolve) => {
-      const logSpy = jest.spyOn(console, 'log');
+      const logSpy = vi.spyOn(console, 'log');
       const handler = () => {
         try {
           expect(console.log).toHaveBeenCalledWith(
@@ -201,7 +203,7 @@ test('dev: file delete', async () => {
 
 test('dev: config change', async () => {
   global.TMP_TRANSFORMER = 'esbuild';
-  jest.resetModules();
+  vi.resetModules();
   fs.writeFileSync(
     CASE_CONFIG,
     CASE_CONFIG_CONTENT.replace('babel', 'esbuild'),

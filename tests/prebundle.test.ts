@@ -13,7 +13,7 @@ const oFs = Object.keys(fs).reduce((r, k) => {
 }, {});
 
 beforeAll(() => {
-  jest.resetModules();
+  vi.resetModules();
 });
 
 // workaround for a wired issue in fs
@@ -42,6 +42,6 @@ for (let name of cases) {
     const fileMap = distToMap(path.join(CASES_DIR, name, outputDir));
 
     // check result
-    require(`${CASES_DIR}/${name}/expect`).default(fileMap);
+    (await import(`${CASES_DIR}/${name}/expect`)).default(fileMap);
   });
 }

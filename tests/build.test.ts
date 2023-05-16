@@ -28,6 +28,6 @@ for (let name of cases) {
     const fileMap = distToMap(path.join(CASES_DIR, name, 'dist'));
 
     // check result
-    require(`${CASES_DIR}/${name}/expect`).default(fileMap);
+    (await import(`${CASES_DIR}/${name}/expect`)).default(fileMap);
   });
 }

@@ -2,21 +2,19 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { GeneratorHelper } from '../src/commands/generators/utils';
+import { mockModule } from './utils';
 
 let useRTL = false;
-jest.doMock('../src/commands/generators/utils', () => {
-  const originalModule = jest.requireActual('../src/commands/generators/utils');
-  return {
-    __esModule: true,
-    ...originalModule,
-    promptsExitWhenCancel: jest.fn(() => ({ useRTL })),
-  };
-});
+const mockInstall = vi.fn();
 
-const mockInstall = jest.fn();
-jest
-  .spyOn(GeneratorHelper.prototype, 'installDeps')
-  .mockImplementation(mockInstall);
+vi.spyOn(GeneratorHelper.prototype, 'installDeps').mockImplementation(
+  mockInstall,
+);
+const utilsPath = require.resolve('../src/commands/generators/utils');
+mockModule(utilsPath, {
+  promptsExitWhenCancel: vi.fn(() => ({ useRTL })),
+  GeneratorHelper,
+});
 
 const CASES_DIR = path.join(__dirname, 'fixtures/generator');
 describe('jest generator', function () {
@@ -76,7 +74,7 @@ describe('jest generator', function () {
 
   test('warning when jest config exists', async () => {
     writeFileSync(jestConfPath, '{}');
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     await cli.run({
       args: { _: ['g', 'jest'], $0: 'node' },
     });
