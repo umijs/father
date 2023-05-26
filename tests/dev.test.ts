@@ -209,7 +209,7 @@ test('dev: config change', async () => {
   );
 
   // wait for restart
-  await wait(5000);
+  await wait(10000);
 
   const fileMap = distToMap(CASE_DIST);
 
