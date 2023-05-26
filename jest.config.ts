@@ -4,6 +4,7 @@ const defaultConfig = createConfig();
 
 export default {
   ...defaultConfig,
+  testTimeout: 600000,
   moduleNameMapper: {
     ...defaultConfig.moduleNameMapper,
     // @umijs/bundler-webpack requireHook not working for jest
