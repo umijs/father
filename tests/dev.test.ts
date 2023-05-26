@@ -208,8 +208,8 @@ test('dev: config change', async () => {
     'utf-8',
   );
 
-  // wait for restart
-  await wait(10000);
+  // wait for restart (at least 5s+ is required to restart in Windows CI)
+  await wait(6000);
 
   const fileMap = distToMap(CASE_DIST);
 
