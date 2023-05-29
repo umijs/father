@@ -187,7 +187,7 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * external dependencies
    * @note  like umi externals
    */
-  externals: IBundlerWebpackConfig['externals'];
+  externals?: IBundlerWebpackConfig['externals'];
 
   /**
    * modify webpack config via webpack-chain
@@ -200,7 +200,7 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
   /**
    * configure postcss
    */
-  postcssOptions: IBundlerWebpackConfig['postcssLoader'];
+  postcssOptions?: IBundlerWebpackConfig['postcssLoader'];
 
   /**
    * configure autoprefixer
