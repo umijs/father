@@ -116,28 +116,43 @@ export default async function getDeclarations(
     tsHost.writeFile = (fileName, content, _a, _b, sourceFiles) => {
       const sourceFile = sourceFiles?.[0].fileName;
 
-      // only collect dts for input files, to avoid output error in watch mode
-      // ref: https://github.com/umijs/father/issues/43
-      if (sourceFile && inputFiles.includes(sourceFile)) {
+      if (fileName === tsconfig.options.tsBuildInfoFile) {
+        // save incremental cache
+        fsExtra.writeFileSync(tsconfig.options.tsBuildInfoFile, content);
+      } else if (sourceFile) {
+        // write d.ts & d.ts.map and save cache
         const ret = {
           file: path.basename(fileName),
           content,
           sourceFile,
         };
-        const index = output.findIndex(
-          (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
-        );
-        if (index > -1) {
-          output.splice(index, 1, ret);
-        } else {
-          output.push(ret);
+
+        // only collect dts for input files, to avoid output error in watch mode
+        // ref: https://github.com/umijs/father-next/issues/43
+        if (inputFiles.includes(sourceFile)) {
+          const index = output.findIndex(
+            (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
+          );
+          if (index > -1) {
+            output.splice(index, 1, ret);
+          } else {
+            output.push(ret);
+          }
         }
 
         // group cache by file (d.ts & d.ts.map)
-        cacheRets[cacheKeys[sourceFile]] ??= [];
-        cacheRets[cacheKeys[sourceFile]].push(ret);
-      } else if (fileName === tsconfig.options.tsBuildInfoFile) {
-        fsExtra.writeFileSync(tsconfig.options.tsBuildInfoFile, content);
+        // always save cache even if it's not input file, to avoid cache miss
+        // because it probably can be used in next bundless run
+        const cacheKey =
+          cacheKeys[sourceFile] ||
+          [
+            sourceFile,
+            fs.lstatSync(sourceFile).mtimeMs,
+            JSON.stringify(tsconfig.options),
+          ].join(':');
+
+        cacheRets[cacheKey] ??= [];
+        cacheRets[cacheKey].push(ret);
       }
     };
 
