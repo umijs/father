@@ -78,6 +78,7 @@ const babelTransformer: IJSTransformer = function (content) {
     filename: this.paths.fileAbsPath,
     cwd: this.paths.cwd,
     babelrc: false,
+    configFile: false,
     sourceMaps: this.config.sourcemap,
     sourceFileName: this.config.sourcemap
       ? path.relative(
