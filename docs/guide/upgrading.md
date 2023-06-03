@@ -9,7 +9,7 @@
 1. **不再支持所有 rollup 构建模式**，如果项目源码需要打包，请输出 UMD 构建产物（基于 Webpack）；如果不需要打包，请以 Bundless 形式输出 ESModule 或 CommonJS 产物（基于 Babel/esbuild），具体可参考 [构建模式](./build-mode.md) 文档
 2. **不再内置 CSS Modules 支持**，组件库不建议使用 CSS Modules，会使得样式难以覆写、且会给用户项目带来额外的编译成本
 3. **Bundless 模式不再支持编译非 JavaScript 文件**，样式表交给实际项目编译会更加灵活，如果组件库有自定义主题的需求，可以考虑使用输出 UMD 产物，具体可参考 [构建 UMD 产物 - 如何选择](./umd.md#如何选择)
-4. **不再内置组件库文档方案**，如果此前使用 Docz 文档方案，请参考 [文档](https://github.com/umijs/father/issues/241) 迁移到 dumi；如果是新项目，可以直接使用 [dumi 组件研发脚手架](https://d.umijs.org/zh-CN/guide#%E8%84%9A%E6%89%8B%E6%9E%B6%E5%88%9D%E5%A7%8B%E5%8C%96) 初始化项目；未来 dumi 2 会和 father 4 一起提供更加集成化的组件研发方案
+4. **不再内置组件库文档方案**，如果此前使用 Docz 文档方案，请参考 [文档](https://github.com/umijs/father/issues/241) 迁移到 dumi；如果是新项目，可以直接使用 [dumi 脚手架工具](https://d.umijs.org/guide/initialize) 初始化 React 组件库项目
 5. **不再内置 monorepo 支持**，请将 father 4 结合各 monorepo 自己的方案做源码构建，比如 pnpm workspace 可参考 [Umi 4 的仓库](https://github.com/umijs/umi)
 
 ## package.json 升级
