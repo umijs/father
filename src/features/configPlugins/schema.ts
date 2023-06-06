@@ -57,7 +57,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         entry: Joi.alternatives()
           .try(Joi.string(), Joi.object().pattern(Joi.string(), Joi.object()))
           .optional(),
-        output: Joi.string().optional(),
+        output: Joi.alternatives().try(Joi.string(), Joi.object()).optional(),
         externals: Joi.alternatives().try(
           Joi.object(),
           Joi.string(),

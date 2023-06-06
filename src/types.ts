@@ -5,9 +5,9 @@ import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/di
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type {
+  createConfigProviders,
   IBundleConfig,
   IBundlessConfig,
-  createConfigProviders,
 } from './builder/config';
 import type { IDoctorReport } from './doctor';
 import type { IDoctorSourceParseResult } from './doctor/parser';
@@ -175,7 +175,7 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * bundle output path
    * @default dist/umd
    */
-  output?: string;
+  output?: string | { path?: string; filename?: string };
 
   /**
    * extract CSS
