@@ -40,7 +40,7 @@ export interface IBundlessConfig
   type: IFatherBuildTypes.BUNDLESS;
   format: IFatherBundlessTypes;
   input: string;
-  output: NonNullable<IFatherBundleConfig['output']>;
+  output: NonNullable<IFatherBundlessConfig['output']>;
 }
 
 /**
@@ -108,6 +108,8 @@ export function normalizeUserConfig(
   // normalize umd config
   if (umd) {
     const entryConfig = umd.entry;
+    const output =
+      typeof umd.output === 'object' ? umd.output : { path: umd.output };
     const bundleConfig: Omit<IBundleConfig, 'entry'> = {
       type: IFatherBuildTypes.BUNDLE,
       bundler: 'webpack',
@@ -119,15 +121,22 @@ export function normalizeUserConfig(
       // generate default output
       output: {
         // default to generate filename from package name
-        filename: `${getAutoBundleFilename(pkg.name)}.min.js`,
+        filename:
+          output.filename || `${getAutoBundleFilename(pkg.name)}.min.js`,
         // default to output dist
-        path: umd.output || 'dist/umd',
+        path: output.path || 'dist/umd',
       },
     };
 
     if (typeof entryConfig === 'object') {
       // extract multiple entries to single configs
       Object.keys(entryConfig).forEach((entry) => {
+        const outputConfig = entryConfig[entry].output;
+        const entryOutput =
+          typeof outputConfig === 'object'
+            ? outputConfig
+            : { path: outputConfig };
+
         configs.push({
           ...bundleConfig,
 
@@ -137,8 +146,9 @@ export function normalizeUserConfig(
 
           // override output
           output: {
-            filename: `${path.parse(entry).name}.min.js`,
-            path: entryConfig[entry].output || bundleConfig.output.path,
+            filename:
+              entryOutput.filename || `${path.parse(entry).name}.min.js`,
+            path: entryOutput.path || bundleConfig.output.path,
           },
         });
       });
