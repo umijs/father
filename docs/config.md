@@ -201,10 +201,10 @@ export default {
 
 #### output
 
-- 类型：`string`
+- 类型：`string` | `{ path?: string; filename?: string }`
 - 默认值：`dist/umd`
 
-指定产物的输出目录，输出文件名暂不支持配置，单 `entry` 时默认以 NPM 包名命名、多 `entry` 时默认与源码文件同名。
+指定产物的输出目录及输出文件名，输出目录的默认值为 `dist/umd`，输出文件名在单 `entry` 时默认以 NPM 包名命名、多 `entry` 时默认与源码文件同名。
 
 #### externals
 
@@ -238,7 +238,7 @@ export default {
 ```ts
 export default {
   theme: { 'primary-color': '#1890ff' },
-}
+};
 ```
 
 ### prebundle
