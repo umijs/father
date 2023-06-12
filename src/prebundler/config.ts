@@ -147,7 +147,7 @@ export function getConfig(opts: {
       pkg: depPkg,
       output: path.resolve(
         opts.cwd,
-        `${output || DEFAULT_OUTPUT_DIR}/${depPkg.name}/index.js`,
+        `${output || DEFAULT_OUTPUT_DIR}/${depName}/index.js`,
       ),
     };
 
