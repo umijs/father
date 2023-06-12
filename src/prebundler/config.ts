@@ -167,7 +167,7 @@ export function getConfig(opts: {
     }
 
     // prepare deps externals
-    depExternals[depPkg.name] = config.deps[depEntryPath].output;
+    depExternals[depName] = config.deps[depEntryPath].output;
   });
 
   // process extraDtsDeps config
