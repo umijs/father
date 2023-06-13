@@ -1,13 +1,13 @@
-import type { IApi } from '../../types';
-import vm from 'vm';
 import { chalk, winPath } from '@umijs/utils';
-import type { IDoctorReport } from '..';
-import { getPkgNameFromPath } from '../utils';
 import enhancedResolve from 'enhanced-resolve';
+import vm from 'vm';
+import type { IDoctorReport } from '..';
+import type { IApi } from '../../types';
+import { getPkgNameFromPath } from '../../utils';
 
 export default (api: IApi) => {
   const sandbox = vm.createContext({ require });
-  let resolver: ReturnType<typeof enhancedResolve['create']['sync']>;
+  let resolver: ReturnType<(typeof enhancedResolve)['create']['sync']>;
 
   api.describe({
     // disable temporarily

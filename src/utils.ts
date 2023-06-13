@@ -1,6 +1,6 @@
 import { chalk, logger as umiLogger, pkgUp } from '@umijs/utils';
 import Cache from 'file-system-cache';
-import path from 'path';
+import path, { isAbsolute } from 'path';
 import { CACHE_PATH } from './constants';
 import { IApi } from './types';
 
@@ -185,17 +185,16 @@ export const logger: Omit<IFatherLogger, '_quiet'> = new Proxy<IFatherLogger>(
 );
 
 export function isFilePath(path: string) {
-  return /^[\.\/]/.test(path);
+  return isAbsolute(path) || path.startsWith('.');
 }
 
-/**
- * @example
- * like @scope/name, @scope/name/test, name, name/test
- */
-const moduleNameRE = /^((?:@[\w_-]+\/)?[\w_-]+)/;
+export function getPkgNameFromPath(p: string) {
+  return p.match(/^(?:@[a-z\d][\w-.]*\/)?[a-z\d][\w-.]*/i)?.[0];
+}
+
 export const getDepPkgName = (name: string, packageJson: { name: string }) => {
   if (isFilePath(name)) {
     return packageJson.name;
   }
-  return moduleNameRE.exec(name)?.[1] ?? packageJson.name;
+  return getPkgNameFromPath(name) ?? name;
 };
