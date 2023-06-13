@@ -86,7 +86,7 @@
     "ts-node": "^10.9.1",
     "zx": "^4.3.0"
   },
-  "packageManager": "pnpm@7.3.0",
+  "packageManager": "pnpm@8.6.2",
   "publishConfig": {
     "access": "public"
   },
