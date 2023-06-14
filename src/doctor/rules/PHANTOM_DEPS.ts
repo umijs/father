@@ -1,7 +1,7 @@
 import { chalk } from '@umijs/utils';
 import type { IDoctorReport } from '..';
 import type { IApi } from '../../types';
-import { getPkgNameFromPath } from '../utils';
+import { getPkgNameFromPath } from '../../utils';
 
 export default (api: IApi) => {
   api.addImportsCheckup(({ file, imports, mergedAlias, mergedExternals }) => {

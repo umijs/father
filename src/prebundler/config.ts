@@ -6,6 +6,7 @@ import { winPath } from '@umijs/utils';
 import path from 'path';
 import { IApi, IFatherPreBundleConfig } from '../types';
 import {
+  getDepPkgName,
   getDepPkgPath,
   getDtsInfoForPkgPath,
   getNestedTypeDepsForPkg,
@@ -127,7 +128,7 @@ export function getConfig(opts: {
   // process deps config
   Object.entries(deps).forEach(([dep, depConfig]) => {
     // handle array deps
-    const depName = Array.isArray(deps) ? deps[parseInt(dep)] : dep;
+    let depName = Array.isArray(deps) ? deps[parseInt(dep)] : dep;
     depConfig = Array.isArray(deps) ? {} : depConfig;
 
     const depEntryPath = require.resolve(depName, { paths: [opts.cwd] });
@@ -135,6 +136,7 @@ export function getConfig(opts: {
     const depTypeInfo =
       depConfig.dts !== false ? getDtsInfoForPkgPath(depPkgPath) : null;
     const depPkg = require(depPkgPath);
+    depName = getDepPkgName(depName, depPkg);
 
     // generate bundle config
     config.deps[depEntryPath] = {
@@ -147,7 +149,7 @@ export function getConfig(opts: {
       pkg: depPkg,
       output: path.resolve(
         opts.cwd,
-        `${output || DEFAULT_OUTPUT_DIR}/${depPkg.name}/index.js`,
+        `${output || DEFAULT_OUTPUT_DIR}/${depName}/index.js`,
       ),
     };
 
@@ -167,7 +169,7 @@ export function getConfig(opts: {
     }
 
     // prepare deps externals
-    depExternals[depPkg.name] = config.deps[depEntryPath].output;
+    depExternals[depName] = config.deps[depEntryPath].output;
   });
 
   // process extraDtsDeps config

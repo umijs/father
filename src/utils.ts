@@ -1,6 +1,6 @@
-import { pkgUp, chalk, logger as umiLogger } from '@umijs/utils';
+import { chalk, logger as umiLogger, pkgUp } from '@umijs/utils';
 import Cache from 'file-system-cache';
-import path from 'path';
+import path, { isAbsolute } from 'path';
 import { CACHE_PATH } from './constants';
 import { IApi } from './types';
 
@@ -9,7 +9,7 @@ const caches: Record<string, ReturnType<typeof Cache>> = {};
 /**
  * get file-system cache for specific namespace
  */
-export function getCache(ns: string): typeof caches['0'] {
+export function getCache(ns: string): (typeof caches)['0'] {
   // return fake cache if cache disabled
   if (process.env.FATHER_CACHE === 'none') {
     return { set() {}, get() {}, setSync() {}, getSync() {} } as any;
@@ -183,3 +183,18 @@ export const logger: Omit<IFatherLogger, '_quiet'> = new Proxy<IFatherLogger>(
     },
   },
 );
+
+export function isFilePath(path: string) {
+  return isAbsolute(path) || path.startsWith('.');
+}
+
+export function getPkgNameFromPath(p: string) {
+  return p.match(/^(?:@[a-z\d][\w-.]*\/)?[a-z\d][\w-.]*/i)?.[0];
+}
+
+export const getDepPkgName = (name: string, packageJson: { name: string }) => {
+  if (isFilePath(name)) {
+    return packageJson.name;
+  }
+  return getPkgNameFromPath(name) ?? name;
+};

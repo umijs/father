@@ -1,5 +1,5 @@
-import { logger } from '../src/utils';
 import { logger as umiLogger } from '@umijs/utils';
+import { getDepPkgName, isFilePath, logger } from '../src/utils';
 
 jest.mock('@umijs/utils', () => {
   const originalModule = jest.requireActual('@umijs/utils');
@@ -54,5 +54,44 @@ describe('logger', () => {
     );
 
     process.env.NODE_ENV = originalEnv;
+  });
+
+  describe(isFilePath.name, () => {
+    test('absolute', () => {
+      expect(isFilePath('/path/to/name')).toBe(true);
+    });
+
+    test('relative', () => {
+      expect(isFilePath('./name/test')).toBe(true);
+    });
+
+    test('module', () => {
+      expect(isFilePath('name')).toBe(false);
+      expect(isFilePath('@scope/name')).toBe(false);
+    });
+  });
+
+  describe(getDepPkgName.name, () => {
+    test('normal module', () => {
+      expect(getDepPkgName('name', { name: 'test' })).toBe('name');
+      expect(getDepPkgName('name/test', { name: 'test' })).toBe('name');
+    });
+
+    test('scope module', () => {
+      expect(getDepPkgName('@scope/name', { name: 'test' })).toBe(
+        '@scope/name',
+      );
+      expect(getDepPkgName('@scope/name/test', { name: 'test' })).toBe(
+        '@scope/name',
+      );
+    });
+
+    test('absolute', () => {
+      expect(getDepPkgName('/path/to/name', { name: 'test' })).toBe('test');
+    });
+
+    test('relative', () => {
+      expect(getDepPkgName('./name/test', { name: 'test' })).toBe('test');
+    });
   });
 });
