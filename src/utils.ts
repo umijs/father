@@ -1,5 +1,6 @@
 import { chalk, logger as umiLogger, pkgUp } from '@umijs/utils';
 import Cache from 'file-system-cache';
+import { builtinModules } from 'module';
 import path, { isAbsolute } from 'path';
 import { CACHE_PATH } from './constants';
 import { IApi } from './types';
@@ -68,6 +69,12 @@ export function getDtsInfoForPkgPath(pkgPath: string) {
 
   return info;
 }
+
+/**
+ * Determine if it is a native module
+ */
+export const isBuiltInModule = (pkgName: string) =>
+  builtinModules.includes(pkgName.replace(/^node:/, ''));
 
 /**
  * get package.json path for specific NPM package
