@@ -1,5 +1,10 @@
 import { logger as umiLogger } from '@umijs/utils';
-import { getDepPkgName, isFilePath, logger } from '../src/utils';
+import {
+  getDepPkgName,
+  isBuiltInModule,
+  isFilePath,
+  logger,
+} from '../src/utils';
 
 jest.mock('@umijs/utils', () => {
   const originalModule = jest.requireActual('@umijs/utils');
@@ -93,5 +98,11 @@ describe('logger', () => {
     test('relative', () => {
       expect(getDepPkgName('./name/test', { name: 'test' })).toBe('test');
     });
+  });
+
+  test(isBuiltInModule.name, () => {
+    expect(isBuiltInModule('node:path')).toBeTruthy();
+    expect(isBuiltInModule('path')).toBeTruthy();
+    expect(isBuiltInModule('minimatch')).toBeFalsy();
   });
 });

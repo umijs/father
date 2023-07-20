@@ -10,6 +10,7 @@ import {
   getDepPkgPath,
   getDtsInfoForPkgPath,
   getNestedTypeDepsForPkg,
+  isBuiltInModule,
 } from '../utils';
 
 export interface IPreBundleConfig {
@@ -131,7 +132,8 @@ export function getConfig(opts: {
     let depName = Array.isArray(deps) ? deps[parseInt(dep)] : dep;
     depConfig = Array.isArray(deps) ? {} : depConfig;
 
-    const depEntryPath = require.resolve(depName, { paths: [opts.cwd] });
+    const depPath = isBuiltInModule(depName) ? `${depName}/` : depName;
+    const depEntryPath = require.resolve(depPath, { paths: [opts.cwd] });
     const depPkgPath = getDepPkgPath(depName, opts.cwd);
     const depTypeInfo =
       depConfig.dts !== false ? getDtsInfoForPkgPath(depPkgPath) : null;
