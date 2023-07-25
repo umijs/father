@@ -16,7 +16,7 @@ father 是一款 NPM 包研发工具，能够帮助开发者更高效、高质�
 
 father 本身需要在 Node.js v14 以上的环境中运行，使用前请确保已安装 Node.js v14 及以上版本。
 
-father 产出的 Node.js 产物默认兼容到 Node.js v14，Browser 产物默认兼容到 ES5（IE11），暂不支持修改。
+father 产出的 Node.js 产物默认兼容到 Node.js v14，Browser 产物默认兼容到 ES5（IE11）。
 
 ## 快速上手
 
