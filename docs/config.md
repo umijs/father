@@ -50,7 +50,7 @@ father 支持以下配置项。
 
 指定构建产物的目标平台，其中 `esm` 与 `umd` 产物的默认 `platform` 为 `browser`，`cjs` 产物的默认 `platform` 为 `node`；指定为 `browser` 时产物默认兼容至 IE11，指定为 `node` 时产物默认兼容至 Node.js v14。
 
-> 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物默认兼容性为 Chrome65 而不是 IE11。
+> 注：Bundless 模式下，如果手动将 `transformer` 指定为 `esbuild`，那么 `browser` 产物默认兼容性为 Chrome51 而不是 IE11。
 
 ### sourcemap
 
@@ -71,7 +71,7 @@ father 支持以下配置项。
 | `platform` | `transformer` | default value    |
 | ---------- | ------------- | ---------------- |
 | `browser`  | `babel`       | `{ ie: 11 }`     |
-| `browser`  | `esbuild`     | `{ chrome: 65 }` |
+| `browser`  | `esbuild`     | `{ chrome: 51 }` |
 | `browser`  | `swc`         | `{ chrome: 65 }` |
 | `node`     | `babel`       | `{ node: 14 }`   |
 | `node`     | `esbuild`     | `{ node: 14 }`   |
