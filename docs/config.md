@@ -72,7 +72,7 @@ father 支持以下配置项。
 | ---------- | ------------- | ---------------- |
 | `browser`  | `babel`       | `{ ie: 11 }`     |
 | `browser`  | `esbuild`     | `{ chrome: 65 }` |
-| `browser`  | `swc`         | `{ chrome: 65 }` |
+| `browser`  | `swc`         | `{ ie: 11 }`     |
 | `node`     | `babel`       | `{ node: 14 }`   |
 | `node`     | `esbuild`     | `{ node: 14 }`   |
 | `node`     | `swc`         | `{ node: 14 }`   |
