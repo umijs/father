@@ -95,7 +95,7 @@ export default async function getDeclarations(
       tsconfig.options.incremental = true;
       tsconfig.options.tsBuildInfoFile = path.join(
         tscCacheDir,
-        'tsconfig.tsbuildinfo',
+        'tsc.tsbuildinfo',
       );
     }
 
