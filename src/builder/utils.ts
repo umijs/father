@@ -128,7 +128,7 @@ export function getBabelStyledComponentsOpts(pkg: IApi['pkg']) {
       const [name, org] = pkg.name.split('/').reverse();
       // hash org to make namespace clear
       const suffix = org
-        ? `-${createHash('md5').update(org).digest('hex').slice(0, 4)}`
+        ? `-${getContentHash(org, 4)}`
         : /* istanbul ignore next -- @preserve */
           '';
 
@@ -137,4 +137,8 @@ export function getBabelStyledComponentsOpts(pkg: IApi['pkg']) {
   }
 
   return opts;
+}
+
+export function getContentHash(content: string, length = 8) {
+  return createHash('md5').update(content).digest('hex').slice(0, length);
 }

@@ -4,6 +4,7 @@ import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
 import { CACHE_PATH } from '../../../constants';
 import { getCache, logger } from '../../../utils';
+import { getContentHash } from '../../utils';
 
 /**
  * get parsed tsconfig.json for specific path
@@ -94,7 +95,7 @@ export default async function getDeclarations(
       tsconfig.options.incremental = true;
       tsconfig.options.tsBuildInfoFile = path.join(
         tscCacheDir,
-        'tsconfig.tsbuildinfo',
+        'tsc.tsbuildinfo',
       );
     }
 
@@ -105,7 +106,7 @@ export default async function getDeclarations(
         // format: {path:mtime:config}
         [file]: [
           file,
-          fs.lstatSync(file).mtimeMs,
+          getContentHash(fs.readFileSync(file, 'utf-8')),
           JSON.stringify(tsconfig.options),
         ].join(':'),
       }),
@@ -147,7 +148,7 @@ export default async function getDeclarations(
           cacheKeys[sourceFile] ||
           [
             sourceFile,
-            fs.lstatSync(sourceFile).mtimeMs,
+            getContentHash(fs.readFileSync(sourceFile, 'utf-8')),
             JSON.stringify(tsconfig.options),
           ].join(':');
 
