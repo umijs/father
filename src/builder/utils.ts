@@ -81,7 +81,7 @@ const defaultCompileTarget: Record<
 > = {
   [IFatherPlatformTypes.BROWSER]: {
     [IFatherJSTransformerTypes.BABEL]: { ie: 11 },
-    [IFatherJSTransformerTypes.ESBUILD]: ['chrome65'],
+    [IFatherJSTransformerTypes.ESBUILD]: ['chrome51'],
     [IFatherJSTransformerTypes.SWC]: { ie: 11 },
   },
   [IFatherPlatformTypes.NODE]: {
