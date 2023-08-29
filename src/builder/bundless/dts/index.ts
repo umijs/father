@@ -193,7 +193,7 @@ export default async function getDeclarations(
       .getPreEmitDiagnostics(incrProgram.getProgram())
       .concat(result.diagnostics);
 
-    // istanbul-ignore-if
+    /* istanbul ignore if -- @preserve */
     if (diagnostics.length) {
       diagnostics.forEach((d) => {
         const fragments: string[] = [];
