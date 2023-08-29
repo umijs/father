@@ -2,9 +2,9 @@ import { glob, lodash } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import {
-  createConfigProviders,
   IBundleConfig,
   IBundlessConfig,
+  createConfigProviders,
 } from '../builder/config';
 import { DEFAULT_BUNDLESS_IGNORES } from '../constants';
 import { getConfig as getPreBundleConfig } from '../prebundler/config';
@@ -139,7 +139,7 @@ export default async (api: IApi): Promise<IDoctorReport> => {
   for (const file of sourceFiles) {
     // skip non-javascript files
     // TODO: support collect imports from style style pre-processor files
-    if (!/\.(j|t)sx?$/.test(file)) continue;
+    if (!/(?<!\.d)\.(j|t)s$/.test(file)) continue;
 
     importsReport.push(
       ...(await api.applyPlugins({
