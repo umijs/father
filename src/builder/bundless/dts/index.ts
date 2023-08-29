@@ -196,16 +196,29 @@ export default async function getDeclarations(
     // istanbul-ignore-if
     if (diagnostics.length) {
       diagnostics.forEach((d) => {
-        const loc = ts.getLineAndCharacterOfPosition(d.file!, d.start!);
-        const rltPath = winPath(path.relative(opts.cwd, d.file!.fileName));
-        const errMsg = ts.flattenDiagnosticMessageText(d.messageText, '\n');
+        const fragments: string[] = [];
 
-        logger.error(
-          `${chalk.blueBright(rltPath)}:${
-            // correct line number & column number, ref: https://github.com/microsoft/TypeScript/blob/93f2d2b9a1b2f8861b49d76bb5e58f6e9f2b56ee/src/compiler/tracing.ts#L185
-            `${chalk.yellow(loc.line + 1)}:${chalk.yellow(loc.character + 1)}`
-          } - ${chalk.gray(`TS${d.code}:`)} ${errMsg}`,
-        );
+        // show file path & line number
+        if (d.file && d.start) {
+          const rltPath = winPath(path.relative(opts.cwd, d.file!.fileName));
+          const loc = ts.getLineAndCharacterOfPosition(d.file!, d.start!);
+
+          fragments.push(
+            `${chalk.blueBright(rltPath)}:${
+              // correct line number & column number, ref: https://github.com/microsoft/TypeScript/blob/93f2d2b9a1b2f8861b49d76bb5e58f6e9f2b56ee/src/compiler/tracing.ts#L185
+              `${chalk.yellow(loc.line + 1)}:${chalk.yellow(
+                loc.character + 1,
+              )} -`
+            }`,
+          );
+        }
+
+        // show error code
+        fragments.push(chalk.gray(`TS${d.code}:`));
+        // show error message
+        fragments.push(ts.flattenDiagnosticMessageText(d.messageText, '\n'));
+
+        logger.error(fragments.join(' '));
       });
       throw new Error('Declaration generation failed.');
     }
