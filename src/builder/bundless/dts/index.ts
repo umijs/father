@@ -188,9 +188,14 @@ export default async function getDeclarations(
     });
 
     // check compile error
+    // ref: https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
+    const diagnostics = ts
+      .getPreEmitDiagnostics(incrProgram.getProgram())
+      .concat(result.diagnostics);
+
     // istanbul-ignore-if
-    if (result.diagnostics.length) {
-      result.diagnostics.forEach((d) => {
+    if (diagnostics.length) {
+      diagnostics.forEach((d) => {
         const loc = ts.getLineAndCharacterOfPosition(d.file!, d.start!);
         const rltPath = winPath(path.relative(opts.cwd, d.file!.fileName));
         const errMsg = ts.flattenDiagnosticMessageText(d.messageText, '\n');
