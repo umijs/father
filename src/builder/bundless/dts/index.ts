@@ -95,7 +95,7 @@ export default async function getDeclarations(
       tsconfig.options.incremental = true;
       tsconfig.options.tsBuildInfoFile = path.join(
         tscCacheDir,
-        'tsc.tsbuildinfo',
+        'dts.tsbuildinfo',
       );
     }
 
@@ -103,12 +103,10 @@ export default async function getDeclarations(
     const cacheKeys = inputFiles.reduce<Record<string, string>>(
       (ret, file) => ({
         ...ret,
-        // format: {path:mtime:config}
-        [file]: [
-          file,
-          getContentHash(fs.readFileSync(file, 'utf-8')),
-          JSON.stringify(tsconfig.options),
-        ].join(':'),
+        // format: {path:contenthash}
+        [file]: [file, getContentHash(fs.readFileSync(file, 'utf-8'))].join(
+          ':',
+        ),
       }),
       {},
     );
@@ -149,7 +147,6 @@ export default async function getDeclarations(
           [
             sourceFile,
             getContentHash(fs.readFileSync(sourceFile, 'utf-8')),
-            JSON.stringify(tsconfig.options),
           ].join(':');
 
         cacheRets[cacheKey] ??= [];
@@ -167,7 +164,7 @@ export default async function getDeclarations(
 
     const incrProgram = ts.createIncrementalProgram({
       rootNames: inputFiles,
-      options: tsconfig.options as any,
+      options: tsconfig.options,
       host: tsHost,
     });
 
