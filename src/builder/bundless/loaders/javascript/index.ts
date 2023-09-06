@@ -32,9 +32,12 @@ const jsLoader: IBundlessLoader = function (content) {
   }
 
   // mark for output declaration file
+  const tsconfig = /\.tsx?$/.test(this.resource)
+    ? getTsconfig(this.context!)
+    : undefined;
   if (
-    /\.tsx?$/.test(this.resource) &&
-    getTsconfig(this.context!)?.options.declaration
+    tsconfig?.options.declaration &&
+    tsconfig?.fileNames.includes(this.resource)
   ) {
     outputOpts.declaration = true;
   }
