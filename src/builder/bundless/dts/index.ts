@@ -163,7 +163,7 @@ export default async function getDeclarations(
     });
 
     const incrProgram = ts.createIncrementalProgram({
-      rootNames: inputFiles,
+      rootNames: tsconfig.fileNames,
       options: tsconfig.options,
       host: tsHost,
     });

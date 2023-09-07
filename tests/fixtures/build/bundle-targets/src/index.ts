@@ -2,4 +2,4 @@ async function hello() {
   return await Promise.resolve('ok');
 }
 
-hello();
+export default hello;

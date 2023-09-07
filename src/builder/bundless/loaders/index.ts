@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
@@ -63,17 +64,23 @@ export default async (
   const cacheRet = await cache.get(cacheKey, '');
 
   // use cache first
-  if (cacheRet)
+  /* istanbul ignore if -- @preserve */
+  if (cacheRet) {
+    const tsconfig = /\.tsx?$/.test(fileAbsPath)
+      ? getTsconfig(opts.cwd)
+      : undefined;
+
     return Promise.resolve<ILoaderOutput>({
       ...cacheRet,
       options: {
         ...cacheRet.options,
         // FIXME: shit code for avoid invalid declaration value when tsconfig changed
-        declaration: /\.tsx?$/.test(fileAbsPath)
-          ? getTsconfig(opts.cwd)?.options.declaration
-          : false,
+        declaration:
+          tsconfig?.options.declaration &&
+          tsconfig?.fileNames.includes(winPath(fileAbsPath)),
       },
     });
+  }
 
   // get matched loader by test
   const matched = loaders.find((item) => {

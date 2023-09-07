@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import { getTsconfig } from '../../dts';
 import type { IBundlessLoader, IJSTransformer, ILoaderOutput } from '../types';
 
@@ -32,9 +33,12 @@ const jsLoader: IBundlessLoader = function (content) {
   }
 
   // mark for output declaration file
+  const tsconfig = /\.tsx?$/.test(this.resource)
+    ? getTsconfig(this.context!)
+    : undefined;
   if (
-    /\.tsx?$/.test(this.resource) &&
-    getTsconfig(this.context!)?.options.declaration
+    tsconfig?.options.declaration &&
+    tsconfig?.fileNames.includes(winPath(this.resource))
   ) {
     outputOpts.declaration = true;
   }
