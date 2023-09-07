@@ -1,9 +1,8 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "strict": true,
-    "skipLibCheck": true,
     "declaration": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@bundless-overrides": ["../bundless-overrides/src/client"]
     }
