@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
@@ -63,6 +64,7 @@ export default async (
   const cacheRet = await cache.get(cacheKey, '');
 
   // use cache first
+  /* istanbul ignore if -- @preserve */
   if (cacheRet) {
     const tsconfig = /\.tsx?$/.test(fileAbsPath)
       ? getTsconfig(opts.cwd)
@@ -75,7 +77,7 @@ export default async (
         // FIXME: shit code for avoid invalid declaration value when tsconfig changed
         declaration:
           tsconfig?.options.declaration &&
-          tsconfig?.fileNames.includes(fileAbsPath),
+          tsconfig?.fileNames.includes(winPath(fileAbsPath)),
       },
     });
   }
