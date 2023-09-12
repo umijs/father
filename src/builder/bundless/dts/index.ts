@@ -188,7 +188,9 @@ export default async function getDeclarations(
     // ref: https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
     const diagnostics = ts
       .getPreEmitDiagnostics(incrProgram.getProgram())
-      .concat(result.diagnostics);
+      .concat(result.diagnostics)
+      // omit error for files which not included by build
+      .filter((d) => !d.file || inputFiles.includes(d.file.fileName));
 
     /* istanbul ignore if -- @preserve */
     if (diagnostics.length) {
