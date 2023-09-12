@@ -12,23 +12,23 @@ importers:
         specifier: 7.36.3
         version: 7.36.3(@types/node@18.15.13)
       '@umijs/babel-preset-umi':
-        specifier: ^4.0.79
-        version: 4.0.79(styled-components@6.0.3)
+        specifier: ^4.0.80
+        version: 4.0.80(styled-components@6.0.3)
       '@umijs/bundler-utils':
-        specifier: ^4.0.79
-        version: 4.0.79
+        specifier: ^4.0.80
+        version: 4.0.80
       '@umijs/bundler-webpack':
-        specifier: ^4.0.79
-        version: 4.0.79(styled-components@6.0.3)(typescript@5.0.4)(webpack@5.80.0)
+        specifier: ^4.0.80
+        version: 4.0.80(styled-components@6.0.3)(typescript@5.0.4)(webpack@5.80.0)
       '@umijs/case-sensitive-paths-webpack-plugin':
         specifier: ^1.0.1
         version: 1.0.1
       '@umijs/core':
-        specifier: ^4.0.79
-        version: 4.0.79
+        specifier: ^4.0.80
+        version: 4.0.80
       '@umijs/utils':
-        specifier: ^4.0.79
-        version: 4.0.79
+        specifier: ^4.0.80
+        version: 4.0.80
       '@vercel/ncc':
         specifier: 0.33.3
         version: 0.33.3
@@ -3350,13 +3350,13 @@ packages:
     dependencies:
       '@types/yargs-parser': 21.0.0
 
-  /@umijs/babel-preset-umi@4.0.79(styled-components@6.0.3):
-    resolution: {integrity: sha512-8+R49QPKnx3PeQfSUpjBlaaaCeA4Vf7PCB1yFN2Jqd5l5KTjTo/nhWmh49U1YZC3aJSdtNlBYxmMS4gZ0mwdvg==}
+  /@umijs/babel-preset-umi@4.0.80(styled-components@6.0.3):
+    resolution: {integrity: sha512-m7ZgYlookzP9YKPGTV47pHbbVplc442rKRFP69z6/Tl3kD71A9knNhRW1+rpeg+HqnUTYR/W2MbIVCGokdGrEg==}
     dependencies:
       '@babel/runtime': 7.21.0
       '@bloomberg/record-tuple-polyfill': 0.0.4
-      '@umijs/bundler-utils': 4.0.79
-      '@umijs/utils': 4.0.79
+      '@umijs/bundler-utils': 4.0.80
+      '@umijs/utils': 4.0.80
       babel-plugin-styled-components: 2.1.1(styled-components@6.0.3)
       core-js: 3.28.0
     transitivePeerDependencies:
@@ -3364,12 +3364,12 @@ packages:
       - supports-color
     dev: false
 
-  /@umijs/bundler-esbuild@4.0.79:
-    resolution: {integrity: sha512-SEgJ+6rE284XsOc4nYogzjPeUlcBhq8oNTHJ3EpWN009gkIJcU5JnfBLYwzeZAgTMPjEpwpB+y0KvVA/4lZdlw==}
+  /@umijs/bundler-esbuild@4.0.80:
+    resolution: {integrity: sha512-ToiJhEvkJ3NejNMQAh7U2cYiHNHUvZB5rHDR/Ydaaej8cglehW+D3fDaiqFQzsREnizQNyvIGR5U4A04N6/K4A==}
     hasBin: true
     dependencies:
-      '@umijs/bundler-utils': 4.0.79
-      '@umijs/utils': 4.0.79
+      '@umijs/bundler-utils': 4.0.80
+      '@umijs/utils': 4.0.80
       enhanced-resolve: 5.9.3
       postcss: 8.4.25
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.25)
@@ -3390,10 +3390,10 @@ packages:
       - supports-color
     dev: true
 
-  /@umijs/bundler-utils@4.0.79:
-    resolution: {integrity: sha512-AONUjmdk1Eoq6IhWcIeYevcKWFNgxgNXF/6+WA0Omhrr7gVQRAuUlp5ikG6FO0Bge4GnZPk44J2jPnmv1IYEJA==}
+  /@umijs/bundler-utils@4.0.80:
+    resolution: {integrity: sha512-FZsZi8T1T0faAlcXYHUct+MGryTgrzYJodZAoVl5yAyFJVd4jXycJyxvRvtDu55tiUb26IJFbx9ZJfenOoSbCw==}
     dependencies:
-      '@umijs/utils': 4.0.79
+      '@umijs/utils': 4.0.80
       esbuild: 0.17.19
       regenerate: 1.4.2
       regenerate-unicode-properties: 10.1.0
@@ -3402,8 +3402,8 @@ packages:
       - supports-color
     dev: false
 
-  /@umijs/bundler-webpack@4.0.79(styled-components@6.0.3)(typescript@5.0.4)(webpack@5.80.0):
-    resolution: {integrity: sha512-vMtef2p7MaP2Ba87j6Mb2+zhxooLCYvycHXn8g0+kTmU5l6h3zy5AT6vfeFIWi3BBPoXUNAe5uOL6yUv72z2Vg==}
+  /@umijs/bundler-webpack@4.0.80(styled-components@6.0.3)(typescript@5.0.4)(webpack@5.80.0):
+    resolution: {integrity: sha512-EdkEQpVx/fSrI0jmD6RbvPuSXiXW/1HXSA0OB9MJoKOBbndVTvjKL82CNgoUo8Ahytr2bZ0zjbgoV/lHadFLkA==}
     hasBin: true
     dependencies:
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.10(react-refresh@0.14.0)(webpack@5.80.0)
@@ -3411,11 +3411,11 @@ packages:
       '@svgr/plugin-jsx': 6.5.1(@svgr/core@6.5.1)
       '@svgr/plugin-svgo': 6.5.1(@svgr/core@6.5.1)
       '@types/hapi__joi': 17.1.9
-      '@umijs/babel-preset-umi': 4.0.79(styled-components@6.0.3)
-      '@umijs/bundler-utils': 4.0.79
+      '@umijs/babel-preset-umi': 4.0.80(styled-components@6.0.3)
+      '@umijs/bundler-utils': 4.0.80
       '@umijs/case-sensitive-paths-webpack-plugin': 1.0.1
-      '@umijs/mfsu': 4.0.79
-      '@umijs/utils': 4.0.79
+      '@umijs/mfsu': 4.0.80
+      '@umijs/utils': 4.0.80
       cors: 2.8.5
       css-loader: 6.7.1(webpack@5.80.0)
       es5-imcompatible-versions: 0.1.80
@@ -3444,21 +3444,21 @@ packages:
     resolution: {integrity: sha512-kDKJ8yTarxwxGJDInG33hOpaQRZ//XpNuuznQ/1Mscypw6kappzFmrBr2dOYave++K7JHouoANF354UpbEQw0Q==}
     dev: false
 
-  /@umijs/core@4.0.79:
-    resolution: {integrity: sha512-NPL0TY2V0iH4gZbKC6L8O2tvNUD55ypmUIlvn2Z0Bd8pVbjho7PRVzrgIZoOdWnD3vTcajks3kv7WAoIFzTT9A==}
+  /@umijs/core@4.0.80:
+    resolution: {integrity: sha512-98w3JpaZpJ7qLRW+ZWuwY45BeN6ob+kHTQitZ2ejIEO3zkJzpHt86OMo0rf9SlDz8NGghEVWRcs5ehYynj3VMQ==}
     dependencies:
-      '@umijs/bundler-utils': 4.0.79
-      '@umijs/utils': 4.0.79
+      '@umijs/bundler-utils': 4.0.80
+      '@umijs/utils': 4.0.80
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@umijs/mfsu@4.0.79:
-    resolution: {integrity: sha512-KpH8f3/JSHKOdQotvStPFNWnnWFJrdbivfq1ED1vRf4uMbDljSy22Cp05zaTcoLYUuz99Wu3CJ2xVZ7zwWO0dQ==}
+  /@umijs/mfsu@4.0.80:
+    resolution: {integrity: sha512-DRXWxHk66Pl+2/bJe/7S7t8HWQAyAVOGK+Xr0PtSqoXaM/HIpGF1DkZTPe2QBe9AGpJic4TcOfccK+1SSIqlZg==}
     dependencies:
-      '@umijs/bundler-esbuild': 4.0.79
-      '@umijs/bundler-utils': 4.0.79
-      '@umijs/utils': 4.0.79
+      '@umijs/bundler-esbuild': 4.0.80
+      '@umijs/bundler-utils': 4.0.80
+      '@umijs/utils': 4.0.80
       enhanced-resolve: 5.9.3
       is-equal: 1.6.4
     transitivePeerDependencies:
@@ -3495,8 +3495,8 @@ packages:
       pino: 7.11.0
     dev: true
 
-  /@umijs/utils@4.0.79:
-    resolution: {integrity: sha512-4lO4Ol0zq4lO1bLTi+uDhpq3lp+K09Bxaar2JwsZvPOiYcc0p+ffSxws39iW7whzIRkhlhpUtqIrRO9k+dSTuA==}
+  /@umijs/utils@4.0.80:
+    resolution: {integrity: sha512-sAG9x2HSdBCCj3QNHfQsIIfnJ65BksPwF/Nk4VkPvRRcxg9dZ2Lmjlk/26bzgGhikMNLiJj1DLU8p+BlyU/kWA==}
     dependencies:
       chokidar: 3.5.3
       pino: 7.11.0
