@@ -39,6 +39,15 @@ $ father doctor
 
 源码中引入路径的文件大小写与磁盘上的大小写不符，如果开发者使用的是大小写不敏感的操作系统（比如 Windows 和 macOS 的默认配置），由于编译不会报错，可能不会发现该问题，但 NPM 包发布后在大小写敏感的操作系统上编译时则会找不到模块。
 
+## TSCONFIG_RISK
+
+- 级别：错误 ❌
+- 说明：
+
+检查 tsconfig.json 配置中存在的风险，目前支持检测如下风险：
+
+1. 当 `compilerOptions.declaration` 启用时，如果配置了 `include` 且没有包含任何 bundless 构建的源文件，则认定为存在 `.d.ts` 产物缺失风险，会进行报错
+
 ## PREFER_PACK_FILES
 
 - 级别：警告 ⚠️
@@ -77,4 +86,3 @@ $ father doctor
 - 说明：
 
 有多实例风险的依赖声明应该放入 `peerDependencies` 而不是 `dependencies`，比如 `react`、`antd`。
-

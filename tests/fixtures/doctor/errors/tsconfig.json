@@ -1,1 +1,6 @@
-{}
+{
+  "compilerOptions": {
+    "declaration": true
+  },
+  "include": [".fatherrc.ts"]
+}
