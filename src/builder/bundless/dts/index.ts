@@ -7,13 +7,24 @@ import { getCache, logger } from '../../../utils';
 import { getContentHash } from '../../utils';
 
 /**
+ * get tsconfig.json path for specific path
+ */
+export function getTsconfigPath(cwd: string) {
+  // use require() rather than import(), to avoid jest runner to fail
+  // ref: https://github.com/nodejs/node/issues/35889
+  const ts: typeof import('typescript') = require('typescript');
+
+  return ts.findConfigFile(cwd, ts.sys.fileExists);
+}
+
+/**
  * get parsed tsconfig.json for specific path
  */
 export function getTsconfig(cwd: string) {
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
-  const tsconfigPath = ts.findConfigFile(cwd, ts.sys.fileExists);
+  const tsconfigPath = getTsconfigPath(cwd);
 
   if (tsconfigPath) {
     const tsconfigFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
