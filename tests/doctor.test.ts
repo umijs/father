@@ -97,7 +97,7 @@ test('doctor: error checkups', async () => {
 
   // TSCONFIG_RISK
   expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('No source files included in tsconfig.json'),
+    expect.stringContaining('No source file included in tsconfig.json'),
   );
 
   // CJS_IMPORT_PURE_ESM
