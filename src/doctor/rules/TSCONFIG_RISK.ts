@@ -8,7 +8,8 @@ export default (api: IApi) => {
     if (bundlessConfigs.length) {
       const tsconfigPath = getTsconfigPath(api.cwd);
       // only check when tsconfig.json is in cwd
-      const tsconfig = tsconfigPath?.includes(api.cwd) && getTsconfig(api.cwd);
+      const tsconfig =
+        tsconfigPath?.includes(winPath(api.cwd)) && getTsconfig(api.cwd);
 
       if (tsconfig && tsconfig.options.declaration) {
         const inputs = bundlessConfigs.map((c) => c.input);
