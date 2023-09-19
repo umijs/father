@@ -24,16 +24,16 @@ export interface IBundleWatcher {
   close: () => void;
 }
 
-interface IBundlessOpts {
+interface IBundleOpts {
   cwd: string;
   configProvider: BundleConfigProvider;
   buildDependencies?: string[];
   watch?: boolean;
 }
 
-function bundless(opts: Omit<IBundlessOpts, 'watch'>): Promise<void>;
-function bundless(opts: IBundlessOpts): Promise<IBundleWatcher>;
-async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
+function bundle(opts: Omit<IBundleOpts, 'watch'>): Promise<void>;
+function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
+async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const closeHandlers: webpack.Watching['close'][] = [];
 
@@ -192,4 +192,4 @@ async function bundless(opts: IBundlessOpts): Promise<void | IBundleWatcher> {
   }
 }
 
-export default bundless;
+export default bundle;
