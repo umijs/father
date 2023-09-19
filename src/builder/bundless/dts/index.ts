@@ -188,13 +188,11 @@ export default async function getDeclarations(
     // ref: https://github.com/LeDDGroup/typescript-transform-paths/blob/06c317839ca2f2426ad5c39c640e231f739af115/src/transformer.ts#L136-L140
     const proxyTs = new Proxy(ts, {
       get(target: any, prop) {
+        // typescript internal method since 4.4.x
         const PROXY_KEY = 'tryParsePatterns';
 
         return prop === PROXY_KEY
-          ? () =>
-              PROXY_KEY in target
-                ? target.tryParsePatterns(transformPaths)
-                : target.getOwnKeys(transformPaths)
+          ? () => target[PROXY_KEY](transformPaths)
           : target[prop];
       },
     });
