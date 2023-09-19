@@ -19,6 +19,7 @@ export function getTsconfigPath(cwd: string) {
 
 /**
  * get parsed tsconfig.json for specific path
+ * ref: https://github.com/privatenumber/get-tsconfig#how-can-i-use-typescript-to-parse-tsconfigjson
  */
 export function getTsconfig(cwd: string) {
   // use require() rather than import(), to avoid jest runner to fail
@@ -32,6 +33,10 @@ export function getTsconfig(cwd: string) {
       tsconfigFile.config,
       ts.sys,
       path.dirname(tsconfigPath),
+      undefined,
+      // specify config file path like tsc, to ensure type roots behavior same as tsc
+      // ref: https://github.com/microsoft/TypeScript/blob/0464e91c8b67579a4ed840e5783575a493c958e0/src/compiler/program.ts#L2325
+      tsconfigPath,
     );
   }
 }
