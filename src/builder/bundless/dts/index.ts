@@ -56,6 +56,7 @@ export default async function getDeclarations(
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
   const tsconfig = getTsconfig(opts.cwd);
+  const transformPaths: Record<string, string[]> = {};
 
   if (tsconfig) {
     // check tsconfig error
@@ -94,10 +95,11 @@ export default async function getDeclarations(
         tsconfig.options.paths![item][0],
       );
 
-      if (!winPath(pathAbsTarget).startsWith(`${winPath(opts.cwd)}/`)) {
-        delete tsconfig.options.paths![item];
+      if (winPath(pathAbsTarget).startsWith(`${winPath(opts.cwd)}/`)) {
+        transformPaths[item] = tsconfig.options.paths![item];
+      } else {
         logger.debug(
-          `Remove ${item} from tsconfig.paths, because it's out of cwd.`,
+          `Skip transform ${item} from tsconfig.paths, because it's out of cwd.`,
         );
       }
     });
@@ -182,6 +184,20 @@ export default async function getDeclarations(
     // using ts-paths-transformer to transform tsconfig paths to relative path
     // reason: https://github.com/microsoft/TypeScript/issues/30952
     // ref: https://www.npmjs.com/package/typescript-transform-paths
+    // proxy pathsPatterns to avoid transform paths out of cwd
+    // ref: https://github.com/LeDDGroup/typescript-transform-paths/blob/06c317839ca2f2426ad5c39c640e231f739af115/src/transformer.ts#L136-L140
+    const proxyTs = new Proxy(ts, {
+      get(target: any, prop) {
+        const PROXY_KEY = 'tryParsePatterns';
+
+        return prop === PROXY_KEY
+          ? () =>
+              PROXY_KEY in target
+                ? target.tryParsePatterns(transformPaths)
+                : target.getOwnKeys(transformPaths)
+          : target[prop];
+      },
+    });
     const result = incrProgram.emit(undefined, undefined, undefined, true, {
       afterDeclarations: [
         tsPathsTransformer(
@@ -190,7 +206,7 @@ export default async function getDeclarations(
           // specific typescript instance, because this plugin is incompatible with typescript@4.9.x currently
           // but some project may declare typescript and some dependency manager will hoist project's typescript
           // rather than father's typescript for this plugin
-          { ts },
+          { ts: proxyTs },
         ),
       ],
     });
