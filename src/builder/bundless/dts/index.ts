@@ -195,6 +195,12 @@ export default async function getDeclarations(
       ],
     });
 
+    // save cache
+    // why save cache before check compile error?
+    // because ts compiler will compile files incrementally in the next time, so the correct d.ts files may lost if not save cache
+    // and don't worry the wrong d.ts save to cache, it will be override by the new content in the next time
+    Object.keys(cacheRets).forEach((key) => cache.setSync(key, cacheRets[key]));
+
     // check compile error
     // ref: https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
     const diagnostics = ts
@@ -232,9 +238,6 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
-
-    // save cache
-    Object.keys(cacheRets).forEach((key) => cache.setSync(key, cacheRets[key]));
   }
 
   return output;
