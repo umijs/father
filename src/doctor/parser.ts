@@ -4,6 +4,7 @@ import {
 } from '@umijs/bundler-utils/compiled/esbuild';
 import fs from 'fs';
 import path from 'path';
+import { getContentHash } from '../builder/utils';
 import { getCache } from '../utils';
 
 export type IDoctorSourceParseResult = {
@@ -14,8 +15,11 @@ export default async (
   fileAbsPath: string,
 ): Promise<IDoctorSourceParseResult> => {
   const cache = getCache('doctor-parser');
-  // format: {path:mtime}
-  const cacheKey = [fileAbsPath, fs.statSync(fileAbsPath).mtimeMs].join(':');
+  // format: {path:contenthash}
+  const cacheKey = [
+    fileAbsPath,
+    getContentHash(fs.readFileSync(fileAbsPath, 'utf-8')),
+  ].join(':');
   const cacheRet = cache.getSync(cacheKey, '');
   const ret: IDoctorSourceParseResult = { imports: [] };
 

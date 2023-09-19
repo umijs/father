@@ -4,6 +4,7 @@ import { runLoaders } from 'loader-runner';
 import type { IApi } from '../../../types';
 import { getCache } from '../../../utils';
 import type { IBundlessConfig } from '../../config';
+import { getContentHash } from '../../utils';
 import { getTsconfig } from '../dts';
 import type { IBundlessLoader, ILoaderOutput } from './types';
 
@@ -51,10 +52,10 @@ export default async (
   },
 ) => {
   const cache = getCache('bundless-loader');
-  // format: {path:mtime:config:pkgDeps}
+  // format: {path:contenthash:config:pkgDeps}
   const cacheKey = [
     fileAbsPath,
-    fs.statSync(fileAbsPath).mtimeMs,
+    getContentHash(fs.readFileSync(fileAbsPath, 'utf-8')),
     JSON.stringify(opts.config),
     // use for babel opts generator in src/builder/utils.ts
     JSON.stringify(
