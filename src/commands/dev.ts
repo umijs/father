@@ -7,12 +7,16 @@ export default (api: IApi) => {
   api.registerCommand({
     name: DEV_COMMAND,
     description: 'start incremental build in watch mode',
-    async fn() {
+    options: `
+--no-clean  do not clean all output directories before dev
+`,
+    async fn({ args }) {
       const buildWatcher = await builder({
         userConfig: api.config,
         cwd: api.cwd,
         pkg: api.pkg,
         watch: true,
+        clean: args.clean,
       });
 
       // handle config change
