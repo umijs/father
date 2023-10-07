@@ -51,15 +51,6 @@ body:
       required: true
 
   - type: input
-    id: browser
-    attributes:
-      label: Browser Version
-      description: Browser version you now use
-      placeholder: ex. Firefox 118.0.0
-    validations:
-      required: true
-
-  - type: input
     id: reproduction
     attributes:
       label: Link to minimal reproduction
