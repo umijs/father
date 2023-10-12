@@ -1,7 +1,7 @@
 import type { IDoctorReport } from '..';
 import type { IApi } from '../../types';
 
-const PREFER_PEER_DEPS = ['react', 'react-dom', 'antd'];
+const PREFER_PEER_DEPS = ['react', 'react-dom', 'antd', 'dumi'];
 
 export default (api: IApi) => {
   api.addRegularCheckup(() => {
