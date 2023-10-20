@@ -81,6 +81,10 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         jsMinifier: JSMinifier.terser,
         cssMinifier: CSSMinifier.cssnano,
         extraBabelIncludes: [/node_modules/],
+
+        // set cache parent directory, will join it with `bundler-webpack`
+        // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
+        cacheDirectoryPath: CACHE_PATH,
       },
       entry: {
         [path.parse(config.output.filename).name]: path.join(
@@ -159,7 +163,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         ? {
             cache: {
               buildDependencies: opts.buildDependencies,
-              cacheDirectory: path.join(opts.cwd, CACHE_PATH, 'bundle-webpack'),
             },
           }
         : {}),
