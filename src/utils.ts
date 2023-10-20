@@ -1,4 +1,4 @@
-import { chalk, logger as umiLogger, pkgUp } from '@umijs/utils';
+import { chalk, pkgUp, logger as umiLogger } from '@umijs/utils';
 import Cache from 'file-system-cache';
 import { builtinModules } from 'module';
 import path, { isAbsolute } from 'path';
@@ -13,7 +13,8 @@ const caches: Record<string, ReturnType<typeof Cache>> = {};
 export function getCache(ns: string): (typeof caches)['0'] {
   // return fake cache if cache disabled
   if (process.env.FATHER_CACHE === 'none') {
-    return { set() {}, get() {}, setSync() {}, getSync() {} } as any;
+    const deferrer = () => Promise.resolve();
+    return { set: deferrer, get: deferrer, setSync() {}, getSync() {} } as any;
   }
   return (caches[ns] ??= Cache({ basePath: path.join(CACHE_PATH, ns) }));
 }
