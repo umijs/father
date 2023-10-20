@@ -56,7 +56,7 @@ export default async (
     ],
   });
 
-  cache.set(cacheKey, ret);
+  await cache.set(cacheKey, ret);
 
   return ret;
 };

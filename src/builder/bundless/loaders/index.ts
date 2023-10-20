@@ -129,8 +129,9 @@ export default async (
             };
 
             // save cache then resolve
-            cache.set(cacheKey, ret);
-            resolve(ret);
+            cache.set(cacheKey, ret).then(() => {
+              resolve(ret);
+            });
           } else {
             resolve(void 0);
           }
