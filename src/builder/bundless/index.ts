@@ -14,10 +14,10 @@ import {
   DEFAULT_BUNDLESS_IGNORES,
   WATCH_DEBOUNCE_STEP,
 } from '../../constants';
+import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
 import runLoaders from './loaders';
-import { logger } from '../../utils';
 
 const debugLog = debug(DEBUG_BUNDLESS_NAME);
 
@@ -203,6 +203,12 @@ async function bundless(
         cwd: opts.cwd,
         ignoreInitial: true,
         ignored: DEFAULT_BUNDLESS_IGNORES,
+        // to avoid catch temp file from some special file-system
+        // ex. a.txt => a.txt.12344345 in CloudIDE
+        awaitWriteFinish: {
+          stabilityThreshold: 20,
+          pollInterval: 10,
+        },
       })
       .on('add', handleTransform)
       .on('change', handleTransform)
