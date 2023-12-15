@@ -16,7 +16,7 @@ export function getCache(ns: string): (typeof caches)['0'] {
     const deferrer = () => Promise.resolve();
     return { set: deferrer, get: deferrer, setSync() {}, getSync() {} } as any;
   }
-  return (caches[ns] ??= Cache({ basePath: path.join(CACHE_PATH, ns) }));
+  return (caches[ns] ??= Cache({ basePath: path.resolve(process.env.FATHER_CACHE_DIR || CACHE_PATH, ns) }));
 }
 
 /**
