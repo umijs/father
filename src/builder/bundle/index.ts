@@ -1,8 +1,7 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
 import path from 'path';
-import { CACHE_PATH } from '../../constants';
-import { logger } from '../../utils';
+import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
 import {
   getBabelPresetReactOpts,
@@ -84,7 +83,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
 
         // set cache parent directory, will join it with `bundler-webpack`
         // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
-        cacheDirectoryPath: CACHE_PATH,
+        cacheDirectoryPath: getCachePath(),
       },
       entry: {
         [path.parse(config.output.filename).name]: path.join(

@@ -2,8 +2,7 @@ import { chalk, fsExtra, winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
-import { CACHE_PATH } from '../../../constants';
-import { getCache, logger } from '../../../utils';
+import { getCache, getCachePath, logger } from '../../../utils';
 import { getContentHash } from '../../utils';
 
 /**
@@ -50,7 +49,7 @@ export default async function getDeclarations(
 ) {
   const cache = getCache('bundless-dts');
   const enableCache = process.env.FATHER_CACHE !== 'none';
-  const tscCacheDir = path.join(opts.cwd, CACHE_PATH, 'tsc');
+  const tscCacheDir = path.join(opts.cwd, getCachePath(), 'tsc');
   if (enableCache) {
     // make tsc cache dir
     fsExtra.ensureDirSync(tscCacheDir);
