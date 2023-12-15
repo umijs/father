@@ -2,10 +2,17 @@ import { chalk, pkgUp, logger as umiLogger } from '@umijs/utils';
 import Cache from 'file-system-cache';
 import { builtinModules } from 'module';
 import path, { isAbsolute } from 'path';
-import { CACHE_PATH } from './constants';
+import { DEFAULT_CACHE_PATH } from './constants';
 import { IApi } from './types';
 
 const caches: Record<string, ReturnType<typeof Cache>> = {};
+
+/**
+ * get cache path
+ */
+export function getCachePath() {
+  return process.env.FATHER_CACHE_DIR || DEFAULT_CACHE_PATH;
+}
 
 /**
  * get file-system cache for specific namespace
@@ -16,9 +23,7 @@ export function getCache(ns: string): (typeof caches)['0'] {
     const deferrer = () => Promise.resolve();
     return { set: deferrer, get: deferrer, setSync() {}, getSync() {} } as any;
   }
-  return (caches[ns] ??= Cache({
-    basePath: path.resolve(process.env.FATHER_CACHE_DIR || CACHE_PATH, ns),
-  }));
+  return (caches[ns] ??= Cache({ basePath: path.join(getCachePath(), ns) }));
 }
 
 /**

@@ -5,7 +5,7 @@ export const WATCH_DEBOUNCE_STEP = 300;
 export const DEV_COMMAND = 'dev';
 export const BUILD_COMMANDS = ['build', 'prebundle'];
 export const DEBUG_BUNDLESS_NAME = 'father:bundless';
-export const CACHE_PATH = 'node_modules/.cache/father';
+export const DEFAULT_CACHE_PATH = 'node_modules/.cache/father';
 export const DEFAULT_BUNDLESS_IGNORES = [
   '**/.*',
   '**/.*/**',
