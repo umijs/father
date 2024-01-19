@@ -42,7 +42,7 @@
     ]
   },
   "dependencies": {
-    "@microsoft/api-extractor": "7.36.3",
+    "@microsoft/api-extractor": "7.39.1",
     "@umijs/babel-preset-umi": "^4.0.89",
     "@umijs/bundler-utils": "^4.0.89",
     "@umijs/bundler-webpack": "^4.0.89",
@@ -59,7 +59,7 @@
     "loader-runner": "4.2.0",
     "minimatch": "3.1.2",
     "tsconfig-paths": "4.0.0",
-    "typescript": "~5.0.4",
+    "typescript": "~5.3.3",
     "typescript-transform-paths": "3.4.6",
     "v8-compile-cache": "2.3.0"
   },

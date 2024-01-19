@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@microsoft/api-extractor':
-        specifier: 7.36.3
-        version: 7.36.3(@types/node@18.15.13)
+        specifier: 7.39.1
+        version: 7.39.1(@types/node@18.15.13)
       '@umijs/babel-preset-umi':
         specifier: ^4.0.89
         version: 4.0.89
@@ -19,7 +19,7 @@ importers:
         version: 4.0.89
       '@umijs/bundler-webpack':
         specifier: ^4.0.89
-        version: 4.0.89(typescript@5.0.4)(webpack@5.80.0)
+        version: 4.0.89(typescript@5.3.3)(webpack@5.80.0)
       '@umijs/case-sensitive-paths-webpack-plugin':
         specifier: ^1.0.1
         version: 1.0.1
@@ -60,11 +60,11 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       typescript:
-        specifier: ~5.0.4
-        version: 5.0.4
+        specifier: ~5.3.3
+        version: 5.3.3
       typescript-transform-paths:
         specifier: 3.4.6
-        version: 3.4.6(typescript@5.0.4)
+        version: 3.4.6(typescript@5.3.3)
       v8-compile-cache:
         specifier: 2.3.0
         version: 2.3.0
@@ -116,7 +116,7 @@ importers:
         version: 2.8.7
       prettier-plugin-organize-imports:
         specifier: ^3.2.2
-        version: 3.2.2(prettier@2.8.7)(typescript@5.0.4)
+        version: 3.2.2(prettier@2.8.7)(typescript@5.3.3)
       prettier-plugin-packagejson:
         specifier: ^2.4.3
         version: 2.4.3(prettier@2.8.7)
@@ -125,7 +125,7 @@ importers:
         version: 3.0.2
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.0.4)
+        version: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.3.3)
       zx:
         specifier: ^4.3.0
         version: 4.3.0
@@ -1825,13 +1825,13 @@ packages:
       '@types/node': 18.15.13
       chalk: 4.1.2
       cosmiconfig: 8.1.3
-      cosmiconfig-typescript-loader: 4.3.0(@types/node@18.15.13)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.0.4)
+      cosmiconfig-typescript-loader: 4.3.0(@types/node@18.15.13)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.3.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
       resolve-from: 5.0.0
-      ts-node: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.0.4)
-      typescript: 5.0.4
+      ts-node: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.3.3)
+      typescript: 5.3.3
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -2752,32 +2752,32 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@microsoft/api-extractor-model@7.27.5(@types/node@18.15.13):
-    resolution: {integrity: sha512-9/tBzYMJitR+o+zkPr1lQh2+e8ClcaTF6eZo7vZGDqRt2O5XmXWPbYJZmxyM3wb5at6lfJNEeGZrQXLjsQ0Nbw==}
+  /@microsoft/api-extractor-model@7.28.4(@types/node@18.15.13):
+    resolution: {integrity: sha512-vucgyPmgHrJ/D4/xQywAmjTmSfxAx2/aDmD6TkIoLu51FdsAfuWRbijWA48AePy60OO+l+mmy9p2P/CEeBZqig==}
     dependencies:
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.1
-      '@rushstack/node-core-library': 3.59.6(@types/node@18.15.13)
+      '@rushstack/node-core-library': 3.63.0(@types/node@18.15.13)
     transitivePeerDependencies:
       - '@types/node'
     dev: false
 
-  /@microsoft/api-extractor@7.36.3(@types/node@18.15.13):
-    resolution: {integrity: sha512-u0H6362AQq+r55X8drHx4npgkrCfJnMzRRHfQo8PMNKB8TcBnrTLfXhXWi+xnTM6CzlU/netEN8c4bq581Rnrg==}
+  /@microsoft/api-extractor@7.39.1(@types/node@18.15.13):
+    resolution: {integrity: sha512-V0HtCufWa8hZZvSmlEzQZfINcJkHAU/bmpyJQj6w+zpI87EkR8DuBOW6RWrO9c7mUYFZoDaNgUTyKo83ytv+QQ==}
     hasBin: true
     dependencies:
-      '@microsoft/api-extractor-model': 7.27.5(@types/node@18.15.13)
+      '@microsoft/api-extractor-model': 7.28.4(@types/node@18.15.13)
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.1
-      '@rushstack/node-core-library': 3.59.6(@types/node@18.15.13)
-      '@rushstack/rig-package': 0.4.0
-      '@rushstack/ts-command-line': 4.15.1
+      '@rushstack/node-core-library': 3.63.0(@types/node@18.15.13)
+      '@rushstack/rig-package': 0.5.1
+      '@rushstack/ts-command-line': 4.17.1
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.1
       semver: 7.5.4
       source-map: 0.6.1
-      typescript: 5.0.4
+      typescript: 5.3.3
     transitivePeerDependencies:
       - '@types/node'
     dev: false
@@ -2835,8 +2835,8 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /@rushstack/node-core-library@3.59.6(@types/node@18.15.13):
-    resolution: {integrity: sha512-bMYJwNFfWXRNUuHnsE9wMlW/mOB4jIwSUkRKtu02CwZhQdmzMsUbxE0s1xOLwTpNIwlzfW/YT7OnOHgDffLgYg==}
+  /@rushstack/node-core-library@3.63.0(@types/node@18.15.13):
+    resolution: {integrity: sha512-Q7B3dVpBQF1v+mUfxNcNZh5uHVR8ntcnkN5GYjbBLrxUYHBGKbnCM+OdcN+hzCpFlLBH6Ob0dEHhZ0spQwf24A==}
     peerDependencies:
       '@types/node': '*'
     peerDependenciesMeta:
@@ -2853,15 +2853,15 @@ packages:
       z-schema: 5.0.3
     dev: false
 
-  /@rushstack/rig-package@0.4.0:
-    resolution: {integrity: sha512-FnM1TQLJYwSiurP6aYSnansprK5l8WUK8VG38CmAaZs29ZeL1msjK0AP1VS4ejD33G0kE/2cpsPsS9jDenBMxw==}
+  /@rushstack/rig-package@0.5.1:
+    resolution: {integrity: sha512-pXRYSe29TjRw7rqxD4WS3HN/sRSbfr+tJs4a9uuaSIBAITbUggygdhuG0VrO0EO+QqH91GhYMN4S6KRtOEmGVA==}
     dependencies:
       resolve: 1.22.1
       strip-json-comments: 3.1.1
     dev: false
 
-  /@rushstack/ts-command-line@4.15.1:
-    resolution: {integrity: sha512-EL4jxZe5fhb1uVL/P/wQO+Z8Rc8FMiWJ1G7VgnPDvdIt5GVjRfK7vwzder1CZQiX3x0PY6uxENYLNGTFd1InRQ==}
+  /@rushstack/ts-command-line@4.17.1:
+    resolution: {integrity: sha512-2jweO1O57BYP5qdBGl6apJLB+aRIn5ccIRTPDyULh0KMwVzFqWtw6IZWt1qtUoZD/pD2RNkIOosH6Cq45rIYeg==}
     dependencies:
       '@types/argparse': 1.0.38
       argparse: 1.0.10
@@ -3347,7 +3347,7 @@ packages:
       - supports-color
     dev: false
 
-  /@umijs/bundler-webpack@4.0.89(typescript@5.0.4)(webpack@5.80.0):
+  /@umijs/bundler-webpack@4.0.89(typescript@5.3.3)(webpack@5.80.0):
     resolution: {integrity: sha512-BfCpmxDIzhRa7wnEAODOj5auHXd/n954qt0QUkUUlGJYa5GrtgRiKsGtnwew+8uVX1vm0y7XDqnCU+trWAq0nQ==}
     hasBin: true
     dependencies:
@@ -3364,7 +3364,7 @@ packages:
       cors: 2.8.5
       css-loader: 6.7.1(webpack@5.80.0)
       es5-imcompatible-versions: 0.1.80
-      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.0.4)(webpack@5.80.0)
+      fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.3.3)(webpack@5.80.0)
       jest-worker: 29.4.3
       lightningcss: 1.22.1
       node-libs-browser: 2.2.1
@@ -4435,7 +4435,7 @@ packages:
       vary: 1.1.2
     dev: false
 
-  /cosmiconfig-typescript-loader@4.3.0(@types/node@18.15.13)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.0.4):
+  /cosmiconfig-typescript-loader@4.3.0(@types/node@18.15.13)(cosmiconfig@8.1.3)(ts-node@10.9.1)(typescript@5.3.3):
     resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
@@ -4446,8 +4446,8 @@ packages:
     dependencies:
       '@types/node': 18.15.13
       cosmiconfig: 8.1.3
-      ts-node: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.0.4)
-      typescript: 5.0.4
+      ts-node: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.3.3)
+      typescript: 5.3.3
     dev: true
 
   /cosmiconfig@7.0.1:
@@ -5469,7 +5469,7 @@ packages:
       is-callable: 1.2.4
     dev: false
 
-  /fork-ts-checker-webpack-plugin@8.0.0(typescript@5.0.4)(webpack@5.80.0):
+  /fork-ts-checker-webpack-plugin@8.0.0(typescript@5.3.3)(webpack@5.80.0):
     resolution: {integrity: sha512-mX3qW3idpueT2klaQXBzrIM/pHw+T0B/V9KHEvNrqijTq9NFnMZU6oreVxDYcf33P8a5cW+67PjodNHthGnNVg==}
     engines: {node: '>=12.13.0', yarn: '>=1.0.0'}
     peerDependencies:
@@ -5488,7 +5488,7 @@ packages:
       schema-utils: 3.1.2
       semver: 7.5.4
       tapable: 2.2.1
-      typescript: 5.0.4
+      typescript: 5.3.3
       webpack: 5.80.0(@swc/core@1.3.53)
     dev: false
 
@@ -6368,7 +6368,7 @@ packages:
       pretty-format: 27.5.1
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.0.4)
+      ts-node: 10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.3.3)
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -8158,7 +8158,7 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
-  /prettier-plugin-organize-imports@3.2.2(prettier@2.8.7)(typescript@5.0.4):
+  /prettier-plugin-organize-imports@3.2.2(prettier@2.8.7)(typescript@5.3.3):
     resolution: {integrity: sha512-e97lE6odGSiHonHJMTYC0q0iLXQyw0u5z/PJpvP/3vRy6/Zi9kLBwFAbEGjDzIowpjQv8b+J04PDamoUSQbzGA==}
     peerDependencies:
       '@volar/vue-language-plugin-pug': ^1.0.4
@@ -8172,7 +8172,7 @@ packages:
         optional: true
     dependencies:
       prettier: 2.8.7
-      typescript: 5.0.4
+      typescript: 5.3.3
     dev: true
 
   /prettier-plugin-packagejson@2.4.3(prettier@2.8.7):
@@ -9249,7 +9249,7 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /ts-node@10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.0.4):
+  /ts-node@10.9.1(@swc/core@1.3.53)(@types/node@18.15.13)(typescript@5.3.3):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -9276,7 +9276,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 5.0.4
+      typescript: 5.3.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -9346,18 +9346,18 @@ packages:
       is-typedarray: 1.0.0
     dev: true
 
-  /typescript-transform-paths@3.4.6(typescript@5.0.4):
+  /typescript-transform-paths@3.4.6(typescript@5.3.3):
     resolution: {integrity: sha512-qdgpCk9oRHkIBhznxaHAapCFapJt5e4FbFik7Y4qdqtp6VyC3smAIPoDEIkjZ2eiF7x5+QxUPYNwJAtw0thsTw==}
     peerDependencies:
       typescript: '>=3.6.5'
     dependencies:
       minimatch: 3.1.2
-      typescript: 5.0.4
+      typescript: 5.3.3
     dev: false
 
-  /typescript@5.0.4:
-    resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==}
-    engines: {node: '>=12.20'}
+  /typescript@5.3.3:
+    resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   /unbox-primitive@1.0.2:
