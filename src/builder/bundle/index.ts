@@ -40,6 +40,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
     const config = opts.configProvider.configs[i];
     const { plugins: extraPostCSSPlugins, ...postcssLoader } =
       config.postcssOptions || {};
+    const babelSCOpts = getBabelStyledComponentsOpts(opts.configProvider.pkg);
     // workaround for combine continuous onBuildComplete log in watch mode
     const logStatus = lodash.debounce(
       () =>
@@ -105,12 +106,14 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           pluginTransformRuntime: {},
           pluginLockCoreJS: {},
           pluginDynamicImportNode: false,
-          pluginStyledComponents: getBabelStyledComponentsOpts(
-            opts.configProvider.pkg,
-          ),
         },
       ],
-      beforeBabelPlugins: [require.resolve('babel-plugin-dynamic-import-node')],
+      beforeBabelPlugins: [
+        require.resolve('babel-plugin-dynamic-import-node'),
+        ...(babelSCOpts
+          ? [[require.resolve('babel-plugin-styled-components'), babelSCOpts]]
+          : []),
+      ],
       extraBabelPresets: config.extraBabelPresets,
       extraBabelPlugins: config.extraBabelPlugins,
 
