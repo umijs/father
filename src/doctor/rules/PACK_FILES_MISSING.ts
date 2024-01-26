@@ -21,7 +21,7 @@ export default (api: IApi) => {
         );
         Object.values(preBundleConfig.dts).forEach((c) =>
           entities.push(
-            winPath(path.relative(api.cwd, path.basename(c.output))),
+            winPath(path.relative(api.cwd, path.dirname(c.output))),
           ),
         );
 
