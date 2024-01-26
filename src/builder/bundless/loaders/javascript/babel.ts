@@ -45,8 +45,8 @@ const babelTransformer: IJSTransformer = function (content) {
       path.dirname(this.paths.fileAbsPath),
     ),
     presetTypeScript: {},
-    pluginStyledComponents: getBabelStyledComponentsOpts(this.pkg),
   };
+  const pluginSCOpts = getBabelStyledComponentsOpts(this.pkg);
 
   // transform alias to relative path for babel-plugin-module-resolver
   const alias = Object.entries(oAlias).reduce<typeof oAlias>(
@@ -99,6 +99,9 @@ const babelTransformer: IJSTransformer = function (content) {
           extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.json'],
         },
       ],
+      ...(pluginSCOpts
+        ? [[require.resolve('babel-plugin-styled-components'), pluginSCOpts]]
+        : []),
       ...(define
         ? [
             [

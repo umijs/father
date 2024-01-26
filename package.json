@@ -52,6 +52,7 @@
     "@vercel/ncc": "0.33.3",
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-module-resolver": "4.1.0",
+    "babel-plugin-styled-components": "2.1.4",
     "babel-plugin-transform-define": "2.0.1",
     "enhanced-resolve": "5.9.3",
     "fast-glob": "3.2.12",
