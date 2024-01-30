@@ -14,7 +14,7 @@ export function addSourceMappingUrl(code: string, loc: string) {
   return (
     code +
     '\n//# sourceMappingURL=' +
-    path.basename(loc.replace(/\.(jsx|tsx?)$/, '.js.map'))
+    path.basename(loc.replace(/\.[jt]sx?$/, '.js.map'))
   );
 }
 

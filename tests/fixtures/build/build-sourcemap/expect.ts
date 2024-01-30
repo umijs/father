@@ -33,4 +33,14 @@ export default (files: Record<string, string>) => {
     readFileSync(join(__dirname, 'dist/cjs/utils/index.js.map'), 'utf-8'),
   );
   expect(map4.sources[0]).toEqual('../../../src/utils/index.ts');
+
+  // sourcefile js test
+  expect('esm/sourcejs.js.map' in files).toBe(true);
+  expect(files['esm/sourcejs.js']).toContain(
+    '//# sourceMappingURL=sourcejs.js.map',
+  );
+  expect('cjs/sourcejs.js.map' in files).toBe(true);
+  expect(files['cjs/sourcejs.js']).toContain(
+    '//# sourceMappingURL=sourcejs.js.map',
+  );
 };
