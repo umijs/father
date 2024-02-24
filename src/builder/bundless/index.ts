@@ -31,6 +31,13 @@ function replacePathExt(filePath: string, ext: string) {
 }
 
 /**
+ * checks if a file path is located within a specific directory.
+ */
+const isFileInDir = (filePath: string, dirPath: string) => {
+  return filePath.startsWith(winPath(dirPath).replace(/\/+$/, ''));
+};
+
+/**
  * transform specific files
  */
 async function transformFiles(
@@ -41,22 +48,36 @@ async function transformFiles(
     watch?: true;
   },
 ) {
+  // get config and dist path info for specific item
+  const itemPathInfo = (item: string) => {
+    const config = opts.configProvider.getConfigForFile(item);
+
+    if (config) {
+      const itemDistPath = path.join(
+        config.output!,
+        path.relative(config.input, item),
+      );
+      const itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+      const itemDistDir = path.dirname(itemDistAbsPath);
+
+      return { config, itemDistPath, itemDistAbsPath, itemDistDir };
+    } else {
+      return null;
+    }
+  };
+
   try {
     let count = 0;
     const declarationFileMap = new Map<string, string>();
 
     // process all matched items
     for (let item of files) {
-      const config = opts.configProvider.getConfigForFile(item);
+      const pathInfo = itemPathInfo(item);
       const itemAbsPath = path.join(opts.cwd, item);
 
-      if (config) {
-        let itemDistPath = path.join(
-          config.output!,
-          path.relative(config.input, item),
-        );
-        let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
-        const parentPath = path.dirname(itemDistAbsPath);
+      if (pathInfo) {
+        const { config, itemDistDir: parentPath, ...itemDisInfo } = pathInfo;
+        let { itemDistPath, itemDistAbsPath } = itemDisInfo;
 
         // create parent directory if not exists
         if (!fs.existsSync(parentPath)) {
@@ -124,13 +145,30 @@ async function transformFiles(
         },
       );
 
-      declarations.forEach((item) => {
-        fs.writeFileSync(
-          path.join(declarationFileMap.get(item.sourceFile)!, item.file),
-          item.content,
-          'utf-8',
-        );
-      });
+      declarations
+        // filterMap: filter out declarations with unrecognized distDir and mapping it
+        .flatMap(({ sourceFile, ...declaration }) => {
+          // Prioritize using declarationFileMap
+          // If not available, try to recalculate itemDistDir
+          const distDir =
+            declarationFileMap.get(sourceFile) ??
+            (() => {
+              const watchRoot = path.join(opts.cwd, opts.configProvider.input);
+              const isInWatchDir = isFileInDir(sourceFile, watchRoot);
+              return isInWatchDir
+                ? itemPathInfo(path.relative(opts.cwd, sourceFile))?.itemDistDir
+                : undefined;
+            })();
+
+          return distDir ? [{ distDir, declaration }] : [];
+        })
+        .forEach(({ distDir, declaration }) => {
+          fs.writeFileSync(
+            path.join(distDir, declaration.file),
+            declaration.content,
+            'utf-8',
+          );
+        });
     }
 
     return count;

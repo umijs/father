@@ -143,17 +143,13 @@ export default async function getDeclarations(
           sourceFile,
         };
 
-        // only collect dts for input files, to avoid output error in watch mode
-        // ref: https://github.com/umijs/father-next/issues/43
-        if (inputFiles.includes(sourceFile)) {
-          const index = output.findIndex(
-            (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
-          );
-          if (index > -1) {
-            output.splice(index, 1, ret);
-          } else {
-            output.push(ret);
-          }
+        const index = output.findIndex(
+          (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
+        );
+        if (index > -1) {
+          output.splice(index, 1, ret);
+        } else {
+          output.push(ret);
         }
 
         // group cache by file (d.ts & d.ts.map)
@@ -221,11 +217,14 @@ export default async function getDeclarations(
 
     // check compile error
     // ref: https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
-    const diagnostics = ts
+    const allDiagnostics = ts
       .getPreEmitDiagnostics(incrProgram.getProgram())
-      .concat(result.diagnostics)
-      // omit error for files which not included by build
-      .filter((d) => !d.file || inputFiles.includes(d.file.fileName));
+      .concat(result.diagnostics);
+
+    // omit error for files which not included by build
+    const diagnostics = allDiagnostics.filter(
+      (d) => !d.file || inputFiles.includes(d.file.fileName),
+    );
 
     /* istanbul ignore if -- @preserve */
     if (diagnostics.length) {
@@ -256,7 +255,11 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
+
+    return output.filter(
+      (it) => !allDiagnostics.some((d) => d.file?.fileName === it.sourceFile),
+    );
   }
 
-  return output;
+  return [];
 }
