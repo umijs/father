@@ -1,4 +1,4 @@
-import { chalk, fsExtra, winPath } from '@umijs/utils';
+import { chalk, fsExtra, lodash, winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
@@ -143,15 +143,6 @@ export default async function getDeclarations(
           sourceFile,
         };
 
-        const index = output.findIndex(
-          (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
-        );
-        if (index > -1) {
-          output.splice(index, 1, ret);
-        } else {
-          output.push(ret);
-        }
-
         // group cache by file (d.ts & d.ts.map)
         // always save cache even if it's not input file, to avoid cache miss
         // because it probably can be used in next bundless run
@@ -162,12 +153,36 @@ export default async function getDeclarations(
             getContentHash(fs.readFileSync(sourceFile, 'utf-8')),
           ].join(':');
 
+        // 通过 cache 判断该输出是否属于本项目的有效 build
+        const existInCache = () =>
+          !lodash.isEmpty(cache.getSync(cacheKey, null));
+
+        // only collect dts for input files, to avoid output error in watch mode
+        // ref: https://github.com/umijs/father-next/issues/43
+        const shouldOutput = inputFiles.includes(sourceFile) || existInCache();
+
+        if (shouldOutput) {
+          const index = output.findIndex(
+            (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
+          );
+          if (index > -1) {
+            output.splice(index, 1, ret);
+          } else {
+            output.push(ret);
+          }
+        }
+
         cacheRets[cacheKey] ??= [];
         cacheRets[cacheKey].push(ret);
       }
     };
 
     // use cache first
+    // 这里不能只根据 inputFiles 进行 output 的初始填充
+    // 因为上一次处理结果的 output 可能超过 inputFiles
+    // 所以这里应该想办法取回上一次处理的结果
+    // 否则会出现 esm / cjs 其中的一个 d.ts 生成不完整的情况
+    // FIXME
     inputFiles.forEach((file) => {
       const cacheRet = cache.getSync(cacheKeys[file], '');
       if (cacheRet) {
@@ -217,14 +232,20 @@ export default async function getDeclarations(
 
     // check compile error
     // ref: https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
-    const allDiagnostics = ts
+    const diagnostics = ts
       .getPreEmitDiagnostics(incrProgram.getProgram())
-      .concat(result.diagnostics);
-
-    // omit error for files which not included by build
-    const diagnostics = allDiagnostics.filter(
-      (d) => !d.file || inputFiles.includes(d.file.fileName),
-    );
+      .concat(result.diagnostics)
+      // omit error for files which not included by build
+      .filter((d) => {
+        const file = d.file;
+        return (
+          !file ||
+          inputFiles.includes(file.fileName) ||
+          Object.values(cacheRets).some((it) =>
+            it.some((it) => it.sourceFile === file.fileName),
+          )
+        );
+      });
 
     /* istanbul ignore if -- @preserve */
     if (diagnostics.length) {
@@ -255,11 +276,7 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
-
-    return output.filter(
-      (it) => !allDiagnostics.some((d) => d.file?.fileName === it.sourceFile),
-    );
   }
 
-  return [];
+  return output;
 }
