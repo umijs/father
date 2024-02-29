@@ -5,9 +5,9 @@ import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/di
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type {
-  createConfigProviders,
   IBundleConfig,
   IBundlessConfig,
+  createConfigProviders,
 } from './builder/config';
 import type { IDoctorReport } from './doctor';
 import type { IDoctorSourceParseResult } from './doctor/parser';
@@ -89,6 +89,11 @@ export enum IFatherPlatformTypes {
 export enum IFatherBundlessTypes {
   ESM = 'esm',
   CJS = 'cjs',
+}
+
+export enum IFatherBundlerTypes {
+  WEBPACK = 'webpack',
+  MAKO = 'mako',
 }
 
 export interface IFatherBaseConfig {
@@ -216,6 +221,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * configure less variables
    */
   theme?: Record<string, string>;
+
+  /**
+   * configure bundler - webpack or mako
+   */
+  bundler?: `${IFatherBundlerTypes}`;
 }
 
 export interface IFatherPreBundleConfig {
