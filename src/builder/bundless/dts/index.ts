@@ -50,13 +50,23 @@ function getFileCacheKey(file: string): string {
   return [file, getContentHash(fs.readFileSync(file, 'utf-8'))].join(':');
 }
 
+type Output = {
+  file: string;
+  content: string;
+  sourceFile: string;
+};
+
+function getIOCacheKey(inputFiles: string[]) {
+  return `i:${inputFiles.join(',')}`;
+}
+
 /**
  * get declarations for specific files
  */
 export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
-) {
+): Promise<Output[]> {
   const cache = getCache('bundless-dts');
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const tscCacheDir = path.join(opts.cwd, getCachePath(), 'tsc');
@@ -65,7 +75,7 @@ export default async function getDeclarations(
     fsExtra.ensureDirSync(tscCacheDir);
   }
 
-  const output: { file: string; content: string; sourceFile: string }[] = [];
+  const output: Output[] = [];
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
@@ -181,18 +191,12 @@ export default async function getDeclarations(
       }
     };
 
+    const inputCacheKey = getIOCacheKey(inputFiles);
     // use cache first
-    // 这里不能只根据 inputFiles 进行 output 的初始填充
     // 因为上一次处理结果的 output 可能超过 inputFiles
-    // 所以这里应该想办法取回上一次处理的结果
-    // 否则会出现 esm / cjs 其中的一个 d.ts 生成不完整的情况
-    // FIXME
-    inputFiles.forEach((file) => {
-      const cacheRet = cache.getSync(cacheKeys[file], '');
-      if (cacheRet) {
-        output.push(...cacheRet);
-      }
-    });
+    // 所以优先使用缓存结果 避免 ts 增量处理而跳过的输出
+    const outputCached = cache.getSync(inputCacheKey, null);
+    (outputCached ?? []).forEach((ret: Output) => output.push(ret));
 
     const incrProgram = ts.createIncrementalProgram({
       rootNames: tsconfig.fileNames,
@@ -242,13 +246,7 @@ export default async function getDeclarations(
       // omit error for files which not included by build
       .filter((d) => {
         const file = d.file;
-        return (
-          !file ||
-          inputFiles.includes(file.fileName) ||
-          Object.values(cacheRets).some((it) =>
-            it.some((it) => it.sourceFile === file.fileName),
-          )
-        );
+        return !file || output.some((it) => it.sourceFile === file.fileName);
       });
 
     /* istanbul ignore if -- @preserve */
@@ -280,7 +278,8 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
-  }
 
+    cache.setSync(inputCacheKey, output);
+  }
   return output;
 }
