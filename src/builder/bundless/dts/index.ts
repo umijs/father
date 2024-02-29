@@ -41,6 +41,16 @@ export function getTsconfig(cwd: string) {
 }
 
 /**
+ * 文件在缓存中的索引
+ *
+ * format: {path:contenthash}
+ * @private
+ */
+function getFileCacheKey(file: string): string {
+  return [file, getContentHash(fs.readFileSync(file, 'utf-8'))].join(':');
+}
+
+/**
  * get declarations for specific files
  */
 export default async function getDeclarations(
@@ -117,16 +127,15 @@ export default async function getDeclarations(
     }
 
     const tsHost = ts.createIncrementalCompilerHost(tsconfig.options);
+
     const cacheKeys = inputFiles.reduce<Record<string, string>>(
       (ret, file) => ({
         ...ret,
-        // format: {path:contenthash}
-        [file]: [file, getContentHash(fs.readFileSync(file, 'utf-8'))].join(
-          ':',
-        ),
+        [file]: getFileCacheKey(file),
       }),
       {},
     );
+
     const cacheRets: Record<string, typeof output> = {};
 
     tsHost.writeFile = (fileName, content, _a, _b, sourceFiles) => {
@@ -143,15 +152,7 @@ export default async function getDeclarations(
           sourceFile,
         };
 
-        // group cache by file (d.ts & d.ts.map)
-        // always save cache even if it's not input file, to avoid cache miss
-        // because it probably can be used in next bundless run
-        const cacheKey =
-          cacheKeys[sourceFile] ||
-          [
-            sourceFile,
-            getContentHash(fs.readFileSync(sourceFile, 'utf-8')),
-          ].join(':');
+        const cacheKey = cacheKeys[sourceFile] ?? getFileCacheKey(sourceFile);
 
         // 通过 cache 判断该输出是否属于本项目的有效 build
         const existInCache = () =>
@@ -172,6 +173,9 @@ export default async function getDeclarations(
           }
         }
 
+        // group cache by file (d.ts & d.ts.map)
+        // always save cache even if it's not input file, to avoid cache miss
+        // because it probably can be used in next bundless run
         cacheRets[cacheKey] ??= [];
         cacheRets[cacheKey].push(ret);
       }
