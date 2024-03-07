@@ -30,6 +30,14 @@ function replacePathExt(filePath: string, ext: string) {
   return path.join(parsed.dir, `${parsed.name}${ext}`);
 }
 
+// create parent directory if not exists
+// TODO maybe can import fsExtra from @umijs/utils
+function ensureDirSync(dir: string) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
 /**
  * transform specific files
  */
@@ -71,10 +79,7 @@ async function transformFiles(
         const { config, itemDistDir: parentPath } = pathInfo;
         let { itemDistPath, itemDistAbsPath } = pathInfo;
 
-        // create parent directory if not exists
-        if (!fs.existsSync(parentPath)) {
-          fs.mkdirSync(parentPath, { recursive: true });
-        }
+        ensureDirSync(parentPath);
 
         // get result from loaders
         const result = await runLoaders(itemAbsPath, {
@@ -142,7 +147,12 @@ async function transformFiles(
             declarationFileMap.get(sourceFile) ??
             itemPathInfo(path.relative(opts.cwd, sourceFile))?.itemDistDir;
 
-          return distDir ? [{ distDir, declaration }] : [];
+          return distDir
+            ? (() => {
+                ensureDirSync(distDir);
+                return [{ distDir, declaration }];
+              })()
+            : [];
         });
 
       logger.quietExpect.event(
