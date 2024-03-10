@@ -30,6 +30,14 @@ function replacePathExt(filePath: string, ext: string) {
   return path.join(parsed.dir, `${parsed.name}${ext}`);
 }
 
+// create parent directory if not exists
+// TODO maybe can import fsExtra from @umijs/utils
+function ensureDirSync(dir: string) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
 /**
  * transform specific files
  */
@@ -41,27 +49,37 @@ async function transformFiles(
     watch?: true;
   },
 ) {
+  // get config and dist path info for specific item
+  const itemPathInfo = (fileInWatch: string) => {
+    const config = opts.configProvider.getConfigForFile(fileInWatch);
+
+    if (config) {
+      const itemDistPath = path.join(
+        config.output!,
+        path.relative(config.input, fileInWatch),
+      );
+      const itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+      const itemDistDir = path.dirname(itemDistAbsPath);
+
+      return { config, itemDistPath, itemDistAbsPath, itemDistDir };
+    } else {
+      return null;
+    }
+  };
   try {
     let count = 0;
     const declarationFileMap = new Map<string, string>();
 
     // process all matched items
     for (let item of files) {
-      const config = opts.configProvider.getConfigForFile(item);
+      const pathInfo = itemPathInfo(item);
       const itemAbsPath = path.join(opts.cwd, item);
 
-      if (config) {
-        let itemDistPath = path.join(
-          config.output!,
-          path.relative(config.input, item),
-        );
-        let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
-        const parentPath = path.dirname(itemDistAbsPath);
+      if (pathInfo) {
+        const { config, itemDistDir: parentPath } = pathInfo;
+        let { itemDistPath, itemDistAbsPath } = pathInfo;
 
-        // create parent directory if not exists
-        if (!fs.existsSync(parentPath)) {
-          fs.mkdirSync(parentPath, { recursive: true });
-        }
+        ensureDirSync(parentPath);
 
         // get result from loaders
         const result = await runLoaders(itemAbsPath, {
@@ -113,10 +131,6 @@ async function transformFiles(
     }
 
     if (declarationFileMap.size) {
-      logger.quietExpect.event(
-        `Generate declaration file${declarationFileMap.size > 1 ? 's' : ''}...`,
-      );
-
       const declarations = await getDeclarations(
         [...declarationFileMap.keys()],
         {
@@ -124,12 +138,29 @@ async function transformFiles(
         },
       );
 
-      declarations.forEach((item) => {
-        fs.writeFileSync(
-          path.join(declarationFileMap.get(item.sourceFile)!, item.file),
-          item.content,
-          'utf-8',
-        );
+      const dtsFiles = declarations
+        // filterMap: filter out declarations with unrecognized distDir and mapping it
+        .flatMap(({ sourceFile, ...declaration }) => {
+          // prioritize using declarationFileMap
+          // if not available, try to recalculate itemDistDir
+          const distDir =
+            declarationFileMap.get(sourceFile) ??
+            itemPathInfo(path.relative(opts.cwd, sourceFile))?.itemDistDir;
+
+          return distDir
+            ? (() => {
+                ensureDirSync(distDir);
+                return [{ distDir, declaration }];
+              })()
+            : [];
+        });
+
+      logger.quietExpect.event(
+        `Generate declaration file${dtsFiles.length > 1 ? 's' : ''}...`,
+      );
+
+      dtsFiles.forEach(({ distDir, declaration: { file, content } }) => {
+        fs.writeFileSync(path.join(distDir, file), content, 'utf-8');
       });
     }
 

@@ -21,6 +21,7 @@ export function getCache(ns: string): (typeof caches)['0'] {
   // return fake cache if cache disabled
   if (process.env.FATHER_CACHE === 'none') {
     const deferrer = () => Promise.resolve();
+    // FIXME: getSync should support second parameter
     return { set: deferrer, get: deferrer, setSync() {}, getSync() {} } as any;
   }
   return (caches[ns] ??= Cache({ basePath: path.join(getCachePath(), ns) }));

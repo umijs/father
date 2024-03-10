@@ -1,4 +1,4 @@
-import { chalk, fsExtra, winPath } from '@umijs/utils';
+import { chalk, fsExtra, lodash, winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
@@ -41,12 +41,28 @@ export function getTsconfig(cwd: string) {
 }
 
 /**
+ * 文件在缓存中的索引
+ *
+ * format: {path:contenthash}
+ * @private
+ */
+function getFileCacheKey(file: string): string {
+  return [file, getContentHash(fs.readFileSync(file, 'utf-8'))].join(':');
+}
+
+type Output = {
+  file: string;
+  content: string;
+  sourceFile: string;
+};
+
+/**
  * get declarations for specific files
  */
 export default async function getDeclarations(
   inputFiles: string[],
   opts: { cwd: string },
-) {
+): Promise<Output[]> {
   const cache = getCache('bundless-dts');
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const tscCacheDir = path.join(opts.cwd, getCachePath(), 'tsc');
@@ -55,7 +71,7 @@ export default async function getDeclarations(
     fsExtra.ensureDirSync(tscCacheDir);
   }
 
-  const output: { file: string; content: string; sourceFile: string }[] = [];
+  const output: Output[] = [];
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
@@ -117,16 +133,17 @@ export default async function getDeclarations(
     }
 
     const tsHost = ts.createIncrementalCompilerHost(tsconfig.options);
+
+    const ofFileCacheKey = lodash.memoize(getFileCacheKey, lodash.identity);
+
     const cacheKeys = inputFiles.reduce<Record<string, string>>(
       (ret, file) => ({
         ...ret,
-        // format: {path:contenthash}
-        [file]: [file, getContentHash(fs.readFileSync(file, 'utf-8'))].join(
-          ':',
-        ),
+        [file]: ofFileCacheKey(file),
       }),
       {},
     );
+
     const cacheRets: Record<string, typeof output> = {};
 
     tsHost.writeFile = (fileName, content, _a, _b, sourceFiles) => {
@@ -143,9 +160,17 @@ export default async function getDeclarations(
           sourceFile,
         };
 
+        const cacheKey = cacheKeys[sourceFile] ?? ofFileCacheKey(sourceFile);
+
+        // 通过 cache 判断该输出是否属于本项目的有效 build
+        const existInCache = () =>
+          !lodash.isEmpty(cache.getSync(cacheKey, null));
+
         // only collect dts for input files, to avoid output error in watch mode
         // ref: https://github.com/umijs/father-next/issues/43
-        if (inputFiles.includes(sourceFile)) {
+        const shouldOutput = inputFiles.includes(sourceFile) || existInCache();
+
+        if (shouldOutput) {
           const index = output.findIndex(
             (out) => out.file === ret.file && out.sourceFile === ret.sourceFile,
           );
@@ -159,25 +184,17 @@ export default async function getDeclarations(
         // group cache by file (d.ts & d.ts.map)
         // always save cache even if it's not input file, to avoid cache miss
         // because it probably can be used in next bundless run
-        const cacheKey =
-          cacheKeys[sourceFile] ||
-          [
-            sourceFile,
-            getContentHash(fs.readFileSync(sourceFile, 'utf-8')),
-          ].join(':');
-
         cacheRets[cacheKey] ??= [];
         cacheRets[cacheKey].push(ret);
       }
     };
 
+    const inputCacheKey = inputFiles.map(ofFileCacheKey).join(':');
     // use cache first
-    inputFiles.forEach((file) => {
-      const cacheRet = cache.getSync(cacheKeys[file], '');
-      if (cacheRet) {
-        output.push(...cacheRet);
-      }
-    });
+    // 因为上一次处理结果的 output 可能超过 inputFiles
+    // 所以优先使用缓存结果 避免 ts 增量处理而跳过的输出
+    const outputCached = cache.getSync(inputCacheKey, null);
+    (outputCached ?? []).forEach((ret: Output) => output.push(ret));
 
     const incrProgram = ts.createIncrementalProgram({
       rootNames: tsconfig.fileNames,
@@ -225,7 +242,10 @@ export default async function getDeclarations(
       .getPreEmitDiagnostics(incrProgram.getProgram())
       .concat(result.diagnostics)
       // omit error for files which not included by build
-      .filter((d) => !d.file || inputFiles.includes(d.file.fileName));
+      .filter((d) => {
+        const file = d.file;
+        return !file || output.some((it) => it.sourceFile === file.fileName);
+      });
 
     /* istanbul ignore if -- @preserve */
     if (diagnostics.length) {
@@ -256,7 +276,8 @@ export default async function getDeclarations(
       });
       throw new Error('Declaration generation failed.');
     }
-  }
 
+    cache.setSync(inputCacheKey, output);
+  }
   return output;
 }
