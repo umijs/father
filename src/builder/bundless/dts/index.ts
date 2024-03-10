@@ -56,10 +56,6 @@ type Output = {
   sourceFile: string;
 };
 
-function getIOCacheKey(inputFiles: string[]) {
-  return `i:${inputFiles.join(',')}`;
-}
-
 /**
  * get declarations for specific files
  */
@@ -138,10 +134,12 @@ export default async function getDeclarations(
 
     const tsHost = ts.createIncrementalCompilerHost(tsconfig.options);
 
+    const ofFileCacheKey = lodash.memoize(getFileCacheKey, lodash.identity);
+
     const cacheKeys = inputFiles.reduce<Record<string, string>>(
       (ret, file) => ({
         ...ret,
-        [file]: getFileCacheKey(file),
+        [file]: ofFileCacheKey(file),
       }),
       {},
     );
@@ -162,7 +160,7 @@ export default async function getDeclarations(
           sourceFile,
         };
 
-        const cacheKey = cacheKeys[sourceFile] ?? getFileCacheKey(sourceFile);
+        const cacheKey = cacheKeys[sourceFile] ?? ofFileCacheKey(sourceFile);
 
         // 通过 cache 判断该输出是否属于本项目的有效 build
         const existInCache = () =>
@@ -191,7 +189,7 @@ export default async function getDeclarations(
       }
     };
 
-    const inputCacheKey = getIOCacheKey(inputFiles);
+    const inputCacheKey = inputFiles.map(ofFileCacheKey).join(':');
     // use cache first
     // 因为上一次处理结果的 output 可能超过 inputFiles
     // 所以优先使用缓存结果 避免 ts 增量处理而跳过的输出
