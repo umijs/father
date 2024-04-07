@@ -1,8 +1,12 @@
-import path from 'path';
+import { tryPaths } from '@umijs/utils';
+import { join, parse } from 'path';
 import { getCachePath } from '../../utils';
 import type { BundleConfigProvider, IBundleConfig } from '../config';
 import { getBabelPresetReactOpts, getBundleTargets } from '../utils';
 import { logStatus } from './utils';
+
+const extensions = ['.js', '.jsx', '.ts', '.tsx', '.cjs', '.mjs'];
+
 interface IBundleOpts {
   cwd: string;
   configProvider: BundleConfigProvider;
@@ -19,6 +23,10 @@ async function makoBundle(
   require('@umijs/bundler-webpack/dist/requireHook');
   // @ts-ignore
   const { build, dev } = require(process.env.OKAM);
+  // mako need extension
+  const entry = tryPaths(
+    extensions.map((ext) => join(opts.cwd, `${config.entry}${ext}`)),
+  );
   const options = {
     cwd: opts.cwd,
     config: {
@@ -43,10 +51,7 @@ async function makoBundle(
       cacheDirectoryPath: getCachePath(),
     },
     entry: {
-      [path.parse(config.output.filename).name]: path.join(
-        opts.cwd,
-        config.entry,
-      ),
+      [parse(config.output.filename).name]: entry,
     },
     babelPreset: [
       require.resolve('@umijs/babel-preset-umi'),
@@ -81,7 +86,6 @@ async function makoBundle(
       if (!isFirstCompile) logStatus(config);
     },
   };
-  console.log(options);
 
   if (opts.watch) {
     return await dev(options);
