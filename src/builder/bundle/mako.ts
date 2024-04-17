@@ -86,10 +86,6 @@ async function makoBundle(
       if (!isFirstCompile) logStatus(config);
     },
   };
-
-  if (opts.watch) {
-    return await dev(options);
-  }
   return await build(options);
 }
 
