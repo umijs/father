@@ -1,6 +1,7 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import type { DevTool } from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import { chalk, importLazy, lodash, tryPaths } from '@umijs/utils';
+import assert from 'assert';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
@@ -193,6 +194,9 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       const entry = tryPaths(
         extensions.map((ext) => path.join(opts.cwd, `${config.entry}${ext}`)),
       ) as string;
+
+      assert(entry, `Cannot find entry file ${config.entry}`);
+
       options.entry = {
         [path.parse(config.output.filename).name]: entry,
       };
