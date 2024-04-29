@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "OKAM=@alipay/umi-bundler-okam father build",
+    "build": "father build",
     "build:no-clean": "father build --no-clean",
     "dev": "father dev",
     "dev:no-clean": "father dev --no-clean",

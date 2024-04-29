@@ -68,7 +68,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         chainWebpack: config.chainWebpack,
         define: config.define,
         devtool: config.sourcemap && ('source-map' as DevTool),
-        externals: config.externals || {},
+        externals: config.externals,
         outputPath: config.output.path,
 
         // postcss config
