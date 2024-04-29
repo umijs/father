@@ -9,9 +9,6 @@ import {
   getBabelStyledComponentsOpts,
   getBundleTargets,
 } from '../utils';
-process.env.OKAM = require.resolve(
-  '/Users/xiaoxiao/work/mako/packages/bundler-okam/index',
-);
 
 export interface IBundleWatcher {
   close: () => void;
