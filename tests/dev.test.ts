@@ -137,34 +137,30 @@ test('dev: file change', async () => {
     `export const ${content};`,
     'utf-8',
   );
+  // wait for watch debounce and compile
+  await wait(WATCH_DEBOUNCE_STEP + 500);
+  // wait for webpack compilation done
+  await new Promise<void>((resolve) => {
+    const logSpy = jest.spyOn(console, 'log');
+    const handler = () => {
+      try {
+        expect(console.log).toHaveBeenCalledWith(
+          // badge
+          expect.stringContaining('-'),
+          // time
+          expect.stringContaining('['),
+          // content
+          expect.stringContaining('Bundle '),
+        );
+        logSpy.mockRestore();
+        resolve();
+      } catch {
+        setTimeout(handler, 500);
+      }
+    };
 
-  await Promise.all([
-    // wait for watch debounce and compile
-    wait(WATCH_DEBOUNCE_STEP + 500),
-    // wait for webpack compilation done
-    new Promise<void>((resolve) => {
-      const logSpy = jest.spyOn(console, 'log');
-      const handler = () => {
-        try {
-          expect(console.log).toHaveBeenCalledWith(
-            // badge
-            expect.stringContaining('-'),
-            // time
-            expect.stringContaining('['),
-            // content
-            expect.stringContaining('Bundle '),
-          );
-          logSpy.mockRestore();
-          resolve();
-        } catch {
-          setTimeout(handler, 500);
-        }
-      };
-
-      handler();
-    }),
-  ]);
-
+    handler();
+  });
   const fileMap = distToMap(CASE_DIST);
 
   expect(fileMap['esm/index.js']).toContain(content);
