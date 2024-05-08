@@ -94,6 +94,41 @@ export function convertAliasByTsconfigPaths(cwd: string) {
   return { bundle, bundless };
 }
 
+export function mergeTsconfigPathAliasToConfig(
+  userConfig: IFatherConfig,
+  cwd: string,
+  pkg: IApi['pkg'],
+) {
+  const configs = normalizeUserConfig(userConfig, pkg);
+  // convert alias from tsconfig paths
+  const aliasFromPaths = convertAliasByTsconfigPaths(cwd);
+  logger.debug('Convert alias from tsconfig.json:', aliasFromPaths);
+  return configs.reduce(
+    (r, config) => {
+      if (config.type === IFatherBuildTypes.BUNDLE) {
+        config.alias = { ...aliasFromPaths.bundle, ...config.alias };
+        r.bundle.push(config);
+      } else if (config.type === IFatherBuildTypes.BUNDLESS) {
+        config.alias = { ...aliasFromPaths.bundless, ...config.alias };
+        // Handling file suffixes only bundless mode needs to be handled
+        for (let target in config.alias) {
+          // If the file suffix is js remove the suffix
+          const aPath = config.alias[target];
+          config.alias![target] = aPath.replace(/\.(t|j)sx?$/, '');
+        }
+
+        r.bundless[config.format].push(config);
+      }
+
+      return r;
+    },
+    { bundle: [], bundless: { esm: [], cjs: [] } } as {
+      bundle: IBundleConfig[];
+      bundless: { esm: IBundlessConfig[]; cjs: IBundlessConfig[] };
+    },
+  );
+}
+
 /**
  * normalize user config to bundler configs
  * @param userConfig  config from user
@@ -362,33 +397,10 @@ export function createConfigProviders(
   } = { bundless: {} };
   const configs = normalizeUserConfig(userConfig, pkg);
 
-  // convert alias from tsconfig paths
-  const aliasFromPaths = convertAliasByTsconfigPaths(cwd);
-  logger.debug('Convert alias from tsconfig.json:', aliasFromPaths);
-
-  const { bundle, bundless } = configs.reduce(
-    (r, config) => {
-      if (config.type === IFatherBuildTypes.BUNDLE) {
-        config.alias = { ...aliasFromPaths.bundle, ...config.alias };
-        r.bundle.push(config);
-      } else if (config.type === IFatherBuildTypes.BUNDLESS) {
-        config.alias = { ...aliasFromPaths.bundless, ...config.alias };
-        // Handling file suffixes only bundless mode needs to be handled
-        for (let target in config.alias) {
-          // If the file suffix is js remove the suffix
-          const aPath = config.alias[target];
-          config.alias![target] = aPath.replace(/\.(t|j)sx?$/, '');
-        }
-
-        r.bundless[config.format].push(config);
-      }
-
-      return r;
-    },
-    { bundle: [], bundless: { esm: [], cjs: [] } } as {
-      bundle: IBundleConfig[];
-      bundless: { esm: IBundlessConfig[]; cjs: IBundlessConfig[] };
-    },
+  const { bundle, bundless } = mergeTsconfigPathAliasToConfig(
+    userConfig,
+    cwd,
+    pkg,
   );
 
   if (bundle.length) {
