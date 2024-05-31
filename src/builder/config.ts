@@ -50,7 +50,7 @@ export type IBuilderConfig = IBundleConfig | IBundlessConfig;
 /**
  * generate bundle filename by package name
  */
-function getAutoBundleFilename(pkgName?: string) {
+export function getAutoBundleFilename(pkgName?: string) {
   return pkgName ? pkgName.replace(/^@[^/]+\//, '') : 'index';
 }
 

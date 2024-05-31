@@ -23,7 +23,6 @@ global.TMP_CASE_CONFIG = CASE_CONFIG;
 
 jest.mock('../src/builder/bundle/index.ts', () => {
   const originalModule = jest.requireActual('../src/builder/bundle/index.ts');
-
   return {
     __esModule: true,
     ...originalModule,
@@ -71,7 +70,7 @@ jest.mock('@umijs/utils', () => {
 // to make sure father load the latest config
 jest.mock('./fixtures/dev/.fatherrc.ts', () => {
   const originalModule = jest.requireActual(global.TMP_CASE_CONFIG);
-
+  originalModule.default.umd.bundler = 'mako';
   if (global.TMP_TRANSFORMER) {
     originalModule.default.esm.transformer = global.TMP_TRANSFORMER;
   }
@@ -116,7 +115,7 @@ afterAll(async () => {
   jest.unmock('../src/builder/bundle/index.ts');
 });
 
-test('dev: file output', () => {
+test('mako dev: file output', () => {
   const fileMap = distToMap(CASE_DIST);
 
   expect(fileMap['esm/index.js']).not.toBeUndefined();
@@ -129,7 +128,7 @@ test('dev: file output', () => {
   expect(fileMap['umd/index.min.js']).not.toBeUndefined();
 });
 
-test('dev: file change', async () => {
+test('mako dev: file change', async () => {
   const content = `a = 1`;
 
   // make file change
@@ -167,7 +166,7 @@ test('dev: file change', async () => {
   expect(fileMap['umd/index.min.js']).toContain(content);
 });
 
-test('dev: file add', async () => {
+test('mako dev: file add', async () => {
   fs.mkdirSync(path.join(CASE_SRC, 'child'));
   fs.writeFileSync(path.join(CASE_SRC, 'child/new.ts'), '', 'utf-8');
 
@@ -180,7 +179,7 @@ test('dev: file add', async () => {
   expect(fileMap['esm/child/new.d.ts']).not.toBeUndefined();
 });
 
-test('dev: file delete', async () => {
+test('mako dev: file delete', async () => {
   fs.rmSync(path.join(CASE_SRC, 'child'), { recursive: true });
 
   // wait for watch debounce and compile
@@ -195,7 +194,7 @@ test('dev: file delete', async () => {
   expect(fs.existsSync(path.join(CASE_DIST, 'child'))).toBe(false);
 });
 
-test('dev: config change', async () => {
+test('mako dev: config change', async () => {
   global.TMP_TRANSFORMER = 'esbuild';
   jest.resetModules();
   fs.writeFileSync(

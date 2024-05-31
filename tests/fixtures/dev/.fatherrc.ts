@@ -2,5 +2,5 @@ export default {
   esm: {
     transformer: 'babel',
   },
-  umd: { entry: { 'src/index': {} } },
+  umd: { entry: { 'src/index': {} }, bundler: 'mako' },
 };

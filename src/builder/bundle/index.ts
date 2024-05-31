@@ -5,6 +5,7 @@ import assert from 'assert';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
+import { getAutoBundleFilename } from '../config';
 import {
   getBabelPresetReactOpts,
   getBabelStyledComponentsOpts,
@@ -15,8 +16,13 @@ export interface IBundleWatcher {
   close: () => void;
 }
 
-const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
+const webpackBundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
+);
+
+const makoBundler = importLazy(
+  // path.dirname(require.resolve('/Users/xiaoxiao/work/mako/packages/bundler-mako/package.json')),
+  path.dirname(require.resolve('@umijs/bundler-mako/package.json')),
 );
 
 const {
@@ -57,27 +63,29 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       100,
       { leading: true, trailing: false },
     );
-
     // log for normal build
     !opts.watch && logStatus();
     const options = {
       cwd: opts.cwd,
+      hmr: false,
       watch: opts.watch,
       config: {
         alias: config.alias,
+        hmr: false,
         autoprefixer: config.autoprefixer,
         chainWebpack: config.chainWebpack,
         define: config.define,
-        devtool: config.sourcemap && ('source-map' as DevTool),
+        devtool: !!config.sourcemap && ('source-map' as DevTool),
         externals: config.externals,
         outputPath: config.output.path,
-
         // postcss config
         extraPostCSSPlugins,
         postcssLoader,
-
+        clean: false,
         ...(config.extractCSS !== false ? {} : { styleLoader: {} }),
-
+        // ref: https://github.com/umijs/mako/issues/1062
+        inlineCSS:
+          config.extractCSS !== false ? false : { 'TODO: REMOVE ME': 1 },
         // less config
         theme: config.theme,
 
@@ -86,7 +94,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         jsMinifier: JSMinifier.terser,
         cssMinifier: CSSMinifier.cssnano,
         extraBabelIncludes: [/node_modules/],
-
         // set cache parent directory, will join it with `bundler-webpack`
         // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
         cacheDirectoryPath: getCachePath(),
@@ -125,9 +132,10 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       // configure library related options
       chainWebpack(memo: any) {
         memo.output.libraryTarget('umd');
-
-        if (config?.name) {
-          memo.output.library(config.name);
+        const name =
+          config.name || getAutoBundleFilename(opts.configProvider.pkg.name);
+        if (name !== 'index') {
+          memo.output.library(name);
         }
 
         // modify webpack target
@@ -176,34 +184,27 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         : {}),
 
       // collect close handlers for watch mode
-      ...(opts.watch
-        ? {
-            onBuildComplete({ isFirstCompile, close }: any) {
-              if (isFirstCompile) closeHandlers.push(close);
-              // log for watch mode
-              else logStatus();
-            },
-          }
-        : {}),
+      onBuildComplete({ isFirstCompile, close }: any) {
+        if (isFirstCompile) closeHandlers.push(close);
+        // log for watch mode
+        else logStatus();
+      },
+      onDevCompileDone() {},
       disableCopy: true,
     };
-    if (process.env.OKAM && config.bundler === 'mako') {
+    if (config.bundler === 'mako') {
       require('@umijs/bundler-webpack/dist/requireHook');
-      const { build } = require(process.env.OKAM);
-
       const entry = tryPaths(
         extensions.map((ext) => path.join(opts.cwd, `${config.entry}${ext}`)),
       ) as string;
-
       assert(entry, `Cannot find entry file ${config.entry}`);
 
       options.entry = {
         [path.parse(config.output.filename).name]: entry,
       };
-
-      await build(options);
+      await makoBundler.build(options);
     } else {
-      await bundler.build(options);
+      await webpackBundler.build(options);
     }
   }
 
