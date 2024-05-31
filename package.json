@@ -55,6 +55,7 @@
     "babel-plugin-styled-components": "2.1.4",
     "babel-plugin-transform-define": "2.0.1",
     "enhanced-resolve": "5.9.3",
+    "esbuild": "0.17.19",
     "fast-glob": "3.2.12",
     "file-system-cache": "2.0.0",
     "loader-runner": "4.2.0",
