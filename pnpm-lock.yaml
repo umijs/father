@@ -47,6 +47,9 @@ importers:
       enhanced-resolve:
         specifier: 5.9.3
         version: 5.9.3
+      esbuild:
+        specifier: 0.17.19
+        version: 0.17.19
       fast-glob:
         specifier: 3.2.12
         version: 3.2.12
@@ -3519,7 +3522,7 @@ packages:
       react-refresh: 0.14.0
       schema-utils: 3.1.2
       source-map: 0.7.4
-      webpack: 5.80.0(@swc/core@1.3.53)
+      webpack: 5.80.0(@swc/core@1.3.53)(esbuild@0.17.19)
     dev: false
 
   /@umijs/test@4.0.68(@babel/core@7.21.3):
@@ -4658,7 +4661,7 @@ packages:
       postcss-modules-values: 4.0.0(postcss@8.4.31)
       postcss-value-parser: 4.2.0
       semver: 7.5.4
-      webpack: 5.80.0(@swc/core@1.3.53)
+      webpack: 5.80.0(@swc/core@1.3.53)(esbuild@0.17.19)
     dev: false
 
   /css-prefers-color-scheme@6.0.3(postcss@8.4.31):
@@ -5583,7 +5586,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.3.3
-      webpack: 5.80.0(@swc/core@1.3.53)
+      webpack: 5.80.0(@swc/core@1.3.53)(esbuild@0.17.19)
     dev: false
 
   /form-data@3.0.1:
@@ -9237,7 +9240,7 @@ packages:
       supports-hyperlinks: 2.2.0
     dev: true
 
-  /terser-webpack-plugin@5.3.7(@swc/core@1.3.53)(webpack@5.80.0):
+  /terser-webpack-plugin@5.3.7(@swc/core@1.3.53)(esbuild@0.17.19)(webpack@5.80.0):
     resolution: {integrity: sha512-AfKwIktyP7Cu50xNjXF/6Qb5lBNzYaWpU6YfoX3uZicTx0zTy0stDDCsvjDapKsSDvOeWo5MEq4TmdBy2cNoHw==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -9255,11 +9258,12 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.17
       '@swc/core': 1.3.53
+      esbuild: 0.17.19
       jest-worker: 27.5.1
       schema-utils: 3.1.2
       serialize-javascript: 6.0.1
       terser: 5.17.1
-      webpack: 5.80.0(@swc/core@1.3.53)
+      webpack: 5.80.0(@swc/core@1.3.53)(esbuild@0.17.19)
     dev: false
 
   /terser@5.17.1:
@@ -9666,7 +9670,7 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: false
 
-  /webpack@5.80.0(@swc/core@1.3.53):
+  /webpack@5.80.0(@swc/core@1.3.53)(esbuild@0.17.19):
     resolution: {integrity: sha512-OIMiq37XK1rWO8mH9ssfFKZsXg4n6klTEDL7S8/HqbAOBBaiy8ABvXvz0dDCXeEF9gqwxSvVk611zFPjS8hJxA==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -9697,7 +9701,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.1.2
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.7(@swc/core@1.3.53)(webpack@5.80.0)
+      terser-webpack-plugin: 5.3.7(@swc/core@1.3.53)(esbuild@0.17.19)(webpack@5.80.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
