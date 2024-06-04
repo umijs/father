@@ -1,6 +1,6 @@
 class Content {
   say() {
-    return 'Hello father 3';
+    return 'Hello father';
   }
 }
 

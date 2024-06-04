@@ -29,7 +29,8 @@
     "test:build": "jest tests/build.test.ts",
     "test:cov": "jest --collectCoverage",
     "test:dev": "jest tests/dev.test.ts",
-    "test:mako-build": "jest tests/mako.build.test.ts"
+    "test:mako-build": "jest tests/mako.build.test.ts",
+    "test:mako-dev": "jest tests/mako.dev.test.ts"
   },
   "commitlint": {
     "extends": [
@@ -46,13 +47,13 @@
   },
   "dependencies": {
     "@microsoft/api-extractor": "7.39.1",
-    "@umijs/babel-preset-umi": "^4.2.5",
-    "@umijs/bundler-mako": "0.5.0",
-    "@umijs/bundler-utils": "^4.2.5",
-    "@umijs/bundler-webpack": "^4.2.5",
+    "@umijs/babel-preset-umi": "^4.2.9",
+    "@umijs/bundler-mako": "0.5.3",
+    "@umijs/bundler-utils": "^4.2.9",
+    "@umijs/bundler-webpack": "^4.2.9",
     "@umijs/case-sensitive-paths-webpack-plugin": "^1.0.1",
-    "@umijs/core": "^4.2.5",
-    "@umijs/utils": "^4.2.5",
+    "@umijs/core": "^4.2.9",
+    "@umijs/utils": "^4.2.9",
     "@vercel/ncc": "0.33.3",
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-module-resolver": "4.1.0",
@@ -71,12 +72,12 @@
   "devDependencies": {
     "@commitlint/cli": "^17.8.1",
     "@commitlint/config-conventional": "^17.8.1",
-    "@swc/core": "^1.5.7",
+    "@swc/core": "^1.5.24",
     "@types/jest": "^27.5.2",
     "@types/loader-runner": "2.2.4",
     "@types/minimatch": "3.0.5",
-    "@types/node": "^18.19.33",
-    "@umijs/test": "^4.2.5",
+    "@types/node": "^18.19.34",
+    "@umijs/test": "^4.2.9",
     "esno": "^0.16.3",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.3",

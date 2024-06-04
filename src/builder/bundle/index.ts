@@ -69,11 +69,12 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       cwd: opts.cwd,
       hmr: false,
       watch: opts.watch,
+      DevServer: false,
       config: {
         alias: config.alias,
-        hmr: false,
         autoprefixer: config.autoprefixer,
         chainWebpack: config.chainWebpack,
+        stats: false,
         define: config.define,
         devtool: !!config.sourcemap && ('source-map' as DevTool),
         externals: config.externals,
@@ -88,7 +89,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           config.extractCSS !== false ? false : { 'TODO: REMOVE ME': 1 },
         // less config
         theme: config.theme,
-
         // compatible with IE11 by default
         targets: getBundleTargets(config),
         jsMinifier: JSMinifier.terser,

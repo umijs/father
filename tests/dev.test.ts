@@ -48,7 +48,6 @@ jest.mock('@umijs/utils', () => {
       ...originalModule.chokidar,
       watch: (...args: any) => {
         const ret = originalModule.chokidar.watch(...args);
-
         global.TMP_WATCHERS.push(ret);
 
         return ret;
