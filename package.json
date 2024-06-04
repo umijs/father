@@ -25,7 +25,7 @@
     "format": "prettier --write .",
     "prepare": "husky install",
     "release": "esno scripts/release.ts",
-    "test": "jest --runInBand",
+    "test": "jest --runInBand --forceExit",
     "test:build": "jest tests/build.test.ts",
     "test:cov": "jest --collectCoverage --runInBand",
     "test:dev": "jest tests/dev.test.ts",
