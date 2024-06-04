@@ -1,5 +1,5 @@
-import { build } from '@umijs/bundler-utils/compiled/esbuild';
 import { winPath } from '@umijs/utils';
+import { build } from 'esbuild';
 import path from 'path';
 import { IFatherBundlessConfig } from '../../../../types';
 import { getBundlessTargets } from '../../../utils';
