@@ -27,7 +27,7 @@
     "release": "esno scripts/release.ts",
     "test": "jest --runInBand",
     "test:build": "jest tests/build.test.ts",
-    "test:cov": "jest --collectCoverage",
+    "test:cov": "jest --collectCoverage --runInBand",
     "test:dev": "jest tests/dev.test.ts",
     "test:mako-build": "jest tests/mako.build.test.ts",
     "test:mako-dev": "jest tests/mako.dev.test.ts"
