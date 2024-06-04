@@ -72,6 +72,7 @@ jest.mock('@umijs/utils', () => {
 jest.mock('./fixtures/dev/.fatherrc.ts', () => {
   const originalModule = jest.requireActual(global.TMP_CASE_CONFIG);
   originalModule.default.umd.bundler = 'mako';
+  originalModule.default.umd.name ??= 'mako_dev_test';
   if (global.TMP_TRANSFORMER) {
     originalModule.default.esm.transformer = global.TMP_TRANSFORMER;
   }

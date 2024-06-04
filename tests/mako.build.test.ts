@@ -22,6 +22,7 @@ const setupRcFileMocks = (cases, casesDir) => {
       console.log(originalModule.default, 'originalModule');
       originalModule.default.umd &&
         (originalModule.default.umd = {
+          name: 'mamo_build_test',
           ...originalModule.default.umd,
           bundler: 'mako',
         });

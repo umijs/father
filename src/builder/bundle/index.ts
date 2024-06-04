@@ -5,7 +5,6 @@ import assert from 'assert';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
-import { getAutoBundleFilename } from '../config';
 import {
   getBabelPresetReactOpts,
   getBabelStyledComponentsOpts,
@@ -69,7 +68,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       cwd: opts.cwd,
       hmr: false,
       watch: opts.watch,
-      DevServer: false,
+      devServer: false,
       config: {
         alias: config.alias,
         autoprefixer: config.autoprefixer,
@@ -132,10 +131,11 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       // configure library related options
       chainWebpack(memo: any) {
         memo.output.libraryTarget('umd');
-        const name =
-          config.name || getAutoBundleFilename(opts.configProvider.pkg.name);
-        if (name !== 'index') {
-          memo.output.library(name);
+        if (config.bundler === 'mako') {
+          assert(config.name, `Mako bundler need set name in umd config`);
+        }
+        if (config?.name) {
+          memo.output.library(config.name);
         }
 
         // modify webpack target
