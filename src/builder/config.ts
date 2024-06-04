@@ -23,7 +23,6 @@ export interface IBundleConfig
   extends IFatherBaseConfig,
     Omit<IFatherBundleConfig, 'entry' | 'output'> {
   type: IFatherBuildTypes.BUNDLE;
-  bundler: 'webpack';
   entry: string;
   output: {
     filename: string;
@@ -51,7 +50,7 @@ export type IBuilderConfig = IBundleConfig | IBundlessConfig;
 /**
  * generate bundle filename by package name
  */
-function getAutoBundleFilename(pkgName?: string) {
+export function getAutoBundleFilename(pkgName?: string) {
   return pkgName ? pkgName.replace(/^@[^/]+\//, '') : 'index';
 }
 
@@ -112,7 +111,6 @@ export function normalizeUserConfig(
       typeof umd.output === 'object' ? umd.output : { path: umd.output };
     const bundleConfig: Omit<IBundleConfig, 'entry'> = {
       type: IFatherBuildTypes.BUNDLE,
-      bundler: 'webpack',
       ...baseConfig,
 
       // override base configs from umd config

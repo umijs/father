@@ -1,6 +1,6 @@
 export default {
   esm: {
-    transformer: 'babel',
+    transformer: 'esbuild',
   },
   umd: { entry: { 'src/index': {} } },
 };

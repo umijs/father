@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "build": "father build",
+    "build:no-clean": "father build --no-clean",
+    "dev": "father dev",
+    "dev:no-clean": "father dev --no-clean",
+    "doctor": "father doctor",
+    "version": "father version"
+  },
+  "dependencies": {
+    "father": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
