@@ -48,7 +48,7 @@
   "dependencies": {
     "@microsoft/api-extractor": "7.39.1",
     "@umijs/babel-preset-umi": "^4.2.9",
-    "@umijs/bundler-mako": "^4.2.9",
+    "@umijs/bundler-mako": "0.5.3",
     "@umijs/bundler-utils": "^4.2.9",
     "@umijs/bundler-webpack": "^4.2.9",
     "@umijs/case-sensitive-paths-webpack-plugin": "^1.0.1",
