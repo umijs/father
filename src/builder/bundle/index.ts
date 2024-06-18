@@ -16,13 +16,13 @@ export interface IBundleWatcher {
 }
 
 const webpackBundler: typeof import('@umijs/bundler-webpack') = importLazy(
-  path.dirname(
-    require.resolve(process.env.OKAM || '@umijs/bundler-webpack/package.json'),
-  ),
+  path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
 );
 
 const makoBundler = importLazy(
-  path.dirname(require.resolve('@umijs/bundler-mako/package.json')),
+  path.dirname(
+    require.resolve(process.env.OKAM || '@umijs/bundler-mako/package.json'),
+  ),
 );
 
 const {
