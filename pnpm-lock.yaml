@@ -12,26 +12,26 @@ importers:
         specifier: 7.39.1
         version: 7.39.1(@types/node@18.19.34)
       '@umijs/babel-preset-umi':
-        specifier: ^4.2.9
-        version: 4.2.9
+        specifier: ^4.2.11
+        version: 4.2.11
       '@umijs/bundler-mako':
         specifier: 0.5.3
         version: 0.5.3
       '@umijs/bundler-utils':
-        specifier: ^4.2.9
-        version: 4.2.9
+        specifier: ^4.2.11
+        version: 4.2.11
       '@umijs/bundler-webpack':
-        specifier: ^4.2.9
-        version: 4.2.9(typescript@5.3.3)(webpack@5.91.0)
+        specifier: ^4.2.11
+        version: 4.2.11(typescript@5.3.3)(webpack@5.91.0)
       '@umijs/case-sensitive-paths-webpack-plugin':
         specifier: ^1.0.1
         version: 1.0.1
       '@umijs/core':
-        specifier: ^4.2.9
-        version: 4.2.9
+        specifier: ^4.2.11
+        version: 4.2.11
       '@umijs/utils':
-        specifier: ^4.2.9
-        version: 4.2.9
+        specifier: ^4.2.11
+        version: 4.2.11
       '@vercel/ncc':
         specifier: 0.33.3
         version: 0.33.3
@@ -2294,24 +2294,24 @@ packages:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  /@umijs/babel-preset-umi@4.2.9:
-    resolution: {integrity: sha512-KX+1grC5x7u6zJt8U05eujo4Z7t+teOJZJgQr3Ok/4ASaRdkFPVugKU2/dg2nSQ99yMcZjrfkpAgQvRZtAdfuQ==}
+  /@umijs/babel-preset-umi@4.2.11:
+    resolution: {integrity: sha512-Km7XDQS+PgM0HbVtoDAHN20n1Cffo+Pz96glLqcHut//b6tHErp5LJ6J691zYrfBfK8W7J+RpjJSCDiQuttUHQ==}
     dependencies:
       '@babel/runtime': 7.23.6
       '@bloomberg/record-tuple-polyfill': 0.0.4
-      '@umijs/bundler-utils': 4.2.9
-      '@umijs/utils': 4.2.9
+      '@umijs/bundler-utils': 4.2.11
+      '@umijs/utils': 4.2.11
       core-js: 3.34.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@umijs/bundler-esbuild@4.2.9:
-    resolution: {integrity: sha512-HqARNLmilAJsIeUsRmgqNRJtDUOO2f7lLX8PNzePc1xJVfWq3JgvsgsNnIl/ifMu//SFXdMOux/J+XnJhm1Ong==}
+  /@umijs/bundler-esbuild@4.2.11:
+    resolution: {integrity: sha512-ZQah2AmII4Eh718GzeHCGfw5TG0UBYNIuRUKM1/ZMwWYDjg5cKaBUp57vt6j2Fhh174xym1ntk/iIuVCXvhahA==}
     hasBin: true
     dependencies:
-      '@umijs/bundler-utils': 4.2.9
-      '@umijs/utils': 4.2.9
+      '@umijs/bundler-utils': 4.2.11
+      '@umijs/utils': 4.2.11
       enhanced-resolve: 5.9.3
       postcss: 8.4.38
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.38)
@@ -2323,7 +2323,7 @@ packages:
   /@umijs/bundler-mako@0.5.3:
     resolution: {integrity: sha512-TLOmkhyibfH+ioTQc2x6km3XtbFLnrNpVCb2PRil/Wscjd6oT8+9nMefWobeXohqc4QLjzxAILTOmipGonsbcQ==}
     dependencies:
-      '@umijs/bundler-utils': 4.2.9
+      '@umijs/bundler-utils': 4.2.11
       '@umijs/mako': 0.5.3
       chalk: 4.1.2
       compression: 1.7.4
@@ -2338,6 +2338,18 @@ packages:
       - supports-color
     dev: false
 
+  /@umijs/bundler-utils@4.2.11:
+    resolution: {integrity: sha512-GlRTT5Q1LZaCVuRYPhveid3CWukyQrITJmRDkMcKtHcMF1rFy1cqOLST8mA7aN2T/V11sSlC4+3C+Uj+JXDpQQ==}
+    dependencies:
+      '@umijs/utils': 4.2.11
+      esbuild: 0.21.4
+      regenerate: 1.4.2
+      regenerate-unicode-properties: 10.1.1
+      spdy: 4.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@umijs/bundler-utils@4.2.9:
     resolution: {integrity: sha512-29UMvA1hmznuH1IWI3vsS7OCy4N2P9Vgum3GiiOPcz7d26/uf+1yxppkC6cJk7YbuTjMpW4XNcgqKbEPBPlhAQ==}
     dependencies:
@@ -2348,21 +2360,22 @@ packages:
       spdy: 4.0.2
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
-  /@umijs/bundler-webpack@4.2.9(typescript@5.3.3)(webpack@5.91.0):
-    resolution: {integrity: sha512-tp3z7tDtWsdvgsHuENgHFJwJoYAcOQEbpIC+kx+c+i24g1LRIlUzXKuOikleG6e1tDlvyCYkbNpYZOUeeoDb+g==}
+  /@umijs/bundler-webpack@4.2.11(typescript@5.3.3)(webpack@5.91.0):
+    resolution: {integrity: sha512-iiJCk9SYtxGJjM+8WgICdFzqdcXKGXG21HPbnnpMWpqZ3Ey4b1iZAPRH/GP/aToYLdw37rWXw31OG70pTcsnkA==}
     hasBin: true
     dependencies:
       '@svgr/core': 6.5.1
       '@svgr/plugin-jsx': 6.5.1(@svgr/core@6.5.1)
       '@svgr/plugin-svgo': 6.5.1(@svgr/core@6.5.1)
       '@types/hapi__joi': 17.1.9
-      '@umijs/babel-preset-umi': 4.2.9
-      '@umijs/bundler-utils': 4.2.9
+      '@umijs/babel-preset-umi': 4.2.11
+      '@umijs/bundler-utils': 4.2.11
       '@umijs/case-sensitive-paths-webpack-plugin': 1.0.1
-      '@umijs/mfsu': 4.2.9
+      '@umijs/mfsu': 4.2.11
       '@umijs/react-refresh-webpack-plugin': 0.5.11(react-refresh@0.14.0)(webpack@5.91.0)
-      '@umijs/utils': 4.2.9
+      '@umijs/utils': 4.2.11
       cors: 2.8.5
       css-loader: 6.7.1(webpack@5.91.0)
       es5-imcompatible-versions: 0.1.90
@@ -2390,11 +2403,11 @@ packages:
     resolution: {integrity: sha512-kDKJ8yTarxwxGJDInG33hOpaQRZ//XpNuuznQ/1Mscypw6kappzFmrBr2dOYave++K7JHouoANF354UpbEQw0Q==}
     dev: false
 
-  /@umijs/core@4.2.9:
-    resolution: {integrity: sha512-dn8SMP2mnCmVnlIzMdMbLC+ql2H5uAxOujoutA2ZmbwVNof4Q7EILqENE8XMVzkGvS+3kNGVAzZZZqtdEWLDHw==}
+  /@umijs/core@4.2.11:
+    resolution: {integrity: sha512-1xD5pruWhw6Pij5sK/FIQRaRKXaNXHqtAjmyFuXyr1LNCiDydS/rDYvYpC9H3S3oh7uB0USHYu9DUTIcPxzZSQ==}
     dependencies:
-      '@umijs/bundler-utils': 4.2.9
-      '@umijs/utils': 4.2.9
+      '@umijs/bundler-utils': 4.2.11
+      '@umijs/utils': 4.2.11
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2456,12 +2469,12 @@ packages:
       '@umijs/mako-linux-x64-musl': 0.5.3
     dev: false
 
-  /@umijs/mfsu@4.2.9:
-    resolution: {integrity: sha512-dBN2uJ+VqvjM43gmodic+xM7cATV1YMMsLYCXMiobMwR1oI6aRnKwbHLeq6crBS/UhGrsQbW3fbYxQzfHL+wzw==}
+  /@umijs/mfsu@4.2.11:
+    resolution: {integrity: sha512-xyGtJ64prW29FEG6nApwiifllvWyR1lUCfMvDBmZPeBW5VQE/z6pa1i5WW8g+sk9HDKpCGp3sRRBx8Mv5XxAFg==}
     dependencies:
-      '@umijs/bundler-esbuild': 4.2.9
-      '@umijs/bundler-utils': 4.2.9
-      '@umijs/utils': 4.2.9
+      '@umijs/bundler-esbuild': 4.2.11
+      '@umijs/bundler-utils': 4.2.11
+      '@umijs/utils': 4.2.11
       enhanced-resolve: 5.9.3
       is-equal: 1.7.0
     transitivePeerDependencies:
@@ -2523,6 +2536,13 @@ packages:
       - supports-color
     dev: true
 
+  /@umijs/utils@4.2.11:
+    resolution: {integrity: sha512-pDiPaPPILl052754sR/EJPxgYqOaH0Acn43rJHJXWRTUuWW5QEqH+7IpwTJAOx+MxAmXW2H5sdgxESjrsT6gzg==}
+    dependencies:
+      chokidar: 3.5.3
+      pino: 7.11.0
+    dev: false
+
   /@umijs/utils@4.2.5:
     resolution: {integrity: sha512-+ZMUCjhdZeiptDq0FoZqgXMgx/QzN/m9U1IIGS0c5YYWHN/0SUksjQ/GAoGToPT/0yxEnD878lFltS+l4gSwnw==}
     dependencies:
@@ -2535,6 +2555,7 @@ packages:
     dependencies:
       chokidar: 3.5.3
       pino: 7.11.0
+    dev: true
 
   /@vercel/ncc@0.33.3:
     resolution: {integrity: sha512-JGZ11QV+/ZcfudW2Cz2JVp54/pJNXbsuWRgSh2ZmmZdQBKXqBtIGrwI1Wyx8nlbzAiEFe7FHi4K1zX4//jxTnQ==}
