@@ -14,6 +14,7 @@ import {
   DEFAULT_BUNDLESS_IGNORES,
   WATCH_DEBOUNCE_STEP,
 } from '../../constants';
+import { IFatherBundlessTypes } from '../../types';
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
@@ -43,6 +44,7 @@ async function transformFiles(
 ) {
   try {
     let count = 0;
+    const writtenFiles = new Set<string>();
     const declarationFileMap = new Map<string, string>();
 
     // process all matched items
@@ -96,6 +98,7 @@ async function transformFiles(
 
           // distribute file with result
           fs.writeFileSync(itemDistAbsPath, result.content);
+          writtenFiles.add(itemDistAbsPath);
         } else {
           // copy file as normal assets
           fs.copyFileSync(itemAbsPath, itemDistAbsPath);
@@ -133,6 +136,37 @@ async function transformFiles(
       });
     }
 
+    if (opts.configProvider.configs[0].format === IFatherBundlessTypes.ESM) {
+      // Add relative imports extensions in esm code
+      for (const file of writtenFiles) {
+        const imports = new Set<string>();
+        const content = fs.readFileSync(file, 'utf-8');
+        const relativeImportRegex =
+          /(?:^|\s)(?:export|import)[\(\s\{][^"']*?["']([\.|/][^"']*)/g;
+        let match: RegExpExecArray | null;
+        while ((match = relativeImportRegex.exec(content))) {
+          imports.add(match[1]);
+        }
+        let newContent = content;
+        for (const imp of imports) {
+          const absPath = path.join(path.dirname(file), imp);
+          const resolvedModule = require.resolve(absPath);
+          // const relativePath = winPath(path.relative(path.dirname(file), absPath));
+          const relativePathFromResolvedModule = winPath(
+            path.relative(path.dirname(file), resolvedModule),
+          );
+          newContent = newContent.replace(
+            new RegExp(
+              `((?:export|import)[\\(\\s\\{][^"']*?["'])(${imp})`,
+              'g',
+            ),
+            `$1${relativePathFromResolvedModule}`,
+          );
+        }
+        fs.writeFileSync(file, newContent, 'utf-8');
+      }
+    }
+
     return count;
   } catch (err: any) {
     if (opts.watch) {
@@ -155,11 +189,10 @@ function bundless(
 async function bundless(
   opts: Parameters<typeof transformFiles>[1],
 ): Promise<void | chokidar.FSWatcher> {
+  const format = opts.configProvider.configs[0].format;
   const statusText = `Bundless for ${chalk.yellow(
     opts.configProvider.input,
-  )} directory to ${chalk.yellow(
-    opts.configProvider.configs[0].format,
-  )} format`;
+  )} directory to ${chalk.yellow(format)} format`;
 
   logger.info(statusText);
 
@@ -170,6 +203,23 @@ async function bundless(
     nodir: true,
   });
   const count = await transformFiles(matches, opts);
+
+  // Write a package.json with proper "type" field inside opts.output
+  const subPkgPath = path.join(
+    opts.cwd,
+    opts.configProvider.output,
+    'package.json',
+  );
+  const subPkgContent = {
+    type: {
+      [IFatherBundlessTypes.CJS]: 'commonjs',
+      [IFatherBundlessTypes.ESM]: 'module',
+    }[format],
+  };
+  fs.writeFileSync(subPkgPath, JSON.stringify(subPkgContent, null, 2));
+  logger.quietExpect.event(
+    `Generated ${chalk.gray(path.relative(opts.cwd, subPkgPath))}`,
+  );
 
   if (!opts.watch) {
     // output result for normal mode
