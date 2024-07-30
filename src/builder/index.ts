@@ -41,11 +41,11 @@ interface IWatchBuilderResult {
 // overload normal/watch mode
 function builder(opts: IBuilderOpts): Promise<void>;
 function builder(
-  opts: IBuilderOpts & { watch: true },
+  opts: IBuilderOpts & { watch: true, watchOnly?: boolean },
 ): Promise<IWatchBuilderResult>;
 
 async function builder(
-  opts: IBuilderOpts & { watch?: true },
+  opts: IBuilderOpts & { watch?: true, watchOnly?: boolean },
 ): Promise<IWatchBuilderResult | void> {
   const configProviders = createConfigProviders(
     opts.userConfig,
@@ -69,6 +69,7 @@ async function builder(
       configProvider: configProviders.bundle,
       buildDependencies: opts.buildDependencies,
       watch: opts.watch,
+      watchOnly: opts.watchOnly,
     });
 
     opts.watch && watchers.push(watcher);
@@ -79,6 +80,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
+      watchOnly: opts.watchOnly,
     });
 
     opts.watch && watchers.push(watcher);
@@ -89,6 +91,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
+      watchOnly: opts.watchOnly,
     });
 
     opts.watch && watchers.push(watcher);

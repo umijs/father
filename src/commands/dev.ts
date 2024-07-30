@@ -16,6 +16,7 @@ export default (api: IApi) => {
         cwd: api.cwd,
         pkg: api.pkg,
         watch: true,
+        watchOnly: args.watchOnly,
         clean: args.clean,
       });
 
