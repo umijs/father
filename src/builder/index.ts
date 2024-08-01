@@ -41,11 +41,11 @@ interface IWatchBuilderResult {
 // overload normal/watch mode
 function builder(opts: IBuilderOpts): Promise<void>;
 function builder(
-  opts: IBuilderOpts & { watch: true; watchOnly?: boolean },
+  opts: IBuilderOpts & { watch: true; incremental?: boolean },
 ): Promise<IWatchBuilderResult>;
 
 async function builder(
-  opts: IBuilderOpts & { watch?: true; watchOnly?: boolean },
+  opts: IBuilderOpts & { watch?: true; incremental?: boolean },
 ): Promise<IWatchBuilderResult | void> {
   const configProviders = createConfigProviders(
     opts.userConfig,
@@ -55,7 +55,7 @@ async function builder(
   const outputs = getProviderOutputs(configProviders);
   const watchers: (chokidar.FSWatcher | IBundleWatcher)[] = [];
 
-  if (opts.clean !== false && !opts.watchOnly) {
+  if (opts.clean !== false && !opts.incremental) {
     // clean output directories
     logger.quietExpect.info('Clean output directories');
     outputs.forEach((output) => {
@@ -69,7 +69,7 @@ async function builder(
       configProvider: configProviders.bundle,
       buildDependencies: opts.buildDependencies,
       watch: opts.watch,
-      watchOnly: opts.watchOnly,
+      incremental: opts.incremental,
     });
 
     opts.watch && watchers.push(watcher);
@@ -80,7 +80,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
-      watchOnly: opts.watchOnly,
+      incremental: opts.incremental,
     });
 
     opts.watch && watchers.push(watcher);
@@ -91,7 +91,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
-      watchOnly: opts.watchOnly,
+      incremental: opts.incremental,
     });
 
     opts.watch && watchers.push(watcher);

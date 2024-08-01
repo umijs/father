@@ -28,16 +28,16 @@ interface IBundleOpts {
   configProvider: BundleConfigProvider;
   buildDependencies?: string[];
   watch?: boolean;
-  watchOnly?: boolean;
+  incremental?: boolean;
 }
 
-function bundle(opts: Omit<IBundleOpts, 'watch' | 'watchOnly'>): Promise<void>;
+function bundle(opts: Omit<IBundleOpts, 'watch' | 'incremental'>): Promise<void>;
 function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
 async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const closeHandlers: webpack.Watching['close'][] = [];
 
-  if (!opts.watchOnly) {
+  if (!opts.incremental) {
     for (let i = 0; i < opts.configProvider.configs.length; i += 1) {
       const config = opts.configProvider.configs[i];
       const { plugins: extraPostCSSPlugins, ...postcssLoader } =

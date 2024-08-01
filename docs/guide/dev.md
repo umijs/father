@@ -10,7 +10,7 @@
 # 执行 dev 命令，开启实时编译
 $ father dev
 # 只监听文件变化，不执行构建
-$ father dev --watch-only
+$ father dev --incremental
 ```
 
 一旦源码或配置文件发生变化，产物将会实时增量编译到输出目录。

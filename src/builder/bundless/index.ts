@@ -39,7 +39,7 @@ async function transformFiles(
     cwd: string;
     configProvider: BundlessConfigProvider;
     watch?: true;
-    watchOnly?: boolean;
+    incremental?: boolean;
   },
 ) {
   try {
@@ -165,7 +165,7 @@ async function bundless(
 
   const startTime = Date.now();
   let count = 0;
-  if (!opts.watchOnly) {
+  if (!opts.incremental) {
     const matches = glob.sync(`${opts.configProvider.input}/**`, {
       cwd: opts.cwd,
       ignore: DEFAULT_BUNDLESS_IGNORES,
