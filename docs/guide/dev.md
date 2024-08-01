@@ -9,7 +9,7 @@
 ```bash
 # 执行 dev 命令，开启实时编译
 $ father dev
-# 只监听文件变化，不执行构建
+# 跳过初次全量构建，只监听文件变化执行增量构建
 $ father dev --incremental
 ```
 
