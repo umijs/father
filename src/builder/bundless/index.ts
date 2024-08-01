@@ -39,6 +39,7 @@ async function transformFiles(
     cwd: string;
     configProvider: BundlessConfigProvider;
     watch?: true;
+    incremental?: boolean;
   },
 ) {
   try {
@@ -102,8 +103,7 @@ async function transformFiles(
         }
 
         logger.quietExpect.event(
-          `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${
-            result?.options.declaration ? ' (with declaration)' : ''
+          `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${result?.options.declaration ? ' (with declaration)' : ''
           }`,
         );
         count += 1;
@@ -164,18 +164,20 @@ async function bundless(
   logger.info(statusText);
 
   const startTime = Date.now();
-  const matches = glob.sync(`${opts.configProvider.input}/**`, {
-    cwd: opts.cwd,
-    ignore: DEFAULT_BUNDLESS_IGNORES,
-    nodir: true,
-  });
-  const count = await transformFiles(matches, opts);
+  let count = 0;
+  if (!opts.incremental) {
+    const matches = glob.sync(`${opts.configProvider.input}/**`, {
+      cwd: opts.cwd,
+      ignore: DEFAULT_BUNDLESS_IGNORES,
+      nodir: true,
+    });
+    count = await transformFiles(matches, opts);
+  }
 
   if (!opts.watch) {
     // output result for normal mode
     logger.quietExpect.event(
-      `Transformed successfully in ${
-        Date.now() - startTime
+      `Transformed successfully in ${Date.now() - startTime
       } ms (${count} files)`,
     );
   } else {
@@ -227,10 +229,10 @@ async function bundless(
           // TODO: collect real emit files
           const relatedFiles = isTsFile
             ? [
-                replacePathExt(fileDistAbsPath, '.js'),
-                replacePathExt(fileDistAbsPath, '.d.ts'),
-                replacePathExt(fileDistAbsPath, '.d.ts.map'),
-              ]
+              replacePathExt(fileDistAbsPath, '.js'),
+              replacePathExt(fileDistAbsPath, '.d.ts'),
+              replacePathExt(fileDistAbsPath, '.d.ts.map'),
+            ]
             : [fileDistAbsPath];
           const relatedMainFile = relatedFiles.find((item) =>
             fs.existsSync(item),
