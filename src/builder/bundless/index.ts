@@ -95,7 +95,7 @@ async function transformFiles(
   try {
     let count = 0;
     let bundlessPromises = [];
-    let declarationFileMap: Map<string, string> = new Map();
+    let declarationFileMap = new Map<string, string>();
 
     // process all matched items
     for (let item of files) {
