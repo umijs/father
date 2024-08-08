@@ -55,7 +55,7 @@ type IJSTransformerResult = [ILoaderOutput['content'], SourceMap?];
 /**
  * bundless transformer type
  */
-export type IJSTransformer = (
+export type IJSTransformerFn = (
   this: ILoaderContext & {
     paths: {
       cwd: string;
@@ -65,3 +65,8 @@ export type IJSTransformer = (
   },
   content: Parameters<IBundlessLoader>[0],
 ) => IJSTransformerResult | Promise<IJSTransformerResult>;
+
+export type IJSTransformer = {
+  fn?: IJSTransformerFn;
+  resolvePath: string;
+};

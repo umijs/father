@@ -3,7 +3,7 @@ import { build } from 'esbuild';
 import path from 'path';
 import { IFatherBundlessConfig } from '../../../../types';
 import { getBundlessTargets } from '../../../utils';
-import type { IJSTransformer } from '../types';
+import type { IJSTransformerFn } from '../types';
 
 /**
  * create a replacer for transform alias path to relative path
@@ -42,7 +42,7 @@ function createAliasReplacer(opts: { alias: IFatherBundlessConfig['alias'] }) {
 /**
  * esbuild transformer
  */
-const esbuildTransformer: IJSTransformer = async function () {
+const esbuildTransformer: IJSTransformerFn = async function () {
   const replacer = createAliasReplacer({ alias: this.config.alias });
 
   let { outputFiles } = await build({

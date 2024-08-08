@@ -8,7 +8,7 @@ import {
   getBundlessTargets,
   getSWCTransformReactOpts,
 } from '../../../utils';
-import { IJSTransformer } from '../types';
+import { IJSTransformerFn } from '../types';
 
 const isTs = (p: string): boolean => p.endsWith('.ts') || p.endsWith('.tsx');
 
@@ -102,7 +102,7 @@ export const replaceAbsPathWithRelativePath = (opts: {
 /**
  * swc transformer
  */
-const swcTransformer: IJSTransformer = async function (content) {
+const swcTransformer: IJSTransformerFn = async function (content) {
   // swc will install on demand, so should import dynamic
   const { transform }: typeof import('@swc/core') = require('@swc/core');
 

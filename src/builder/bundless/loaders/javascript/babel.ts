@@ -9,7 +9,7 @@ import {
   getBabelStyledComponentsOpts,
   getBundlessTargets,
 } from '../../../utils';
-import type { IJSTransformer } from '../types';
+import type { IJSTransformerFn } from '../types';
 
 /**
  * parse for stringify define value, use to babel-plugin-transform-define
@@ -27,7 +27,7 @@ function getParsedDefine(define: Record<string, string>) {
 /**
  * babel transformer
  */
-const babelTransformer: IJSTransformer = function (content) {
+const babelTransformer: IJSTransformerFn = function (content) {
   const {
     extraBabelPlugins = [],
     extraBabelPresets = [],

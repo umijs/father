@@ -136,6 +136,13 @@ export default {
 
 配置转换过程中需要忽略的文件，支持 glob 表达式，被匹配的文件将不会输出到产物目录。另外，father 会默认忽略源码目录中所有的 Markdown 文件和测试文件。
 
+#### parallel
+
+- 类型：`boolean`
+- 默认值：`false`
+
+指定是否开启并发编译，默认关闭。
+
 ### umd
 
 - 类型：`object`
