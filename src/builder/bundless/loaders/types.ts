@@ -31,7 +31,7 @@ export type IBundlessLoader = (
   this: Omit<ExtendedLoaderContext, 'async'> &
     ILoaderContext & {
       cwd: string;
-
+      transformers: Record<string, IJSTransformer>;
       itemDistAbsPath: string;
 
       /**

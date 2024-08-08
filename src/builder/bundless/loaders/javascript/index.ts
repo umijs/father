@@ -16,7 +16,6 @@ export interface ITransformerItem {
 export function addTransformer(item: ITransformerItem) {
   const mod = require(item.transformer);
   const transformer: IJSTransformer = mod.default || mod;
-
   transformers[item.id] = transformer;
 }
 
@@ -24,7 +23,7 @@ export function addTransformer(item: ITransformerItem) {
  * builtin javascript loader
  */
 const jsLoader: IBundlessLoader = function (content) {
-  let transformer = this.transformers[this.config.transformer!];
+  const transformer = this.transformers[this.config.transformer!];
   if (typeof transformer.fn !== 'function') {
     const mod = require(this.transformers[this.config.transformer!]
       .resolvePath as string);
