@@ -9,6 +9,7 @@ import {
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
+import type { ILoaderArgs } from './loaders';
 import runLoaders from './loaders';
 import { IJSTransformer, IJSTransformerFn } from './loaders/types';
 import createParallelLoader from './parallelLoader';
@@ -93,7 +94,7 @@ async function transformFiles(
 ) {
   try {
     let count = 0;
-    let bunllessPrmises = [];
+    let bundlessPromises = [];
     let declarationFileMap: Map<string, string> = new Map();
 
     // process all matched items
@@ -113,49 +114,35 @@ async function transformFiles(
         if (!fs.existsSync(parentPath)) {
           fs.mkdirSync(parentPath, { recursive: true });
         }
+        const loaderArgs: ILoaderArgs = {
+          fileAbsPath: itemAbsPath,
+          fileDistPath: itemDistPath,
+          loaders,
+          transformers,
+          opts: {
+            config,
+            pkg: opts.configProvider.pkg,
+            cwd: opts.cwd,
+            itemDistAbsPath,
+          },
+        };
         if (config.parallel) {
           parallelLoader ||= createParallelLoader();
           for (const key in transformers) {
-            if (transformers.hasOwnProperty(key)) {
+            if (loaderArgs.transformers.hasOwnProperty(key)) {
               delete transformers[key].fn;
             }
           }
-          bunllessPrmises.push(
-            parallelLoader.run({
-              fileAbsPath: itemAbsPath,
-              fileDistPath: itemDistPath,
-              loaders,
-              transformers,
-              opts: {
-                config,
-                pkg: opts.configProvider.pkg,
-                cwd: opts.cwd,
-                itemDistAbsPath,
-              },
-            }),
-          );
+          bundlessPromises.push(parallelLoader.run(loaderArgs));
         } else {
-          bunllessPrmises.push(
-            runLoaders({
-              fileAbsPath: itemAbsPath,
-              fileDistPath: itemDistPath,
-              loaders,
-              transformers,
-              opts: {
-                config,
-                pkg: opts.configProvider.pkg,
-                cwd: opts.cwd,
-                itemDistAbsPath,
-              },
-            }),
-          );
+          bundlessPromises.push(runLoaders(loaderArgs));
         }
         count += 1;
       } else {
         debugLog(`No config matches ${chalk.gray(item)}, skip`);
       }
     }
-    const results = await Promise.all(bunllessPrmises);
+    const results = await Promise.all(bundlessPromises);
     lodash.forEach(results, (item) => {
       if (item) {
         declarationFileMap.set(item[0], item[1]);

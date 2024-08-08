@@ -11,7 +11,7 @@ import type { IBundlessLoader, ILoaderOutput } from './types';
 
 import type { Loaders, Transformers } from '..';
 
-interface ILoaderArgs {
+export interface ILoaderArgs {
   fileAbsPath: string;
   loaders: Loaders;
   fileDistPath: string;
@@ -128,7 +128,6 @@ export default async (args: ILoaderArgs) => {
     // run matched loader
     return new Promise<ILoaderOutput | void | string[]>((resolve, reject) => {
       let outputOpts: ILoaderOutput['options'] = {};
-
       runLoaders(
         {
           resource: args.fileAbsPath,
@@ -166,5 +165,7 @@ export default async (args: ILoaderArgs) => {
         },
       );
     });
+  } else {
+    fs.copyFileSync(args.fileAbsPath, args.opts.itemDistAbsPath);
   }
 };
