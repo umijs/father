@@ -5,9 +5,9 @@ import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/di
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type {
-  createConfigProviders,
   IBundleConfig,
   IBundlessConfig,
+  createConfigProviders,
 } from './builder/config';
 import type { IDoctorReport } from './doctor';
 import type { IDoctorSourceParseResult } from './doctor/parser';
@@ -159,6 +159,11 @@ export interface IFatherBundlessConfig extends IFatherBaseConfig {
    * ignore specific directories & files via ignore syntax
    */
   ignores?: string[];
+
+  /**
+   * compiler parallel
+   */
+  parallel?: boolean;
 }
 
 export interface IFatherBundleConfig extends IFatherBaseConfig {
