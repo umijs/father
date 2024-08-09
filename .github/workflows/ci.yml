@@ -60,6 +60,9 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
+      - name: Build Father Projext
+        run: pnpm run build
+
       - name: Type check
         run: pnpm tsc --noEmit
 

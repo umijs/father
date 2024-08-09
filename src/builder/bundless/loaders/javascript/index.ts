@@ -16,7 +16,6 @@ export interface ITransformerItem {
 export function addTransformer(item: ITransformerItem) {
   const mod = require(item.transformer);
   const transformer: IJSTransformer = mod.default || mod;
-
   transformers[item.id] = transformer;
 }
 
@@ -24,7 +23,12 @@ export function addTransformer(item: ITransformerItem) {
  * builtin javascript loader
  */
 const jsLoader: IBundlessLoader = function (content) {
-  const transformer = transformers[this.config.transformer!];
+  const transformer = this.transformers[this.config.transformer!];
+  if (typeof transformer.fn !== 'function') {
+    const mod = require(this.transformers[this.config.transformer!]
+      .resolvePath as string);
+    transformer.fn = mod.default || mod;
+  }
   const outputOpts: ILoaderOutput['options'] = {};
 
   // specify output ext for non-js file
@@ -43,7 +47,7 @@ const jsLoader: IBundlessLoader = function (content) {
     outputOpts.declaration = true;
   }
 
-  const ret = transformer.call(
+  const ret = transformer.fn!.call(
     {
       config: this.config,
       pkg: this.pkg,

@@ -40,6 +40,7 @@ export interface IBundlessConfig
   type: IFatherBuildTypes.BUNDLESS;
   format: IFatherBundlessTypes;
   input: string;
+  parallel: boolean;
   output: NonNullable<IFatherBundlessConfig['output']>;
 }
 
@@ -177,6 +178,7 @@ export function normalizeUserConfig(
       type: IFatherBuildTypes.BUNDLESS,
       format: formatName as IFatherBundlessTypes,
       platform: userConfig.platform || defaultPlatform,
+      parallel: false,
       ...baseConfig,
       ...esmBaseConfig,
     };

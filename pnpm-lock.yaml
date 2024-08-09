@@ -62,6 +62,9 @@ importers:
       minimatch:
         specifier: 3.1.2
         version: 3.1.2
+      piscina:
+        specifier: ^4.6.1
+        version: 4.6.1
       tsconfig-paths:
         specifier: 4.0.0
         version: 4.0.0
@@ -7696,9 +7699,25 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: false
 
+  /nice-napi@1.0.2:
+    resolution: {integrity: sha512-px/KnJAJZf5RuBGcfD+Sp2pAKq0ytz8j+1NehvgIGFkvtvFrDM3T8E4x/JJODXK9WZow8RRGrbA9QQ3hs+pDhA==}
+    os: ['!win32']
+    requiresBuild: true
+    dependencies:
+      node-addon-api: 3.2.1
+      node-gyp-build: 4.8.1
+    dev: false
+    optional: true
+
   /node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
     dev: false
+
+  /node-addon-api@3.2.1:
+    resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -7725,6 +7744,13 @@ packages:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
     dev: true
+
+  /node-gyp-build@4.8.1:
+    resolution: {integrity: sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==}
+    hasBin: true
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -8078,6 +8104,12 @@ packages:
     resolution: {integrity: sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==}
     engines: {node: '>= 6'}
     dev: true
+
+  /piscina@4.6.1:
+    resolution: {integrity: sha512-z30AwWGtQE+Apr+2WBZensP2lIvwoaMcOPkQlIEmSGMJNUvaYACylPYrQM6wSdUNJlnDVMSpLv7xTMJqlVshOA==}
+    optionalDependencies:
+      nice-napi: 1.0.2
+    dev: false
 
   /pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}

@@ -60,6 +60,7 @@
     "file-system-cache": "2.0.0",
     "loader-runner": "4.2.0",
     "minimatch": "3.1.2",
+    "piscina": "^4.6.1",
     "tsconfig-paths": "4.0.0",
     "typescript": "~5.3.3",
     "typescript-transform-paths": "3.4.6",

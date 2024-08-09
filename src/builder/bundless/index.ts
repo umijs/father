@@ -1,12 +1,4 @@
-import {
-  chalk,
-  chokidar,
-  debug,
-  glob,
-  lodash,
-  rimraf,
-  winPath,
-} from '@umijs/utils';
+import { chalk, chokidar, debug, glob, lodash, rimraf } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -17,9 +9,67 @@ import {
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
+import type { ILoaderArgs } from './loaders';
 import runLoaders from './loaders';
+import { IJSTransformer, IJSTransformerFn } from './loaders/types';
+import createParallelLoader from './parallelLoader';
 
 const debugLog = debug(DEBUG_BUNDLESS_NAME);
+let parallelLoader: ReturnType<typeof createParallelLoader> | undefined;
+/**
+ * loader item type
+ */
+interface ILoaderItem {
+  id: string;
+  test: string | RegExp | ((path: string) => boolean);
+  loader: string;
+  options?: Record<string, any>;
+}
+
+export type Loaders = ILoaderItem[];
+
+const loaders: ILoaderItem[] = [];
+
+/**
+ * add loader
+ * @param item  loader item
+ */
+export function addLoader(item: ILoaderItem) {
+  // only support simple test type currently, because the webpack condition is too complex
+  // refer: https://github.com/webpack/webpack/blob/0f6c78cca174a73184fdc0d9c9c2bd376b48557c/lib/rules/RuleSetCompiler.js#L211
+  if (
+    !['string', 'function'].includes(typeof item.test) &&
+    !(item.test instanceof RegExp)
+  ) {
+    throw new Error(
+      `Unsupported loader test in \`${item.id}\`, only string, function and regular expression are available.`,
+    );
+  }
+
+  loaders.push(item);
+}
+
+const transformers: Record<string, IJSTransformer> = {};
+
+export interface ITransformerItem {
+  id: string;
+  transformer: string;
+}
+
+export type Transformers = Record<string, IJSTransformer>;
+
+/**
+ * add javascript transformer
+ * @param item
+ */
+export function addTransformer(item: ITransformerItem) {
+  const mod = require(item.transformer);
+  const transformer: IJSTransformerFn = mod.default || mod;
+  transformers[item.id] = {
+    fn: transformer,
+    resolvePath: item.transformer,
+  };
+}
 
 /**
  * replace extension for path
@@ -44,7 +94,8 @@ async function transformFiles(
 ) {
   try {
     let count = 0;
-    const declarationFileMap = new Map<string, string>();
+    let bundlessPromises = [];
+    let declarationFileMap = new Map<string, string>();
 
     // process all matched items
     for (let item of files) {
@@ -63,67 +114,51 @@ async function transformFiles(
         if (!fs.existsSync(parentPath)) {
           fs.mkdirSync(parentPath, { recursive: true });
         }
-
-        // get result from loaders
-        const result = await runLoaders(itemAbsPath, {
-          config,
-          pkg: opts.configProvider.pkg,
-          cwd: opts.cwd,
-          itemDistAbsPath,
-        });
-
-        if (result) {
-          // update ext if loader specified
-          if (result.options.ext) {
-            itemDistPath = replacePathExt(itemDistPath, result.options.ext);
-            itemDistAbsPath = replacePathExt(
-              itemDistAbsPath,
-              result.options.ext,
-            );
+        const loaderArgs: ILoaderArgs = {
+          fileAbsPath: itemAbsPath,
+          fileDistPath: itemDistPath,
+          loaders,
+          transformers,
+          opts: {
+            config,
+            pkg: opts.configProvider.pkg,
+            cwd: opts.cwd,
+            itemDistAbsPath,
+          },
+        };
+        if (config.parallel) {
+          parallelLoader ||= createParallelLoader();
+          for (const key in transformers) {
+            if (loaderArgs.transformers.hasOwnProperty(key)) {
+              delete transformers[key].fn;
+            }
           }
-
-          // prepare for declaration
-          if (result.options.declaration) {
-            // use winPath because ts compiler will convert to posix path
-            declarationFileMap.set(winPath(itemAbsPath), parentPath);
-          }
-
-          if (result.options.map) {
-            const map = result.options.map;
-            const mapLoc = `${itemDistAbsPath}.map`;
-
-            fs.writeFileSync(mapLoc, map);
-          }
-
-          // distribute file with result
-          fs.writeFileSync(itemDistAbsPath, result.content);
+          bundlessPromises.push(parallelLoader.run(loaderArgs));
         } else {
-          // copy file as normal assets
-          fs.copyFileSync(itemAbsPath, itemDistAbsPath);
+          bundlessPromises.push(runLoaders(loaderArgs));
         }
-
-        logger.quietExpect.event(
-          `Bundless ${chalk.gray(item)} to ${chalk.gray(itemDistPath)}${result?.options.declaration ? ' (with declaration)' : ''
-          }`,
-        );
         count += 1;
       } else {
         debugLog(`No config matches ${chalk.gray(item)}, skip`);
       }
     }
+    const results = await Promise.all(bundlessPromises);
+    lodash.forEach(results, (item) => {
+      if (item) {
+        declarationFileMap.set(item[0], item[1]);
+      }
+    });
 
     if (declarationFileMap.size) {
       logger.quietExpect.event(
         `Generate declaration file${declarationFileMap.size > 1 ? 's' : ''}...`,
       );
-
       const declarations = await getDeclarations(
         [...declarationFileMap.keys()],
         {
           cwd: opts.cwd,
         },
       );
-
       declarations.forEach((item) => {
         fs.writeFileSync(
           path.join(declarationFileMap.get(item.sourceFile)!, item.file),
@@ -177,7 +212,8 @@ async function bundless(
   if (!opts.watch) {
     // output result for normal mode
     logger.quietExpect.event(
-      `Transformed successfully in ${Date.now() - startTime
+      `Transformed successfully in ${
+        Date.now() - startTime
       } ms (${count} files)`,
     );
   } else {
@@ -229,10 +265,10 @@ async function bundless(
           // TODO: collect real emit files
           const relatedFiles = isTsFile
             ? [
-              replacePathExt(fileDistAbsPath, '.js'),
-              replacePathExt(fileDistAbsPath, '.d.ts'),
-              replacePathExt(fileDistAbsPath, '.d.ts.map'),
-            ]
+                replacePathExt(fileDistAbsPath, '.js'),
+                replacePathExt(fileDistAbsPath, '.d.ts'),
+                replacePathExt(fileDistAbsPath, '.d.ts.map'),
+              ]
             : [fileDistAbsPath];
           const relatedMainFile = relatedFiles.find((item) =>
             fs.existsSync(item),
