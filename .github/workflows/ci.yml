@@ -60,7 +60,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
-      - name: Build Father Projext
+      - name: Build father projext
         run: pnpm run build
 
       - name: Type check
