@@ -221,6 +221,13 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * configure less variables
    */
   theme?: Record<string, string>;
+
+  /**
+   * output unminified js file
+   * @default false
+   * @note When set to true, unminified js file will be generated in the same directory without sourcemap.
+   */
+  generateUnminified?: boolean;
 }
 
 export interface IFatherPreBundleConfig {
