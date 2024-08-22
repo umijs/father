@@ -148,7 +148,7 @@ export function normalizeUserConfig(
             filename: entryOutput.filename
               ? `${entryOutput.filename}${
                   singleConfig.generateUnminified ? '.min' : ''
-                }.js`
+                }`
               : `${path.parse(entry).name}.min.js`,
             path: entryOutput.path || output.path || 'dist/umd',
           },
@@ -201,7 +201,7 @@ export function normalizeUserConfig(
         jsMinifier: JSMinifier.terser,
         output: {
           filename: output.filename
-            ? `${output.filename}${umd.generateUnminified ? '.min' : ''}.js`
+            ? `${output.filename}${umd.generateUnminified ? '.min' : ''}`
             : `${defaultFileName}.min.js`,
           path: output.path || 'dist/umd',
         },
