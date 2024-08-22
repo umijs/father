@@ -132,12 +132,13 @@ export function normalizeUserConfig(
           typeof outputConfig === 'object'
             ? outputConfig
             : { path: outputConfig };
-        if (singleConfig.generateUnminified) {
-          assert(
-            !entryOutput.filename?.includes('.min'),
-            'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
-          );
-        }
+        assert(
+          !(
+            singleConfig.generateUnminified &&
+            entryOutput.filename?.includes('.min')
+          ),
+          'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
+        );
 
         const minifiedConfig = {
           ...bundleConfig,
