@@ -1,5 +1,6 @@
 import { JSMinifier } from '@umijs/bundler-webpack/dist/types';
 import { winPath } from '@umijs/utils';
+import assert from 'assert';
 import { Minimatch } from 'minimatch';
 import path from 'path';
 import { loadConfig } from 'tsconfig-paths';
@@ -126,22 +127,17 @@ export function normalizeUserConfig(
     if (typeof entryConfig === 'object') {
       Object.entries(entryConfig).forEach(([entry, singleConfig]) => {
         const outputConfig = singleConfig.output;
+
         const entryOutput =
           typeof outputConfig === 'object'
             ? outputConfig
             : { path: outputConfig };
-
-        const unminifiedConfig = {
-          ...bundleConfig,
-          ...singleConfig,
-          entry,
-          jsMinifier: JSMinifier.none,
-          sourcemap: false,
-          output: {
-            filename: entryOutput.filename || `${path.parse(entry).name}.js`,
-            path: entryOutput.path || output.path || 'dist/umd',
-          },
-        };
+        if (singleConfig.generateUnminified) {
+          assert(
+            !entryOutput.filename?.includes('.min'),
+            'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
+          );
+        }
 
         const minifiedConfig = {
           ...bundleConfig,
@@ -149,13 +145,27 @@ export function normalizeUserConfig(
           entry,
           jsMinifier: JSMinifier.terser,
           output: {
-            filename:
-              entryOutput.filename || `${path.parse(entry).name}.min.js`,
+            filename: entryOutput.filename
+              ? `${entryOutput.filename}${
+                  singleConfig.generateUnminified ? '.min' : ''
+                }.js`
+              : `${path.parse(entry).name}.min.js`,
             path: entryOutput.path || output.path || 'dist/umd',
           },
         };
 
         if (singleConfig.generateUnminified) {
+          const unminifiedConfig = {
+            ...bundleConfig,
+            ...singleConfig,
+            entry,
+            jsMinifier: JSMinifier.none,
+            sourcemap: false,
+            output: {
+              filename: entryOutput.filename || `${path.parse(entry).name}.js`,
+              path: entryOutput.path || output.path || 'dist/umd',
+            },
+          };
           configs.push(unminifiedConfig, minifiedConfig);
         } else {
           configs.push(minifiedConfig);
@@ -163,20 +173,23 @@ export function normalizeUserConfig(
       });
     } else {
       const defaultEntry = entryConfig || 'src/index';
-      const defaultOutput = {
-        filename:
-          output.filename || `${getAutoBundleFilename(pkg.name)}.min.js`,
-        path: output.path || 'dist/umd',
-      };
-
+      const defaultFileName = getAutoBundleFilename(pkg.name);
       if (umd.generateUnminified) {
+        if (umd.generateUnminified) {
+          assert(
+            !output.filename?.includes('.min'),
+            'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
+          );
+        }
         configs.push({
           ...bundleConfig,
           entry: defaultEntry,
           jsMinifier: JSMinifier.none,
           sourcemap: false,
           output: {
-            filename: `${getAutoBundleFilename(pkg.name)}.js`,
+            filename: output.filename
+              ? `${output.filename}.js`
+              : `${defaultFileName}.js`,
             path: output.path || 'dist/umd',
           },
         });
@@ -186,7 +199,12 @@ export function normalizeUserConfig(
         ...bundleConfig,
         entry: defaultEntry,
         jsMinifier: JSMinifier.terser,
-        output: defaultOutput,
+        output: {
+          filename: output.filename
+            ? `${output.filename}${umd.generateUnminified ? '.min' : ''}.js`
+            : `${defaultFileName}.min.js`,
+          path: output.path || 'dist/umd',
+        },
       });
     }
   }
