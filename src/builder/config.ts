@@ -146,9 +146,10 @@ export function normalizeUserConfig(
           jsMinifier: JSMinifier.terser,
           output: {
             filename: entryOutput.filename
-              ? `${entryOutput.filename}${
-                  singleConfig.generateUnminified ? '.min' : ''
-                }`
+              ? entryOutput.filename.replace(
+                  /(\.js)?$/,
+                  singleConfig.generateUnminified ? '.min.js' : '.js',
+                )
               : `${path.parse(entry).name}.min.js`,
             path: entryOutput.path || output.path || 'dist/umd',
           },
@@ -175,12 +176,10 @@ export function normalizeUserConfig(
       const defaultEntry = entryConfig || 'src/index';
       const defaultFileName = getAutoBundleFilename(pkg.name);
       if (umd.generateUnminified) {
-        if (umd.generateUnminified) {
-          assert(
-            !output.filename?.includes('.min'),
-            'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
-          );
-        }
+        assert(
+          !output.filename?.includes('.min'),
+          'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
+        );
         configs.push({
           ...bundleConfig,
           entry: defaultEntry,
@@ -188,7 +187,7 @@ export function normalizeUserConfig(
           sourcemap: false,
           output: {
             filename: output.filename
-              ? `${output.filename}.js`
+              ? `${output.filename}`
               : `${defaultFileName}.js`,
             path: output.path || 'dist/umd',
           },
@@ -201,7 +200,10 @@ export function normalizeUserConfig(
         jsMinifier: JSMinifier.terser,
         output: {
           filename: output.filename
-            ? `${output.filename}${umd.generateUnminified ? '.min' : ''}`
+            ? output.filename.replace(
+                /(\.js)?$/,
+                umd.generateUnminified ? '.min.js' : '.js',
+              )
             : `${defaultFileName}.min.js`,
           path: output.path || 'dist/umd',
         },
