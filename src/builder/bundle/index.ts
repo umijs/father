@@ -31,7 +31,9 @@ interface IBundleOpts {
   incremental?: boolean;
 }
 
-function bundle(opts: Omit<IBundleOpts, 'watch' | 'incremental'>): Promise<void>;
+function bundle(
+  opts: Omit<IBundleOpts, 'watch' | 'incremental'>,
+): Promise<void>;
 function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
 async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
@@ -68,7 +70,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           devtool: config.sourcemap && 'source-map',
           externals: config.externals,
           outputPath: config.output.path,
-
           // postcss config
           extraPostCSSPlugins,
           postcssLoader,
@@ -80,7 +81,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
 
           // compatible with IE11 by default
           targets: getBundleTargets(config),
-          jsMinifier: JSMinifier.terser,
+          jsMinifier: config.jsMinifier,
           cssMinifier: CSSMinifier.cssnano,
           extraBabelIncludes: [/node_modules/],
 
@@ -165,21 +166,21 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         // enable webpack persistent cache
         ...(enableCache
           ? {
-            cache: {
-              buildDependencies: opts.buildDependencies,
-            },
-          }
+              cache: {
+                buildDependencies: opts.buildDependencies,
+              },
+            }
           : {}),
 
         // collect close handlers for watch mode
         ...(opts.watch
           ? {
-            onBuildComplete({ isFirstCompile, close }: any) {
-              if (isFirstCompile) closeHandlers.push(close);
-              // log for watch mode
-              else logStatus();
-            },
-          }
+              onBuildComplete({ isFirstCompile, close }: any) {
+                if (isFirstCompile) closeHandlers.push(close);
+                // log for watch mode
+                else logStatus();
+              },
+            }
           : {}),
         disableCopy: true,
       });

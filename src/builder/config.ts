@@ -1,4 +1,6 @@
+import { JSMinifier } from '@umijs/bundler-webpack/dist/types';
 import { winPath } from '@umijs/utils';
+import assert from 'assert';
 import { Minimatch } from 'minimatch';
 import path from 'path';
 import { loadConfig } from 'tsconfig-paths';
@@ -24,6 +26,7 @@ export interface IBundleConfig
     Omit<IFatherBundleConfig, 'entry' | 'output'> {
   type: IFatherBuildTypes.BUNDLE;
   bundler: 'webpack';
+  jsMinifier: JSMinifier;
   entry: string;
   output: {
     filename: string;
@@ -111,55 +114,100 @@ export function normalizeUserConfig(
     const entryConfig = umd.entry;
     const output =
       typeof umd.output === 'object' ? umd.output : { path: umd.output };
-    const bundleConfig: Omit<IBundleConfig, 'entry'> = {
-      type: IFatherBuildTypes.BUNDLE,
-      bundler: 'webpack',
-      ...baseConfig,
+    const bundleConfig: Omit<IBundleConfig, 'entry' | 'output' | 'jsMinifier'> =
+      {
+        type: IFatherBuildTypes.BUNDLE,
+        bundler: 'webpack',
+        ...baseConfig,
 
-      // override base configs from umd config
-      ...umd,
-
-      // generate default output
-      output: {
-        // default to generate filename from package name
-        filename:
-          output.filename || `${getAutoBundleFilename(pkg.name)}.min.js`,
-        // default to output dist
-        path: output.path || 'dist/umd',
-      },
-    };
+        // override base configs from umd config
+        ...umd,
+      };
 
     if (typeof entryConfig === 'object') {
-      // extract multiple entries to single configs
-      Object.keys(entryConfig).forEach((entry) => {
-        const outputConfig = entryConfig[entry].output;
+      Object.entries(entryConfig).forEach(([entry, singleConfig]) => {
+        const outputConfig = singleConfig.output;
+
         const entryOutput =
           typeof outputConfig === 'object'
             ? outputConfig
             : { path: outputConfig };
+        assert(
+          !(
+            singleConfig.generateUnminified &&
+            entryOutput.filename?.includes('.min')
+          ),
+          'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
+        );
 
-        configs.push({
+        const minifiedConfig = {
           ...bundleConfig,
-
-          // override all configs from entry config
-          ...entryConfig[entry],
+          ...singleConfig,
           entry,
-
-          // override output
+          jsMinifier: JSMinifier.terser,
           output: {
-            filename:
-              entryOutput.filename || `${path.parse(entry).name}.min.js`,
-            path: entryOutput.path || bundleConfig.output.path,
+            filename: entryOutput.filename
+              ? entryOutput.filename.replace(
+                  /(\.js)?$/,
+                  singleConfig.generateUnminified ? '.min.js' : '.js',
+                )
+              : `${path.parse(entry).name}.min.js`,
+            path: entryOutput.path || output.path || 'dist/umd',
           },
-        });
+        };
+
+        if (singleConfig.generateUnminified) {
+          const unminifiedConfig = {
+            ...bundleConfig,
+            ...singleConfig,
+            entry,
+            jsMinifier: JSMinifier.none,
+            sourcemap: false,
+            output: {
+              filename: entryOutput.filename || `${path.parse(entry).name}.js`,
+              path: entryOutput.path || output.path || 'dist/umd',
+            },
+          };
+          configs.push(unminifiedConfig, minifiedConfig);
+        } else {
+          configs.push(minifiedConfig);
+        }
       });
     } else {
-      // generate single entry to single config
+      const defaultEntry = entryConfig || 'src/index';
+      const defaultFileName = getAutoBundleFilename(pkg.name);
+      if (umd.generateUnminified) {
+        assert(
+          !output.filename?.includes('.min'),
+          'if set generateUnminified enabled, you need to delete ".min" in the output filename config',
+        );
+        configs.push({
+          ...bundleConfig,
+          entry: defaultEntry,
+          jsMinifier: JSMinifier.none,
+          sourcemap: false,
+          output: {
+            filename: output.filename
+              ? `${output.filename}`
+              : `${defaultFileName}.js`,
+            path: output.path || 'dist/umd',
+          },
+        });
+      }
+
       configs.push({
         ...bundleConfig,
-
-        // default to bundle src/index
-        entry: entryConfig || 'src/index',
+        entry: defaultEntry,
+        jsMinifier: JSMinifier.terser,
+        output: {
+          filename: output.filename
+            ? output.filename.replace(
+                /(\.js)?$/,
+                umd.generateUnminified ? '.min.js' : '.js',
+              )
+            : `${defaultFileName}.min.js`,
+          path: output.path || 'dist/umd',
+        },
       });
     }
   }
