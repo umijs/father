@@ -2967,7 +2967,7 @@ packages:
       jest-util: 27.5.1
       jest-validate: 27.5.1
       jest-watcher: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       rimraf: 3.0.2
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -3099,7 +3099,7 @@ packages:
       jest-haste-map: 27.5.1
       jest-regex-util: 27.5.1
       jest-util: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       pirates: 4.0.5
       slash: 3.0.0
       source-map: 0.6.1
@@ -3123,7 +3123,7 @@ packages:
       jest-haste-map: 29.5.0
       jest-regex-util: 29.4.3
       jest-util: 29.5.0
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       pirates: 4.0.5
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -5718,7 +5718,7 @@ packages:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
 
   /fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
@@ -6695,7 +6695,7 @@ packages:
       jest-runner: 27.5.1
       jest-util: 27.5.1
       jest-validate: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       parse-json: 5.2.0
       pretty-format: 27.5.1
       slash: 3.0.0
@@ -6785,7 +6785,7 @@ packages:
       jest-serializer: 27.5.1
       jest-util: 27.5.1
       jest-worker: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -6804,7 +6804,7 @@ packages:
       jest-regex-util: 29.4.3
       jest-util: 29.5.0
       jest-worker: 29.5.0
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -6862,7 +6862,7 @@ packages:
       '@types/stack-utils': 2.0.1
       chalk: 4.1.2
       graceful-fs: 4.2.10
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       pretty-format: 27.5.1
       slash: 3.0.0
       stack-utils: 2.0.5
@@ -7389,7 +7389,7 @@ packages:
       execa: 7.1.1
       lilconfig: 2.1.0
       listr2: 5.0.8
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       normalize-path: 3.0.0
       object-inspect: 1.12.3
       pidtree: 0.6.0
@@ -7618,8 +7618,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  /micromatch@4.0.5:
-    resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
+  /micromatch@4.0.8:
+    resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
     dependencies:
       braces: 3.0.3
