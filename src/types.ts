@@ -164,6 +164,11 @@ export interface IFatherBundlessConfig extends IFatherBaseConfig {
    * ignore specific directories & files via ignore syntax
    */
   ignores?: string[];
+
+  /**
+   * compiler parallel
+   */
+  parallel?: boolean;
 }
 
 export interface IFatherBundleConfig extends IFatherBaseConfig {

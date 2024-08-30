@@ -204,7 +204,7 @@ export function isFilePath(path: string) {
 }
 
 export function getPkgNameFromPath(p: string) {
-  return p.match(/^(?:@[a-z\d][\w-.]*\/)?[a-z\d][\w-.]*/i)?.[0];
+  return p.match(/^(?:@[a-z\d][\w-.]*\/|node:)?[a-z\d][\w-.]*/i)?.[0];
 }
 
 export const getDepPkgName = (name: string, packageJson: { name: string }) => {

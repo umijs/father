@@ -40,6 +40,7 @@ function getBundlessSchemas(Joi: Root) {
       IFatherJSTransformerTypes.ESBUILD,
       IFatherJSTransformerTypes.SWC,
     ).optional(),
+    parallel: Joi.bool(),
     overrides: Joi.object(),
     ignores: Joi.array().items(Joi.string()),
   });

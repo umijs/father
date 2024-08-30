@@ -1,16 +1,14 @@
 import {
-  addLoader as addBundlessLoader,
-  ILoaderItem,
-} from '../../builder/bundless/loaders';
-import {
-  addTransformer as addJSTransformer,
   ITransformerItem,
-} from '../../builder/bundless/loaders/javascript';
+  Loaders,
+  addLoader as addBundlessLoader,
+  addTransformer as addJSTransformer,
+} from '../../builder/bundless';
 import { IApi, IFatherJSTransformerTypes } from '../../types';
 
 export default async (api: IApi) => {
   // collect all bundless loaders
-  const bundlessLoaders: ILoaderItem[] = await api.applyPlugins({
+  const bundlessLoaders: Loaders = await api.applyPlugins({
     key: 'addBundlessLoader',
     initialValue: [
       {

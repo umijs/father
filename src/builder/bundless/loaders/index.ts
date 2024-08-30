@@ -1,65 +1,88 @@
-import { winPath } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 import fs from 'fs';
 import { runLoaders } from 'loader-runner';
+import path from 'path';
 import type { IApi } from '../../../types';
-import { getCache } from '../../../utils';
+import { getCache, logger } from '../../../utils';
 import type { IBundlessConfig } from '../../config';
 import { getContentHash } from '../../utils';
 import { getTsconfig } from '../dts';
 import type { IBundlessLoader, ILoaderOutput } from './types';
 
-/**
- * loader item type
- */
-export interface ILoaderItem {
-  id: string;
-  test: string | RegExp | ((path: string) => boolean);
-  loader: string;
-  options?: Record<string, any>;
-}
+import type { Loaders, Transformers } from '..';
 
-const loaders: ILoaderItem[] = [];
-
-/**
- * add loader
- * @param item  loader item
- */
-export function addLoader(item: ILoaderItem) {
-  // only support simple test type currently, because the webpack condition is too complex
-  // refer: https://github.com/webpack/webpack/blob/0f6c78cca174a73184fdc0d9c9c2bd376b48557c/lib/rules/RuleSetCompiler.js#L211
-  if (
-    !['string', 'function'].includes(typeof item.test) &&
-    !(item.test instanceof RegExp)
-  ) {
-    throw new Error(
-      `Unsupported loader test in \`${item.id}\`, only string, function and regular expression are available.`,
-    );
-  }
-
-  loaders.push(item);
-}
-
-/**
- * loader module base on webpack loader-runner
- */
-export default async (
-  fileAbsPath: string,
+export interface ILoaderArgs {
+  fileAbsPath: string;
+  loaders: Loaders;
+  fileDistPath: string;
+  transformers: Transformers;
   opts: {
     config: IBundlessConfig;
     pkg: IApi['pkg'];
     cwd: string;
     itemDistAbsPath: string;
-  },
-) => {
+  };
+}
+
+function replacePathExt(filePath: string, ext: string) {
+  const parsed = path.parse(filePath);
+
+  return path.join(parsed.dir, `${parsed.name}${ext}`);
+}
+
+function dealResult(result: any, args: ILoaderArgs) {
+  let fileDistAbsPath = args.opts.itemDistAbsPath;
+  if (result) {
+    // update ext if loader specified
+    if (result.options.ext) {
+      fileDistAbsPath = replacePathExt(
+        args.opts.itemDistAbsPath,
+        result.options.ext,
+      );
+    }
+
+    if (result.options.map) {
+      const map = result.options.map;
+      const mapLoc = `${fileDistAbsPath}.map`;
+
+      fs.writeFileSync(mapLoc, map);
+    }
+
+    // distribute file with result
+    fs.writeFileSync(fileDistAbsPath, result.content);
+  } else {
+    // copy file as normal assets
+    fs.copyFileSync(args.fileAbsPath, fileDistAbsPath);
+  }
+  logger.quietExpect.event(
+    `Bundless ${chalk.gray(path.basename(fileDistAbsPath))} to ${chalk.gray(
+      args.fileDistPath,
+    )}${result?.options.declaration ? ' (with declaration)' : ''}`,
+  );
+  // prepare for declaration
+  if (result.options.declaration) {
+    // use winPath because ts compiler will convert to posix path
+    return [winPath(args.fileAbsPath), path.dirname(fileDistAbsPath)];
+  }
+}
+
+/**
+ * loader module base on webpack loader-runner
+ */
+export default async (args: ILoaderArgs) => {
   const cache = getCache('bundless-loader');
   // format: {path:contenthash:config:pkgDeps}
   const cacheKey = [
-    fileAbsPath,
-    getContentHash(fs.readFileSync(fileAbsPath, 'utf-8')),
-    JSON.stringify(opts.config),
+    args.fileAbsPath,
+    getContentHash(fs.readFileSync(args.fileAbsPath, 'utf-8')),
+    JSON.stringify(args.opts.config),
     // use for babel opts generator in src/builder/utils.ts
     JSON.stringify(
-      Object.assign({}, opts.pkg.dependencies, opts.pkg.peerDependencies),
+      Object.assign(
+        {},
+        args.opts.pkg.dependencies,
+        args.opts.pkg.peerDependencies,
+      ),
     ),
   ].join(':');
   const cacheRet = await cache.get(cacheKey, '');
@@ -67,51 +90,54 @@ export default async (
   // use cache first
   /* istanbul ignore if -- @preserve */
   if (cacheRet) {
-    const tsconfig = /\.tsx?$/.test(fileAbsPath)
-      ? getTsconfig(opts.cwd)
+    const tsconfig = /\.tsx?$/.test(args.fileAbsPath)
+      ? getTsconfig(args.opts.cwd)
       : undefined;
-
-    return Promise.resolve<ILoaderOutput>({
-      ...cacheRet,
-      options: {
-        ...cacheRet.options,
-        // FIXME: shit code for avoid invalid declaration value when tsconfig changed
-        declaration:
-          tsconfig?.options.declaration &&
-          tsconfig?.fileNames.includes(winPath(fileAbsPath)),
+    const declaration = dealResult(
+      {
+        ...cacheRet,
+        options: {
+          ...cacheRet.options,
+          // FIXME: shit code for avoid invalid declaration value when tsconfig changed
+          declaration:
+            tsconfig?.options.declaration &&
+            tsconfig?.fileNames.includes(winPath(args.fileAbsPath)),
+        },
       },
-    });
+      args,
+    );
+    return Promise.resolve(declaration);
   }
 
   // get matched loader by test
-  const matched = loaders.find((item) => {
+  const matched = args.loaders.find((item) => {
     switch (typeof item.test) {
       case 'string':
-        return fileAbsPath.startsWith(item.test);
+        return args.fileAbsPath.startsWith(item.test);
 
       case 'function':
-        return item.test(fileAbsPath);
+        return item.test(args.fileAbsPath);
 
       default:
         // assume it is RegExp instance
-        return item.test.test(fileAbsPath);
+        return item.test.test(args.fileAbsPath);
     }
   });
 
   if (matched) {
     // run matched loader
-    return new Promise<ILoaderOutput | void>((resolve, reject) => {
+    return new Promise<ILoaderOutput | void | string[]>((resolve, reject) => {
       let outputOpts: ILoaderOutput['options'] = {};
-
       runLoaders(
         {
-          resource: fileAbsPath,
+          resource: args.fileAbsPath,
           loaders: [{ loader: matched.loader, options: matched.options }],
           context: {
-            cwd: opts.cwd,
-            config: opts.config,
-            pkg: opts.pkg,
-            itemDistAbsPath: opts.itemDistAbsPath,
+            cwd: args.opts.cwd,
+            config: args.opts.config,
+            transformers: args.transformers,
+            pkg: args.opts.pkg,
+            itemDistAbsPath: args.opts.itemDistAbsPath,
             setOutputOptions(opts) {
               outputOpts = opts;
             },
@@ -130,7 +156,8 @@ export default async (
 
             // save cache then resolve
             cache.set(cacheKey, ret).then(() => {
-              resolve(ret);
+              const declaration = dealResult(ret, args);
+              resolve(declaration);
             });
           } else {
             resolve(void 0);
@@ -138,5 +165,7 @@ export default async (
         },
       );
     });
+  } else {
+    fs.copyFileSync(args.fileAbsPath, args.opts.itemDistAbsPath);
   }
 };

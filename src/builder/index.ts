@@ -1,10 +1,10 @@
 import { chokidar, rimraf } from '@umijs/utils';
 import path from 'path';
 import { IApi, IFatherConfig } from '../types';
+import { logger } from '../utils';
 import bundle, { type IBundleWatcher } from './bundle';
 import bundless from './bundless';
 import { createConfigProviders } from './config';
-import { logger } from '../utils';
 
 function getProviderOutputs(
   providers: ReturnType<typeof createConfigProviders>,
@@ -41,11 +41,11 @@ interface IWatchBuilderResult {
 // overload normal/watch mode
 function builder(opts: IBuilderOpts): Promise<void>;
 function builder(
-  opts: IBuilderOpts & { watch: true },
+  opts: IBuilderOpts & { watch: true; incremental?: boolean },
 ): Promise<IWatchBuilderResult>;
 
 async function builder(
-  opts: IBuilderOpts & { watch?: true },
+  opts: IBuilderOpts & { watch?: true; incremental?: boolean },
 ): Promise<IWatchBuilderResult | void> {
   const configProviders = createConfigProviders(
     opts.userConfig,
@@ -55,7 +55,7 @@ async function builder(
   const outputs = getProviderOutputs(configProviders);
   const watchers: (chokidar.FSWatcher | IBundleWatcher)[] = [];
 
-  if (opts.clean !== false) {
+  if (opts.clean !== false && !opts.incremental) {
     // clean output directories
     logger.quietExpect.info('Clean output directories');
     outputs.forEach((output) => {
@@ -69,6 +69,7 @@ async function builder(
       configProvider: configProviders.bundle,
       buildDependencies: opts.buildDependencies,
       watch: opts.watch,
+      incremental: opts.incremental,
     });
 
     opts.watch && watchers.push(watcher);
@@ -79,6 +80,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.esm,
       watch: opts.watch,
+      incremental: opts.incremental,
     });
 
     opts.watch && watchers.push(watcher);
@@ -89,6 +91,7 @@ async function builder(
       cwd: opts.cwd,
       configProvider: configProviders.bundless.cjs,
       watch: opts.watch,
+      incremental: opts.incremental,
     });
 
     opts.watch && watchers.push(watcher);
