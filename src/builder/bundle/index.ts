@@ -39,173 +39,179 @@ interface IBundleOpts {
   configProvider: BundleConfigProvider;
   buildDependencies?: string[];
   watch?: boolean;
+  incremental?: boolean;
 }
 
-function bundle(opts: Omit<IBundleOpts, 'watch'>): Promise<void>;
+function bundle(
+  opts: Omit<IBundleOpts, 'watch' | 'incremental'>,
+): Promise<void>;
 function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
 async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const closeHandlers: webpack.Watching['close'][] = [];
-
-  for (let i = 0; i < opts.configProvider.configs.length; i += 1) {
-    const config = opts.configProvider.configs[i];
-    const { plugins: extraPostCSSPlugins, ...postcssLoader } =
-      config.postcssOptions || {};
-    const babelSCOpts = getBabelStyledComponentsOpts(opts.configProvider.pkg);
-    // workaround for combine continuous onBuildComplete log in watch mode
-    const logStatus = lodash.debounce(
-      () =>
-        logger.info(
-          `Bundle from ${chalk.yellow(config.entry)} to ${chalk.yellow(
-            path.join(config.output.path, config.output.filename),
-          )}`,
-        ),
-      100,
-      { leading: true, trailing: false },
-    );
-    // log for normal build
-    !opts.watch && logStatus();
-    const options = {
-      cwd: opts.cwd,
-      hmr: false,
-      watch: opts.watch,
-      devServer: false,
-      config: {
-        alias: config.alias,
-        autoprefixer: config.autoprefixer,
-        chainWebpack: config.chainWebpack,
-        stats: false,
-        define: config.define,
-        devtool: !!config.sourcemap && ('source-map' as DevTool),
-        externals: config.externals,
-        outputPath: config.output.path,
-        // postcss config
-        extraPostCSSPlugins,
-        postcssLoader,
-        clean: false,
-        ...(config.extractCSS !== false ? {} : { styleLoader: {} }),
-        // ref: https://github.com/umijs/mako/issues/1062
-        inlineCSS:
-          config.extractCSS !== false ? false : { 'TODO: REMOVE ME': 1 },
-        // less config
-        theme: config.theme,
-        // compatible with IE11 by default
-        targets: getBundleTargets(config),
-        jsMinifier: JSMinifier.terser,
-        cssMinifier: CSSMinifier.cssnano,
-        extraBabelIncludes: [/node_modules/],
-        // set cache parent directory, will join it with `bundler-webpack`
-        // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
-        cacheDirectoryPath: getCachePath(),
-      },
-      entry: {
-        [path.parse(config.output.filename).name]: path.join(
-          opts.cwd,
-          config.entry,
-        ),
-      },
-      babelPreset: [
-        require.resolve('@umijs/babel-preset-umi'),
-        {
-          presetEnv: {
-            targets: getBundleTargets(config),
-          },
-          presetReact: getBabelPresetReactOpts(
-            opts.configProvider.pkg,
-            opts.cwd,
+  if (!opts.incremental) {
+    for (let i = 0; i < opts.configProvider.configs.length; i += 1) {
+      const config = opts.configProvider.configs[i];
+      const { plugins: extraPostCSSPlugins, ...postcssLoader } =
+        config.postcssOptions || {};
+      const babelSCOpts = getBabelStyledComponentsOpts(opts.configProvider.pkg);
+      // workaround for combine continuous onBuildComplete log in watch mode
+      const logStatus = lodash.debounce(
+        () =>
+          logger.info(
+            `Bundle from ${chalk.yellow(config.entry)} to ${chalk.yellow(
+              path.join(config.output.path, config.output.filename),
+            )}`,
           ),
-          presetTypeScript: {},
-          pluginTransformRuntime: {},
-          pluginLockCoreJS: {},
-          pluginDynamicImportNode: false,
+        100,
+        { leading: true, trailing: false },
+      );
+      // log for normal build
+      !opts.watch && logStatus();
+      const options = {
+        cwd: opts.cwd,
+        hmr: false,
+        watch: opts.watch,
+        devServer: false,
+        config: {
+          alias: config.alias,
+          autoprefixer: config.autoprefixer,
+          chainWebpack: config.chainWebpack,
+          stats: false,
+          define: config.define,
+          devtool: !!config.sourcemap && ('source-map' as DevTool),
+          externals: config.externals,
+          outputPath: config.output.path,
+          // postcss config
+          extraPostCSSPlugins,
+          postcssLoader,
+          clean: false,
+          ...(config.extractCSS !== false ? {} : { styleLoader: {} }),
+          // ref: https://github.com/umijs/mako/issues/1062
+          inlineCSS:
+            config.extractCSS !== false ? false : { 'TODO: REMOVE ME': 1 },
+          // less config
+          theme: config.theme,
+          // compatible with IE11 by default
+          targets: getBundleTargets(config),
+          jsMinifier: JSMinifier.terser,
+          cssMinifier: CSSMinifier.cssnano,
+          extraBabelIncludes: [/node_modules/],
+          // set cache parent directory, will join it with `bundler-webpack`
+          // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
+          cacheDirectoryPath: getCachePath(),
         },
-      ],
-      beforeBabelPlugins: [
-        require.resolve('babel-plugin-dynamic-import-node'),
-        ...(babelSCOpts
-          ? [[require.resolve('babel-plugin-styled-components'), babelSCOpts]]
-          : []),
-      ],
-      extraBabelPresets: config.extraBabelPresets,
-      extraBabelPlugins: config.extraBabelPlugins,
-
-      // configure library related options
-      chainWebpack(memo: any) {
-        memo.output.libraryTarget('umd');
-        if (config.bundler === 'mako') {
-          assert(config.name, `Mako bundler need set name in umd config`);
-        }
-        if (config?.name) {
-          memo.output.library(config.name);
-        }
-
-        // modify webpack target
-        if (config.platform === 'node') {
-          memo.target('node');
-        }
-
-        if (enableCache) {
-          // use father version as cache version
-          memo.merge({
-            cache: { version: require('../../../package.json').version },
-          });
-        }
-
-        // also bundle svg as asset, because father force disable svgr
-        const imgRule = memo.module.rule('asset').oneOf('image');
-        if (imgRule.get('test')) {
-          imgRule.test(
-            new RegExp(imgRule.get('test').source.replace(/(\|png)/, '$1|svg')),
-          );
-        }
-
-        // disable progress bar
-        memo.plugins.delete('progress-plugin');
-
-        // auto bump analyze port
-        /* istanbul ignore if -- @preserve */
-        if (process.env.ANALYZE) {
-          memo.plugin('webpack-bundle-analyzer').tap((args: any) => {
-            args[0].analyzerPort += i;
-
-            return args;
-          });
-        }
-
-        return memo;
-      },
-
-      // enable webpack persistent cache
-      ...(enableCache
-        ? {
-            cache: {
-              buildDependencies: opts.buildDependencies,
+        entry: {
+          [path.parse(config.output.filename).name]: path.join(
+            opts.cwd,
+            config.entry,
+          ),
+        },
+        babelPreset: [
+          require.resolve('@umijs/babel-preset-umi'),
+          {
+            presetEnv: {
+              targets: getBundleTargets(config),
             },
+            presetReact: getBabelPresetReactOpts(
+              opts.configProvider.pkg,
+              opts.cwd,
+            ),
+            presetTypeScript: {},
+            pluginTransformRuntime: {},
+            pluginLockCoreJS: {},
+            pluginDynamicImportNode: false,
+          },
+        ],
+        beforeBabelPlugins: [
+          require.resolve('babel-plugin-dynamic-import-node'),
+          ...(babelSCOpts
+            ? [[require.resolve('babel-plugin-styled-components'), babelSCOpts]]
+            : []),
+        ],
+        extraBabelPresets: config.extraBabelPresets,
+        extraBabelPlugins: config.extraBabelPlugins,
+
+        // configure library related options
+        chainWebpack(memo: any) {
+          memo.output.libraryTarget('umd');
+          if (config.bundler === 'mako') {
+            assert(config.name, `Mako bundler need set name in umd config`);
           }
-        : {}),
+          if (config?.name) {
+            memo.output.library(config.name);
+          }
 
-      // collect close handlers for watch mode
-      onBuildComplete({ isFirstCompile, close }: any) {
-        if (isFirstCompile) closeHandlers.push(close);
-        // log for watch mode
-        else logStatus();
-      },
-      onDevCompileDone() {},
-      disableCopy: true,
-    };
-    if (config.bundler === 'mako') {
-      require('@umijs/bundler-webpack/dist/requireHook');
-      const entry = tryPaths(
-        extensions.map((ext) => path.join(opts.cwd, `${config.entry}${ext}`)),
-      ) as string;
-      assert(entry, `Cannot find entry file ${config.entry}`);
+          // modify webpack target
+          if (config.platform === 'node') {
+            memo.target('node');
+          }
 
-      options.entry = {
-        [path.parse(config.output.filename).name]: entry,
+          if (enableCache) {
+            // use father version as cache version
+            memo.merge({
+              cache: { version: require('../../../package.json').version },
+            });
+          }
+
+          // also bundle svg as asset, because father force disable svgr
+          const imgRule = memo.module.rule('asset').oneOf('image');
+          if (imgRule.get('test')) {
+            imgRule.test(
+              new RegExp(
+                imgRule.get('test').source.replace(/(\|png)/, '$1|svg'),
+              ),
+            );
+          }
+
+          // disable progress bar
+          memo.plugins.delete('progress-plugin');
+
+          // auto bump analyze port
+          /* istanbul ignore if -- @preserve */
+          if (process.env.ANALYZE) {
+            memo.plugin('webpack-bundle-analyzer').tap((args: any) => {
+              args[0].analyzerPort += i;
+
+              return args;
+            });
+          }
+
+          return memo;
+        },
+
+        // enable webpack persistent cache
+        ...(enableCache
+          ? {
+              cache: {
+                buildDependencies: opts.buildDependencies,
+              },
+            }
+          : {}),
+
+        // collect close handlers for watch mode
+        onBuildComplete({ isFirstCompile, close }: any) {
+          if (isFirstCompile) closeHandlers.push(close);
+          // log for watch mode
+          else logStatus();
+        },
+        onDevCompileDone() {},
+        disableCopy: true,
       };
-      await makoBundler.build(options);
-    } else {
-      await webpackBundler.build(options);
+      if (config.bundler === 'mako') {
+        require('@umijs/bundler-webpack/dist/requireHook');
+        const entry = tryPaths(
+          extensions.map((ext) => path.join(opts.cwd, `${config.entry}${ext}`)),
+        ) as string;
+        assert(entry, `Cannot find entry file ${config.entry}`);
+
+        options.entry = {
+          [path.parse(config.output.filename).name]: entry,
+        };
+        await makoBundler.build(options);
+      } else {
+        await webpackBundler.build(options);
+      }
     }
   }
 
