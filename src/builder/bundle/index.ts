@@ -1,5 +1,7 @@
 import type { webpack } from '@umijs/bundler-webpack';
-import { chalk, importLazy, lodash } from '@umijs/utils';
+import type { DevTool } from '@umijs/bundler-webpack/compiled/webpack-5-chain';
+import { chalk, importLazy, lodash, tryPaths } from '@umijs/utils';
+import assert from 'assert';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
@@ -9,9 +11,20 @@ import {
   getBundleTargets,
 } from '../utils';
 
-const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
+export interface IBundleWatcher {
+  close: () => void;
+}
+
+const webpackBundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
 );
+
+const makoBundler = importLazy(
+  path.dirname(
+    require.resolve(process.env.OKAM || '@umijs/bundler-mako/package.json'),
+  ),
+);
+
 const {
   CSSMinifier,
   JSMinifier,
@@ -19,9 +32,7 @@ const {
   require.resolve('@umijs/bundler-webpack/dist/types'),
 );
 
-export interface IBundleWatcher {
-  close: () => void;
-}
+const extensions = ['.js', '.jsx', '.ts', '.tsx', '.cjs', '.mjs'];
 
 interface IBundleOpts {
   cwd: string;
@@ -31,12 +42,13 @@ interface IBundleOpts {
   incremental?: boolean;
 }
 
-function bundle(opts: Omit<IBundleOpts, 'watch' | 'incremental'>): Promise<void>;
+function bundle(
+  opts: Omit<IBundleOpts, 'watch' | 'incremental'>,
+): Promise<void>;
 function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
 async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const closeHandlers: webpack.Watching['close'][] = [];
-
   if (!opts.incremental) {
     for (let i = 0; i < opts.configProvider.configs.length; i += 1) {
       const config = opts.configProvider.configs[i];
@@ -54,36 +66,37 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         100,
         { leading: true, trailing: false },
       );
-
       // log for normal build
       !opts.watch && logStatus();
-      await bundler.build({
+      const options = {
         cwd: opts.cwd,
+        hmr: false,
         watch: opts.watch,
+        devServer: false,
         config: {
           alias: config.alias,
           autoprefixer: config.autoprefixer,
           chainWebpack: config.chainWebpack,
+          stats: false,
           define: config.define,
-          devtool: config.sourcemap && 'source-map',
+          devtool: !!config.sourcemap && ('source-map' as DevTool),
           externals: config.externals,
           outputPath: config.output.path,
-
           // postcss config
           extraPostCSSPlugins,
           postcssLoader,
-
+          clean: false,
           ...(config.extractCSS !== false ? {} : { styleLoader: {} }),
-
+          // ref: https://github.com/umijs/mako/issues/1062
+          inlineCSS:
+            config.extractCSS !== false ? false : { 'TODO: REMOVE ME': 1 },
           // less config
           theme: config.theme,
-
           // compatible with IE11 by default
           targets: getBundleTargets(config),
           jsMinifier: JSMinifier.terser,
           cssMinifier: CSSMinifier.cssnano,
           extraBabelIncludes: [/node_modules/],
-
           // set cache parent directory, will join it with `bundler-webpack`
           // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
           cacheDirectoryPath: getCachePath(),
@@ -122,7 +135,9 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         // configure library related options
         chainWebpack(memo: any) {
           memo.output.libraryTarget('umd');
-
+          if (config.bundler === 'mako') {
+            assert(config.name, `Mako bundler need set name in umd config`);
+          }
           if (config?.name) {
             memo.output.library(config.name);
           }
@@ -141,10 +156,13 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
 
           // also bundle svg as asset, because father force disable svgr
           const imgRule = memo.module.rule('asset').oneOf('image');
-
-          imgRule.test(
-            new RegExp(imgRule.get('test').source.replace(/(\|png)/, '$1|svg')),
-          );
+          if (imgRule.get('test')) {
+            imgRule.test(
+              new RegExp(
+                imgRule.get('test').source.replace(/(\|png)/, '$1|svg'),
+              ),
+            );
+          }
 
           // disable progress bar
           memo.plugins.delete('progress-plugin');
@@ -165,24 +183,35 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         // enable webpack persistent cache
         ...(enableCache
           ? {
-            cache: {
-              buildDependencies: opts.buildDependencies,
-            },
-          }
+              cache: {
+                buildDependencies: opts.buildDependencies,
+              },
+            }
           : {}),
 
         // collect close handlers for watch mode
-        ...(opts.watch
-          ? {
-            onBuildComplete({ isFirstCompile, close }: any) {
-              if (isFirstCompile) closeHandlers.push(close);
-              // log for watch mode
-              else logStatus();
-            },
-          }
-          : {}),
+        onBuildComplete({ isFirstCompile, close }: any) {
+          if (isFirstCompile) closeHandlers.push(close);
+          // log for watch mode
+          else logStatus();
+        },
+        onDevCompileDone() {},
         disableCopy: true,
-      });
+      };
+      if (config.bundler === 'mako') {
+        require('@umijs/bundler-webpack/dist/requireHook');
+        const entry = tryPaths(
+          extensions.map((ext) => path.join(opts.cwd, `${config.entry}${ext}`)),
+        ) as string;
+        assert(entry, `Cannot find entry file ${config.entry}`);
+
+        options.entry = {
+          [path.parse(config.output.filename).name]: entry,
+        };
+        await makoBundler.build(options);
+      } else {
+        await webpackBundler.build(options);
+      }
     }
   }
 

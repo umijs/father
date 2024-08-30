@@ -1,4 +1,5 @@
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { WATCH_DEBOUNCE_STEP } from '../src/constants';
@@ -10,6 +11,7 @@ const CASE_DIST = path.join(CASE_DIR, 'dist');
 const CASE_CONFIG = path.join(CASE_DIR, '.fatherrc.ts');
 const CASE_CONFIG_CONTENT = fs.readFileSync(CASE_CONFIG, 'utf-8');
 const logSpy = jest.spyOn(console, 'log');
+const isWindows = os.platform() === 'win32';
 
 // create wait util via real setTimeout
 const wait = (
@@ -23,7 +25,6 @@ global.TMP_CASE_CONFIG = CASE_CONFIG;
 
 jest.mock('../src/builder/bundle/index.ts', () => {
   const originalModule = jest.requireActual('../src/builder/bundle/index.ts');
-
   return {
     __esModule: true,
     ...originalModule,
@@ -70,7 +71,8 @@ jest.mock('@umijs/utils', () => {
 // to make sure father load the latest config
 jest.mock('./fixtures/dev/.fatherrc.ts', () => {
   const originalModule = jest.requireActual(global.TMP_CASE_CONFIG);
-
+  originalModule.default.umd.bundler = 'mako';
+  originalModule.default.umd.name ??= 'mako_dev_test';
   if (global.TMP_TRANSFORMER) {
     originalModule.default.esm.transformer = global.TMP_TRANSFORMER;
   }
@@ -115,99 +117,103 @@ afterAll(async () => {
   jest.unmock('../src/builder/bundle/index.ts');
 });
 
-test('dev: file output', () => {
-  const fileMap = distToMap(CASE_DIST);
+if (!isWindows) {
+  test('mako dev: file output', () => {
+    const fileMap = distToMap(CASE_DIST);
 
-  expect(fileMap['esm/index.js']).not.toBeUndefined();
-  expect(fileMap['esm/index.d.ts']).not.toBeUndefined();
+    expect(fileMap['esm/index.js']).not.toBeUndefined();
+    expect(fileMap['esm/index.d.ts']).not.toBeUndefined();
 
-  // expect generate d.ts.map in development mode by default
-  expect(fileMap['esm/index.d.ts.map']).not.toBeUndefined();
+    // expect generate d.ts.map in development mode by default
+    expect(fileMap['esm/index.d.ts.map']).not.toBeUndefined();
 
-  // expect umd file
-  expect(fileMap['umd/index.min.js']).not.toBeUndefined();
-});
-
-test('dev: file change', async () => {
-  const content = `a = 1`;
-
-  // make file change
-  fs.writeFileSync(
-    path.join(CASE_SRC, 'index.ts'),
-    `export const ${content};`,
-    'utf-8',
-  );
-  // wait for watch debounce and compile
-  await wait(WATCH_DEBOUNCE_STEP + 500);
-  // wait for webpack compilation done
-  await new Promise<void>((resolve) => {
-    const handler = () => {
-      try {
-        expect(console.log).toHaveBeenCalledWith(
-          // badge
-          expect.stringContaining('-'),
-          // time
-          expect.stringContaining('['),
-          // content
-          expect.stringContaining('Bundle '),
-        );
-        logSpy.mockRestore();
-        resolve();
-      } catch {
-        setTimeout(handler, 500);
-      }
-    };
-
-    handler();
+    // expect umd file
+    expect(fileMap['umd/index.min.js']).not.toBeUndefined();
   });
-  const fileMap = distToMap(CASE_DIST);
 
-  expect(fileMap['esm/index.js']).toContain(content);
-  expect(fileMap['umd/index.min.js']).toContain(content);
-});
+  test('mako dev: file change', async () => {
+    const content = `a = 1`;
 
-test('dev: file add', async () => {
-  fs.mkdirSync(path.join(CASE_SRC, 'child'));
-  fs.writeFileSync(path.join(CASE_SRC, 'child/new.ts'), '', 'utf-8');
+    // make file change
+    fs.writeFileSync(
+      path.join(CASE_SRC, 'index.ts'),
+      `export const ${content};`,
+      'utf-8',
+    );
+    // wait for watch debounce and compile
+    await wait(WATCH_DEBOUNCE_STEP + 500);
+    // wait for webpack compilation done
+    await new Promise<void>((resolve) => {
+      const handler = () => {
+        try {
+          expect(console.log).toHaveBeenCalledWith(
+            // badge
+            expect.stringContaining('-'),
+            // time
+            expect.stringContaining('['),
+            // content
+            expect.stringContaining('Bundle '),
+          );
+          logSpy.mockRestore();
+          resolve();
+        } catch {
+          setTimeout(handler, 500);
+        }
+      };
 
-  // wait for watch debounce and compile
-  await wait(WATCH_DEBOUNCE_STEP + 500);
+      handler();
+    });
+    const fileMap = distToMap(CASE_DIST);
 
-  const fileMap = distToMap(CASE_DIST);
+    expect(fileMap['esm/index.js']).toContain(content);
+    expect(fileMap['umd/index.min.js']).toContain(content);
+  });
 
-  expect(fileMap[`esm/child/new.js`]).not.toBeUndefined();
-  expect(fileMap['esm/child/new.d.ts']).not.toBeUndefined();
-});
+  test('mako dev: file add', async () => {
+    fs.mkdirSync(path.join(CASE_SRC, 'child'));
+    fs.writeFileSync(path.join(CASE_SRC, 'child/new.ts'), '', 'utf-8');
 
-test('dev: file delete', async () => {
-  fs.rmSync(path.join(CASE_SRC, 'child'), { recursive: true });
+    // wait for watch debounce and compile
+    await wait(WATCH_DEBOUNCE_STEP + 500);
 
-  // wait for watch debounce and compile
-  await wait(WATCH_DEBOUNCE_STEP + 500);
+    const fileMap = distToMap(CASE_DIST);
 
-  const fileMap = distToMap(CASE_DIST);
+    expect(fileMap[`esm/child/new.js`]).not.toBeUndefined();
+    expect(fileMap['esm/child/new.d.ts']).not.toBeUndefined();
+  });
 
-  expect(fileMap[`esm/child/new.js`]).toBeUndefined();
-  expect(fileMap['esm/child/new.d.ts']).toBeUndefined();
+  test('mako dev: file delete', async () => {
+    fs.rmSync(path.join(CASE_SRC, 'child'), { recursive: true });
 
-  // expect directory also be removed
-  expect(fs.existsSync(path.join(CASE_DIST, 'child'))).toBe(false);
-});
+    // wait for watch debounce and compile
+    await wait(WATCH_DEBOUNCE_STEP + 500);
 
-test('dev: config change', async () => {
-  global.TMP_TRANSFORMER = 'esbuild';
-  jest.resetModules();
-  fs.writeFileSync(
-    CASE_CONFIG,
-    CASE_CONFIG_CONTENT.replace('babel', 'esbuild'),
-    'utf-8',
-  );
+    const fileMap = distToMap(CASE_DIST);
 
-  // wait for restart (at least 5s+ is required to restart in Windows CI)
-  await wait(6000);
+    expect(fileMap[`esm/child/new.js`]).toBeUndefined();
+    expect(fileMap['esm/child/new.d.ts']).toBeUndefined();
 
-  const fileMap = distToMap(CASE_DIST);
+    // expect directory also be removed
+    expect(fs.existsSync(path.join(CASE_DIST, 'child'))).toBe(false);
+  });
 
-  // expect comment be generated by esbuild
-  expect(fileMap[`esm/index.js`]).toContain('// src/index.ts');
-});
+  test('mako dev: config change', async () => {
+    global.TMP_TRANSFORMER = 'esbuild';
+    jest.resetModules();
+    fs.writeFileSync(
+      CASE_CONFIG,
+      CASE_CONFIG_CONTENT.replace('babel', 'esbuild'),
+      'utf-8',
+    );
+
+    // wait for restart (at least 5s+ is required to restart in Windows CI)
+    await wait(6000);
+
+    const fileMap = distToMap(CASE_DIST);
+
+    // expect comment be generated by esbuild
+    expect(fileMap[`esm/index.js`]).toContain('// src/index.ts');
+  });
+} else {
+  test.skip('mako test cases should be skipped on Windows', () => {});
+}

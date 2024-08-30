@@ -91,6 +91,11 @@ export enum IFatherBundlessTypes {
   CJS = 'cjs',
 }
 
+export enum IFatherBundlerTypes {
+  WEBPACK = 'webpack',
+  MAKO = 'mako',
+}
+
 export interface IFatherBaseConfig {
   /**
    * compile platform
@@ -221,6 +226,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * configure less variables
    */
   theme?: Record<string, string>;
+
+  /**
+   * configure bundler - webpack or mako
+   */
+  bundler?: `${IFatherBundlerTypes}`;
 }
 
 export interface IFatherPreBundleConfig {
