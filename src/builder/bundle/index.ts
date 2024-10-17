@@ -31,7 +31,9 @@ interface IBundleOpts {
   incremental?: boolean;
 }
 
-function bundle(opts: Omit<IBundleOpts, 'watch' | 'incremental'>): Promise<void>;
+function bundle(
+  opts: Omit<IBundleOpts, 'watch' | 'incremental'>,
+): Promise<void>;
 function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
 async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
@@ -111,7 +113,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           },
         ],
         beforeBabelPlugins: [
-          require.resolve('babel-plugin-dynamic-import-node'),
           ...(babelSCOpts
             ? [[require.resolve('babel-plugin-styled-components'), babelSCOpts]]
             : []),
@@ -122,7 +123,11 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         // configure library related options
         chainWebpack(memo: any) {
           memo.output.libraryTarget('umd');
-
+          memo.merge({
+            output: {
+              asyncChunks: false,
+            },
+          });
           if (config?.name) {
             memo.output.library(config.name);
           }
@@ -165,21 +170,21 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         // enable webpack persistent cache
         ...(enableCache
           ? {
-            cache: {
-              buildDependencies: opts.buildDependencies,
-            },
-          }
+              cache: {
+                buildDependencies: opts.buildDependencies,
+              },
+            }
           : {}),
 
         // collect close handlers for watch mode
         ...(opts.watch
           ? {
-            onBuildComplete({ isFirstCompile, close }: any) {
-              if (isFirstCompile) closeHandlers.push(close);
-              // log for watch mode
-              else logStatus();
-            },
-          }
+              onBuildComplete({ isFirstCompile, close }: any) {
+                if (isFirstCompile) closeHandlers.push(close);
+                // log for watch mode
+                else logStatus();
+              },
+            }
           : {}),
         disableCopy: true,
       });

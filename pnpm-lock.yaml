@@ -32,9 +32,6 @@ importers:
       '@vercel/ncc':
         specifier: 0.33.3
         version: 0.33.3
-      babel-plugin-dynamic-import-node:
-        specifier: 2.3.3
-        version: 2.3.3
       babel-plugin-module-resolver:
         specifier: 4.1.0
         version: 4.1.0
@@ -4324,12 +4321,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /babel-plugin-dynamic-import-node@2.3.3:
-    resolution: {integrity: sha512-jZVI+s9Zg3IqA/kdi0i6UDCybUI3aSBLnglhYbSSjKlV7yF1F/5LWv8MakQmvYpnbJDS6fcBL2KzHSxNCMtWSQ==}
-    dependencies:
-      object.assign: 4.1.4
-    dev: false
 
   /babel-plugin-istanbul@6.1.1:
     resolution: {integrity: sha512-Y1IQok9821cC9onCx5otgFfRm7Lm+I+wwxOx738M/WLPZ9Q42m4IG5W0FNX8WLL2gYMZo3JkuXIH2DOpWM+qwA==}
