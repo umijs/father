@@ -1,5 +1,6 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
+import browsersList from 'browserslist';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
@@ -57,39 +58,53 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         { leading: true, trailing: false },
       );
 
+      const buildConfig: any = {
+        alias: config.alias,
+        autoprefixer: config.autoprefixer,
+        chainWebpack: config.chainWebpack,
+        define: config.define,
+        devtool: config.sourcemap && 'source-map',
+        externals: config.externals,
+        outputPath: config.output.path,
+
+        // postcss config
+        extraPostCSSPlugins,
+        postcssLoader,
+
+        ...(config.extractCSS !== false ? {} : { styleLoader: {} }),
+
+        // less config
+        theme: config.theme,
+
+        // compatible with IE11 by default
+        // targets: getBundleTargets(config),
+        jsMinifier: JSMinifier.terser,
+        cssMinifier: CSSMinifier.cssnano,
+        extraBabelIncludes: [/node_modules/],
+
+        // set cache parent directory, will join it with `bundler-webpack`
+        // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
+        cacheDirectoryPath: getCachePath(),
+      };
+
+      let presetEnv: any = {};
+      const browsersListConfig = browsersList.loadConfig({
+        path: process.cwd(),
+      });
+      if (browsersListConfig) {
+        presetEnv.ignoreBrowserslistConfig = false;
+        presetEnv.useBuiltIns = 'entry';
+      } else {
+        const targets = getBundleTargets(config);
+        presetEnv.targets = targets;
+        buildConfig.targets = targets;
+      }
       // log for normal build
       !opts.watch && logStatus();
       await bundler.build({
         cwd: opts.cwd,
         watch: opts.watch,
-        config: {
-          alias: config.alias,
-          autoprefixer: config.autoprefixer,
-          chainWebpack: config.chainWebpack,
-          define: config.define,
-          devtool: config.sourcemap && 'source-map',
-          externals: config.externals,
-          outputPath: config.output.path,
-
-          // postcss config
-          extraPostCSSPlugins,
-          postcssLoader,
-
-          ...(config.extractCSS !== false ? {} : { styleLoader: {} }),
-
-          // less config
-          theme: config.theme,
-
-          // compatible with IE11 by default
-          targets: getBundleTargets(config),
-          jsMinifier: JSMinifier.terser,
-          cssMinifier: CSSMinifier.cssnano,
-          extraBabelIncludes: [/node_modules/],
-
-          // set cache parent directory, will join it with `bundler-webpack`
-          // ref: https://github.com/umijs/umi/blob/8dad8c5af0197cd62db11f4b4c85d6bc1db57db1/packages/bundler-webpack/src/build.ts#L32
-          cacheDirectoryPath: getCachePath(),
-        },
+        config: buildConfig,
         entry: {
           [path.parse(config.output.filename).name]: path.join(
             opts.cwd,
@@ -99,9 +114,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         babelPreset: [
           require.resolve('@umijs/babel-preset-umi'),
           {
-            presetEnv: {
-              targets: getBundleTargets(config),
-            },
+            presetEnv,
             presetReact: getBabelPresetReactOpts(
               opts.configProvider.pkg,
               opts.cwd,
