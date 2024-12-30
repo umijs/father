@@ -55,8 +55,8 @@ function dealResult(result: any, args: ILoaderArgs) {
     fs.copyFileSync(args.fileAbsPath, fileDistAbsPath);
   }
   logger.quietExpect.event(
-    `Bundless ${chalk.gray(path.basename(fileDistAbsPath))} to ${chalk.gray(
-      args.fileDistPath,
+    `Bundless ${chalk.gray(path.basename(args.fileAbsPath))} to ${chalk.gray(
+      replacePathExt(args.fileDistPath, result.options.ext),
     )}${result?.options.declaration ? ' (with declaration)' : ''}`,
   );
   // prepare for declaration

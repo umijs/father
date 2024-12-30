@@ -112,7 +112,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           },
         ],
         beforeBabelPlugins: [
-          require.resolve('babel-plugin-dynamic-import-node'),
           ...(babelSCOpts
             ? [[require.resolve('babel-plugin-styled-components'), babelSCOpts]]
             : []),
@@ -123,7 +122,11 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         // configure library related options
         chainWebpack(memo: any) {
           memo.output.libraryTarget('umd');
-
+          memo.merge({
+            output: {
+              asyncChunks: false,
+            },
+          });
           if (config?.name) {
             memo.output.library(config.name);
           }
