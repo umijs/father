@@ -70,7 +70,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           devtool: config.sourcemap && 'source-map',
           externals: config.externals,
           outputPath: config.output.path,
-
           // postcss config
           extraPostCSSPlugins,
           postcssLoader,
@@ -82,7 +81,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
 
           // compatible with IE11 by default
           targets: getBundleTargets(config),
-          jsMinifier: JSMinifier.terser,
+          jsMinifier: config.jsMinifier || JSMinifier.terser,
           cssMinifier: CSSMinifier.cssnano,
           extraBabelIncludes: [/node_modules/],
 
