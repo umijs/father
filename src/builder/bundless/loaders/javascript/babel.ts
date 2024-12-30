@@ -1,5 +1,6 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import { winPath } from '@umijs/utils';
+import browsersList from 'browserslist';
 import path from 'path';
 import { IFatherBundlessTypes } from '../../../../types';
 import {
@@ -28,6 +29,16 @@ function getParsedDefine(define: Record<string, string>) {
  * babel transformer
  */
 const babelTransformer: IJSTransformerFn = function (content) {
+  let presetEnv: any = {
+    modules: this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
+  };
+  const browsersListConfig = browsersList.loadConfig({ path: this.paths.cwd });
+  if (browsersListConfig) {
+    presetEnv.ignoreBrowserslistConfig = false;
+  } else {
+    presetEnv.targets = getBundlessTargets(this.config);
+  }
+
   const {
     extraBabelPlugins = [],
     extraBabelPresets = [],
@@ -36,10 +47,7 @@ const babelTransformer: IJSTransformerFn = function (content) {
   } = this.config;
   // TODO: correct optional in umi types and replace any here
   const presetOpts: any = {
-    presetEnv: {
-      targets: getBundlessTargets(this.config),
-      modules: this.config.format === IFatherBundlessTypes.ESM ? false : 'auto',
-    },
+    presetEnv,
     presetReact: getBabelPresetReactOpts(
       this.pkg,
       path.dirname(this.paths.fileAbsPath),

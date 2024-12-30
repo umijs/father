@@ -75,6 +75,7 @@
     "@types/minimatch": "3.0.5",
     "@types/node": "^18.15.13",
     "@umijs/test": "^4.0.68",
+    "browserslist": "^4.24.3",
     "git-repo-info": "^2.1.1",
     "husky": "^8.0.3",
     "jest": "^27",
