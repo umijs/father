@@ -81,7 +81,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
 
           // compatible with IE11 by default
           targets: getBundleTargets(config),
-          jsMinifier: config.jsMinifier,
+          jsMinifier: config.jsMinifier || JSMinifier.terser,
           cssMinifier: CSSMinifier.cssnano,
           extraBabelIncludes: [/node_modules/],
 
