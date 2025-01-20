@@ -19,6 +19,7 @@ export default (api: IApi) => {
           api.service.configManager!.mainConfigFile,
         ].filter(Boolean) as string[],
       });
+      await api.applyPlugins({ key: 'onAllBuildComplete' });
     },
   });
 };
