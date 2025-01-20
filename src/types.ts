@@ -68,6 +68,11 @@ export type IApi = PluginAPI &
      */
     config: Omit<IFatherConfig, 'extends'>;
     userConfig: IFatherConfig;
+
+    /**
+     * lifecycle
+     */
+    onAllBuildComplete: () => void;
   };
 
 export enum IFatherBuildTypes {

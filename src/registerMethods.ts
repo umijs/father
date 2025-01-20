@@ -6,6 +6,7 @@ export default (api: IApi) => {
     'addRegularCheckup',
     'addSourceCheckup',
     'addImportsCheckup',
+    'onAllBuildComplete',
   ].forEach((name) => {
     api.registerMethod({ name });
   });
