@@ -63,7 +63,7 @@
     "piscina": "^4.6.1",
     "tsconfig-paths": "4.0.0",
     "typescript": "5.7.2",
-    "typescript-transform-paths": "3.4.6",
+    "typescript-transform-paths": "3.5.3",
     "v8-compile-cache": "2.3.0"
   },
   "devDependencies": {
