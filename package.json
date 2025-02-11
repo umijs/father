@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "4.5.2",
+  "version": "4.5.3",
   "description": "A bundless/bundle build tool",
   "homepage": "https://github.com/umijs/father#readme",
   "bugs": "https://github.com/umijs/father/issues",
@@ -42,7 +42,7 @@
     ]
   },
   "dependencies": {
-    "@microsoft/api-extractor": "7.39.1",
+    "@microsoft/api-extractor": "7.48.1",
     "@umijs/babel-preset-umi": "^4.4.4",
     "@umijs/bundler-utils": "^4.4.4",
     "@umijs/bundler-webpack": "^4.4.4",
@@ -62,8 +62,8 @@
     "minimatch": "3.1.2",
     "piscina": "^4.6.1",
     "tsconfig-paths": "4.0.0",
-    "typescript": "~5.3.3",
-    "typescript-transform-paths": "3.4.6",
+    "typescript": "5.4.2",
+    "typescript-transform-paths": "3.4.7",
     "v8-compile-cache": "2.3.0"
   },
   "devDependencies": {
