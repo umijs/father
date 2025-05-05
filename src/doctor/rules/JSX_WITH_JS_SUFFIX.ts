@@ -36,7 +36,7 @@ const hasJSX = (code: string) => {
 };
 
 export default (api: IApi) => {
-  api.addSourceCheckup(({ file, content }) => {
+  api.addJSXSourceCheckup(({ file, content }) => {
     // 文件后缀名为 js 并且文件内容包含 JSX 语法
     if (/\.js$/.test(file) && hasJSX(content)) {
       return {

@@ -126,7 +126,7 @@ export default async (api: IApi): Promise<IDoctorReport> => {
     const fileContent = fs.readFileSync(path.join(api.cwd, file), 'utf-8');
     JSXReport.push(
       ...(await api.applyPlugins({
-        key: 'addSourceCheckup',
+        key: 'addJSXSourceCheckup',
         args: {
           file,
           content: fileContent,
@@ -144,6 +144,7 @@ export default async (api: IApi): Promise<IDoctorReport> => {
     );
   }
   const filteredJSX = JSXReport.filter(Boolean);
+  console.log('qly ~ filteredJSX:', filteredJSX);
   if (filteredJSX.length) {
     console.log(`
 ${chalk.red('ERROR')} These files has JSX syntax, but file suffix is '.js'
