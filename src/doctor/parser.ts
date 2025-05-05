@@ -30,7 +30,6 @@ export default async (
     write: false,
     // enable bundle for trigger onResolve hook, but all deps will be externalized
     bundle: true,
-    loader: { '.js': 'jsx' },
     logLevel: 'silent',
     format: 'esm',
     target: 'esnext',
