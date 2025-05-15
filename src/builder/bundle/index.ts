@@ -106,7 +106,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               opts.cwd,
             ),
             presetTypeScript: {},
-            pluginTransformRuntime: {},
+            pluginTransformRuntime: config.transformRuntime || {},
             pluginLockCoreJS: {},
             pluginDynamicImportNode: false,
           },
