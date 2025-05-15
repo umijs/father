@@ -213,6 +213,13 @@ export default {
 
 指定产物的输出目录及输出文件名，输出目录的默认值为 `dist/umd`，输出文件名在单 `entry` 时默认以 NPM 包名命名、多 `entry` 时默认与源码文件同名。
 
+#### transformRuntime
+
+- 类型：`{ absoluteRuntime?: string }`
+- 默认值：`{}`
+
+配置 transform-runtime 插件的部分功能。
+
 #### externals
 
 - 类型：`Record<string, string>`
