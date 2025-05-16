@@ -42,7 +42,7 @@
     ]
   },
   "dependencies": {
-    "@microsoft/api-extractor": "7.48.1",
+    "@microsoft/api-extractor": "7.43.7",
     "@umijs/babel-preset-umi": "^4.4.11",
     "@umijs/bundler-utils": "^4.4.11",
     "@umijs/bundler-webpack": "^4.4.11",
