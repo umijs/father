@@ -124,6 +124,16 @@ export interface IFatherBaseConfig {
   extraBabelPlugins?: IBundlerWebpackConfig['extraBabelPlugins'];
 
   /**
+   * configure transform runtime
+   */
+  transformRuntime?: {
+    /**
+     * absolute dir path which contains @babel/runtime
+     */
+    absoluteRuntime?: string;
+  };
+
+  /**
    * output sourcemap
    */
   sourcemap?: boolean;

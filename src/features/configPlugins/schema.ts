@@ -65,6 +65,9 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
           Joi.array(),
         ),
         generateUnminified: Joi.boolean().optional(),
+        transformRuntime: Joi.object({
+          absoluteRuntime: Joi.string().optional(),
+        }).optional(),
         chainWebpack: Joi.function().optional(),
         extractCSS: Joi.boolean().optional(),
         name: Joi.string().optional(),
