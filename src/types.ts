@@ -39,6 +39,13 @@ export type IApi = PluginAPI &
       },
       IDoctorReport | IDoctorReport[0] | void
     >;
+    addJSXSourceCheckup: IAdd<
+      {
+        file: string;
+        content: string;
+      },
+      IDoctorReport | IDoctorReport[0] | void
+    >;
     addSourceCheckup: IAdd<
       {
         file: string;
