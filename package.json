@@ -63,8 +63,7 @@
     "piscina": "^4.6.1",
     "tsconfig-paths": "4.0.0",
     "typescript": "5.4.2",
-    "typescript-transform-paths": "3.4.7",
-    "v8-compile-cache": "2.3.0"
+    "typescript-transform-paths": "3.4.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",
