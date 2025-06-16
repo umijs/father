@@ -29,6 +29,9 @@ importers:
       '@umijs/utils':
         specifier: ^4.4.11
         version: 4.4.11
+      '@utoo/pack':
+        specifier: link:../mako/packages/pack
+        version: link:../mako/packages/pack
       '@vercel/ncc':
         specifier: 0.33.3
         version: 0.33.3
@@ -168,6 +171,21 @@ importers:
       rimraf:
         specifier: 3.0.2
         version: 3.0.2
+
+  examples/utoo-pack:
+    dependencies:
+      '@utoo/pack':
+        specifier: link:../mako/packages/pack
+        version: link:../mako/packages/pack
+      father:
+        specifier: workspace:*
+        version: link:../..
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
 
   tests/fixtures/build/automatic-jsx:
     dependencies:

@@ -1,4 +1,6 @@
+import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
 import { semver } from '@umijs/utils';
+import type { ExternalConfig } from '@utoo/pack/cjs/types';
 import { createHash } from 'crypto';
 import path from 'path';
 import {
@@ -141,4 +143,128 @@ export function getBabelStyledComponentsOpts(pkg: IApi['pkg']) {
 
 export function getContentHash(content: string, length = 8) {
   return createHash('md5').update(content).digest('hex').slice(0, length);
+}
+
+/**
+ * Convert webpack externals configuration to utoo-pack externals format
+ * @param externals webpack externals configuration
+ * @returns utoo-pack externals configuration
+ */
+export function convertExternalsToUtooPackExternals(
+  externals?: IBundlerWebpackConfig['externals'],
+): Record<string, ExternalConfig> | undefined {
+  if (!externals) {
+    return undefined;
+  }
+
+  // Handle different webpack externals formats
+  if (typeof externals === 'string') {
+    // Single string external: "lodash" -> { "lodash": "lodash" }
+    return { [externals]: externals };
+  }
+
+  if (Array.isArray(externals)) {
+    // Array of externals: ["lodash", "react"] -> { "lodash": "lodash", "react": "react" }
+    return externals.reduce((acc, external) => {
+      if (typeof external === 'string') {
+        acc[external] = external;
+      } else if (typeof external === 'object' && external !== null) {
+        Object.assign(acc, convertExternalsToUtooPackExternals(external));
+      }
+      return acc;
+    }, {} as Record<string, ExternalConfig>);
+  }
+
+  if (typeof externals === 'object' && externals !== null) {
+    const result: Record<string, ExternalConfig> = {};
+
+    Object.entries(externals).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        // Check if it's a script type with shorthand syntax: "global@https://example.com/script.js"
+        if (
+          value.includes('@') &&
+          (value.startsWith('script ') || value.includes('://'))
+        ) {
+          const match = value.match(/^(?:script\s+)?(.+?)@(.+)$/);
+          if (match) {
+            const [, globalName, scriptUrl] = match;
+            // Use utoo-pack string format: "script globalName@url"
+            result[key] = `script ${globalName}@${scriptUrl}`;
+          } else {
+            result[key] = value;
+          }
+        } else {
+          // Simple string mapping: { "react": "React" }
+          result[key] = value;
+        }
+      } else if (Array.isArray(value)) {
+        // Array format handling
+        if (value.length >= 2) {
+          const [first, second] = value;
+
+          // Check if it's a script type array: ["https://example.com/script.js", "GlobalName"]
+          if (
+            typeof first === 'string' &&
+            first.includes('://') &&
+            typeof second === 'string'
+          ) {
+            // Use utoo-pack object format for script
+            result[key] = {
+              root: second,
+              type: 'script',
+              script: first,
+            };
+          } else if (typeof first === 'string' && typeof second === 'string') {
+            // Handle type prefix formats
+            if (first.startsWith('commonjs')) {
+              result[key] = `commonjs ${second}`;
+            } else if (first === 'module') {
+              result[key] = `esm ${second}`;
+            } else if (
+              first === 'var' ||
+              first === 'global' ||
+              first === 'window'
+            ) {
+              result[key] = second;
+            } else if (first === 'script') {
+              // Script type without URL in array format - treat as regular script prefix
+              result[key] = `script ${second}`;
+            } else {
+              result[key] = `${first} ${second}`;
+            }
+          } else {
+            result[key] = value[0] || key;
+          }
+        } else {
+          result[key] = value[0] || key;
+        }
+      } else if (typeof value === 'object' && value !== null) {
+        // Object format: handle complex configurations
+        if ('root' in value || 'commonjs' in value || 'amd' in value) {
+          // Standard webpack externals object format
+          if (value.commonjs) {
+            result[key] = `commonjs ${value.commonjs}`;
+          } else if (value.root) {
+            result[key] = value.root;
+          } else if (value.amd) {
+            result[key] = value.amd;
+          } else {
+            result[key] = key;
+          }
+        } else {
+          // Treat as utoo-pack specific configuration (might already be in correct format)
+          result[key] = value as ExternalConfig;
+        }
+      } else {
+        // Fallback to key name
+        result[key] = key;
+      }
+    });
+
+    return result;
+  }
+
+  // Function and RegExp externals are not supported in utoo-pack
+  // Return empty object to avoid errors
+  return {};
 }

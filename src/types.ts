@@ -96,6 +96,11 @@ export enum IFatherBundlessTypes {
   CJS = 'cjs',
 }
 
+export enum IFatherBundlerTypes {
+  WEBPACK = 'webpack',
+  UTOO_PACK = 'utoo-pack',
+}
+
 export interface IFatherBaseConfig {
   /**
    * compile platform
@@ -142,6 +147,11 @@ export interface IFatherBaseConfig {
    * compile targets
    */
   targets?: Record<string, number>;
+
+  /**
+   * bundler type - webpack or utoo-pack
+   */
+  bundler?: `${IFatherBundlerTypes}`;
 }
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {
