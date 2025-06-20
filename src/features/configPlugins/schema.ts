@@ -73,6 +73,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         name: Joi.string().optional(),
         theme: Joi.object().pattern(Joi.string(), Joi.string()),
         bundler: Joi.string().optional(),
+        rootPath: Joi.string().optional(),
       }),
     prebundle: (Joi) =>
       Joi.object({

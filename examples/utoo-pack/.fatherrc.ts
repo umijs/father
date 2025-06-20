@@ -6,6 +6,7 @@ export default defineConfig({
     bundler: 'utoo-pack',
     // bundler: 'webpack',
     generateUnminified: true,
+    rootPath: path.resolve(__dirname, '../../'),
   },
   alias: {
     '@': path.resolve(__dirname, './src'),

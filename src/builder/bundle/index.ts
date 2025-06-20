@@ -205,8 +205,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
                 import: path.join(opts.cwd, config.entry),
                 // set umd config.
                 library: {
-                  name: entryName,
-                  export: ['default'],
+                  export: [],
                 },
               },
             ],
@@ -238,7 +237,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           buildId: '',
         };
         const projectPath = opts.cwd;
-        const rootPath = path.resolve(projectPath, '../../');
+        const rootPath = config.rootPath ?? projectPath;
         await utooPackBundler.build(utooPackOpts, projectPath, rootPath);
       } else {
         await webpackBundler.build(webpackBundlerOpts as any);

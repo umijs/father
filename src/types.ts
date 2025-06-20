@@ -152,6 +152,15 @@ export interface IFatherBaseConfig {
    * bundler type - webpack or utoo-pack
    */
   bundler?: `${IFatherBundlerTypes}`;
+
+  /**
+   * root path for utoo-pack
+   *
+   * when you use utoo pack under monorepo, you should use this set monorepo rootPath
+   *
+   * it will help find the root node_modules for utoo-pack resolver.
+   */
+  rootPath?: string;
 }
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {
