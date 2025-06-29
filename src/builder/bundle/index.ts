@@ -1,6 +1,6 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
-import type { BuildOptions } from '@utoo/pack/esm/types';
+import type { BundleOptions } from '@utoo/pack/esm/types';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
@@ -196,9 +196,8 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       };
       if (config.bundler === 'utoo-pack') {
         const entryName = path.parse(config.output.filename).name;
-        const utooPackOpts: BuildOptions = {
+        const utooPackOpts: BundleOptions = {
           config: {
-            // target: getBundleTargets(config),
             entry: [
               {
                 name: entryName,
