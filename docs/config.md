@@ -2,6 +2,18 @@
 
 father 支持以下配置项。
 
+## 环境变量
+
+### FATHER_TSCONFIG_NAME
+
+- 默认值：tsconfig.name
+
+在许多项目中，供编辑器使用的 `tsconfig` 配置并不适合直接用来构建，因此可能需要提供一个 `tsconfig.build.json` 来定制构建的规则。
+
+```bash
+FATHER_TSCONFIG_NAME=tsconfig.build.json father build
+```
+
 ## 公共配置
 
 ### alias
