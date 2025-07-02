@@ -223,7 +223,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               minify: config.jsMinifier !== JSMinifier.none,
             },
           },
-          processDefineEnv: {
+          defineEnv: {
             client: [],
             nodejs: [],
             edge: [],
