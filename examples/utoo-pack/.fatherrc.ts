@@ -7,6 +7,11 @@ export default defineConfig({
     // bundler: 'webpack',
     generateUnminified: true,
     rootPath: path.resolve(__dirname, '../../'),
+    name: 'utoo-pack-example',
+    externals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
+    },
   },
   alias: {
     '@': path.resolve(__dirname, './src'),

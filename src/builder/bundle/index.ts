@@ -204,6 +204,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
                 import: path.join(opts.cwd, config.entry),
                 // set umd config.
                 library: {
+                  name: config.name,
                   export: [],
                 },
               },
