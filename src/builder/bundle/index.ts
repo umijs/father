@@ -197,7 +197,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       if (config.bundler === 'utoo-pack') {
         const entryName = path.parse(config.output.filename).name;
         const externals = convertExternalsToUtooPackExternals(config.externals);
-        console.log('externals', externals);
         const utooPackOpts: BundleOptions = {
           config: {
             entry: [
