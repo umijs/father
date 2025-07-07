@@ -239,22 +239,7 @@ export function convertExternalsToUtooPackExternals(
           result[key] = value[0] || key;
         }
       } else if (typeof value === 'object' && value !== null) {
-        // Object format: handle complex configurations
-        if ('root' in value || 'commonjs' in value || 'amd' in value) {
-          // Standard webpack externals object format
-          if (value.commonjs) {
-            result[key] = `commonjs ${value.commonjs}`;
-          } else if (value.root) {
-            result[key] = value.root;
-          } else if (value.amd) {
-            result[key] = value.amd;
-          } else {
-            result[key] = key;
-          }
-        } else {
-          // Treat as utoo-pack specific configuration (might already be in correct format)
-          result[key] = value as ExternalConfig;
-        }
+        result[key] = value as ExternalConfig;
       } else {
         // Fallback to key name
         result[key] = key;

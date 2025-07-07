@@ -9,8 +9,14 @@ export default defineConfig({
     rootPath: path.resolve(__dirname, '../../'),
     name: 'utoo-pack-example',
     externals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
+      react: {
+        root: 'React',
+        commonjs: 'react',
+      },
+      'react-dom': {
+        root: 'ReactDOM',
+        commonjs: 'react-dom',
+      },
     },
   },
   alias: {
