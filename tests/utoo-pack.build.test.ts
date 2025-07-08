@@ -12,7 +12,6 @@ const UTOO_PACK_NOT_SUPORTED_CASES = [
   'bundle-chain-webpack',
   'styled-components',
   'bundle-externals',
-  'bundle-extract-css',
   'bundle-platform-node',
   'bundle-theme',
 ];
@@ -25,7 +24,7 @@ const setupRcFileMocks = (cases, casesDir) => {
       console.log(originalModule.default, 'originalModule');
       originalModule.default.umd &&
         (originalModule.default.umd = {
-          name: 'mamo_build_test',
+          name: 'utoo_build_test',
           ...originalModule.default.umd,
           bundler: 'utoo-pack',
           rootPath: path.resolve(__dirname, '../'),

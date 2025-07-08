@@ -217,6 +217,10 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             sourceMaps: Boolean(config.sourcemap),
             externals,
             define: config.define,
+            styles: {
+              // @ts-ignore
+              inlineCss: {},
+            },
             output: {
               path: config.output.path,
               filename: config.output.filename,
