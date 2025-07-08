@@ -1,17 +1,24 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
+import type { BundleOptions } from '@utoo/pack/esm/types';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
 import {
+  convertExternalsToUtooPackExternals,
   getBabelPresetReactOpts,
   getBabelStyledComponentsOpts,
   getBundleTargets,
 } from '../utils';
 
-const bundler: typeof import('@umijs/bundler-webpack') = importLazy(
+const webpackBundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
 );
+
+const utooPackBundler: typeof import('@utoo/pack') = importLazy(
+  path.dirname(require.resolve('@utoo/pack/package.json')),
+);
+
 const {
   CSSMinifier,
   JSMinifier,
@@ -59,7 +66,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
 
       // log for normal build
       !opts.watch && logStatus();
-      await bundler.build({
+      const webpackBundlerOpts = {
         cwd: opts.cwd,
         watch: opts.watch,
         config: {
@@ -186,7 +193,60 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             }
           : {}),
         disableCopy: true,
-      });
+      };
+      if (config.bundler === 'utoo-pack') {
+        const entryName = path.parse(config.output.filename).name;
+        const externals = convertExternalsToUtooPackExternals(config.externals);
+        const utooPackOpts: BundleOptions = {
+          config: {
+            entry: [
+              {
+                name: entryName,
+                import: path.join(opts.cwd, config.entry),
+                // set umd config.
+                library: {
+                  name: config.name,
+                  export: [],
+                },
+              },
+            ],
+            mode: opts.watch ? 'development' : 'production',
+            resolve: {
+              alias: config.alias,
+            },
+            sourceMaps: Boolean(config.sourcemap),
+            externals,
+            define: config.define,
+            styles: {
+              // @ts-ignore
+              inlineCss: {},
+            },
+            output: {
+              path: config.output.path,
+              filename: config.output.filename,
+            },
+            optimization: {
+              minify: config.jsMinifier !== JSMinifier.none,
+            },
+          },
+          defineEnv: {
+            client: [],
+            nodejs: [],
+            edge: [],
+          },
+          processEnv: {},
+          watch: {
+            enable: opts.watch ?? false,
+          },
+          dev: opts.watch ?? false,
+          buildId: '',
+        };
+        const projectPath = opts.cwd;
+        const rootPath = config.rootPath ?? projectPath;
+        await utooPackBundler.build(utooPackOpts, projectPath, rootPath);
+      } else {
+        await webpackBundler.build(webpackBundlerOpts as any);
+      }
     }
   }
 
