@@ -1,8 +1,10 @@
+import { mockProcessExit } from 'jest-mock-process';
 import path from 'path';
 import * as cli from '../src/cli/cli';
 import { distToMap, getDirCases } from './utils';
 
 const CASES_DIR = path.join(__dirname, 'fixtures/build');
+const mockExit = mockProcessExit();
 
 beforeAll(() => {
   process.env.FATHER_CACHE = 'none';
@@ -11,6 +13,7 @@ beforeAll(() => {
 afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
+  mockExit.mockRestore();
 });
 
 // generate cases
