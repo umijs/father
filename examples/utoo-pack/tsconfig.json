@@ -13,7 +13,8 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "hello-a": ["./src/a.ts"]
     }
   }
 }

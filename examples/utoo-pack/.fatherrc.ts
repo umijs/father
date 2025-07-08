@@ -18,11 +18,9 @@ export default defineConfig({
         commonjs: 'react-dom',
       },
     },
-  },
-  alias: {
-    '@': path.resolve(__dirname, './src'),
-    'hello-a': path.resolve(__dirname, './src/a.tsx'),
-    'hello-foo': path.resolve(__dirname, './src/foo.ts'),
+    alias: {
+      'hello-a': './src/a.ts',
+    },
   },
   platform: 'browser',
 });
