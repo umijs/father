@@ -26,7 +26,7 @@ const setupRcFileMocks = (cases, casesDir) => {
         (originalModule.default.umd = {
           name: 'utoo_build_test',
           ...originalModule.default.umd,
-          bundler: 'utoo-pack',
+          bundler: 'utoopack',
           rootPath: path.resolve(__dirname, '../'),
         });
       return {
@@ -62,7 +62,7 @@ const cases = difference(
 ) as string[];
 if (!isWindows) {
   for (let name of cases) {
-    test(`utoo-pack build: ${name}`, async () => {
+    test(`utoopack build: ${name}`, async () => {
       // execute build
       process.env.APP_ROOT = path.join(global.CASES_DIR, name);
       await cli.run({
@@ -77,5 +77,5 @@ if (!isWindows) {
     });
   }
 } else {
-  test.skip('utoo-pack test cases should be skipped on Windows', () => {});
+  test.skip('utoopack test cases should be skipped on Windows', () => {});
 }

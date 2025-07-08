@@ -98,7 +98,7 @@ export enum IFatherBundlessTypes {
 
 export enum IFatherBundlerTypes {
   WEBPACK = 'webpack',
-  UTOO_PACK = 'utoo-pack',
+  UTOO_PACK = 'utoopack',
 }
 
 export interface IFatherBaseConfig {
@@ -149,16 +149,16 @@ export interface IFatherBaseConfig {
   targets?: Record<string, number>;
 
   /**
-   * bundler type - webpack or utoo-pack
+   * bundler type - webpack or utoopack
    */
   bundler?: `${IFatherBundlerTypes}`;
 
   /**
-   * root path for utoo-pack
+   * root path for utoopack
    *
-   * when you use utoo pack under monorepo, you should use this set monorepo rootPath
+   * when you use utoopack under monorepo, you should use this set monorepo rootPath
    *
-   * it will help find the root node_modules for utoo-pack resolver.
+   * it will help find the root node_modules for utoopack resolver.
    */
   rootPath?: string;
 }

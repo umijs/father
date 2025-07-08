@@ -146,9 +146,9 @@ export function getContentHash(content: string, length = 8) {
 }
 
 /**
- * Convert webpack externals configuration to utoo-pack externals format
+ * Convert webpack externals configuration to utoopack externals format
  * @param externals webpack externals configuration
- * @returns utoo-pack externals configuration
+ * @returns utoopack externals configuration
  */
 export function convertExternalsToUtooPackExternals(
   externals?: IBundlerWebpackConfig['externals'],
@@ -249,7 +249,7 @@ export function convertExternalsToUtooPackExternals(
     return result;
   }
 
-  // Function and RegExp externals are not supported in utoo-pack
+  // Function and RegExp externals are not supported in utoopack
   // Return empty object to avoid errors
   return {};
 }
