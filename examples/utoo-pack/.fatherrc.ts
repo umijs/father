@@ -3,7 +3,7 @@ const path = require('path');
 
 export default defineConfig({
   umd: {
-    bundler: 'utoo-pack',
+    bundler: 'utoopack',
     // bundler: 'webpack',
     generateUnminified: true,
     rootPath: path.resolve(__dirname, '../../'),
