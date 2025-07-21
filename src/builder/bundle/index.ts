@@ -245,7 +245,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         const rootPath = config.rootPath ?? projectPath;
         await utooPackBundler.build(utooPackOpts, projectPath, rootPath);
       } else {
-        logger.event(
+        logger.info(
           `father v4.6.1 已支持 ${chalk.green(
             'Rust Bundler utoopack',
           )} 打包 umd，使用 \`umd.bundler: 'utoopack'\` 配置开启`,
