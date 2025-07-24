@@ -32,6 +32,7 @@ beforeAll(() => {
 afterAll(() => {
   delete process.env.APP_ROOT;
   delete process.env.FATHER_CACHE;
+  delete process.env.FATHER_TSCONFIG_NAME;
   mockExit.mockRestore();
   jest.unmock('@umijs/utils');
 });
@@ -76,6 +77,23 @@ test('config: nested extends', async () => {
   // prepare file map
   const fileMap = distToMap(
     path.join(CASES_DIR, 'config-nested-extends', 'dist'),
+  );
+
+  // check result
+  require(`${process.env.APP_ROOT}/expect`).default(fileMap);
+});
+
+test('config: custom tsconfig name', async () => {
+  // execute build
+  process.env.FATHER_TSCONFIG_NAME = 'tsconfig.build.json';
+  process.env.APP_ROOT = path.join(CASES_DIR, 'config-custom-tsconfig-name');
+  await cli.run({
+    args: { _: ['build'], $0: 'node' },
+  });
+
+  // prepare file map
+  const fileMap = distToMap(
+    path.join(CASES_DIR, 'config-custom-tsconfig-name', 'dist'),
   );
 
   // check result
