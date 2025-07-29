@@ -8,7 +8,7 @@
     "version": "father version"
   },
   "dependencies": {
-    "@utoo/pack": "0.0.1-alpha.2",
+    "@utoo/pack": "0.0.1-alpha.28",
     "father": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

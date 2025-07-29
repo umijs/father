@@ -218,7 +218,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             externals,
             define: config.define,
             styles: {
-              // @ts-ignore
               inlineCss: {},
             },
             output: {

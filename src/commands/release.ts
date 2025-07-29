@@ -1,5 +1,5 @@
-import { logger } from '../utils';
 import { IApi } from '../types';
+import { logger } from '../utils';
 
 export default (api: IApi) => {
   api.registerCommand({

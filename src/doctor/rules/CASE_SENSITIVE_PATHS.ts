@@ -1,13 +1,13 @@
-import type { IDoctorReport } from '..';
-import type { IApi } from '../../types';
-import fs from 'fs';
-import enhancedResolve from 'enhanced-resolve';
 import CaseSensitivePathsPlugin from '@umijs/case-sensitive-paths-webpack-plugin';
 import { chalk } from '@umijs/utils';
+import enhancedResolve from 'enhanced-resolve';
+import fs from 'fs';
+import type { IDoctorReport } from '..';
+import type { IApi } from '../../types';
 
 export default (api: IApi) => {
   const checker = new CaseSensitivePathsPlugin();
-  let resolver: ReturnType<typeof enhancedResolve['create']['sync']>;
+  let resolver: ReturnType<(typeof enhancedResolve)['create']['sync']>;
   let aliasKeys: string[];
 
   // set fs for checker
