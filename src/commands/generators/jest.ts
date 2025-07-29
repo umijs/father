@@ -1,8 +1,8 @@
 import { GeneratorType } from '@umijs/core';
-import { logger } from '../../utils';
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
+import { logger } from '../../utils';
 import { GeneratorHelper, promptsExitWhenCancel } from './utils';
 
 export default (api: IApi) => {

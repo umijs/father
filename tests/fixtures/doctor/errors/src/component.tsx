@@ -1,1 +1,1 @@
-export { default } from './CamelCase'
+export { default } from './CamelCase';

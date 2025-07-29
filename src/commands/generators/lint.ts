@@ -1,8 +1,8 @@
 import { GeneratorType } from '@umijs/core';
 import { getNpmClient } from '@umijs/utils';
 import { IApi } from '../../types';
-import { GeneratorHelper } from './utils';
 import { logger } from '../../utils';
+import { GeneratorHelper } from './utils';
 
 export default (api: IApi) => {
   api.describe({

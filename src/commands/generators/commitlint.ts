@@ -5,8 +5,8 @@ import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
-import { GeneratorHelper } from './utils';
 import { logger } from '../../utils';
+import { GeneratorHelper } from './utils';
 
 export default (api: IApi) => {
   api.describe({

@@ -1,9 +1,9 @@
 import { GeneratorType } from '@umijs/core';
-import { logger } from '../../utils';
 import fg from 'fast-glob';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
+import { logger } from '../../utils';
 import { GeneratorHelper } from './utils';
 
 export default (api: IApi) => {

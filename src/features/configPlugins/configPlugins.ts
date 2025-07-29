@@ -1,5 +1,5 @@
-import path from 'path';
 import { deepmerge, resolve } from '@umijs/utils';
+import path from 'path';
 import { IApi } from '../../types';
 import { getSchemas } from './schema';
 

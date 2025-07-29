@@ -150,6 +150,15 @@ export default {
 
 配置将源码打包为 UMD 产物，支持以下子配置项，也支持覆盖外部的公共配置项。
 
+#### bundler
+
+- 类型: `'webpack' | 'utoopack'`
+- 默认值: `'webpack'`
+
+用于指定 UMD 构建的 bundler 类型，默认为 `webpack`，utoopack 为 utoo 工具链的 Rust Bundler(对比 Webpack 约有 3x - 5x 的构建速度提升)，参考: [Utoo bundler](https://github.com/umijs/mako?tab=readme-ov-file#%EF%B8%8F-bundler)。
+
+开启 `utoopack` 之后，注意 webpack 相关的一些配置不再兼容，例如 chainWebpack 等。
+
 #### name
 
 - 类型：`string`

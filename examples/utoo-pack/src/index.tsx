@@ -6,15 +6,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { a } from '@/a';
-import { a as a1 } from 'hello-a';
+// import { a as a1 } from 'hello-a';
 
-console.log(a, a1);
+console.log(a);
+// console.log(a1);
 
-function App({content}:{content:string}) {
+function App({ content }: { content: string }) {
   // @ts-ignore
   return <div>{content}</div>;
 }
 
 // @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App content={'hello'}/>);
+root.render(<App content={'hello'} />);

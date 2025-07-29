@@ -1,6 +1,6 @@
+import { winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
-import { winPath } from '@umijs/utils';
 
 /**
  * read dist directory to file map
