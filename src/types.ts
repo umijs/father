@@ -262,6 +262,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * @note When set to true, unminified js file will be generated in the same directory without sourcemap.
    */
   generateUnminified?: boolean;
+
+  /**
+   * copy
+   */
+  copy?: IBundlerWebpackConfig['copy'];
 }
 
 export interface IFatherPreBundleConfig {

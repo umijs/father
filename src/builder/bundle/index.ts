@@ -5,6 +5,7 @@ import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
 import {
+  convertCopyConfig,
   convertExternalsToUtooPackExternals,
   getBabelPresetReactOpts,
   getBabelStyledComponentsOpts,
@@ -196,7 +197,9 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       };
       if (config.bundler === 'utoopack') {
         const entryName = path.parse(config.output.filename).name;
+        const distPath = config.output.path;
         const externals = convertExternalsToUtooPackExternals(config.externals);
+        const copy = convertCopyConfig(config.copy, distPath);
         const utooPackOpts: BundleOptions = {
           config: {
             entry: [
@@ -221,8 +224,9 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               inlineCss: {},
             },
             output: {
-              path: config.output.path,
+              path: distPath,
               filename: config.output.filename,
+              copy,
             },
             optimization: {
               minify: config.jsMinifier !== JSMinifier.none,
