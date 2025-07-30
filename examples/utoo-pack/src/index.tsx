@@ -11,6 +11,8 @@ import { a } from '@/a';
 console.log(a);
 // console.log(a1);
 
+console.log(require('alias-module'));
+
 function App({ content }: { content: string }) {
   // @ts-ignore
   return <div>{content}</div>;

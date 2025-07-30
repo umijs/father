@@ -22,7 +22,14 @@ export default defineConfig({
     },
     alias: {
       'hello-a': './src/a.ts',
+      'alias-module': path.join(__dirname, 'src/alias'),
     },
+    copy: [
+      {
+        from: './src/reset.css',
+        to: './reset.css',
+      },
+    ],
   },
   platform: 'browser',
 });

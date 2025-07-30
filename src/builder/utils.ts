@@ -1,4 +1,7 @@
-import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
+import type {
+  IConfig as IBundlerWebpackConfig,
+  ICopy,
+} from '@umijs/bundler-webpack/dist/types';
 import { semver } from '@umijs/utils';
 import type { ExternalConfig } from '@utoo/pack/cjs/types';
 import { createHash } from 'crypto';
@@ -252,4 +255,29 @@ export function convertExternalsToUtooPackExternals(
   // Function and RegExp externals are not supported in utoopack
   // Return empty object to avoid errors
   return {};
+}
+
+export function convertCopyConfig(
+  copy?: IBundlerWebpackConfig['copy'],
+  distPath?: string,
+): Array<ICopy> {
+  if (!copy) {
+    return [];
+  }
+
+  return [
+    ...copy.map((pattern) => {
+      if (typeof pattern === 'string') {
+        return {
+          from: pattern,
+          to: distPath ?? '',
+        };
+      } else {
+        return {
+          from: pattern.from,
+          to: pattern.to,
+        };
+      }
+    }),
+  ];
 }
