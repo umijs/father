@@ -160,7 +160,6 @@ export function normalizeUserConfig(
             ...singleConfig,
             entry,
             jsMinifier: JSMinifier.none,
-            sourcemap: false,
             output: {
               filename: entryOutput.filename || `${path.parse(entry).name}.js`,
               path: entryOutput.path || output.path || 'dist/umd',
@@ -183,7 +182,6 @@ export function normalizeUserConfig(
           ...bundleConfig,
           entry: defaultEntry,
           jsMinifier: JSMinifier.none,
-          sourcemap: false,
           output: {
             filename: output.filename
               ? `${output.filename}`
