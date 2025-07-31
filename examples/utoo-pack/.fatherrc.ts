@@ -8,6 +8,7 @@ export default defineConfig({
     generateUnminified: true,
     rootPath: path.resolve(__dirname, '../../'),
     name: 'utoo-pack-example',
+    sourcemap: false,
     externals: {
       react: {
         root: 'React',
