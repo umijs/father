@@ -267,6 +267,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * copy
    */
   copy?: IBundlerWebpackConfig['copy'];
+
+  /**
+   * scope hoisting
+   */
+  concatenateModules?: boolean;
 }
 
 export interface IFatherPreBundleConfig {
