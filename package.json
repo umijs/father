@@ -49,7 +49,7 @@
     "@umijs/case-sensitive-paths-webpack-plugin": "^1.0.1",
     "@umijs/core": "^4.4.11",
     "@umijs/utils": "^4.4.11",
-    "@utoo/pack": "0.0.1-alpha.35",
+    "@utoo/pack": "0.0.1-alpha.36",
     "@vercel/ncc": "0.33.3",
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-module-resolver": "4.1.0",

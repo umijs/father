@@ -77,6 +77,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
         copy: Joi.array()
           .items(Joi.object().pattern(Joi.string(), Joi.string()))
           .optional(),
+        concatenateModules: Joi.boolean().optional(),
       }),
     prebundle: (Joi) =>
       Joi.object({

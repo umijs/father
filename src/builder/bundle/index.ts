@@ -230,6 +230,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             },
             optimization: {
               minify: config.jsMinifier !== JSMinifier.none,
+              concatenateModules: config.concatenateModules,
             },
           },
           defineEnv: {
