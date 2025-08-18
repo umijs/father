@@ -23,7 +23,6 @@ const setupRcFileMocks = (cases, casesDir) => {
     const rcFilePath = path.join(casesDir, name, '.fatherrc.ts');
     jest.doMock(rcFilePath, () => {
       const originalModule = jest.requireActual(rcFilePath);
-      console.log(originalModule.default, 'originalModule');
       originalModule.default.umd &&
         (originalModule.default.umd = {
           name: 'utoo_build_test',
