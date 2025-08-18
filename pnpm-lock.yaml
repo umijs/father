@@ -30,8 +30,8 @@ importers:
         specifier: ^4.4.12
         version: 4.4.12
       '@utoo/pack':
-        specifier: 0.0.1-alpha.36
-        version: 0.0.1-alpha.36(@types/webpack@5.28.5)(webpack@5.80.0)
+        specifier: 0.0.1-alpha.39
+        version: 0.0.1-alpha.39(@types/webpack@5.28.5)(webpack@5.80.0)
       '@vercel/ncc':
         specifier: 0.33.3
         version: 0.33.3
@@ -4011,8 +4011,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-darwin-arm64@0.0.1-alpha.36:
-    resolution: {integrity: sha512-u+KgAf66aB5DDKbKJPJyITSvgLlWluCwzy2Ew6QKg+MfJ04frB7FZ6BYanH6ckrVvSvdgZaYjdOBLqz7YMsSHA==}
+  /@utoo/pack-darwin-arm64@0.0.1-alpha.39:
+    resolution: {integrity: sha512-2Y52p6FqRECDELe/bH9UAk4mvjYc9SIuYYSIJnZBXPucF05KmUjZS2vz5JYpICxKoIU5vbW9jY/kuwUB2JNQxw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -4029,8 +4029,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-darwin-x64@0.0.1-alpha.36:
-    resolution: {integrity: sha512-+xcO1HOydAY6odlFEbKb8iHlFNIo2WKT0W+kEFSNKyL+Qg1ATZeqI5SGmA1sPKTLt/zs2msHG4HKLMWedIUycQ==}
+  /@utoo/pack-darwin-x64@0.0.1-alpha.39:
+    resolution: {integrity: sha512-vVD5VBw9MqOzaiEKQ0CA+HCvUW4Y4vmMqyet4XlKSzxO0YYWxtAZwLTr89tgtA6xCkpNtFBbVKusFww/lhKEjQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -4047,8 +4047,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-linux-arm64-gnu@0.0.1-alpha.36:
-    resolution: {integrity: sha512-JALnQsi6NV8TWkIQusyVTn1Xd5S+3LKUYn2pLnEnVt+RabjILe3KMVZRVRUvaUzOCtznk4Q4QMHoPdNdHWzH7g==}
+  /@utoo/pack-linux-arm64-gnu@0.0.1-alpha.39:
+    resolution: {integrity: sha512-UJjfC+uPNafsbDsU3Zr2YK6fg0iE5F8QyixPpuq3rw8yceCHhlinMUm6uGTflcq/eTt0piDAo9lgsa8aFfJOfg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -4065,8 +4065,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-linux-arm64-musl@0.0.1-alpha.36:
-    resolution: {integrity: sha512-AxYsYQAc/c0xoxQUCK1oGO0M40793bPGXJ6DZ9Kki37skNybDqLSEw3TOKqaXQb6eCkANb6bS7cx4SQikenDWw==}
+  /@utoo/pack-linux-arm64-musl@0.0.1-alpha.39:
+    resolution: {integrity: sha512-3Ud5MBOYbOlzdOaCEQOUJA+sDvVjvRKVi4U1vEiiVA4vUvkh6bdZ35M/a4nqPgihgYWo1Ov86lzwA70C8rnO2w==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -4083,8 +4083,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-linux-x64-gnu@0.0.1-alpha.36:
-    resolution: {integrity: sha512-RqgPTseIdaohv8iLWG4kcOyr0Xnf1PgX6d+u4kSqnc77Mlgk5a8hn62VLIv3Bv6YWHP0La/Jx1WvORPM/tE8cg==}
+  /@utoo/pack-linux-x64-gnu@0.0.1-alpha.39:
+    resolution: {integrity: sha512-DcAkBPmJgfnsVVzkmCYWS66bgsy8oElUDX2b9Pkqi78bQARs7QFTpiu76toxJynAWkFiOOJ+41xYo3ZtepWGog==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -4101,8 +4101,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-linux-x64-musl@0.0.1-alpha.36:
-    resolution: {integrity: sha512-KK5ZE5zo/e46zTuYiqETfirWRaG/Z48zHxeWmH1dCJP9WBbv6ke6Ir0Wo+FXuCU4DoCaMwzTgPby40+ePqlTpQ==}
+  /@utoo/pack-linux-x64-musl@0.0.1-alpha.39:
+    resolution: {integrity: sha512-qdomM9Ri8qIIttRUF6VL6JxATgqz+CsYM4bXJt57r8lrb6MaeolKMxz/Gyrh/S1ufcPiMBn3qlw6RTnIZKU69g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -4119,8 +4119,8 @@ packages:
     dev: false
     optional: true
 
-  /@utoo/pack-win32-x64-msvc@0.0.1-alpha.36:
-    resolution: {integrity: sha512-G+QFeEYsoMt9x+nZA0pIx6tj4IQyflKv68Q4hoQCSIqttuwygrWVmYky5DOF+HN/Nc4Q2+0yow8JMlZVAGljtQ==}
+  /@utoo/pack-win32-x64-msvc@0.0.1-alpha.39:
+    resolution: {integrity: sha512-RIThSCgu+c87DnPcievPRn+cpNsh/O7sPpdZqtuWj5v7L3N8wBf6hE/vaetzlRWTsdb03eTpzLUMyJCDumD6Ig==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -4168,8 +4168,8 @@ packages:
       - webpack
     dev: false
 
-  /@utoo/pack@0.0.1-alpha.36(@types/webpack@5.28.5)(webpack@5.80.0):
-    resolution: {integrity: sha512-p8XlhjAz4goYmYn57RUOGn9QrhljLVi6wxORQ8QBtDvsz7iz3TZ4ZBIYcHBSxhapID8iI98yaVZ+sqRSyJ0TOg==}
+  /@utoo/pack@0.0.1-alpha.39(@types/webpack@5.28.5)(webpack@5.80.0):
+    resolution: {integrity: sha512-aWlOBvGvCwZvsOJw1UPavMh+UiHRR36HU85ojew/ZJAokrIzozP9m+B2YcLP3GBp2k28M/H5cKrsiwGDIznzJA==}
     engines: {node: '>= 10'}
     peerDependencies:
       '@types/webpack': ^5.28.5
@@ -4191,13 +4191,13 @@ packages:
       send: 0.17.1
       ws: 8.18.2
     optionalDependencies:
-      '@utoo/pack-darwin-arm64': 0.0.1-alpha.36
-      '@utoo/pack-darwin-x64': 0.0.1-alpha.36
-      '@utoo/pack-linux-arm64-gnu': 0.0.1-alpha.36
-      '@utoo/pack-linux-arm64-musl': 0.0.1-alpha.36
-      '@utoo/pack-linux-x64-gnu': 0.0.1-alpha.36
-      '@utoo/pack-linux-x64-musl': 0.0.1-alpha.36
-      '@utoo/pack-win32-x64-msvc': 0.0.1-alpha.36
+      '@utoo/pack-darwin-arm64': 0.0.1-alpha.39
+      '@utoo/pack-darwin-x64': 0.0.1-alpha.39
+      '@utoo/pack-linux-arm64-gnu': 0.0.1-alpha.39
+      '@utoo/pack-linux-arm64-musl': 0.0.1-alpha.39
+      '@utoo/pack-linux-x64-gnu': 0.0.1-alpha.39
+      '@utoo/pack-linux-x64-musl': 0.0.1-alpha.39
+      '@utoo/pack-win32-x64-msvc': 0.0.1-alpha.39
     transitivePeerDependencies:
       - '@rspack/core'
       - bufferutil
