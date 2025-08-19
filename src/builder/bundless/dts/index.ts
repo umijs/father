@@ -13,7 +13,11 @@ export function getTsconfigPath(cwd: string) {
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
 
-  return ts.findConfigFile(cwd, ts.sys.fileExists);
+  return ts.findConfigFile(
+    cwd,
+    ts.sys.fileExists,
+    process.env.FATHER_TSCONFIG_NAME,
+  );
 }
 
 /**
