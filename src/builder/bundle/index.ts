@@ -246,7 +246,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           buildId: '',
         };
         const projectPath = opts.cwd;
-        const rootPath = config.rootPath ?? projectPath;
+        const rootPath = config.rootPath;
         await utooPackBundler.build(utooPackOpts, projectPath, rootPath);
       } else {
         await webpackBundler.build(webpackBundlerOpts as any);
