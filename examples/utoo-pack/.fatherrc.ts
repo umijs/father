@@ -6,7 +6,6 @@ export default defineConfig({
     bundler: 'utoopack',
     // bundler: 'webpack',
     generateUnminified: true,
-    rootPath: path.resolve(__dirname, '../../'),
     name: 'utoo-pack-example',
     sourcemap: false,
     externals: {
