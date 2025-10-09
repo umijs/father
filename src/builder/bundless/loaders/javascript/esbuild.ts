@@ -2,7 +2,7 @@ import { winPath } from '@umijs/utils';
 import { build } from 'esbuild';
 import path from 'path';
 import { IFatherBundlessConfig } from '../../../../types';
-import { getBundlessTargets } from '../../../utils';
+import { getBundlessTargets, getEsbuildJsxOpts } from '../../../utils';
 import type { IJSTransformerFn } from '../types';
 
 /**
@@ -44,6 +44,11 @@ function createAliasReplacer(opts: { alias: IFatherBundlessConfig['alias'] }) {
  */
 const esbuildTransformer: IJSTransformerFn = async function () {
   const replacer = createAliasReplacer({ alias: this.config.alias });
+  // get jsx transform options based on React version and tsconfig
+  const jsxOpts = getEsbuildJsxOpts(
+    this.pkg,
+    path.dirname(this.paths.fileAbsPath),
+  );
 
   let { outputFiles } = await build({
     // do not emit file
@@ -62,6 +67,8 @@ const esbuildTransformer: IJSTransformerFn = async function () {
     platform: this.config.platform,
     target: getBundlessTargets(this.config),
     charset: 'utf8',
+    // apply jsx transform options
+    ...jsxOpts,
     // esbuild need relative entry path
     entryPoints: [path.relative(this.paths.cwd, this.paths.fileAbsPath)],
     absWorkingDir: this.paths.cwd,

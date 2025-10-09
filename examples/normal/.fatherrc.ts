@@ -2,7 +2,7 @@ import { defineConfig } from '../../dist';
 const path = require('path');
 
 export default defineConfig({
-  esm: {},
+  esm: { input: 'src', output: 'dist/esm', transformer: 'esbuild' },
   cjs: {},
   umd: {},
   alias: {

@@ -72,6 +72,28 @@ export function getSWCTransformReactOpts(pkg: IApi['pkg'], cwd: string) {
   };
 }
 
+export function getEsbuildJsxOpts(
+  pkg: IApi['pkg'],
+  cwd: string,
+): { jsx?: 'automatic' | 'transform'; jsxDev?: boolean } {
+  const baseOpts = getBaseTransformReactOpts(pkg, cwd);
+
+  if (!baseOpts) {
+    return {};
+  }
+
+  // esbuild jsx options
+  // ref: https://esbuild.github.io/api/#jsx
+  return {
+    jsx:
+      baseOpts.runtime === 'automatic'
+        ? ('automatic' as const)
+        : ('transform' as const),
+    jsxDev: baseOpts.development,
+    // jsxImportSource defaults to 'react' when jsx is 'automatic'
+  };
+}
+
 export function ensureRelativePath(relativePath: string) {
   // prefix . for same-level path
   if (!relativePath.startsWith('.')) {
