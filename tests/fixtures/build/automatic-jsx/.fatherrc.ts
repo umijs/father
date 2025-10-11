@@ -1,4 +1,4 @@
 export default {
-  esm: {},
+  esm: { input: 'src', output: 'dist/esm', transformer: 'esbuild' },
   umd: {},
 };
