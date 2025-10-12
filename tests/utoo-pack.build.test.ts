@@ -15,7 +15,6 @@ const UTOO_PACK_NOT_SUPORTED_CASES = [
   'bundle-externals',
   'bundle-platform-node',
   'bundle-theme',
-  'bundle-alias',
 ];
 
 const setupRcFileMocks = (cases, casesDir) => {
@@ -61,7 +60,7 @@ const cases = difference(
   getDirCases(global.CASES_DIR),
   UTOO_PACK_NOT_SUPORTED_CASES,
 ) as string[];
-if (!isWindows && !isLinux) {
+if (!isWindows) {
   for (let name of cases) {
     test(`utoopack build: ${name}`, async () => {
       // execute build
