@@ -15,7 +15,7 @@ const UTOO_PACK_NOT_SUPORTED_CASES = [
   'bundle-externals',
   'bundle-platform-node',
   'bundle-theme',
-  'bundle-alias',
+  'bundler-alias',
 ];
 
 const setupRcFileMocks = (cases, casesDir) => {
