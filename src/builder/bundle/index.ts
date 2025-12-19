@@ -139,9 +139,14 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             memo.output.library(config.name);
           }
 
-          // modify webpack target
+          // modify webpack target and disable browser polyfills for node platform
           if (config.platform === 'node') {
             memo.target('node');
+            // Remove browser polyfills for process/Buffer that are injected by
+            // @umijs/bundler-webpack's addNodePolyfill, as they override Node.js
+            // built-ins with browser shims, breaking CLI tools that rely on
+            // process.argv, process.exit, etc.
+            memo.plugins.delete('node-polyfill-provider');
           }
 
           if (enableCache) {
