@@ -1,6 +1,6 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
-import type { BundleOptions } from '@utoo/pack/esm/types';
+import type { BundleOptions } from '@utoo/pack';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';

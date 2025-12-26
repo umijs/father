@@ -3,7 +3,7 @@ import type {
   ICopy,
 } from '@umijs/bundler-webpack/dist/types';
 import { semver } from '@umijs/utils';
-import type { ExternalConfig } from '@utoo/pack/cjs/types';
+import type { ExternalConfig } from '@utoo/pack';
 import { createHash } from 'crypto';
 import path from 'path';
 import {

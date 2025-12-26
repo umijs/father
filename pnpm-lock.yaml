@@ -12,23 +12,23 @@ importers:
         specifier: 7.43.7
         version: 7.43.7(@types/node@18.15.13)
       '@umijs/babel-preset-umi':
-        specifier: ^4.6.9
-        version: 4.6.9
+        specifier: ^4.6.15
+        version: 4.6.15
       '@umijs/bundler-utils':
-        specifier: ^4.6.9
-        version: 4.6.9
+        specifier: ^4.6.15
+        version: 4.6.15
       '@umijs/bundler-webpack':
-        specifier: ^4.6.9
-        version: 4.6.9(typescript@5.4.2)(webpack@5.80.0)
+        specifier: ^4.6.15
+        version: 4.6.15(typescript@5.4.2)(webpack@5.80.0)
       '@umijs/case-sensitive-paths-webpack-plugin':
         specifier: ^1.0.1
         version: 1.0.1
       '@umijs/core':
-        specifier: ^4.6.9
-        version: 4.6.9
+        specifier: ^4.6.15
+        version: 4.6.15
       '@umijs/utils':
-        specifier: ^4.6.9
-        version: 4.6.9
+        specifier: ^4.6.15
+        version: 4.6.15
       '@utoo/pack':
         specifier: 1.1.12
         version: 1.1.12(less-loader@12.3.0)(less@4.3.0)(postcss@8.4.31)(resolve-url-loader@5.0.0)(sass-loader@13.3.3)(sass@1.54.0)
@@ -3778,24 +3778,24 @@ packages:
     dependencies:
       '@types/yargs-parser': 21.0.0
 
-  /@umijs/babel-preset-umi@4.6.9:
-    resolution: {integrity: sha512-nXukHW/Xihu0HPqdg7cTbMLXFquQks/2hirNyZarfjAQL560sELuglTgPzwjIpzwOrKBwC6Hb5C2vpr2jL0DzQ==}
+  /@umijs/babel-preset-umi@4.6.15:
+    resolution: {integrity: sha512-AP3Ap1iGQXKxf6FT2+DSyKm7O547DaAMBHJ7cnyDFWO1ixn3LTpYsgGjpPSogopdcpPLhQzfuq9EcuIXe7AFPQ==}
     dependencies:
       '@babel/runtime': 7.23.6
       '@bloomberg/record-tuple-polyfill': 0.0.4
-      '@umijs/bundler-utils': 4.6.9
-      '@umijs/utils': 4.6.9
+      '@umijs/bundler-utils': 4.6.15
+      '@umijs/utils': 4.6.15
       core-js: 3.34.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@umijs/bundler-esbuild@4.6.9:
-    resolution: {integrity: sha512-J5IAzr5jDD3Hf02Ih8ygnOCJ55sDpf7tk9NKGssohRlMJzS/JM9A0zOwhorflPt0JRwRTVYzz2G3s1DTG5bebg==}
+  /@umijs/bundler-esbuild@4.6.15:
+    resolution: {integrity: sha512-pkkGe6V7iRfWfKXrnemmRYuYfwYeq39x0It/J687dDftkc5AzZEdPMQrcy9woE1eJDsv7glHEbu2LCPFo8KEyw==}
     hasBin: true
     dependencies:
-      '@umijs/bundler-utils': 4.6.9
-      '@umijs/utils': 4.6.9
+      '@umijs/bundler-utils': 4.6.15
+      '@umijs/utils': 4.6.15
       enhanced-resolve: 5.9.3
       postcss: 8.4.31
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.31)
@@ -3816,10 +3816,10 @@ packages:
       - supports-color
     dev: true
 
-  /@umijs/bundler-utils@4.6.9:
-    resolution: {integrity: sha512-6Vp8vIQnfqBpkCEb/V9juJt0lSfretynsSey15FAB3FtQUQFGP6UvyrC+Em9m+NzqPdhyC9rGrJdxrlZlxWEPg==}
+  /@umijs/bundler-utils@4.6.15:
+    resolution: {integrity: sha512-7No97uwjkRg+IfAD5XPcP4/OR+PgKNu0T9jmL52St/sQ/VU6QXhJibJBYaGJETihn5xRfnAi2K+efq4UZ3TD5g==}
     dependencies:
-      '@umijs/utils': 4.6.9
+      '@umijs/utils': 4.6.15
       esbuild: 0.21.4
       regenerate: 1.4.2
       regenerate-unicode-properties: 10.1.1
@@ -3828,20 +3828,20 @@ packages:
       - supports-color
     dev: false
 
-  /@umijs/bundler-webpack@4.6.9(typescript@5.4.2)(webpack@5.80.0):
-    resolution: {integrity: sha512-PA3VaMZ52PRUn+4th+vx+wu7mDAsrltxyNjLocEt/kdcu+BpyDwivf6qWFJVKCBa1ny8mPpBrV6mPYLGNtF1uw==}
+  /@umijs/bundler-webpack@4.6.15(typescript@5.4.2)(webpack@5.80.0):
+    resolution: {integrity: sha512-/lBDFGBGLUUstSIUq6dgJXd8PLoq70MmKAFrZ3438sVuVMMkUw3tv5cKVstL+Z4TYYA1yvwYuVAenepK6BLvRA==}
     hasBin: true
     dependencies:
       '@svgr/core': 6.5.1
       '@svgr/plugin-jsx': 6.5.1(@svgr/core@6.5.1)
       '@svgr/plugin-svgo': 6.5.1(@svgr/core@6.5.1)
       '@types/hapi__joi': 17.1.9
-      '@umijs/babel-preset-umi': 4.6.9
-      '@umijs/bundler-utils': 4.6.9
+      '@umijs/babel-preset-umi': 4.6.15
+      '@umijs/bundler-utils': 4.6.15
       '@umijs/case-sensitive-paths-webpack-plugin': 1.0.1
-      '@umijs/mfsu': 4.6.9
+      '@umijs/mfsu': 4.6.15
       '@umijs/react-refresh-webpack-plugin': 0.5.11(react-refresh@0.14.0)(webpack@5.80.0)
-      '@umijs/utils': 4.6.9
+      '@umijs/utils': 4.6.15
       cors: 2.8.5
       css-loader: 6.7.1(webpack@5.80.0)
       es5-imcompatible-versions: 0.1.80
@@ -3869,21 +3869,21 @@ packages:
     resolution: {integrity: sha512-kDKJ8yTarxwxGJDInG33hOpaQRZ//XpNuuznQ/1Mscypw6kappzFmrBr2dOYave++K7JHouoANF354UpbEQw0Q==}
     dev: false
 
-  /@umijs/core@4.6.9:
-    resolution: {integrity: sha512-Z9B3SoiYuobu9ZEiRuDewPHKvhBFILlTPom0HPbCIp46yPvGMP9YhEhXt0wI30yim1XKfBfiS+5weP4/gK6gVg==}
+  /@umijs/core@4.6.15:
+    resolution: {integrity: sha512-ozZsLlL49Tx88aAE4q5oLWadr3J0rvyODkmCsnxgVTkUrb23p7a0RAhgENl5jsghANJ21WMQYUT7RrUncJ0trg==}
     dependencies:
-      '@umijs/bundler-utils': 4.6.9
-      '@umijs/utils': 4.6.9
+      '@umijs/bundler-utils': 4.6.15
+      '@umijs/utils': 4.6.15
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@umijs/mfsu@4.6.9:
-    resolution: {integrity: sha512-iqc4KifYxn9qAzm+xP/ON1LmCeOq8z6cjNaV0Taso/ZyUd/AAE+GfEHeV4VC8+DTjAeYfKULe1nOCaAFtEu1Bg==}
+  /@umijs/mfsu@4.6.15:
+    resolution: {integrity: sha512-P3/yGr3zMdp63WdC/FpDn/OyNVclEPm6VDXYfnJn1dOW0E4X9cFLmRv/s+8oEfc0P9PicffXoDLJsl7gwuynXA==}
     dependencies:
-      '@umijs/bundler-esbuild': 4.6.9
-      '@umijs/bundler-utils': 4.6.9
-      '@umijs/utils': 4.6.9
+      '@umijs/bundler-esbuild': 4.6.15
+      '@umijs/bundler-utils': 4.6.15
+      '@umijs/utils': 4.6.15
       enhanced-resolve: 5.9.3
       is-equal: 1.6.4
     transitivePeerDependencies:
@@ -3959,8 +3959,8 @@ packages:
       pino: 7.11.0
     dev: true
 
-  /@umijs/utils@4.6.9:
-    resolution: {integrity: sha512-tR58YcJR4J2dAG3gMlTksfjL/N8vFFt2T+v/dceN8aLc5YUk87G041VO/9yjcC2o6vbConOsFf8E53wkDAj5Vw==}
+  /@umijs/utils@4.6.15:
+    resolution: {integrity: sha512-59Cz/EpjoQH5UVmmzoOYFH5e86dpNbNMSbq4+v4URJTTkff2NGaIjeKD0FqdK0LGoO8p9X5oe7MPzZ6qzpsIIA==}
     dependencies:
       chokidar: 3.5.3
       pino: 7.11.0
@@ -4047,9 +4047,6 @@ packages:
       resolve-url-loader: ^5.0.0
       sass: 1.54.0
       sass-loader: ^13.2.0
-    peerDependenciesMeta:
-      postcss:
-        optional: true
     dependencies:
       '@babel/code-frame': 7.22.5
       '@swc/helpers': 0.5.15
