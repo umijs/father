@@ -1,6 +1,7 @@
 import type { webpack } from '@umijs/bundler-webpack';
 import { chalk, importLazy, lodash } from '@umijs/utils';
 import type { BundleOptions } from '@utoo/pack';
+import fs from 'fs';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
 import type { BundleConfigProvider } from '../config';
@@ -37,6 +38,23 @@ interface IBundleOpts {
   buildDependencies?: string[];
   watch?: boolean;
   incremental?: boolean;
+}
+
+function resolveEntryPath(entryPath: string): string {
+  // If path already has an extension, return as is
+  if (path.extname(entryPath)) {
+    return entryPath;
+  }
+
+  const extensions = ['.ts', '.tsx', '.js', '.jsx'];
+  for (const ext of extensions) {
+    const fullPath = `${entryPath}${ext}`;
+    if (fs.existsSync(fullPath)) {
+      return fullPath;
+    }
+  }
+
+  return entryPath;
 }
 
 function bundle(
@@ -205,13 +223,13 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         const distPath = config.output.path;
         const externals = convertExternalsToUtooPackExternals(config.externals);
         const copy = convertCopyConfig(config.copy, distPath);
+        const entryPath = resolveEntryPath(path.join(opts.cwd, config.entry));
         const utooPackOpts: BundleOptions = {
           config: {
             entry: [
               {
                 name: entryName,
-                import: path.join(opts.cwd, config.entry),
-                // set umd config.
+                import: entryPath,
                 library: {
                   name: config.name,
                   export: [],
