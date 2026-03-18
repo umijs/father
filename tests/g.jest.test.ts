@@ -44,8 +44,8 @@ describe('jest generator', function () {
     expect(existsSync(jestConfPath)).toBeTruthy();
     expect(pkg['scripts']).toMatchObject({ test: 'jest' });
     expect(pkg['devDependencies']).toMatchObject({
-      jest: '^27',
-      '@types/jest': '^27',
+      jest: '^29',
+      '@types/jest': '^29',
       typescript: '^4',
       'ts-node': '^10',
       '@umijs/test': '^4',

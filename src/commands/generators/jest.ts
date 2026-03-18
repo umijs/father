@@ -34,8 +34,8 @@ export default (api: IApi) => {
       });
 
       const basicDeps = {
-        jest: '^27',
-        '@types/jest': '^27',
+        jest: '^29',
+        '@types/jest': '^29',
         // we use `jest.config.ts` so jest needs ts and ts-node
         typescript: '^4',
         'ts-node': '^10',

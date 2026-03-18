@@ -256,12 +256,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               concatenateModules: config.concatenateModules,
             },
           },
-          defineEnv: {
-            client: [],
-            nodejs: [],
-            edge: [],
-          },
-          processEnv: {},
           watch: {
             enable: opts.watch ?? false,
           },
