@@ -220,6 +220,8 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       };
       if (config.bundler === 'utoopack') {
         const entryName = path.parse(config.output.filename).name;
+        const cssFilename =
+          config.output.filename.replace(/\.[^.]+$/, '') + '.css';
         const distPath = config.output.path;
         const externals = convertExternalsToUtooPackExternals(config.externals);
         const copy = convertCopyConfig(config.copy, distPath);
@@ -244,11 +246,12 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             externals,
             define: config.define,
             styles: {
-              inlineCss: {},
+              ...(config.extractCSS !== false ? {} : { inlineCss: {} }),
             },
             output: {
               path: distPath,
               filename: config.output.filename,
+              cssFilename,
               copy,
             },
             optimization: {
