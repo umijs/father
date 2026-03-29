@@ -219,6 +219,15 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         disableCopy: true,
       };
       if (config.bundler === 'utoopack') {
+        try {
+          const pkg = require(path.join(
+            require.resolve('@utoo/pack'),
+            '../../package.json',
+          ));
+          logger.info(`Using @utoo/pack@${pkg.version}`);
+        } catch (e) {
+          console.error(e);
+        }
         const entryName = path.parse(config.output.filename).name;
         const cssFilename =
           config.output.filename.replace(/\.[^.]+$/, '') + '.css';
