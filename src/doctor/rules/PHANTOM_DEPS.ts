@@ -1,4 +1,5 @@
 import { chalk } from '@umijs/utils';
+import { isAbsolute } from 'path';
 import type { IDoctorReport } from '..';
 import type { IApi } from '../../types';
 import { getPkgNameFromPath } from '../../utils';
@@ -20,18 +21,20 @@ export default (api: IApi) => {
         aliasKeys.every((k) => k !== i.path && !i.path.startsWith(`${k}/`)) &&
         !mergedExternals[i.path]
       ) {
-        let resolvedPath: string;
+        let isThirdParty: boolean;
 
         try {
-          resolvedPath = require.resolve(pkgName, { paths: [api.cwd] });
+          const resolvedPath = require.resolve(pkgName, { paths: [api.cwd] });
+          // Node.js builtins resolve to non-absolute paths (e.g. 'fs'),
+          // while third-party and monorepo sibling packages resolve to absolute paths
+          isThirdParty = isAbsolute(resolvedPath);
         } catch {
           // take unresolved modules as third party modules
           // because require.resolve not support esm package
-          resolvedPath = 'node_modules';
+          isThirdParty = true;
         }
 
-        // for compatible with Node.js standard library, such as fs, path, etc.
-        if (resolvedPath.includes('node_modules')) {
+        if (isThirdParty) {
           errors.push({
             type: 'error',
             problem: `Source depends on \`${pkgName}\`, but there is no declaration of it
