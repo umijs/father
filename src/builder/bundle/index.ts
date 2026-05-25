@@ -274,6 +274,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               path: distPath,
               filename: config.output.filename,
               cssFilename: '[name].css',
+              assetModuleFilename: 'static/[name].[contenthash:8]',
               copy,
             },
             optimization: {
