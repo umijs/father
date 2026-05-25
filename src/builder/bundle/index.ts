@@ -57,6 +57,18 @@ function resolveEntryPath(entryPath: string): string {
   return entryPath;
 }
 
+function getUtooPackVersion() {
+  try {
+    const pkg = require(path.join(
+      require.resolve('@utoo/pack'),
+      '../../package.json',
+    ));
+    return pkg.version as string | undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function bundle(
   opts: Omit<IBundleOpts, 'watch' | 'incremental'>,
 ): Promise<void>;
@@ -64,6 +76,8 @@ function bundle(opts: IBundleOpts): Promise<IBundleWatcher>;
 async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
   const enableCache = process.env.FATHER_CACHE !== 'none';
   const closeHandlers: webpack.Watching['close'][] = [];
+  let utooPackVersion: string | undefined;
+  let hasLoggedUtooPackVersion = false;
 
   if (!opts.incremental) {
     for (let i = 0; i < opts.configProvider.configs.length; i += 1) {
@@ -84,7 +98,17 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       );
 
       // log for normal build
+      if (config.bundler === 'utoopack' && !hasLoggedUtooPackVersion) {
+        hasLoggedUtooPackVersion = true;
+        utooPackVersion = getUtooPackVersion();
+        logger.info(
+          `Using ${chalk.cyan('@utoo/pack')}${
+            utooPackVersion ? chalk.blueBright(`@${utooPackVersion}`) : ''
+          }`,
+        );
+      }
       !opts.watch && logStatus();
+      const startTime = Date.now();
       const webpackBundlerOpts = {
         cwd: opts.cwd,
         watch: opts.watch,
@@ -219,15 +243,6 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         disableCopy: true,
       };
       if (config.bundler === 'utoopack') {
-        try {
-          const pkg = require(path.join(
-            require.resolve('@utoo/pack'),
-            '../../package.json',
-          ));
-          logger.info(`Using @utoo/pack@${pkg.version}`);
-        } catch (e) {
-          console.error(e);
-        }
         const entryName = path.parse(config.output.filename).name;
         const cssFilename =
           config.output.filename.replace(/\.[^.]+$/, '') + '.css';
@@ -272,6 +287,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             enable: opts.watch ?? false,
           },
           dev: opts.watch ?? false,
+          tracing: false,
           buildId: '',
         };
         const projectPath = opts.cwd;
@@ -280,6 +296,12 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
       } else {
         await webpackBundler.build(webpackBundlerOpts as any);
       }
+      !opts.watch &&
+        logger.info(
+          `Compiled ${chalk.green('successfully')} in ${chalk.dim(
+            `${Date.now() - startTime} ms`,
+          )}`,
+        );
     }
   }
 
