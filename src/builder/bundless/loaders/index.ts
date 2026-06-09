@@ -24,6 +24,12 @@ export interface ILoaderArgs {
   };
 }
 
+export type IDeclarationResult = [
+  sourceFile: string,
+  outputDir: string,
+  compiler?: NonNullable<IBundlessConfig['dts']>['compiler'],
+];
+
 function replacePathExt(filePath: string, ext: string) {
   const parsed = path.parse(filePath);
 
@@ -62,7 +68,11 @@ function dealResult(result: any, args: ILoaderArgs) {
   // prepare for declaration
   if (result.options.declaration) {
     // use winPath because ts compiler will convert to posix path
-    return [winPath(args.fileAbsPath), path.dirname(fileDistAbsPath)];
+    return [
+      winPath(args.fileAbsPath),
+      path.dirname(fileDistAbsPath),
+      args.opts.config.dts?.compiler,
+    ] as IDeclarationResult;
   }
 }
 
@@ -126,45 +136,47 @@ export default async (args: ILoaderArgs) => {
 
   if (matched) {
     // run matched loader
-    return new Promise<ILoaderOutput | void | string[]>((resolve, reject) => {
-      let outputOpts: ILoaderOutput['options'] = {};
-      runLoaders(
-        {
-          resource: args.fileAbsPath,
-          loaders: [{ loader: matched.loader, options: matched.options }],
-          context: {
-            cwd: args.opts.cwd,
-            config: args.opts.config,
-            transformers: args.transformers,
-            pkg: args.opts.pkg,
-            itemDistAbsPath: args.opts.itemDistAbsPath,
-            setOutputOptions(opts) {
-              outputOpts = opts;
-            },
-          } as Partial<ThisParameterType<IBundlessLoader>>,
-          readResource: fs.readFile.bind(fs),
-        },
-        (err, { result }) => {
-          if (err) {
-            reject(err);
-          } else if (result) {
-            // FIXME: handle buffer type?
-            const ret = {
-              content: result[0] as unknown as string,
-              options: outputOpts,
-            };
+    return new Promise<ILoaderOutput | void | IDeclarationResult>(
+      (resolve, reject) => {
+        let outputOpts: ILoaderOutput['options'] = {};
+        runLoaders(
+          {
+            resource: args.fileAbsPath,
+            loaders: [{ loader: matched.loader, options: matched.options }],
+            context: {
+              cwd: args.opts.cwd,
+              config: args.opts.config,
+              transformers: args.transformers,
+              pkg: args.opts.pkg,
+              itemDistAbsPath: args.opts.itemDistAbsPath,
+              setOutputOptions(opts) {
+                outputOpts = opts;
+              },
+            } as Partial<ThisParameterType<IBundlessLoader>>,
+            readResource: fs.readFile.bind(fs),
+          },
+          (err, { result }) => {
+            if (err) {
+              reject(err);
+            } else if (result) {
+              // FIXME: handle buffer type?
+              const ret = {
+                content: result[0] as unknown as string,
+                options: outputOpts,
+              };
 
-            // save cache then resolve
-            cache.set(cacheKey, ret).then(() => {
-              const declaration = dealResult(ret, args);
-              resolve(declaration);
-            });
-          } else {
-            resolve(void 0);
-          }
-        },
-      );
-    });
+              // save cache then resolve
+              cache.set(cacheKey, ret).then(() => {
+                const declaration = dealResult(ret, args);
+                resolve(declaration);
+              });
+            } else {
+              resolve(void 0);
+            }
+          },
+        );
+      },
+    );
   } else {
     fs.copyFileSync(args.fileAbsPath, args.opts.itemDistAbsPath);
   }

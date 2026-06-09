@@ -37,6 +37,25 @@ FATHER_TSCONFIG_NAME=tsconfig.build.json father build
 
 指定继承的父配置文件路径。
 
+### dts
+
+- 类型：`{ compiler?: 'tsc' | 'tsgo' }`
+- 默认值：`{ compiler: 'tsc' }`
+
+配置 TypeScript 类型声明生成方式。默认使用 father 内置的 TypeScript Compiler API；当配置为 `compiler: 'tsgo'` 时，会使用 [tsgo](https://github.com/microsoft/typescript-go) 生成 `.d.ts` 文件。
+
+```ts
+export default {
+  esm: {
+    dts: {
+      compiler: 'tsgo',
+    },
+  },
+};
+```
+
+> 注：`tsgo` 目前为实验能力，需要在项目中额外安装 `@typescript/native-preview`。
+
 ### extraBabelPlugins
 
 - 类型：`string[]`

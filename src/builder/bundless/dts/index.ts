@@ -1,9 +1,21 @@
 import { chalk, fsExtra, winPath } from '@umijs/utils';
+import { execFile } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import tsPathsTransformer from 'typescript-transform-paths';
+import { promisify } from 'util';
+import { IFatherDtsCompilerTypes } from '../../../types';
 import { getCache, getCachePath, logger } from '../../../utils';
 import { getContentHash } from '../../utils';
+
+const execFileAsync = promisify(execFile);
+
+type ParsedTsconfig = ReturnType<typeof getTsconfig>;
+type DeclarationOutput = {
+  file: string;
+  content: string;
+  sourceFile: string;
+};
 
 /**
  * get tsconfig.json path for specific path
@@ -44,12 +56,372 @@ export function getTsconfig(cwd: string) {
   }
 }
 
+function getTransformPaths(tsconfig: NonNullable<ParsedTsconfig>, cwd: string) {
+  const transformPaths: Record<string, string[]> = {};
+
+  // remove paths which out of cwd, to avoid transform to relative path by ts-paths-transformer
+  Object.keys(tsconfig.options.paths || {}).forEach((item) => {
+    const pathAbsTarget = path.resolve(
+      tsconfig.options.pathsBasePath as string,
+      tsconfig.options.paths![item][0],
+    );
+
+    if (winPath(pathAbsTarget).startsWith(`${winPath(cwd)}/`)) {
+      transformPaths[item] = tsconfig.options.paths![item];
+    } else {
+      logger.debug(
+        `Skip transform ${item} from tsconfig.paths, because it's out of cwd.`,
+      );
+    }
+  });
+
+  return transformPaths;
+}
+
+function resolveTsgoBin(cwd: string) {
+  let pkgPath: string;
+
+  try {
+    pkgPath = require.resolve('@typescript/native-preview/package.json', {
+      paths: [cwd],
+    });
+  } catch {
+    throw new Error(
+      'dts.compiler: "tsgo" requires @typescript/native-preview to be installed. Please add it to devDependencies first.',
+    );
+  }
+
+  const binPath = path.join(path.dirname(pkgPath), 'bin/tsgo.js');
+  if (!fs.existsSync(binPath)) {
+    throw new Error(`Cannot find tsgo binary at ${binPath}.`);
+  }
+
+  return binPath;
+}
+
+function isDtsOutput(filePath: string) {
+  return /\.d\.(?:[cm]ts|ts)(?:\.map)?$/.test(filePath);
+}
+
+function normalizeDtsSpecifier(filePath: string) {
+  const normalized = winPath(filePath).replace(/\.d\.(?:[cm]ts|ts)$/, '');
+  const withoutIndex = normalized.replace(/\/index$/, '');
+  return withoutIndex.startsWith('.') ? withoutIndex : `./${withoutIndex}`;
+}
+
+function getPathAliasTarget(
+  specifier: string,
+  tsconfig: NonNullable<ParsedTsconfig>,
+  transformPaths: Record<string, string[]>,
+) {
+  for (const [pattern, targets] of Object.entries(transformPaths)) {
+    const wildcardIndex = pattern.indexOf('*');
+    let matched: string | undefined;
+
+    if (wildcardIndex > -1) {
+      const prefix = pattern.slice(0, wildcardIndex);
+      const suffix = pattern.slice(wildcardIndex + 1);
+      if (specifier.startsWith(prefix) && specifier.endsWith(suffix)) {
+        matched = specifier.slice(
+          prefix.length,
+          specifier.length - suffix.length,
+        );
+      }
+    } else if (specifier === pattern) {
+      matched = '';
+    }
+
+    if (typeof matched !== 'undefined' && targets[0]) {
+      const target = targets[0].replace('*', matched);
+      return path.resolve(tsconfig.options.pathsBasePath as string, target);
+    }
+  }
+}
+
+function findSourceFileByAliasTarget(
+  aliasTarget: string,
+  tsconfig: NonNullable<ParsedTsconfig>,
+) {
+  const candidates = [
+    aliasTarget,
+    `${aliasTarget}.ts`,
+    `${aliasTarget}.tsx`,
+    `${aliasTarget}.mts`,
+    `${aliasTarget}.cts`,
+    path.join(aliasTarget, 'index.ts'),
+    path.join(aliasTarget, 'index.tsx'),
+    path.join(aliasTarget, 'index.mts'),
+    path.join(aliasTarget, 'index.cts'),
+  ].map(winPath);
+
+  return tsconfig.fileNames.find((file) => candidates.includes(winPath(file)));
+}
+
+function rewriteDtsPaths(
+  content: string,
+  currentDtsFile: string,
+  tsconfig: NonNullable<ParsedTsconfig>,
+  transformPaths: Record<string, string[]>,
+  sourceDtsFileMap: Map<string, string>,
+) {
+  return content.replace(
+    /(from\s+|import\s*(?:\(\s*)?|module\s+)(['"])([^'"]+)\2/g,
+    (raw, prefix: string, quote: string, specifier: string) => {
+      const aliasTarget = getPathAliasTarget(
+        specifier,
+        tsconfig,
+        transformPaths,
+      );
+      const targetSourceFile =
+        aliasTarget && findSourceFileByAliasTarget(aliasTarget, tsconfig);
+      const targetDtsFile =
+        targetSourceFile && sourceDtsFileMap.get(winPath(targetSourceFile));
+
+      if (!targetDtsFile) {
+        return raw;
+      }
+
+      const relativePath = path.relative(
+        path.dirname(currentDtsFile),
+        targetDtsFile,
+      );
+      return `${prefix}${quote}${normalizeDtsSpecifier(relativePath)}${quote}`;
+    },
+  );
+}
+
+function normalizeDtsMap(
+  content: string,
+  sourceFile: string,
+  finalMapFile: string,
+) {
+  try {
+    const map = JSON.parse(content);
+    map.file = path.basename(finalMapFile).replace(/\.map$/, '');
+    map.sources = [
+      winPath(path.relative(path.dirname(finalMapFile), sourceFile)),
+    ];
+    return JSON.stringify(map);
+  } catch {
+    return content;
+  }
+}
+
+function toRelativeConfigPath(fromDir: string, target: string) {
+  const relativePath = winPath(path.relative(fromDir, target));
+
+  return relativePath.startsWith('.') ? relativePath : `./${relativePath}`;
+}
+
+function getTsgoRootDir(
+  ts: typeof import('typescript'),
+  tsconfig: NonNullable<ParsedTsconfig>,
+  inputFiles: string[],
+  cwd: string,
+) {
+  return (
+    tsconfig.options.rootDir ||
+    (ts as any).getCommonSourceDirectory(
+      tsconfig.options,
+      () => inputFiles,
+      cwd,
+      (fileName: string) => fileName,
+    )
+  );
+}
+
+function writeTsgoConfig(
+  ts: typeof import('typescript'),
+  tsconfig: NonNullable<ParsedTsconfig>,
+  tsconfigPath: string,
+  inputFiles: string[],
+  cwd: string,
+  declarationDir: string,
+) {
+  const tsgoConfig = (ts as any).convertToTSConfig(
+    tsconfig,
+    tsconfigPath,
+    ts.sys,
+  );
+  const compilerOptions = {
+    ...tsgoConfig.compilerOptions,
+    declaration: true,
+    declarationDir,
+    emitDeclarationOnly: true,
+    noEmit: false,
+    rootDir: toRelativeConfigPath(
+      declarationDir,
+      getTsgoRootDir(ts, tsconfig, inputFiles, cwd),
+    ),
+  };
+  const baseUrl = compilerOptions.baseUrl;
+
+  if (compilerOptions.paths) {
+    const baseUrlAbs = path.resolve(cwd, baseUrl || '.');
+
+    compilerOptions.paths = Object.entries(compilerOptions.paths).reduce(
+      (ret, [key, values]) => ({
+        ...ret,
+        [key]: (values as string[]).map((value) =>
+          toRelativeConfigPath(declarationDir, path.resolve(baseUrlAbs, value)),
+        ),
+      }),
+      {},
+    );
+  }
+
+  delete compilerOptions.baseUrl;
+
+  const tempConfigPath = path.join(declarationDir, 'tsconfig.json');
+  fs.writeFileSync(
+    tempConfigPath,
+    JSON.stringify(
+      {
+        compilerOptions,
+        files: tsconfig.fileNames.map((file) =>
+          toRelativeConfigPath(declarationDir, file),
+        ),
+      },
+      null,
+      2,
+    ),
+  );
+
+  return tempConfigPath;
+}
+
+async function getDeclarationsByTsgo(
+  inputFiles: string[],
+  opts: {
+    cwd: string;
+    outputDirs?: Map<string, string>;
+  },
+  ts: typeof import('typescript'),
+  tsconfig: NonNullable<ParsedTsconfig>,
+  transformPaths: Record<string, string[]>,
+) {
+  const tsconfigPath = getTsconfigPath(opts.cwd);
+  const tsgoBin = resolveTsgoBin(opts.cwd);
+  const tempParent = path.join(opts.cwd, getCachePath());
+  fsExtra.ensureDirSync(tempParent);
+  const declarationDir = fs.mkdtempSync(path.join(tempParent, 'tsgo-dts-'));
+  const tsgoConfigPath = writeTsgoConfig(
+    ts,
+    tsconfig,
+    tsconfigPath!,
+    inputFiles,
+    opts.cwd,
+    declarationDir,
+  );
+  const output: DeclarationOutput[] = [];
+  const rootDir = getTsgoRootDir(ts, tsconfig, inputFiles, opts.cwd);
+
+  const tsgoTsconfig = {
+    ...tsconfig,
+    options: {
+      ...tsconfig.options,
+      declaration: true,
+      declarationDir,
+      emitDeclarationOnly: true,
+      noEmit: false,
+      rootDir,
+    },
+  };
+  const sourceDtsFileMap = new Map<string, string>();
+
+  inputFiles.forEach((file) => {
+    const dtsFile = ts
+      .getOutputFileNames(tsgoTsconfig, file, false)
+      .find((item) => /\.d\.(?:[cm]ts|ts)$/.test(item));
+    const outputDir = opts.outputDirs?.get(winPath(file));
+
+    if (dtsFile && outputDir) {
+      sourceDtsFileMap.set(
+        winPath(file),
+        path.join(outputDir, path.basename(dtsFile)),
+      );
+    }
+  });
+
+  try {
+    await execFileAsync(
+      process.execPath,
+      [
+        tsgoBin,
+        '--project',
+        tsgoConfigPath,
+        '--declarationDir',
+        declarationDir,
+        '--noEmit',
+        'false',
+        '--declaration',
+        '--emitDeclarationOnly',
+      ],
+      {
+        cwd: opts.cwd,
+        maxBuffer: 1024 * 1024 * 64,
+      },
+    );
+
+    inputFiles.forEach((sourceFile) => {
+      ts.getOutputFileNames(tsgoTsconfig, sourceFile, false)
+        .filter(isDtsOutput)
+        .forEach((fileName) => {
+          if (!fs.existsSync(fileName)) return;
+
+          const outputDir = opts.outputDirs?.get(winPath(sourceFile));
+          const finalFile = outputDir
+            ? path.join(outputDir, path.basename(fileName))
+            : fileName;
+          const isMap = fileName.endsWith('.map');
+          let content = fs.readFileSync(fileName, 'utf-8');
+
+          if (isMap) {
+            content = normalizeDtsMap(content, sourceFile, finalFile);
+          } else {
+            content = rewriteDtsPaths(
+              content,
+              finalFile,
+              tsconfig,
+              transformPaths,
+              sourceDtsFileMap,
+            );
+          }
+
+          output.push({
+            file: path.basename(fileName),
+            content,
+            sourceFile,
+          });
+        });
+    });
+  } catch (err: any) {
+    [err.stdout, err.stderr].forEach((output) => {
+      output
+        ?.toString()
+        .split('\n')
+        .filter(Boolean)
+        .forEach((line: string) => logger.error(chalk.gray('[tsgo]'), line));
+    });
+
+    throw new Error('Declaration generation failed.');
+  } finally {
+    fsExtra.removeSync(declarationDir);
+  }
+
+  return output;
+}
+
 /**
  * get declarations for specific files
  */
 export default async function getDeclarations(
   inputFiles: string[],
-  opts: { cwd: string },
+  opts: {
+    cwd: string;
+    compiler?: `${IFatherDtsCompilerTypes}`;
+    outputDirs?: Map<string, string>;
+  },
 ) {
   const cache = getCache('bundless-dts');
   const enableCache = process.env.FATHER_CACHE !== 'none';
@@ -64,7 +436,6 @@ export default async function getDeclarations(
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
   const tsconfig = getTsconfig(opts.cwd);
-  const transformPaths: Record<string, string[]> = {};
 
   if (tsconfig) {
     // check tsconfig error
@@ -96,21 +467,18 @@ export default async function getDeclarations(
       tsconfig.options.declarationMap = true;
     }
 
-    // remove paths which out of cwd, to avoid transform to relative path by ts-paths-transformer
-    Object.keys(tsconfig.options.paths || {}).forEach((item) => {
-      const pathAbsTarget = path.resolve(
-        tsconfig.options.pathsBasePath as string,
-        tsconfig.options.paths![item][0],
-      );
+    const transformPaths = getTransformPaths(tsconfig, opts.cwd);
 
-      if (winPath(pathAbsTarget).startsWith(`${winPath(opts.cwd)}/`)) {
-        transformPaths[item] = tsconfig.options.paths![item];
-      } else {
-        logger.debug(
-          `Skip transform ${item} from tsconfig.paths, because it's out of cwd.`,
-        );
-      }
-    });
+    if (opts.compiler === IFatherDtsCompilerTypes.TSGO) {
+      return getDeclarationsByTsgo(
+        inputFiles,
+        opts,
+        ts,
+        tsconfig,
+        transformPaths,
+      );
+    }
+
     // enable incremental for cache
     if (enableCache && typeof tsconfig.options.incremental === 'undefined') {
       tsconfig.options.incremental = true;

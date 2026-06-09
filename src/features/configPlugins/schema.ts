@@ -1,5 +1,9 @@
 import type { Root, SchemaLike } from '@umijs/utils/compiled/@hapi/joi';
-import { IFatherJSTransformerTypes, IFatherPlatformTypes } from '../../types';
+import {
+  IFatherDtsCompilerTypes,
+  IFatherJSTransformerTypes,
+  IFatherPlatformTypes,
+} from '../../types';
 
 function getCommonSchemas(): Record<string, (Joi: Root) => any> {
   return {
@@ -17,6 +21,13 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
     extraBabelPlugins: (Joi) => Joi.array().optional(),
     sourcemap: (Joi) => Joi.boolean().optional(),
     targets: (Joi) => Joi.object().optional(),
+    dts: (Joi) =>
+      Joi.object({
+        compiler: Joi.equal(
+          IFatherDtsCompilerTypes.TSC,
+          IFatherDtsCompilerTypes.TSGO,
+        ).optional(),
+      }).optional(),
   };
 }
 
