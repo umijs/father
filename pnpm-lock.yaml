@@ -187,6 +187,10 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@typescript/native-preview':
+        specifier: 7.0.0-dev.20260609.1
+        version: 7.0.0-dev.20260609.1
 
   tests/fixtures/build/automatic-jsx:
     dependencies:
