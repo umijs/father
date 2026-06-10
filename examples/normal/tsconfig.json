@@ -4,7 +4,6 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "module": "commonjs",
-    "moduleResolution": "node",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
@@ -13,7 +12,9 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "hello-a": ["./src/a.tsx"],
+      "hello-foo": ["./src/foo.ts"]
     }
   }
 }

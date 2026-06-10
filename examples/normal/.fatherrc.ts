@@ -5,6 +5,9 @@ export default defineConfig({
   esm: {},
   cjs: {},
   umd: {},
+  dts: {
+    compiler: 'tsgo',
+  },
   alias: {
     '@': path.resolve(__dirname, './src'),
     'hello-a': path.resolve(__dirname, './src/a.tsx'),
