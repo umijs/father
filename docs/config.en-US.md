@@ -39,7 +39,7 @@ export default {
 };
 ```
 
-> **Note**: `tsgo` is experimental and requires `@typescript/native-preview` to be installed in your project.
+> **Note**: `tsgo` is experimental and requires `@typescript/native-preview` to be installed in your project. Father's built-in `typescript` dependency is the JavaScript TypeScript Compiler API, while `tsgo` is provided by a separate native preview package and is not part of the `typescript` package. To avoid installing an experimental native binary for every user by default, father only checks for this dependency when `compiler: 'tsgo'` is enabled.
 
 ### **extraBabelPlugins**
 

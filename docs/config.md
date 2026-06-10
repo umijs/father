@@ -54,7 +54,7 @@ export default {
 };
 ```
 
-> 注：`tsgo` 目前为实验能力，需要在项目中额外安装 `@typescript/native-preview`。
+> 注：`tsgo` 目前为实验能力，需要在项目中额外安装 `@typescript/native-preview`。father 内置的 `typescript` 是 JavaScript 版 TypeScript Compiler API，而 `tsgo` 来自单独的原生预览包，并不是 `typescript` 包的一部分。为避免所有用户默认安装实验性的 native binary，father 只会在启用 `compiler: 'tsgo'` 时检查该依赖是否存在。
 
 ### extraBabelPlugins
 
