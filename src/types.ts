@@ -101,6 +101,20 @@ export enum IFatherBundlerTypes {
   UTOO_PACK = 'utoopack',
 }
 
+export enum IFatherDtsCompilerTypes {
+  TSC = 'tsc',
+  TSGO = 'tsgo',
+}
+
+export interface IFatherDtsConfig {
+  /**
+   * declaration compiler
+   * @default tsc
+   * @experimental tsgo requires @typescript/native-preview to be installed
+   */
+  compiler?: `${IFatherDtsCompilerTypes}`;
+}
+
 export interface IFatherBaseConfig {
   /**
    * compile platform
@@ -161,6 +175,11 @@ export interface IFatherBaseConfig {
    * it will help find the root node_modules for utoopack resolver.
    */
   rootPath?: string;
+
+  /**
+   * configure TypeScript declaration generation
+   */
+  dts?: IFatherDtsConfig;
 }
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {

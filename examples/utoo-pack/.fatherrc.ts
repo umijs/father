@@ -31,5 +31,10 @@ export default defineConfig({
       },
     ],
   },
+  esm: {},
+  cjs: {},
+  dts: {
+    compiler: 'tsgo',
+  },
   platform: 'browser',
 });

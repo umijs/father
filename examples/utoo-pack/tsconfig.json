@@ -4,7 +4,6 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "module": "commonjs",
-    "moduleResolution": "node",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,

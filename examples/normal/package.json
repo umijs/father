@@ -11,5 +11,8 @@
     "father": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@typescript/native-preview": "7.0.0-dev.20260609.1"
   }
 }

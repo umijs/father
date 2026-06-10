@@ -9,7 +9,7 @@ import {
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
-import type { ILoaderArgs } from './loaders';
+import type { IDeclarationResult, ILoaderArgs } from './loaders';
 import runLoaders from './loaders';
 import { IJSTransformer, IJSTransformerFn } from './loaders/types';
 import createParallelLoader from './parallelLoader';
@@ -95,7 +95,13 @@ async function transformFiles(
   try {
     let count = 0;
     let bundlessPromises = [];
-    let declarationFileMap = new Map<string, string>();
+    let declarationFileMap = new Map<
+      string,
+      {
+        outputDir: string;
+        compiler?: IDeclarationResult[2];
+      }
+    >();
 
     // process all matched items
     for (let item of files) {
@@ -145,7 +151,10 @@ async function transformFiles(
     const results = await Promise.all(bundlessPromises);
     lodash.forEach(results, (item) => {
       if (item) {
-        declarationFileMap.set(item[0], item[1]);
+        declarationFileMap.set(item[0], {
+          outputDir: item[1],
+          compiler: item[2],
+        });
       }
     });
 
@@ -153,19 +162,32 @@ async function transformFiles(
       logger.quietExpect.event(
         `Generate declaration file${declarationFileMap.size > 1 ? 's' : ''}...`,
       );
-      const declarations = await getDeclarations(
-        [...declarationFileMap.keys()],
-        {
-          cwd: opts.cwd,
-        },
+      const declarationGroups = lodash.groupBy(
+        [...declarationFileMap.entries()],
+        ([, meta]) => meta.compiler || 'tsc',
       );
-      declarations.forEach((item) => {
-        fs.writeFileSync(
-          path.join(declarationFileMap.get(item.sourceFile)!, item.file),
-          item.content,
-          'utf-8',
+
+      for (const [compiler, entries] of Object.entries(declarationGroups)) {
+        const outputDirs = new Map(
+          entries.map(([file, meta]) => [file, meta.outputDir]),
         );
-      });
+        const declarations = await getDeclarations(
+          entries.map(([file]) => file),
+          {
+            cwd: opts.cwd,
+            compiler: compiler as IDeclarationResult[2],
+            outputDirs,
+          },
+        );
+
+        declarations.forEach((item) => {
+          fs.writeFileSync(
+            path.join(outputDirs.get(item.sourceFile)!, item.file),
+            item.content,
+            'utf-8',
+          );
+        });
+      }
     }
 
     return count;

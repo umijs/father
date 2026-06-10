@@ -37,6 +37,53 @@ FATHER_TSCONFIG_NAME=tsconfig.build.json father build
 
 指定继承的父配置文件路径。
 
+### dts
+
+- 类型：`{ compiler?: 'tsc' | 'tsgo' }`
+- 默认值：`{ compiler: 'tsc' }`
+
+配置 TypeScript 类型声明生成方式。默认使用 father 内置的 TypeScript Compiler API；当配置为 `compiler: 'tsgo'` 时，会使用 [tsgo](https://github.com/microsoft/typescript-go) 生成 `.d.ts` 文件。
+
+#### 使用 tsgo
+
+开启 `compiler: 'tsgo'` 会使用 [tsgo](https://github.com/microsoft/typescript-go) 生成类型声明文件，在保留类型检查的同时，可以显著加快类型生成速度。
+
+1. 安装 `@typescript/native-preview` 作为开发依赖：
+
+```bash
+pnpm add @typescript/native-preview -D
+# or
+npm add @typescript/native-preview -D
+# or
+yarn add @typescript/native-preview -D
+# or
+bun add @typescript/native-preview -d
+```
+
+> `@typescript/native-preview` 要求 Node.js 20.6.0 或更高版本。
+
+2. 在 father 配置中启用 `tsgo`：
+
+```ts
+export default {
+  esm: {
+    dts: {
+      compiler: 'tsgo',
+    },
+  },
+};
+```
+
+3. 为了保证本地开发体验一致，建议安装 [VS Code Preview Extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview)，并在 VS Code 设置中开启：
+
+```json
+{
+  "typescript.experimental.useTsgo": true
+}
+```
+
+> 注：`tsgo` 目前为实验能力，需要在项目中额外安装 `@typescript/native-preview`。father 内置的 `typescript` 是 JavaScript 版 TypeScript Compiler API，而 `tsgo` 来自单独的原生预览包，并不是 `typescript` 包的一部分。为避免所有用户默认安装实验性的 native binary，father 只会在启用 `compiler: 'tsgo'` 时检查该依赖是否存在。
+
 ### extraBabelPlugins
 
 - 类型：`string[]`

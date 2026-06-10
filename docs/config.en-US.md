@@ -4,114 +4,175 @@ Father supports the following configuration options.
 
 ## General Configuration
 
-### **alias**  
-- **Type**: `Record<string, string>`  
-- **Default**: `undefined`  
-- Specifies aliases to be handled during source code compilation/transformation.  
+### **alias**
+
+- **Type**: `Record<string, string>`
+- **Default**: `undefined`
+- Specifies aliases to be handled during source code compilation/transformation.
 - In **Bundle mode**, `.js` and `.d.ts` output files will automatically convert local path aliases to relative paths.
 
-### **define**  
-- **Type**: `Record<string, string>`  
-- **Default**: `undefined`  
+### **define**
+
+- **Type**: `Record<string, string>`
+- **Default**: `undefined`
 - Specifies variables to be replaced during compilation/transformation, similar to **Webpack DefinePlugin**.
 
-### **extends**  
-- **Type**: `string`  
-- **Default**: `undefined`  
+### **extends**
+
+- **Type**: `string`
+- **Default**: `undefined`
 - Specifies the path to the parent configuration file.
 
-### **extraBabelPlugins**  
-- **Type**: `string[]`  
-- **Default**: `undefined`  
+### **dts**
+
+- **Type**: `{ compiler?: "tsc" | "tsgo" }`
+- **Default**: `{ compiler: "tsc" }`
+- Configures TypeScript declaration generation. Father uses the built-in TypeScript Compiler API by default. Set `compiler` to `"tsgo"` to generate `.d.ts` files with [tsgo](https://github.com/microsoft/typescript-go).
+
+#### **Using tsgo**
+
+Setting `compiler` to `"tsgo"` uses [tsgo](https://github.com/microsoft/typescript-go) to generate declaration files. It keeps type checking while improving declaration generation performance.
+
+1. Install `@typescript/native-preview` as a development dependency:
+
+```bash
+pnpm add @typescript/native-preview -D
+# or
+npm add @typescript/native-preview -D
+# or
+yarn add @typescript/native-preview -D
+# or
+bun add @typescript/native-preview -d
+```
+
+> `@typescript/native-preview` requires Node.js 20.6.0 or higher.
+
+2. Enable `tsgo` in the father config:
+
+```ts
+export default {
+  esm: {
+    dts: {
+      compiler: 'tsgo',
+    },
+  },
+};
+```
+
+3. To keep the local development experience consistent, install the [VS Code Preview Extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview) and enable it in VS Code settings:
+
+```json
+{
+  "typescript.experimental.useTsgo": true
+}
+```
+
+> **Note**: `tsgo` is experimental and requires `@typescript/native-preview` to be installed in your project. Father's built-in `typescript` dependency is the JavaScript TypeScript Compiler API, while `tsgo` is provided by a separate native preview package and is not part of the `typescript` package. To avoid installing an experimental native binary for every user by default, father only checks for this dependency when `compiler: 'tsgo'` is enabled.
+
+### **extraBabelPlugins**
+
+- **Type**: `string[]`
+- **Default**: `undefined`
 - Specifies additional **Babel plugins** to be applied.
 
 > **Note**: In **Bundless mode**, if the `transformer` is set to `esbuild` or `swc`, this configuration does not take effect.
 
-### **extraBabelPresets**  
-- **Type**: `string[]`  
-- **Default**: `undefined`  
+### **extraBabelPresets**
+
+- **Type**: `string[]`
+- **Default**: `undefined`
 - Specifies additional **Babel presets** to be applied.
 
 > **Note**: This is also **not effective in Bundless mode** if `transformer` is `esbuild` or `swc`.
 
-### **platform**  
-- **Type**: `"browser" | "node"`  
-- **Default**: `<auto>`  
-- Specifies the **target platform** for the build output.  
-  - **esm & umd**: Default is `"browser"`.  
-  - **cjs**: Default is `"node"`.  
-  - If set to `"browser"`, output is compatible with **IE11**.  
+### **platform**
+
+- **Type**: `"browser" | "node"`
+- **Default**: `<auto>`
+- Specifies the **target platform** for the build output.
+  - **esm & umd**: Default is `"browser"`.
+  - **cjs**: Default is `"node"`.
+  - If set to `"browser"`, output is compatible with **IE11**.
   - If set to `"node"`, output is compatible with **Node.js v14**.
 
-> **Note**:  
+> **Note**:
+>
 > - In **Bundless mode**, if `transformer` is `esbuild`, the **browser compatibility defaults to Chrome 51** instead of IE11.
 
-### **sourcemap**  
-- **Type**: `boolean`  
-- **Default**: `false`  
+### **sourcemap**
+
+- **Type**: `boolean`
+- **Default**: `false`
 - Enables **source maps** for JavaScript build output.
 
 > **Note**: In **Bundless mode**, the `map` object’s `file` field is empty.
 
-### **targets**  
-- **Type**: `Record<string, number>`  
-- **Default**: `<auto>`  
+### **targets**
+
+- **Type**: `Record<string, number>`
+- **Default**: `<auto>`
 - Specifies the compatibility target for compiled output.
 
-| Platform  | Transformer | Default Target |
-|-----------|------------|----------------|
-| browser   | babel      | `{ ie: 11 }`   |
-| browser   | esbuild    | `{ chrome: 51 }` |
-| browser   | swc        | `{ ie: 11 }`   |
-| node      | babel      | `{ node: 14 }` |
-| node      | esbuild    | `{ node: 14 }` |
-| node      | swc        | `{ node: 14 }` |
+| Platform | Transformer | Default Target   |
+| -------- | ----------- | ---------------- |
+| browser  | babel       | `{ ie: 11 }`     |
+| browser  | esbuild     | `{ chrome: 51 }` |
+| browser  | swc         | `{ ie: 11 }`     |
+| node     | babel       | `{ node: 14 }`   |
+| node     | esbuild     | `{ node: 14 }`   |
+| node     | swc         | `{ node: 14 }`   |
 
 ---
 
-## **Build Configuration**  
+## **Build Configuration**
 
-Father provides build configurations based on **output types**:  
+Father provides build configurations based on **output types**:
 
-- **Bundless mode** → **ESModule (esm), CommonJS (cjs)**  
-- **Bundle mode** → **UMD, Prebundle**  
+- **Bundless mode** → **ESModule (esm), CommonJS (cjs)**
+- **Bundle mode** → **UMD, Prebundle**
 
 ---
 
-## **Bundless Mode (ESM & CJS)**  
+## **Bundless Mode (ESM & CJS)**
 
-### **esm / cjs**  
-- **Type**: `object`  
-- **Default**: `undefined`  
-- Configures **source code transformation** into **ESModule** or **CommonJS** format.  
+### **esm / cjs**
+
+- **Type**: `object`
+- **Default**: `undefined`
+- Configures **source code transformation** into **ESModule** or **CommonJS** format.
 - Supports overriding **general configurations**.
 
-### **input**  
-- **Type**: `string`  
-- **Default**: `"src"`  
+### **input**
+
+- **Type**: `string`
+- **Default**: `"src"`
 - Specifies the **source directory** to transform.
 
-### **output**  
-- **Type**: `string`  
-- **Default**: `<auto>`  
-- Specifies the **output directory**.  
-  - **ESM** → Default is `dist/esm`  
+### **output**
+
+- **Type**: `string`
+- **Default**: `<auto>`
+- Specifies the **output directory**.
+  - **ESM** → Default is `dist/esm`
   - **CJS** → Default is `dist/cjs`
 
-### **transformer**  
-- **Type**: `"babel" | "esbuild" | "swc"`  
-- **Default**: `<auto>`  
-- Specifies the **compilation tool**:  
-  - `"babel"` (default for browser)  
-  - `"esbuild"` (default for node)  
+### **transformer**
+
+- **Type**: `"babel" | "esbuild" | "swc"`
+- **Default**: `<auto>`
+- Specifies the **compilation tool**:
+  - `"babel"` (default for browser)
+  - `"esbuild"` (default for node)
   - `"swc"`
 
-### **overrides**  
-- **Type**: `object`  
-- **Default**: `undefined`  
+### **overrides**
+
+- **Type**: `object`
+- **Default**: `undefined`
 - Allows **subdirectory-specific configurations**.
 
 Example:
+
 ```ts
 export default {
   esm: {
@@ -124,35 +185,40 @@ export default {
 };
 ```
 
-### **ignores**  
-- **Type**: `string[]`  
-- **Default**: `undefined`  
-- Specifies **files to ignore** during transformation.  
+### **ignores**
+
+- **Type**: `string[]`
+- **Default**: `undefined`
+- Specifies **files to ignore** during transformation.
 - Supports **glob patterns**.
 
 > **Note**: By default, **Markdown and test files are ignored**.
 
-### **parallel**  
-- **Type**: `boolean`  
-- **Default**: `false`  
+### **parallel**
+
+- **Type**: `boolean`
+- **Default**: `false`
 - Enables **parallel compilation**.
 
 ---
 
-## **Bundle Mode (UMD & Prebundle)**  
+## **Bundle Mode (UMD & Prebundle)**
 
-### **umd**  
-- **Type**: `object`  
-- **Default**: `undefined`  
-- Configures **source bundling** into **UMD format**.  
+### **umd**
+
+- **Type**: `object`
+- **Default**: `undefined`
+- Configures **source bundling** into **UMD format**.
 - Supports overriding **general configurations**.
 
-### **name**  
-- **Type**: `string`  
-- **Default**: `undefined`  
+### **name**
+
+- **Type**: `string`
+- **Default**: `undefined`
 - Specifies the **library name** in the UMD output.
 
 Example:
+
 ```ts
 export default {
   umd: {
@@ -161,18 +227,21 @@ export default {
 };
 ```
 
-### **extractCSS**  
-- **Type**: `boolean`  
-- **Default**: `true`  
+### **extractCSS**
+
+- **Type**: `boolean`
+- **Default**: `true`
 - Extracts CSS into a **separate file**.
 
-### **entry**  
-- **Type**: `string | Record<string, Config>`  
-- **Default**: `"src/index"`  
-- Specifies the **entry file(s)** for bundling.  
+### **entry**
+
+- **Type**: `string | Record<string, Config>`
+- **Default**: `"src/index"`
+- Specifies the **entry file(s)** for bundling.
 - Supports **multiple entry points**.
 
 Example:
+
 ```ts
 export default {
   umd: {
@@ -184,38 +253,44 @@ export default {
 };
 ```
 
-### **output**  
-- **Type**: `string | { path?: string; filename?: string }`  
-- **Default**: `"dist/umd"`  
+### **output**
+
+- **Type**: `string | { path?: string; filename?: string }`
+- **Default**: `"dist/umd"`
 - Specifies **output directory and filename**.
 
-### **externals**  
-- **Type**: `Record<string, string>`  
-- **Default**: `undefined`  
+### **externals**
+
+- **Type**: `Record<string, string>`
+- **Default**: `undefined`
 - Defines **external dependencies**.
 
-### **chainWebpack**  
-- **Type**: `function`  
-- **Default**: `undefined`  
+### **chainWebpack**
+
+- **Type**: `function`
+- **Default**: `undefined`
 - Uses **webpack-chain** to customize **Webpack configuration**.
 
 ---
 
-## **Prebundle Mode**  
+## **Prebundle Mode**
 
 Prebundling is used to **reduce install size and improve project stability**, especially for **Node.js tools and frameworks**.
 
-### **output**  
-- **Type**: `string`  
-- **Default**: `"compiled"`  
+### **output**
+
+- **Type**: `string`
+- **Default**: `"compiled"`
 - Specifies the **prebundle output directory**.
 
-### **deps**  
-- **Type**: `string[] | Record<string, { minify?: boolean; dts?: boolean }>`  
-- **Default**: `undefined`  
+### **deps**
+
+- **Type**: `string[] | Record<string, { minify?: boolean; dts?: boolean }>`
+- **Default**: `undefined`
 - Defines **dependencies to prebundle**.
 
 Example:
+
 ```ts
 export default {
   prebundle: {
@@ -227,21 +302,24 @@ export default {
 };
 ```
 
-### **extraDtsDeps**  
-- **Type**: `string[]`  
-- **Default**: `undefined`  
+### **extraDtsDeps**
+
+- **Type**: `string[]`
+- **Default**: `undefined`
 - Specifies dependencies **only needing TypeScript declaration files (`.d.ts`)**.
 
 ---
 
-## **Other Configurations**  
+## **Other Configurations**
 
-### **plugins**  
-- **Type**: `string[]`  
-- **Default**: `undefined`  
+### **plugins**
+
+- **Type**: `string[]`
+- **Default**: `undefined`
 - Defines additional **Father plugins**.
 
 Example:
+
 ```ts
 // plugin.ts
 import type { IApi } from 'father';
@@ -258,12 +336,14 @@ export default {
 };
 ```
 
-### **presets**  
-- **Type**: `string[]`  
-- **Default**: `undefined`  
+### **presets**
+
+- **Type**: `string[]`
+- **Default**: `undefined`
 - Defines additional **Father plugin presets**.
 
 Example:
+
 ```ts
 export default (api: IApi) => ({
   presets: [require.resolve('./other-preset')],
