@@ -1,4 +1,4 @@
-import { glob, lodash } from '@umijs/utils';
+import { chalk, glob, lodash } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -120,17 +120,39 @@ export default async (api: IApi): Promise<IDoctorReport> => {
 
   // source checkup
   const sourceReport: IDoctorReport = [];
+  const JSXReport: IDoctorReport = [];
 
   for (const file of sourceFiles) {
+    const fileContent = fs.readFileSync(path.join(api.cwd, file), 'utf-8');
+    JSXReport.push(
+      ...(await api.applyPlugins({
+        key: 'addJSXSourceCheckup',
+        args: {
+          file,
+          content: fileContent,
+        },
+      })),
+    );
     sourceReport.push(
       ...(await api.applyPlugins({
         key: 'addSourceCheckup',
         args: {
           file,
-          content: fs.readFileSync(path.join(api.cwd, file), 'utf-8'),
+          content: fileContent,
         },
       })),
     );
+  }
+  const filteredJSX = JSXReport.filter(Boolean);
+  console.log('qly ~ filteredJSX:', filteredJSX);
+  if (filteredJSX.length) {
+    console.log(`
+${chalk.red('ERROR')} These files has JSX syntax, but file suffix is '.js'
+${chalk.green('SOLUTION')} Please correct to '.jsx'`);
+    filteredJSX.forEach((item, index) => {
+      console.log(`${chalk.yellow(`${index + 1}`)} ${item.problem}`);
+    });
+    throw new Error('ERROR: The JSX syntax extension is not currently enabled');
   }
 
   // imports checkup
