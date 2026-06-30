@@ -78,7 +78,7 @@ function getTransformPaths(tsconfig: NonNullable<ParsedTsconfig>, cwd: string) {
   return transformPaths;
 }
 
-function resolveTsgoBin(cwd: string) {
+export function resolveTsgoBin(cwd: string) {
   let pkgPath: string;
 
   try {
@@ -91,12 +91,34 @@ function resolveTsgoBin(cwd: string) {
     );
   }
 
-  const binPath = path.join(path.dirname(pkgPath), 'bin/tsgo.js');
-  if (!fs.existsSync(binPath)) {
-    throw new Error(`Cannot find tsgo binary at ${binPath}.`);
+  const pkgDir = path.dirname(pkgPath);
+  const pkg = fsExtra.readJSONSync(pkgPath);
+  const declaredBin =
+    typeof pkg.bin === 'string'
+      ? pkg.bin
+      : typeof pkg.bin?.tsgo === 'string'
+      ? pkg.bin.tsgo
+      : undefined;
+  const candidates = [
+    declaredBin,
+    // @typescript/native-preview <= 7.0.0-dev.20260624.1
+    'bin/tsgo.js',
+    // @typescript/native-preview >= 7.0.0-dev.20260629.1
+    'bin/tsgo',
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    const binPath = path.resolve(pkgDir, candidate);
+    if (fs.existsSync(binPath)) {
+      return binPath;
+    }
   }
 
-  return binPath;
+  throw new Error(
+    `Cannot find tsgo binary from @typescript/native-preview at ${pkgDir}. Tried: ${candidates
+      .map((candidate) => path.resolve(pkgDir, candidate))
+      .join(', ')}.`,
+  );
 }
 
 function isDtsOutput(filePath: string) {
