@@ -6,7 +6,8 @@
   "bugs": "https://github.com/umijs/father/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/father"
+    "url": "git+https://github.com/umijs/father.git",
+    "directory": "boilerplate"
   },
   "license": "MIT",
   "main": "dist/index.js",

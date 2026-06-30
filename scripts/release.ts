@@ -6,8 +6,6 @@ import rimraf from 'rimraf';
 import 'zx/globals';
 
 const pkgs = ['.', 'boilerplate'];
-const noNextTagPkgs = ['boilerplate'];
-
 (async () => {
   const { branch } = getGitRepoInfo();
   logger.info(`branch: ${branch}`);
@@ -30,21 +28,6 @@ const noNextTagPkgs = ['boilerplate'];
   assert(
     registry === 'https://registry.npmjs.org/',
     'npm registry is not https://registry.npmjs.org/',
-  );
-
-  // check npm ownership
-  logger.event('check npm ownership');
-  const whoami = (await $`npm whoami`).stdout.trim();
-  await Promise.all(
-    ['father', 'create-father'].map(async (pkg) => {
-      const owners = (await $`npm owner ls ${pkg}`).stdout
-        .trim()
-        .split('\n')
-        .map((line) => {
-          return line.split(' ')[0];
-        });
-      assert(owners.includes(whoami), `${pkg} is not owned by ${whoami}`);
-    }),
   );
 
   // upgrade umijs deps
@@ -99,45 +82,9 @@ const noNextTagPkgs = ['boilerplate'];
   logger.event('git push');
   await $`git push origin ${branch} --tags`;
 
-  // npm publish
-  logger.event('pnpm publish');
-  $.verbose = false;
-
-  // check 2fa config
-  let otpArg: string[] = [];
-  if (
-    (await $`npm profile get "two-factor auth"`).toString().includes('writes')
-  ) {
-    let code = '';
-    do {
-      // get otp from user
-      code = await question('This operation requires a one-time password: ');
-      // generate arg for zx command
-      // why use array? https://github.com/google/zx/blob/main/docs/quotes.md
-      otpArg = ['--otp', code];
-    } while (code.length !== 6);
-  }
-
-  await Promise.all(
-    pkgs.map(async (pkg) => {
-      await $`cd ${pkg} && npm publish --tag ${
-        tag === 'next' && noNextTagPkgs.includes(pkg) ? 'latest' : tag
-      } ${otpArg}`;
-      logger.info(`+ ${pkg}`);
-    }),
+  logger.ready(
+    `release commit pushed, GitHub Actions will publish with tag ${tag}`,
   );
-
-  // sync tnpm
-  logger.event('sync tnpm');
-  $.verbose = false;
-  await Promise.all(
-    pkgs.map(async (pkg) => {
-      const { name } = require(path.join(pkg, 'package.json'));
-      logger.info(`sync ${name}`);
-      await $`tnpm sync ${name}`;
-    }),
-  );
-  $.verbose = true;
 })();
 
 async function upgradeUmijsDeps() {

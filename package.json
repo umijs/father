@@ -6,7 +6,7 @@
   "bugs": "https://github.com/umijs/father/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/father"
+    "url": "git+https://github.com/umijs/father.git"
   },
   "license": "MIT",
   "main": "dist/index.js",
@@ -25,6 +25,7 @@
     "format": "prettier --write .",
     "prepare": "husky install",
     "release": "tsx scripts/release.ts",
+    "release:publish": "tsx scripts/releasePublish.ts",
     "test": "jest",
     "test:cov": "jest --collectCoverage"
   },
