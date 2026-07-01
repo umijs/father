@@ -99,8 +99,15 @@ export function resolveTsgoBin(cwd: string) {
       : typeof pkg.bin?.tsgo === 'string'
       ? pkg.bin.tsgo
       : undefined;
+  const declaredBinHasExtension = declaredBin
+    ? Boolean(path.extname(declaredBin))
+    : false;
   const candidates = [
-    declaredBin,
+    declaredBinHasExtension ? declaredBin : undefined,
+    // @typescript/native-preview >= 7.0.0-dev.20260629.1 uses an extensionless
+    // bin shim, which Node 16 cannot load inside a "type": "module" package.
+    'lib/tsgo.js',
+    declaredBinHasExtension ? undefined : declaredBin,
     // @typescript/native-preview <= 7.0.0-dev.20260624.1
     'bin/tsgo.js',
     // @typescript/native-preview >= 7.0.0-dev.20260629.1

@@ -36,6 +36,7 @@ afterAll(() => {
 function createNativePreviewFixture(
   pkgJson: Record<string, any>,
   binPath: string,
+  extraFiles: string[] = [],
 ) {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'father-tsgo-'));
   tmpDirs.push(cwd);
@@ -48,6 +49,10 @@ function createNativePreviewFixture(
   );
   const fullBinPath = path.join(pkgDir, binPath);
   fs.mkdirSync(path.dirname(fullBinPath), { recursive: true });
+  extraFiles.forEach((file) => {
+    fs.mkdirSync(path.dirname(path.join(pkgDir, file)), { recursive: true });
+    fs.writeFileSync(path.join(pkgDir, file), '#!/usr/bin/env node\n');
+  });
   fs.writeFileSync(
     path.join(pkgDir, 'package.json'),
     JSON.stringify({ name: '@typescript/native-preview', ...pkgJson }),
@@ -57,10 +62,10 @@ function createNativePreviewFixture(
   return { cwd, binPath };
 }
 
-test('resolve tsgo bin from package bin field', () => {
+test('resolve tsgo bin from package bin field with file extension', () => {
   const fixture = createNativePreviewFixture(
-    { bin: { tsgo: 'bin/tsgo' } },
-    'bin/tsgo',
+    { bin: { tsgo: 'bin/tsgo.js' } },
+    'bin/tsgo.js',
   );
 
   const resolvedBin = resolveTsgoBin(fixture.cwd);
@@ -68,6 +73,21 @@ test('resolve tsgo bin from package bin field', () => {
   expect(fs.existsSync(resolvedBin)).toBe(true);
   expect(
     path.normalize(resolvedBin).endsWith(path.normalize(fixture.binPath)),
+  ).toBe(true);
+});
+
+test('resolve tsgo js entry when package bin field is extensionless', () => {
+  const fixture = createNativePreviewFixture(
+    { bin: { tsgo: 'bin/tsgo' } },
+    'bin/tsgo',
+    ['lib/tsgo.js'],
+  );
+
+  const resolvedBin = resolveTsgoBin(fixture.cwd);
+
+  expect(fs.existsSync(resolvedBin)).toBe(true);
+  expect(
+    path.normalize(resolvedBin).endsWith(path.normalize('lib/tsgo.js')),
   ).toBe(true);
 });
 
