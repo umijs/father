@@ -1,12 +1,12 @@
 {
   "name": "father",
-  "version": "4.6.24",
+  "version": "4.6.25-alpha.0",
   "description": "A bundless/bundle build tool",
   "homepage": "https://github.com/umijs/father#readme",
   "bugs": "https://github.com/umijs/father/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/father"
+    "url": "git+https://github.com/umijs/father.git"
   },
   "license": "MIT",
   "main": "dist/index.js",
@@ -25,6 +25,7 @@
     "format": "prettier --write .",
     "prepare": "husky install",
     "release": "tsx scripts/release.ts",
+    "release:publish": "tsx scripts/releasePublish.ts",
     "test": "jest",
     "test:cov": "jest --collectCoverage"
   },
