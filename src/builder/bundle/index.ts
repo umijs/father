@@ -281,6 +281,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               minify: config.jsMinifier !== JSMinifier.none,
               concatenateModules: config.concatenateModules,
             },
+            persistentCaching: false,
             nodePolyfill: true,
           },
           watch: {
