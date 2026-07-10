@@ -9,15 +9,24 @@ import { distToMap } from './utils';
 const CASE_DIR = path.join(__dirname, 'fixtures/tsgo-dts');
 const mockExit = mockProcessExit();
 const tmpDirs: string[] = [];
-const hasTsgo = (() => {
-  try {
-    require.resolve('@typescript/native-preview/package.json', {
-      paths: [CASE_DIR],
-    });
-    return true;
-  } catch {
-    return false;
+const hasNativeTypeScript = (() => {
+  for (const packageName of ['typescript', '@typescript/native-preview']) {
+    try {
+      const pkgPath = require.resolve(`${packageName}/package.json`, {
+        paths: [CASE_DIR],
+      });
+      const pkg = fs.readFileSync(pkgPath, 'utf-8');
+      if (
+        packageName === 'typescript' &&
+        Number(JSON.parse(pkg).version.split('.')[0]) < 7
+      ) {
+        continue;
+      }
+      return true;
+    } catch {}
   }
+
+  return false;
 })();
 
 beforeAll(() => {
@@ -33,20 +42,20 @@ afterAll(() => {
   mockExit.mockRestore();
 });
 
-function createNativePreviewFixture(
+function createCompilerFixture(
+  packageName: string,
   pkgJson: Record<string, any>,
   binPath: string,
   extraFiles: string[] = [],
+  fixtureCwd?: string,
 ) {
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'father-tsgo-'));
-  tmpDirs.push(cwd);
+  const cwd =
+    fixtureCwd || fs.mkdtempSync(path.join(os.tmpdir(), 'father-tsgo-'));
+  if (!fixtureCwd) {
+    tmpDirs.push(cwd);
+  }
 
-  const pkgDir = path.join(
-    cwd,
-    'node_modules',
-    '@typescript',
-    'native-preview',
-  );
+  const pkgDir = path.join(cwd, 'node_modules', ...packageName.split('/'));
   const fullBinPath = path.join(pkgDir, binPath);
   fs.mkdirSync(path.dirname(fullBinPath), { recursive: true });
   extraFiles.forEach((file) => {
@@ -55,12 +64,80 @@ function createNativePreviewFixture(
   });
   fs.writeFileSync(
     path.join(pkgDir, 'package.json'),
-    JSON.stringify({ name: '@typescript/native-preview', ...pkgJson }),
+    JSON.stringify({ name: packageName, ...pkgJson }),
   );
   fs.writeFileSync(fullBinPath, '#!/usr/bin/env node\n');
 
   return { cwd, binPath };
 }
+
+function createNativePreviewFixture(
+  pkgJson: Record<string, any>,
+  binPath: string,
+  extraFiles: string[] = [],
+) {
+  return createCompilerFixture(
+    '@typescript/native-preview',
+    pkgJson,
+    binPath,
+    extraFiles,
+  );
+}
+
+test('resolve stable TypeScript 7', () => {
+  const fixture = createCompilerFixture(
+    'typescript',
+    {
+      version: '7.0.2',
+      type: 'module',
+      bin: { tsc: './bin/tsc' },
+    },
+    'bin/tsc',
+    ['lib/tsc.js'],
+  );
+
+  const resolvedBin = resolveTsgoBin(fixture.cwd);
+
+  expect(fs.existsSync(resolvedBin)).toBe(true);
+  expect(
+    path.normalize(resolvedBin).endsWith(path.normalize('lib/tsc.js')),
+  ).toBe(true);
+});
+
+test('ignore the legacy TypeScript package API', () => {
+  const fixture = createCompilerFixture(
+    'typescript',
+    { version: '6.0.3', bin: { tsc: 'bin/tsc' } },
+    'bin/tsc',
+    ['lib/tsc.js'],
+  );
+
+  expect(() => resolveTsgoBin(fixture.cwd)).toThrow('requires `typescript@^7`');
+});
+
+test('fall back to native preview for legacy TypeScript projects', () => {
+  const legacyFixture = createCompilerFixture(
+    'typescript',
+    { version: '6.0.3', bin: { tsc: 'bin/tsc' } },
+    'bin/tsc',
+    ['lib/tsc.js'],
+  );
+  createCompilerFixture(
+    '@typescript/native-preview',
+    { version: '7.0.0-dev.20260629.1', bin: { tsgo: 'bin/tsgo' } },
+    'bin/tsgo',
+    ['lib/tsgo.js'],
+    legacyFixture.cwd,
+  );
+
+  const resolvedBin = resolveTsgoBin(legacyFixture.cwd);
+
+  expect(
+    path
+      .normalize(resolvedBin)
+      .endsWith(path.normalize('@typescript/native-preview/lib/tsgo.js')),
+  ).toBe(true);
+});
 
 test('resolve tsgo bin from package bin field with file extension', () => {
   const fixture = createNativePreviewFixture(
@@ -102,16 +179,19 @@ test('resolve legacy tsgo.js bin when package bin field is unavailable', () => {
   ).toBe(true);
 });
 
-(hasTsgo ? test : test.skip)('build: bundless tsgo dts', async () => {
-  process.env.APP_ROOT = CASE_DIR;
-  await cli.run({
-    args: { _: ['build'], $0: 'node' },
-  });
+(hasNativeTypeScript ? test : test.skip)(
+  'build: bundless native TypeScript dts',
+  async () => {
+    process.env.APP_ROOT = CASE_DIR;
+    await cli.run({
+      args: { _: ['build'], $0: 'node' },
+    });
 
-  const fileMap = distToMap(path.join(CASE_DIR, 'dist'));
+    const fileMap = distToMap(path.join(CASE_DIR, 'dist'));
 
-  expect(fileMap['esm/index.d.ts']).toContain('./value');
-  expect(fileMap['esm/value.d.ts']).toContain(
-    'export declare const value = "tsgo"',
-  );
-});
+    expect(fileMap['esm/index.d.ts']).toContain('./value');
+    expect(fileMap['esm/value.d.ts']).toContain(
+      'export declare const value = "tsgo"',
+    );
+  },
+);

@@ -1,4 +1,4 @@
-import { chalk, fsExtra, winPath } from '@umijs/utils';
+import { chalk, fsExtra, semver, winPath } from '@umijs/utils';
 import { execFile } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -79,52 +79,69 @@ function getTransformPaths(tsconfig: NonNullable<ParsedTsconfig>, cwd: string) {
 }
 
 export function resolveTsgoBin(cwd: string) {
-  let pkgPath: string;
+  const compilerPackages = [
+    { name: 'typescript', binName: 'tsc', minimumMajor: 7 },
+    { name: '@typescript/native-preview', binName: 'tsgo' },
+  ];
+  const triedPaths: string[] = [];
 
-  try {
-    pkgPath = require.resolve('@typescript/native-preview/package.json', {
-      paths: [cwd],
-    });
-  } catch {
-    throw new Error(
-      'dts.compiler: "tsgo" requires @typescript/native-preview to be installed. Please add it to devDependencies first.',
+  for (const compilerPackage of compilerPackages) {
+    let pkgPath: string;
+
+    try {
+      pkgPath = require.resolve(`${compilerPackage.name}/package.json`, {
+        paths: [cwd],
+      });
+    } catch {
+      continue;
+    }
+
+    const pkgDir = path.dirname(pkgPath);
+    const pkg = fsExtra.readJSONSync(pkgPath);
+
+    if (
+      compilerPackage.minimumMajor &&
+      (!pkg.version || semver.major(pkg.version) < compilerPackage.minimumMajor)
+    ) {
+      continue;
+    }
+
+    const declaredBin =
+      typeof pkg.bin === 'string'
+        ? pkg.bin
+        : typeof pkg.bin?.[compilerPackage.binName] === 'string'
+        ? pkg.bin[compilerPackage.binName]
+        : undefined;
+    const declaredBinHasExtension = declaredBin
+      ? Boolean(path.extname(declaredBin))
+      : false;
+    const candidates = Array.from(
+      new Set(
+        [
+          declaredBinHasExtension ? declaredBin : undefined,
+          // Prefer a JavaScript entry for extensionless ESM bin shims so that
+          // process.execPath can execute it consistently on Node 16 and Windows.
+          `lib/${compilerPackage.binName}.js`,
+          declaredBinHasExtension ? undefined : declaredBin,
+          `bin/${compilerPackage.binName}.js`,
+          `bin/${compilerPackage.binName}`,
+        ].filter(Boolean) as string[],
+      ),
     );
-  }
 
-  const pkgDir = path.dirname(pkgPath);
-  const pkg = fsExtra.readJSONSync(pkgPath);
-  const declaredBin =
-    typeof pkg.bin === 'string'
-      ? pkg.bin
-      : typeof pkg.bin?.tsgo === 'string'
-      ? pkg.bin.tsgo
-      : undefined;
-  const declaredBinHasExtension = declaredBin
-    ? Boolean(path.extname(declaredBin))
-    : false;
-  const candidates = [
-    declaredBinHasExtension ? declaredBin : undefined,
-    // @typescript/native-preview >= 7.0.0-dev.20260629.1 uses an extensionless
-    // bin shim, which Node 16 cannot load inside a "type": "module" package.
-    'lib/tsgo.js',
-    declaredBinHasExtension ? undefined : declaredBin,
-    // @typescript/native-preview <= 7.0.0-dev.20260624.1
-    'bin/tsgo.js',
-    // @typescript/native-preview >= 7.0.0-dev.20260629.1
-    'bin/tsgo',
-  ].filter(Boolean) as string[];
+    for (const candidate of candidates) {
+      const binPath = path.resolve(pkgDir, candidate);
+      triedPaths.push(binPath);
 
-  for (const candidate of candidates) {
-    const binPath = path.resolve(pkgDir, candidate);
-    if (fs.existsSync(binPath)) {
-      return binPath;
+      if (fs.existsSync(binPath)) {
+        return binPath;
+      }
     }
   }
 
   throw new Error(
-    `Cannot find tsgo binary from @typescript/native-preview at ${pkgDir}. Tried: ${candidates
-      .map((candidate) => path.resolve(pkgDir, candidate))
-      .join(', ')}.`,
+    'dts.compiler: "tsgo" requires `typescript@^7` or `@typescript/native-preview`.' +
+      (triedPaths.length ? ` Tried: ${triedPaths.join(', ')}.` : ''),
   );
 }
 

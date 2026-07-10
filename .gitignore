@@ -10,6 +10,7 @@
 /tests/fixtures/**/dist
 /tests/fixtures/deps/*/node_modules
 /tests/fixtures/dev/node_modules
+/tests/fixtures/tsgo-dts/node_modules
 /tests/fixtures/build/*/node_modules
 /tests/fixtures/prebundle/*/compiled
 /tests/fixtures/prebundle/*/modules
