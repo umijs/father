@@ -27,27 +27,21 @@ Father supports the following configuration options.
 
 - **Type**: `{ compiler?: "tsc" | "tsgo" }`
 - **Default**: `{ compiler: "tsc" }`
-- Configures TypeScript declaration generation. Father uses the built-in TypeScript Compiler API by default. Set `compiler` to `"tsgo"` to generate `.d.ts` files with [tsgo](https://github.com/microsoft/typescript-go).
+- Configures TypeScript declaration generation. Father uses the built-in TypeScript Compiler API by default. Set `compiler` to `"tsgo"` to generate `.d.ts` files with the TypeScript 7 native compiler or the legacy tsgo preview.
 
-#### **Using tsgo**
+#### **Using the native TypeScript compiler**
 
-Setting `compiler` to `"tsgo"` uses [tsgo](https://github.com/microsoft/typescript-go) to generate declaration files. It keeps type checking while improving declaration generation performance.
+Setting `compiler` to `"tsgo"` uses the [TypeScript 7 native compiler](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) to generate declaration files. It keeps type checking while improving declaration generation performance. The `tsgo` configuration name is preserved for compatibility with projects that already enabled this mode.
 
-1. Install `@typescript/native-preview` as a development dependency:
+1. Install TypeScript 7 as a development dependency:
 
 ```bash
-pnpm add @typescript/native-preview -D
-# or
-npm add @typescript/native-preview -D
-# or
-yarn add @typescript/native-preview -D
-# or
-bun add @typescript/native-preview -d
+pnpm add typescript@^7 -D
 ```
 
-> `@typescript/native-preview` requires Node.js 20.6.0 or higher.
+> TypeScript 7 requires Node.js 16.20.0 or higher. Father also continues to recognize `@typescript/native-preview` for projects that have not migrated yet.
 
-2. Enable `tsgo` in the father config:
+2. Enable native declaration generation in the Father config:
 
 ```ts
 export default {
@@ -59,15 +53,7 @@ export default {
 };
 ```
 
-3. To keep the local development experience consistent, install the [VS Code Preview Extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview) and enable it in VS Code settings:
-
-```json
-{
-  "typescript.experimental.useTsgo": true
-}
-```
-
-> **Note**: `tsgo` is experimental and requires `@typescript/native-preview` to be installed in your project. Father's built-in `typescript` dependency is the JavaScript TypeScript Compiler API, while `tsgo` is provided by a separate native preview package and is not part of the `typescript` package. To avoid installing an experimental native binary for every user by default, father only checks for this dependency when `compiler: 'tsgo'` is enabled.
+> **Note**: Father prefers `typescript@7` and falls back to `@typescript/native-preview`. To avoid installing native binaries for every user, Father only checks these dependencies when `compiler: 'tsgo'` is enabled.
 
 ### **extraBabelPlugins**
 

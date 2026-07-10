@@ -42,27 +42,21 @@ FATHER_TSCONFIG_NAME=tsconfig.build.json father build
 - 类型：`{ compiler?: 'tsc' | 'tsgo' }`
 - 默认值：`{ compiler: 'tsc' }`
 
-配置 TypeScript 类型声明生成方式。默认使用 father 内置的 TypeScript Compiler API；当配置为 `compiler: 'tsgo'` 时，会使用 [tsgo](https://github.com/microsoft/typescript-go) 生成 `.d.ts` 文件。
+配置 TypeScript 类型声明生成方式。默认使用 father 内置的 TypeScript Compiler API；当配置为 `compiler: 'tsgo'` 时，会使用 TypeScript 7 原生编译器（或旧版 tsgo preview）生成 `.d.ts` 文件。
 
-#### 使用 tsgo
+#### 使用原生 TypeScript 编译器
 
-开启 `compiler: 'tsgo'` 会使用 [tsgo](https://github.com/microsoft/typescript-go) 生成类型声明文件，在保留类型检查的同时，可以显著加快类型生成速度。
+开启 `compiler: 'tsgo'` 会使用 [TypeScript 7 原生编译器](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/) 生成类型声明文件，在保留类型检查的同时，可以显著加快类型生成速度。配置名 `tsgo` 会继续保留，以兼容已经启用该能力的项目。
 
-1. 安装 `@typescript/native-preview` 作为开发依赖：
+1. 安装 TypeScript 7 作为开发依赖：
 
 ```bash
-pnpm add @typescript/native-preview -D
-# or
-npm add @typescript/native-preview -D
-# or
-yarn add @typescript/native-preview -D
-# or
-bun add @typescript/native-preview -d
+pnpm add typescript@^7 -D
 ```
 
-> `@typescript/native-preview` 要求 Node.js 20.6.0 或更高版本。
+> TypeScript 7 要求 Node.js 16.20.0 或更高版本。father 也会继续识别 `@typescript/native-preview`，以兼容尚未迁移的项目。
 
-2. 在 father 配置中启用 `tsgo`：
+2. 在 father 配置中启用原生声明生成：
 
 ```ts
 export default {
@@ -74,15 +68,7 @@ export default {
 };
 ```
 
-3. 为了保证本地开发体验一致，建议安装 [VS Code Preview Extension](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview)，并在 VS Code 设置中开启：
-
-```json
-{
-  "typescript.experimental.useTsgo": true
-}
-```
-
-> 注：`tsgo` 目前为实验能力，需要在项目中额外安装 `@typescript/native-preview`。father 内置的 `typescript` 是 JavaScript 版 TypeScript Compiler API，而 `tsgo` 来自单独的原生预览包，并不是 `typescript` 包的一部分。为避免所有用户默认安装实验性的 native binary，father 只会在启用 `compiler: 'tsgo'` 时检查该依赖是否存在。
+> 注：father 会优先识别项目中的 `typescript@7`，并回退兼容 `@typescript/native-preview`。为避免所有用户默认安装原生二进制，father 只会在启用 `compiler: 'tsgo'` 时检查这些依赖。
 
 ### extraBabelPlugins
 
