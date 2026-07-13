@@ -39,7 +39,7 @@ Setting `compiler` to `"tsgo"` uses the [TypeScript 7 native compiler](https://d
 pnpm add typescript@^7 -D
 ```
 
-If tools in the project still need the TypeScript Compiler API, install TypeScript 7 side-by-side with the TypeScript 6 compatibility package using the aliases recommended by the TypeScript team:
+If tools in the project still need the TypeScript Compiler API, install TypeScript 7 side-by-side with the TypeScript 6 compatibility package using the [aliases recommended by the TypeScript team](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-60):
 
 ```json
 {
