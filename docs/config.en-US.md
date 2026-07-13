@@ -39,7 +39,18 @@ Setting `compiler` to `"tsgo"` uses the [TypeScript 7 native compiler](https://d
 pnpm add typescript@^7 -D
 ```
 
-> TypeScript 7 requires Node.js 16.20.0 or higher. Father also continues to recognize `@typescript/native-preview` for projects that have not migrated yet.
+If tools in the project still need the TypeScript Compiler API, install TypeScript 7 side-by-side with the TypeScript 6 compatibility package using the [aliases recommended by the TypeScript team](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0):
+
+```json
+{
+  "devDependencies": {
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  }
+}
+```
+
+> TypeScript 7 requires Node.js 16.20.0 or higher. Father recognizes both a direct `typescript@7` dependency and the official `@typescript/native` alias. It also continues to recognize `@typescript/native-preview` for projects that have not migrated yet.
 
 2. Enable native declaration generation in the Father config:
 
@@ -53,7 +64,7 @@ export default {
 };
 ```
 
-> **Note**: Father prefers `typescript@7` and falls back to `@typescript/native-preview`. To avoid installing native binaries for every user, Father only checks these dependencies when `compiler: 'tsgo'` is enabled.
+> **Note**: Father prefers `typescript@7`, then the `@typescript/native` alias, and finally falls back to `@typescript/native-preview`. To avoid installing native binaries for every user, Father only checks these dependencies when `compiler: 'tsgo'` is enabled.
 
 ### **extraBabelPlugins**
 
