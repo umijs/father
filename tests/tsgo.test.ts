@@ -10,14 +10,18 @@ const CASE_DIR = path.join(__dirname, 'fixtures/tsgo-dts');
 const mockExit = mockProcessExit();
 const tmpDirs: string[] = [];
 const hasNativeTypeScript = (() => {
-  for (const packageName of ['typescript', '@typescript/native-preview']) {
+  for (const packageName of [
+    'typescript',
+    '@typescript/native',
+    '@typescript/native-preview',
+  ]) {
     try {
       const pkgPath = require.resolve(`${packageName}/package.json`, {
         paths: [CASE_DIR],
       });
       const pkg = fs.readFileSync(pkgPath, 'utf-8');
       if (
-        packageName === 'typescript' &&
+        packageName !== '@typescript/native-preview' &&
         Number(JSON.parse(pkg).version.split('.')[0]) < 7
       ) {
         continue;
@@ -71,17 +75,29 @@ function createCompilerFixture(
   return { cwd, binPath };
 }
 
+function createLegacyNativeAliasFixture(cwd: string) {
+  createCompilerFixture(
+    '@typescript/native',
+    { name: 'typescript', version: '6.0.3', bin: { tsc: 'bin/tsc' } },
+    'bin/tsc',
+    [],
+    cwd,
+  );
+}
+
 function createNativePreviewFixture(
   pkgJson: Record<string, any>,
   binPath: string,
   extraFiles: string[] = [],
 ) {
-  return createCompilerFixture(
+  const fixture = createCompilerFixture(
     '@typescript/native-preview',
     pkgJson,
     binPath,
     extraFiles,
   );
+  createLegacyNativeAliasFixture(fixture.cwd);
+  return fixture;
 }
 
 test('resolve stable TypeScript 7', () => {
@@ -111,8 +127,38 @@ test('ignore the legacy TypeScript package API', () => {
     'bin/tsc',
     ['lib/tsc.js'],
   );
+  createLegacyNativeAliasFixture(fixture.cwd);
 
   expect(() => resolveTsgoBin(fixture.cwd)).toThrow('requires `typescript@^7`');
+});
+
+test('resolve the official TypeScript 7 side-by-side alias', () => {
+  const legacyFixture = createCompilerFixture(
+    'typescript',
+    { version: '6.0.3', bin: { tsc6: 'bin/tsc6' } },
+    'bin/tsc6',
+    ['lib/tsc6.js'],
+  );
+  createCompilerFixture(
+    '@typescript/native',
+    {
+      name: 'typescript',
+      version: '7.0.2',
+      type: 'module',
+      bin: { tsc: './bin/tsc' },
+    },
+    'bin/tsc',
+    ['lib/tsc.js'],
+    legacyFixture.cwd,
+  );
+
+  const resolvedBin = resolveTsgoBin(legacyFixture.cwd);
+
+  expect(
+    path
+      .normalize(resolvedBin)
+      .endsWith(path.normalize('@typescript/native/lib/tsc.js')),
+  ).toBe(true);
 });
 
 test('fall back to native preview for legacy TypeScript projects', () => {
@@ -122,6 +168,7 @@ test('fall back to native preview for legacy TypeScript projects', () => {
     'bin/tsc',
     ['lib/tsc.js'],
   );
+  createLegacyNativeAliasFixture(legacyFixture.cwd);
   createCompilerFixture(
     '@typescript/native-preview',
     { version: '7.0.0-dev.20260629.1', bin: { tsgo: 'bin/tsgo' } },

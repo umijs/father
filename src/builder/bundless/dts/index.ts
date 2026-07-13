@@ -81,6 +81,7 @@ function getTransformPaths(tsconfig: NonNullable<ParsedTsconfig>, cwd: string) {
 export function resolveTsgoBin(cwd: string) {
   const compilerPackages = [
     { name: 'typescript', binName: 'tsc', minimumMajor: 7 },
+    { name: '@typescript/native', binName: 'tsc', minimumMajor: 7 },
     { name: '@typescript/native-preview', binName: 'tsgo' },
   ];
   const triedPaths: string[] = [];
@@ -140,7 +141,7 @@ export function resolveTsgoBin(cwd: string) {
   }
 
   throw new Error(
-    'dts.compiler: "tsgo" requires `typescript@^7` or `@typescript/native-preview`.' +
+    'dts.compiler: "tsgo" requires `typescript@^7`, the `@typescript/native` alias, or `@typescript/native-preview`.' +
       (triedPaths.length ? ` Tried: ${triedPaths.join(', ')}.` : ''),
   );
 }

@@ -110,7 +110,7 @@ export interface IFatherDtsConfig {
   /**
    * declaration compiler
    * @default tsc
-   * @experimental tsgo requires TypeScript 7 or @typescript/native-preview
+   * @experimental tsgo requires TypeScript 7 (direct or @typescript/native alias) or @typescript/native-preview
    */
   compiler?: `${IFatherDtsCompilerTypes}`;
 }

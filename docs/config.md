@@ -54,7 +54,18 @@ FATHER_TSCONFIG_NAME=tsconfig.build.json father build
 pnpm add typescript@^7 -D
 ```
 
-> TypeScript 7 要求 Node.js 16.20.0 或更高版本。father 也会继续识别 `@typescript/native-preview`，以兼容尚未迁移的项目。
+如果项目中的工具仍依赖 TypeScript Compiler API，可以按照 TypeScript 官方推荐的 alias 方案并行安装 TypeScript 7 和 TypeScript 6 兼容包：
+
+```json
+{
+  "devDependencies": {
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  }
+}
+```
+
+> TypeScript 7 要求 Node.js 16.20.0 或更高版本。father 会识别直接安装的 `typescript@7` 和官方约定的 `@typescript/native` alias，也会继续识别 `@typescript/native-preview`，以兼容尚未迁移的项目。
 
 2. 在 father 配置中启用原生声明生成：
 
@@ -68,7 +79,7 @@ export default {
 };
 ```
 
-> 注：father 会优先识别项目中的 `typescript@7`，并回退兼容 `@typescript/native-preview`。为避免所有用户默认安装原生二进制，father 只会在启用 `compiler: 'tsgo'` 时检查这些依赖。
+> 注：father 会依次识别项目中的 `typescript@7`、`@typescript/native` alias，并回退兼容 `@typescript/native-preview`。为避免所有用户默认安装原生二进制，father 只会在启用 `compiler: 'tsgo'` 时检查这些依赖。
 
 ### extraBabelPlugins
 
