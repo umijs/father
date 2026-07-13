@@ -11,6 +11,7 @@ import {
   getBabelPresetReactOpts,
   getBabelStyledComponentsOpts,
   getBundleTargets,
+  getSWCTransformReactOpts,
 } from '../utils';
 
 const webpackBundler: typeof import('@umijs/bundler-webpack') = importLazy(
@@ -248,6 +249,10 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
         const externals = convertExternalsToUtooPackExternals(config.externals);
         const copy = convertCopyConfig(config.copy, distPath);
         const entryPath = resolveEntryPath(path.join(opts.cwd, config.entry));
+        const reactOpts = getSWCTransformReactOpts(
+          opts.configProvider.pkg,
+          opts.cwd,
+        );
         const utooPackOpts: BundleOptions = {
           config: {
             entry: [
@@ -267,6 +272,10 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
             sourceMaps: Boolean(config.sourcemap),
             externals,
             define: config.define,
+            react: {
+              runtime: reactOpts.runtime,
+              importSource: reactOpts.importSource,
+            },
             styles: {
               ...(config.extractCSS !== false ? {} : { inlineCss: {} }),
             },

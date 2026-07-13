@@ -1,4 +1,12 @@
 export default {
   esm: {},
-  umd: {},
+  umd: {
+    externals: {
+      react: {
+        root: 'React',
+        commonjs: 'react',
+        commonjs2: 'react',
+      },
+    },
+  },
 };
