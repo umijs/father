@@ -7,7 +7,6 @@ export default defineConfig({
     // bundler: 'webpack',
     generateUnminified: true,
     name: 'utoo-pack-example',
-    sourcemap: false,
     externals: {
       react: {
         root: 'React',
