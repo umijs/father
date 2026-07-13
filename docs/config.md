@@ -54,7 +54,7 @@ FATHER_TSCONFIG_NAME=tsconfig.build.json father build
 pnpm add typescript@^7 -D
 ```
 
-如果项目中的工具仍依赖 TypeScript Compiler API，可以按照 [TypeScript 官方推荐的 alias 方案](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-60)并行安装 TypeScript 7 和 TypeScript 6 兼容包：
+如果项目中的工具仍依赖 TypeScript Compiler API，可以按照 [TypeScript 官方推荐的 alias 方案](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0)并行安装 TypeScript 7 和 TypeScript 6 兼容包：
 
 ```json
 {
