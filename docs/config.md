@@ -215,6 +215,29 @@ export default {
 
 开启 `utoopack` 之后，注意 webpack 相关的一些配置不再兼容，例如 chainWebpack 等。
 
+#### utoopack
+
+- 类型：`{ optimization?: object }`
+- 默认值：`undefined`
+
+向 Utoopack 透传 UMD 构建的优化配置。`minify` 和 `concatenateModules` 仍分别由 Father 的产物类型和 `umd.concatenateModules` 控制。
+
+```ts
+export default {
+  umd: {
+    bundler: 'utoopack',
+    utoopack: {
+      optimization: {
+        compress: {
+          passes: 3,
+        },
+        treeShaking: false,
+      },
+    },
+  },
+};
+```
+
 #### name
 
 - 类型：`string`

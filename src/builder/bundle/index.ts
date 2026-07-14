@@ -4,7 +4,7 @@ import type { BundleOptions } from '@utoo/pack';
 import fs from 'fs';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
-import type { BundleConfigProvider } from '../config';
+import type { BundleConfigProvider, IBundleConfig } from '../config';
 import {
   convertCopyConfig,
   convertExternalsToUtooPackExternals,
@@ -39,6 +39,16 @@ interface IBundleOpts {
   buildDependencies?: string[];
   watch?: boolean;
   incremental?: boolean;
+}
+
+export function getUtooPackOptimization(
+  config: IBundleConfig,
+): NonNullable<BundleOptions['config']['optimization']> {
+  return {
+    ...config.utoopack?.optimization,
+    minify: config.jsMinifier !== JSMinifier.none,
+    concatenateModules: config.concatenateModules,
+  };
 }
 
 function resolveEntryPath(entryPath: string): string {
@@ -286,10 +296,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               assetModuleFilename: 'static/[name].[contenthash:8]',
               copy,
             },
-            optimization: {
-              minify: config.jsMinifier !== JSMinifier.none,
-              concatenateModules: config.concatenateModules,
-            },
+            optimization: getUtooPackOptimization(config),
             persistentCaching: false,
             nodePolyfill: true,
           },

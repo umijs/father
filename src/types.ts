@@ -3,6 +3,7 @@ import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
+import type { BundleOptions as IUtooPackBundleOptions } from '@utoo/pack';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type {
   IBundleConfig,
@@ -113,6 +114,17 @@ export interface IFatherDtsConfig {
    * @experimental tsgo requires TypeScript 7 (direct or @typescript/native alias) or @typescript/native-preview
    */
   compiler?: `${IFatherDtsCompilerTypes}`;
+}
+
+export interface IFatherUtooPackConfig {
+  /**
+   * configure utoopack optimizations
+   * @note minify and concatenateModules are managed by father
+   */
+  optimization?: Omit<
+    NonNullable<IUtooPackBundleOptions['config']['optimization']>,
+    'minify' | 'concatenateModules'
+  >;
 }
 
 export interface IFatherBaseConfig {
@@ -291,6 +303,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * scope hoisting
    */
   concatenateModules?: boolean;
+
+  /**
+   * configure utoopack-specific options
+   */
+  utoopack?: IFatherUtooPackConfig;
 }
 
 export interface IFatherPreBundleConfig {
