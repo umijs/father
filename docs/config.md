@@ -215,6 +215,30 @@ export default {
 
 开启 `utoopack` 之后，注意 webpack 相关的一些配置不再兼容，例如 chainWebpack 等。
 
+#### utoopack
+
+- 类型：`Partial<@utoo/pack Config>`
+- 默认值：`undefined`
+
+向 Utoopack 透传 UMD 构建配置。用户配置会与 Father 生成的默认配置进行深度合并，同名字段以用户配置为准。
+
+```ts
+export default {
+  umd: {
+    bundler: 'utoopack',
+    utoopack: {
+      optimization: {
+        extractComments: true,
+        compress: {
+          passes: 3,
+        },
+        treeShaking: false,
+      },
+    },
+  },
+};
+```
+
 #### name
 
 - 类型：`string`
