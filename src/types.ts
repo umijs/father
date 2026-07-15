@@ -3,6 +3,7 @@ import type Autoprefixer from '@umijs/bundler-webpack/compiled/autoprefixer';
 import type IWebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import type { IConfig as IBundlerWebpackConfig } from '@umijs/bundler-webpack/dist/types';
 import type { IAdd, IModify, IServicePluginAPI, PluginAPI } from '@umijs/core';
+import type { BundleOptions as IUtooPackBundleOptions } from '@utoo/pack';
 import type { ITransformerItem } from './builder/bundless/loaders/javascript';
 import type {
   IBundleConfig,
@@ -114,6 +115,8 @@ export interface IFatherDtsConfig {
    */
   compiler?: `${IFatherDtsCompilerTypes}`;
 }
+
+export type IFatherUtooPackConfig = Partial<IUtooPackBundleOptions['config']>;
 
 export interface IFatherBaseConfig {
   /**
@@ -291,6 +294,11 @@ export interface IFatherBundleConfig extends IFatherBaseConfig {
    * scope hoisting
    */
   concatenateModules?: boolean;
+
+  /**
+   * configure utoopack
+   */
+  utoopack?: IFatherUtooPackConfig;
 }
 
 export interface IFatherPreBundleConfig {

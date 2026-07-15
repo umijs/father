@@ -4,7 +4,7 @@ import type { BundleOptions } from '@utoo/pack';
 import fs from 'fs';
 import path from 'path';
 import { getCachePath, logger } from '../../utils';
-import type { BundleConfigProvider } from '../config';
+import type { BundleConfigProvider, IBundleConfig } from '../config';
 import {
   convertCopyConfig,
   convertExternalsToUtooPackExternals,
@@ -39,6 +39,13 @@ interface IBundleOpts {
   buildDependencies?: string[];
   watch?: boolean;
   incremental?: boolean;
+}
+
+export function mergeUtooPackConfig(
+  config: BundleOptions['config'],
+  userConfig?: IBundleConfig['utoopack'],
+): BundleOptions['config'] {
+  return lodash.merge({}, config, userConfig);
 }
 
 function resolveEntryPath(entryPath: string): string {
@@ -254,45 +261,48 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           opts.cwd,
         );
         const utooPackOpts: BundleOptions = {
-          config: {
-            entry: [
-              {
-                name: entryName,
-                import: entryPath,
-                library: {
-                  name: config.name,
-                  export: [],
+          config: mergeUtooPackConfig(
+            {
+              entry: [
+                {
+                  name: entryName,
+                  import: entryPath,
+                  library: {
+                    name: config.name,
+                    export: [],
+                  },
                 },
+              ],
+              mode: opts.watch ? 'development' : 'production',
+              resolve: {
+                alias: config.alias,
               },
-            ],
-            mode: opts.watch ? 'development' : 'production',
-            resolve: {
-              alias: config.alias,
+              sourceMaps: Boolean(config.sourcemap),
+              externals,
+              define: config.define,
+              react: {
+                runtime: reactOpts.runtime,
+                importSource: reactOpts.importSource,
+              },
+              styles: {
+                ...(config.extractCSS !== false ? {} : { inlineCss: {} }),
+              },
+              output: {
+                path: distPath,
+                filename: config.output.filename,
+                cssFilename: '[name].css',
+                assetModuleFilename: 'static/[name].[contenthash:8]',
+                copy,
+              },
+              optimization: {
+                minify: config.jsMinifier !== JSMinifier.none,
+                concatenateModules: config.concatenateModules,
+              },
+              persistentCaching: false,
+              nodePolyfill: true,
             },
-            sourceMaps: Boolean(config.sourcemap),
-            externals,
-            define: config.define,
-            react: {
-              runtime: reactOpts.runtime,
-              importSource: reactOpts.importSource,
-            },
-            styles: {
-              ...(config.extractCSS !== false ? {} : { inlineCss: {} }),
-            },
-            output: {
-              path: distPath,
-              filename: config.output.filename,
-              cssFilename: '[name].css',
-              assetModuleFilename: 'static/[name].[contenthash:8]',
-              copy,
-            },
-            optimization: {
-              minify: config.jsMinifier !== JSMinifier.none,
-              concatenateModules: config.concatenateModules,
-            },
-            persistentCaching: false,
-            nodePolyfill: true,
-          },
+            config.utoopack,
+          ),
           watch: {
             enable: opts.watch ?? false,
           },
