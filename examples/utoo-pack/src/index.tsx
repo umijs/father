@@ -5,6 +5,7 @@ import React from 'react';
 // @ts-ignore
 import ReactDOM from 'react-dom';
 import './index.less';
+import styles from './inline-css.module.less';
 import './secondary.less';
 
 import { a } from '@/a';
@@ -17,7 +18,7 @@ console.log(require('alias-module'));
 
 function App({ content }: { content: string }) {
   // @ts-ignore
-  return <div className="wrapper">{content}</div>;
+  return <div className={`wrapper ${styles.inlineCssModule}`}>{content}</div>;
 }
 
 // @ts-ignore

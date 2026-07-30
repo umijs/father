@@ -5,6 +5,8 @@ export default defineConfig({
   umd: {
     bundler: 'utoopack',
     // bundler: 'webpack',
+    // Cover inline CSS with CSS Modules side effects.
+    extractCSS: false,
     generateUnminified: true,
     name: 'utoo-pack-example',
     externals: {
