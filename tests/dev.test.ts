@@ -138,37 +138,20 @@ test('dev: file change', async () => {
     'utf-8',
   );
 
-  await Promise.all([
-    // wait for watch debounce and compile
-    wait(WATCH_DEBOUNCE_STEP + 500),
-    // wait for webpack compilation done
-    new Promise<void>((resolve) => {
-      const logSpy = jest.spyOn(console, 'log');
-      const handler = () => {
-        try {
-          expect(console.log).toHaveBeenCalledWith(
-            // badge
-            expect.stringContaining('-'),
-            // time
-            expect.stringContaining('['),
-            // content
-            expect.stringContaining('Bundle '),
-          );
-          logSpy.mockRestore();
-          resolve();
-        } catch {
-          setTimeout(handler, 500);
-        }
-      };
-
-      handler();
-    }),
-  ]);
-
-  const fileMap = distToMap(CASE_DIST);
-
-  expect(fileMap['esm/index.js']).toContain(content);
-  expect(fileMap['umd/index.min.js']).toContain(content);
+  // Webpack and bundless transforms finish independently. Wait for both
+  // outputs instead of treating a webpack log and a fixed delay as completion.
+  const deadline = Date.now() + 15000;
+  while (true) {
+    try {
+      const fileMap = distToMap(CASE_DIST);
+      expect(fileMap['esm/index.js']).toContain(content);
+      expect(fileMap['umd/index.min.js']).toContain(content);
+      break;
+    } catch (error) {
+      if (Date.now() >= deadline) throw error;
+      await wait(100);
+    }
+  }
 });
 
 test('dev: file add', async () => {
