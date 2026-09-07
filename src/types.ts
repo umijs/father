@@ -337,6 +337,24 @@ export interface IFatherConfig extends IFatherBaseConfig {
    */
   esm?: IFatherBundlessConfig & {
     /**
+     * complete relative module specifiers in JavaScript and declarations
+     * @default false
+     */
+    fullySpecified?: boolean;
+
+    /**
+     * resolve external dependency subpaths for packages without exports
+     * @default false
+     */
+    resolveDepSubpath?: boolean;
+
+    /**
+     * write a package.json type marker in ESM output directories
+     * @default undefined (do not generate or modify package metadata)
+     */
+    outputPackageType?: 'module';
+
+    /**
      * output directory
      * @default dist/esm
      */

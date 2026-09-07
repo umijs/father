@@ -43,6 +43,9 @@ export interface IBundlessConfig
   format: IFatherBundlessTypes;
   input: string;
   parallel: boolean;
+  fullySpecified?: boolean;
+  resolveDepSubpath?: boolean;
+  outputPackageType?: 'module';
   output: NonNullable<IFatherBundlessConfig['output']>;
 }
 
@@ -407,6 +410,34 @@ export function createConfigProviders(
     bundle?: BundleConfigProvider;
   } = { bundless: {} };
   const configs = normalizeUserConfig(userConfig, pkg);
+
+  // A package marker would also change how Node interprets a CJS output
+  // sharing that directory. Reject this before the builder cleans outputs.
+  const modulePackageConfigs = configs.filter(
+    (config): config is IBundlessConfig =>
+      config.type === IFatherBuildTypes.BUNDLESS &&
+      config.outputPackageType === 'module',
+  );
+  const cjsConfigs = configs.filter(
+    (config): config is IBundlessConfig =>
+      config.type === IFatherBuildTypes.BUNDLESS &&
+      config.format === IFatherBundlessTypes.CJS,
+  );
+  for (const esmConfig of modulePackageConfigs) {
+    const esmOutput = path.resolve(cwd, esmConfig.output);
+    for (const cjsConfig of cjsConfigs) {
+      const cjsOutput = path.resolve(cwd, cjsConfig.output);
+      if (
+        esmOutput === cjsOutput ||
+        cjsOutput.startsWith(`${esmOutput}${path.sep}`) ||
+        esmOutput.startsWith(`${cjsOutput}${path.sep}`)
+      ) {
+        throw new Error(
+          'ESM outputPackageType and CJS outputs must use separate directories.',
+        );
+      }
+    }
+  }
 
   // convert alias from tsconfig paths
   const aliasFromPaths = convertAliasByTsconfigPaths(cwd);

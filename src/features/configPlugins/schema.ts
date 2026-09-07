@@ -61,7 +61,12 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
   return {
     ...getCommonSchemas(),
     extends: (Joi) => Joi.string(),
-    esm: (Joi) => getBundlessSchemas(Joi),
+    esm: (Joi) =>
+      getBundlessSchemas(Joi).keys({
+        fullySpecified: Joi.boolean(),
+        resolveDepSubpath: Joi.boolean(),
+        outputPackageType: Joi.equal('module'),
+      }),
     cjs: (Joi) => getBundlessSchemas(Joi),
     umd: (Joi) =>
       Joi.object({

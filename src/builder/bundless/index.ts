@@ -9,6 +9,7 @@ import {
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
+import { finalizeEsm, getRuntimePath } from './esm';
 import type { IDeclarationResult, ILoaderArgs } from './loaders';
 import runLoaders from './loaders';
 import { IJSTransformer, IJSTransformerFn } from './loaders/types';
@@ -94,6 +95,7 @@ async function transformFiles(
 ) {
   try {
     let count = 0;
+    const outputs: { file: string; sourceFile: string }[] = [];
     let bundlessPromises = [];
     let declarationFileMap = new Map<
       string,
@@ -114,6 +116,12 @@ async function transformFiles(
           path.relative(config.input, item),
         );
         let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+        outputs.push({
+          file: /\.d\.[cm]?ts$/.test(itemDistAbsPath)
+            ? itemDistAbsPath
+            : getRuntimePath(itemDistAbsPath),
+          sourceFile: itemAbsPath,
+        });
         const parentPath = path.dirname(itemDistAbsPath);
 
         // create parent directory if not exists
@@ -181,14 +189,15 @@ async function transformFiles(
         );
 
         declarations.forEach((item) => {
-          fs.writeFileSync(
-            path.join(outputDirs.get(item.sourceFile)!, item.file),
-            item.content,
-            'utf-8',
-          );
+          const file = path.join(outputDirs.get(item.sourceFile)!, item.file);
+          fs.writeFileSync(file, item.content, 'utf-8');
+          outputs.push({ file, sourceFile: item.sourceFile });
         });
       }
     }
+
+    // Run after all JS, assets and declarations exist, including cache hits.
+    finalizeEsm(outputs, opts.cwd, opts.configProvider);
 
     return count;
   } catch (err: any) {

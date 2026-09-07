@@ -153,6 +153,36 @@ Father provides build configurations based on **output types**:
   - **ESM** → Default is `dist/esm`
   - **CJS** → Default is `dist/cjs`
 
+### **fullySpecified**
+
+- **Type**: `boolean`
+- **Default**: `false`
+- **ESM only**: applies to the entire ESM build, including `overrides`
+
+Completes relative imports, re-exports and literal `import()` paths with runtime extensions or directory indexes, such as `./utils` → `./utils.js` or `./utils/index.js`, and aligns declaration specifiers. Paths follow actual output locations, including relocated `overrides`. Unresolved extensionless relative imports produce an error.
+
+Works with Babel, esbuild, SWC, parallel builds, caching and watch, preserving JavaScript and declaration source maps. It does not change external dependency paths, output filenames or package.json.
+
+### **resolveDepSubpath**
+
+- **Type**: `boolean`
+- **Default**: `false`
+- **ESM only**: applies to the entire ESM build, including `overrides`
+
+Completes subpaths of dependencies without `exports`, for example `dayjs/plugin/weekday` → `dayjs/plugin/weekday.js`, in both JavaScript and declarations. Package roots, dependencies with an `exports` map, and unresolved dependencies retain their original specifiers. This option is independent of `fullySpecified`; enable it when compatibility with these legacy dependencies is needed.
+
+### **outputPackageType**
+
+- **Type**: `'module'`
+- **Default**: `undefined` (do not generate or modify package metadata)
+- **ESM only**: applies to the entire ESM build, including `overrides`
+
+Writes a package.json with `"type": "module"` in ESM output directories, including relocated `overrides`. Package.json files copied into the output also receive this field, preserving other metadata. Existing `.js` and `.d.ts` filenames are retained; Node.js and TypeScript interpret these files as ESM. ESM and CJS must use separate, non-overlapping output directories when this option is enabled.
+
+All three options require explicit configuration. Neither `exports.import` nor the root package.json `type` enables them automatically. Existing configurations retain their build behavior. After disabling an option, perform a default clean build to avoid retaining previously generated files with `clean: false`.
+
+These options do not convert CommonJS dependencies into ESM or make CSS imports and browser-only APIs available in Node.js. See the [native ESM publishing example](./guide/esm-cjs.en-US.md#native-esm-in-nodejs).
+
 ### **transformer**
 
 - **Type**: `"babel" | "esbuild" | "swc"`
