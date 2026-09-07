@@ -84,6 +84,7 @@ export default async (args: ILoaderArgs) => {
   // format: {path:contenthash:config:pkgDeps}
   const cacheKey = [
     args.fileAbsPath,
+    ...(args.opts.config.autoExtension ? [args.opts.itemDistAbsPath] : []),
     getContentHash(fs.readFileSync(args.fileAbsPath, 'utf-8')),
     JSON.stringify(args.opts.config),
     // use for babel opts generator in src/builder/utils.ts

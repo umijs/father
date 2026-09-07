@@ -158,15 +158,36 @@ father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 
 
 指定产物的输出目录，`esm` 产物的默认输出目录为 `dist/esm`，`cjs` 产物的默认输出目录为 `dist/cjs`。
 
-#### fullySpecified
+#### autoExtension
 
 - 类型：`boolean`
 - 默认值：`false`
-- 仅支持 `esm`，作用于整个 ESM 构建（包括 `overrides`）
+- 支持 `esm`、`cjs` 和 `overrides`
 
-补全相对导入、再导出和字符串字面量 `import()` 的文件后缀或目录入口，例如 `./utils` → `./utils.js` 或 `./utils/index.js`，并同步处理声明文件。根据实际输出位置解析路径，支持移动了输出目录的 `overrides`。无法解析的相对无后缀路径会报错。
+根据 package.json 的包类型和构建格式选择 JavaScript 文件后缀，并同步生成或复制的声明文件后缀：
 
-支持 Babel、esbuild、SWC、并行构建、缓存和 watch，并保留 JS/声明文件 source map。该选项不修改外部依赖路径、产物文件名或 package.json。
+| 包类型                      | ESM 产物          | CJS 产物          |
+| --------------------------- | ----------------- | ----------------- |
+| `type: "module"`            | `.js` / `.d.ts`   | `.cjs` / `.d.cts` |
+| `type: "commonjs"` 或未设置 | `.mjs` / `.d.mts` | `.js` / `.d.ts`   |
+
+后缀选择参考 [Rslib 的 autoExtension](https://rslib.rs/config/lib/auto-extension)。为兼容 Father 4，默认关闭。Father 在开启时同时调整声明文件后缀，避免 `.mjs` 缺少匹配的 `.d.mts` 等类型入口问题。
+
+根 package.json 提供默认包类型；若源码中的 package.json 被复制到输出，则尊重该作用域的包类型，包括通过 `overrides` 移动的输出目录。显式 `.mjs`、`.cjs`、`.d.mts`、`.d.cts` 文件保持原有后缀。不会生成或修改 package.json。
+
+开启后，`redirect.js.extension` 和 `redirect.dts.extension` 默认启用，使文件中的模块引用匹配实际产物。支持 Babel、esbuild、SWC、并行构建、缓存、watch 和 source map。修改包类型、输出配置或关闭选项后，应重新执行一次默认的清理构建，避免 `clean: false` 或已有 watch 进程保留旧文件。
+
+#### redirect
+
+- 类型：`{ js?: { extension?: boolean }; dts?: { extension?: boolean } }`
+- 默认值：两个 `extension` 分别跟随 `autoExtension`，未开启时为 `false`
+- 支持 `esm`、`cjs` 和 `overrides`
+
+借鉴 [Rslib 的 redirect](https://rslib.rs/config/lib/redirect) 配置命名，分别控制 JavaScript 和声明文件中的相对模块引用补全。`js.extension` 处理导入、再导出、字面量 `import()`，以及 CJS 产物中的字面量 `require()`；`dts.extension` 处理声明中的导入、再导出、类型导入及模块扩充。
+
+例如 `./utils` 按实际产物补全为 `./utils.mjs` 或 `./utils/index.mjs`，已有 `./utils.js` 也会同步替换。路径跟随实际输出目录，支持 `overrides`。无法解析的相对无后缀路径会报错。该选项不修改文件本身的后缀或外部依赖路径。
+
+可以只开启 `redirect`，保留 `.js` 文件名并补全内部引用；也可以显式关闭其中一个 `extension`，将对应引用的处理交给消费方的构建工具。
 
 #### resolveDepSubpath
 
@@ -174,19 +195,9 @@ father 以构建产物类型划分构建配置，其中 `esm`、`cjs` 产物为 
 - 默认值：`false`
 - 仅支持 `esm`，作用于整个 ESM 构建（包括 `overrides`）
 
-补全没有 `exports` 的依赖子路径，例如 `dayjs/plugin/weekday` → `dayjs/plugin/weekday.js`。同步处理 JavaScript 与声明文件；包入口、具有 `exports` 的依赖，以及无法解析的依赖保持原有路径。该选项独立于 `fullySpecified`，仅在需要兼容这类旧式依赖时开启。
+补全没有 `exports` 的依赖子路径，例如 `dayjs/plugin/weekday` → `dayjs/plugin/weekday.js`。同步处理 JavaScript 与声明文件；包入口、具有 `exports` 的依赖，以及无法解析的依赖保持原有路径。与 tsdown 的 `deps.resolveDepSubpath` 类似，独立于内部引用补全，仅在需要兼容这类旧式依赖时开启。
 
-#### outputPackageType
-
-- 类型：`'module'`
-- 默认值：`undefined`（不生成或修改包元数据）
-- 仅支持 `esm`，作用于整个 ESM 构建（包括 `overrides`）
-
-在 ESM 输出目录（包括 `overrides` 的输出目录）生成包含 `"type": "module"` 的 package.json；复制到输出目录中的 package.json 也会设置此字段，其他字段保持不变。保留既有 `.js` 和 `.d.ts` 文件名，让 Node.js 和 TypeScript 将该目录内的文件按 ESM 解释。启用时，ESM 和 CJS 必须使用互不包含的独立输出目录。
-
-这三个选项均需显式配置，`exports.import` 和根 package.json 的 `type` 不会自动启用它们。不修改现有配置时，原有构建行为保持不变。关闭选项后应执行一次默认的清理构建，避免 `clean: false` 留下先前生成的文件。
-
-这些选项不会将 CommonJS 依赖转换为 ESM，也不会使 CSS 导入或浏览器专用 API 获得 Node.js 支持。完整双格式发布示例见[构建 ESModule 与 CommonJS 产物](./guide/esm-cjs.md#nodejs-原生-esm)。
+以上能力均需显式开启，`exports.import` 和根 package.json 的 `type` 不会自动启用它们。现有配置的默认构建行为不变。这些选项不会将 CommonJS 依赖转换为 ESM，也不会使 CSS 导入或浏览器专用 API 获得 Node.js 支持。完整发布示例见[构建 ESModule 与 CommonJS 产物](./guide/esm-cjs.md#nodejs-原生-esm)。
 
 #### transformer
 

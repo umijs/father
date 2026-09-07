@@ -43,7 +43,7 @@ export default {
 
 ## Node.js 原生 ESM
 
-传统 `module` 字段供打包工具使用，并不保证其中的路径能被 Node.js 直接加载。father 可以补全 ESM 产物中的路径、同步声明文件，并生成 ESM 包类型标记：
+传统 `module` 字段供打包工具使用，并不保证其中的路径能被 Node.js 直接加载。father 可以按包类型选择产物后缀，并同步补全模块引用和声明文件：
 
 ```ts
 // .fatherrc.ts
@@ -51,10 +51,9 @@ export default {
   esm: {
     output: 'es',
     platform: 'node',
-    fullySpecified: true,
-    outputPackageType: 'module',
+    autoExtension: true,
   },
-  cjs: { output: 'lib' },
+  cjs: { output: 'lib', autoExtension: true },
 };
 ```
 
@@ -62,14 +61,15 @@ export default {
 
 ```json
 {
+  "type": "commonjs",
   "main": "./lib/index.js",
-  "module": "./es/index.js",
+  "module": "./es/index.mjs",
   "types": "./lib/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./es/index.d.ts",
-        "default": "./es/index.js"
+        "types": "./es/index.d.mts",
+        "default": "./es/index.mjs"
       },
       "require": {
         "types": "./lib/index.d.ts",
@@ -81,12 +81,12 @@ export default {
 }
 ```
 
-上述选项必须显式配置：`exports.import` 只声明消费入口，不会启用构建选项。TypeScript 项目还需在 `tsconfig.json` 开启 `declaration`。发布时包含生成的 `es/package.json`；根 package.json 保持 CommonJS 包类型，使 `lib` 中的 `.js` 和 `.d.ts` 按 CommonJS 解释。
+这个例子明确使用 CommonJS 根包，因此 ESM 产物为 `.mjs` / `.d.mts`，CJS 产物为 `.js` / `.d.ts`。若改为 `"type": "module"`，则分别变为 `.js` / `.d.ts` 与 `.cjs` / `.d.cts`，需要同步更新发布入口。Father 不会生成额外的 package.json，也不会修改根包元数据。
 
-`fullySpecified` 将 `export * from './utils'` 按实际产物补全为 `export * from './utils.js'` 或 `export * from './utils/index.js'`，声明文件中的路径同步补全。`outputPackageType` 单独控制包类型标记；如果包类型已经正确设置，可以省略它。两者均不改变产物文件名。
+`autoExtension` 必须显式开启，`exports.import` 只声明消费入口。TypeScript 项目还需在 `tsconfig.json` 开启 `declaration`。产物中的相对导入、再导出、动态导入和 CJS `require()` 默认同步指向实际文件，声明中的路径也会补全；可用 `redirect.js.extension` 和 `redirect.dts.extension` 分别控制。
 
 外部依赖路径默认保持原样。如果依赖使用 `dayjs/plugin/weekday` 这类没有 `exports` 的子路径，可以额外设置 `esm.resolveDepSubpath: true`。具有 `exports` 的依赖始终保留公共导入路径。
 
-已有的 `esm: {}` 构建行为保持不变，以上选项默认都不启用。原有 `esm` 已能保留 ESM 语法；当源码路径和包类型符合要求时，也能直接被 Node.js 加载。这些选项提供自动补全和包类型标记，应用代码及依赖仍需适用于 Node.js。
+已有的 `esm: {}` / `cjs: {}` 构建行为保持不变。原有 `esm` 已能保留 ESM 语法，当源码路径和包类型符合要求时也能直接被 Node.js 加载。新选项自动处理产物后缀和路径，应用代码及依赖仍需适用于 Node.js。
 
 在 father 项目中，ESModule 产物及 CommonJS 产物都以 Bundless 模式进行构建，关于 Bundless 模式的介绍可参考 [构建模式 - Bundless](./build-mode.md#bundless)。

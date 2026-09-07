@@ -2,6 +2,7 @@ import { MagicString, remapping, winPath } from '@umijs/utils';
 import fs from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
+import { IFatherBundlessTypes } from '../../types';
 import type { BundlessConfigProvider, IBundlessConfig } from '../config';
 
 function isFile(file: string) {
@@ -14,6 +15,85 @@ export function getRuntimePath(file: string) {
     .replace(/\.d\.cts$/, '.cjs')
     .replace(/\.d\.ts$/, '.js')
     .replace(/\.(tsx?|jsx)$/, '.js');
+}
+
+// Resolve package scopes that will be copied, even before the assets are emitted.
+// Reading mapped source metadata also keeps relocated overrides consistent.
+function getPackageType(
+  file: string,
+  cwd: string,
+  provider: BundlessConfigProvider,
+) {
+  let dir = path.dirname(file);
+  while (dir !== cwd && dir !== path.dirname(dir)) {
+    for (const config of provider.configs) {
+      const relative = path.relative(path.join(cwd, config.output), dir);
+      if (
+        relative === '..' ||
+        relative.startsWith(`..${path.sep}`) ||
+        path.isAbsolute(relative)
+      )
+        continue;
+      const source = path.resolve(cwd, config.input, relative, 'package.json');
+      if (
+        isFile(source) &&
+        provider.getConfigForFile(winPath(path.relative(cwd, source))) ===
+          config
+      ) {
+        return JSON.parse(fs.readFileSync(source, 'utf-8')).type;
+      }
+    }
+    const packageFile = path.join(dir, 'package.json');
+    if (isFile(packageFile))
+      return JSON.parse(fs.readFileSync(packageFile, 'utf-8')).type;
+    dir = path.dirname(dir);
+  }
+  return provider.pkg.type;
+}
+
+export function getOutputFile(
+  sourceFile: string,
+  cwd: string,
+  provider: BundlessConfigProvider,
+) {
+  const config = provider.getConfigForFile(
+    winPath(path.relative(cwd, sourceFile)),
+  )!;
+  const file = path.join(
+    cwd,
+    config.output,
+    path.relative(config.input, path.relative(cwd, sourceFile)),
+  );
+  if (!config.autoExtension) return file;
+  const modulePackage = getPackageType(file, cwd, provider) === 'module';
+  const extension =
+    config.format === IFatherBundlessTypes.ESM
+      ? modulePackage
+        ? '.js'
+        : '.mjs'
+      : modulePackage
+      ? '.cjs'
+      : '.js';
+  // Explicit .mjs/.cjs and .d.mts/.d.cts assets retain their module identity.
+  return file
+    .replace(
+      /\.d\.ts(?=\.map$|$)/,
+      `.d.${extension.slice(1).replace('js', 'ts')}`,
+    )
+    .replace(/(?<!\.d)\.(tsx?|jsx?)(?=\.map$|$)/, extension);
+}
+
+export function getDeclarationFile(file: string, runtimeFile: string) {
+  const extension = path.extname(runtimeFile).slice(1).replace('js', 'ts');
+  return file.replace(/\.d\.ts(?=\.map$|$)/, `.d.${extension}`);
+}
+
+function redirects(config: IBundlessConfig, declaration: boolean) {
+  return (
+    config.redirect?.[declaration ? 'dts' : 'js']?.extension ??
+    config.autoExtension ??
+    false
+  );
 }
 
 const runtimeExtensions = ['.js', '.mjs', '.cjs'];
@@ -89,8 +169,11 @@ function resolveRelativeSpecifier(
   ];
   const source =
     findFile(sourceRequest, sourceExtensions) ||
-    (/\.js$/.test(request)
-      ? findFile(sourceRequest.slice(0, -3), sourceExtensions)
+    (/\.[cm]?js$/.test(request)
+      ? findFile(
+          sourceRequest.slice(0, -path.extname(sourceRequest).length),
+          sourceExtensions,
+        )
       : undefined);
   let target: string | undefined;
   if (source) {
@@ -98,11 +181,7 @@ function resolveRelativeSpecifier(
       winPath(path.relative(cwd, source)),
     );
     if (config) {
-      const emitted = path.resolve(
-        cwd,
-        config.output,
-        path.relative(config.input, path.relative(cwd, source)),
-      );
+      const emitted = getOutputFile(source, cwd, provider);
       const runtime = getRuntimePath(emitted);
       if (isFile(runtime) || (isDeclaration && isFile(emitted))) {
         target = runtime;
@@ -123,7 +202,7 @@ function resolveRelativeSpecifier(
   }
   if (path.extname(request)) return specifier;
   throw new Error(
-    `Cannot resolve fully specified ESM import ${JSON.stringify(
+    `Cannot resolve module reference ${JSON.stringify(
       specifier,
     )} from ${path.relative(cwd, output.file)}`,
   );
@@ -135,7 +214,7 @@ function rewriteOutput(
   provider: BundlessConfigProvider,
   config: IBundlessConfig,
 ) {
-  // Load the parser only when ESM import rewriting is enabled.
+  // Load the parser only when module reference rewriting is enabled.
   const ts: typeof import('typescript') = require('typescript');
   const content = fs.readFileSync(output.file, 'utf-8');
   const source = ts.createSourceFile(
@@ -151,7 +230,7 @@ function rewriteOutput(
     const specifier = node.text;
     const isRelative = /^(?:\.\.?\/|\.\.?$)/.test(specifier);
     const replacement = isRelative
-      ? config.fullySpecified
+      ? redirects(config, source.isDeclarationFile)
         ? resolveRelativeSpecifier(specifier, output, cwd, provider)
         : specifier
       : config.resolveDepSubpath
@@ -174,6 +253,19 @@ function rewriteOutput(
       node.expression.kind === ts.SyntaxKind.ImportKeyword
     ) {
       replace(node.arguments[0]);
+    } else if (
+      config.format === IFatherBundlessTypes.CJS &&
+      ts.isCallExpression(node) &&
+      ((ts.isIdentifier(node.expression) &&
+        node.expression.text === 'require') ||
+        (ts.isPropertyAccessExpression(node.expression) &&
+          ts.isIdentifier(node.expression.expression) &&
+          node.expression.expression.text === 'require' &&
+          node.expression.name.text === 'resolve'))
+    ) {
+      replace(node.arguments[0]);
+    } else if (ts.isExternalModuleReference(node) && source.isDeclarationFile) {
+      replace(node.expression);
     } else if (
       ts.isImportTypeNode(node) &&
       ts.isLiteralTypeNode(node.argument)
@@ -204,7 +296,7 @@ function rewriteOutput(
   fs.writeFileSync(output.file, result.toString());
 }
 
-export function finalizeEsm(
+export function finalizeOutputs(
   outputs: IOutputFile[],
   cwd: string,
   provider: BundlessConfigProvider,
@@ -212,9 +304,10 @@ export function finalizeEsm(
   if (
     !provider.configs.some(
       (config) =>
-        config.fullySpecified ||
-        config.resolveDepSubpath ||
-        config.outputPackageType,
+        config.autoExtension ||
+        redirects(config, false) ||
+        redirects(config, true) ||
+        config.resolveDepSubpath,
     )
   )
     return;
@@ -224,55 +317,60 @@ export function finalizeEsm(
       winPath(path.relative(cwd, output.sourceFile)),
     ),
   }));
-  // tsc emits maps relative to its declaration location; Father relocates
-  // declarations to the configured output (possibly an override directory).
+  // Generated declarations are relocated after tsc emits them. Copied maps
+  // already describe their own sources and must retain those mappings.
   for (const output of enabledOutputs) {
     if (
-      output.config?.fullySpecified &&
-      /\.d\.[cm]?ts\.map$/.test(output.file) &&
-      isFile(output.file)
-    ) {
-      const map = JSON.parse(fs.readFileSync(output.file, 'utf-8'));
-      if (!map.sourceRoot) {
-        map.sources = [
-          winPath(path.relative(path.dirname(output.file), output.sourceFile)),
-        ];
-        fs.writeFileSync(output.file, JSON.stringify(map));
-      }
+      !output.config ||
+      !isFile(output.file) ||
+      !/\.d\.[cm]?ts\.map$/.test(output.file)
+    )
+      continue;
+    if (
+      !redirects(output.config, true) &&
+      !output.config.autoExtension &&
+      !output.config.resolveDepSubpath
+    )
+      continue;
+    const map = JSON.parse(fs.readFileSync(output.file, 'utf-8'));
+    if (!/\.d\.[cm]?ts(?:\.map)?$/.test(output.sourceFile) && !map.sourceRoot) {
+      map.sources = [
+        winPath(path.relative(path.dirname(output.file), output.sourceFile)),
+      ];
     }
+    if (output.config.autoExtension)
+      map.file = path.basename(output.file.slice(0, -4));
+    fs.writeFileSync(output.file, JSON.stringify(map));
   }
   for (const output of enabledOutputs) {
     const config = output.config;
     if (
-      (config?.fullySpecified || config?.resolveDepSubpath) &&
-      /(?:\.m?js|\.d\.[cm]?ts)$/.test(output.file) &&
-      isFile(output.file)
+      !config ||
+      !/(?:\.[cm]?js|\.d\.[cm]?ts)$/.test(output.file) ||
+      !isFile(output.file)
+    )
+      continue;
+    if (config.autoExtension) {
+      const mapFile = `${output.file}.map`;
+      if (isFile(mapFile)) {
+        const map = JSON.parse(fs.readFileSync(mapFile, 'utf-8'));
+        map.file = path.basename(output.file);
+        fs.writeFileSync(mapFile, JSON.stringify(map));
+        const content = fs.readFileSync(output.file, 'utf-8');
+        fs.writeFileSync(
+          output.file,
+          content.replace(
+            /^([ \t]*\/\/[#@] sourceMappingURL=)[^\r\n]+$/gm,
+            `$1${path.basename(mapFile)}`,
+          ),
+        );
+      }
+    }
+    if (
+      redirects(config, /\.d\.[cm]?ts$/.test(output.file)) ||
+      config.resolveDepSubpath
     ) {
       rewriteOutput(output, cwd, provider, config);
-    }
-  }
-  // A package marker is independent of import rewriting. Include relocated
-  // overrides and copied package scopes while preserving their other metadata.
-  const packageFiles = new Set(
-    provider.configs
-      .filter((config) => config.outputPackageType === 'module')
-      .map((config) => path.resolve(cwd, config.output, 'package.json')),
-  );
-  enabledOutputs
-    .filter(
-      (output) =>
-        output.config?.outputPackageType === 'module' &&
-        path.basename(output.file) === 'package.json',
-    )
-    .forEach((output) => packageFiles.add(output.file));
-  for (const file of packageFiles) {
-    const pkg = isFile(file) ? JSON.parse(fs.readFileSync(file, 'utf-8')) : {};
-    if (pkg.type !== 'module') {
-      fs.mkdirSync(path.dirname(file), { recursive: true });
-      fs.writeFileSync(
-        file,
-        `${JSON.stringify({ ...pkg, type: 'module' }, null, 2)}\n`,
-      );
     }
   }
 }

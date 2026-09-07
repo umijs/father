@@ -187,6 +187,21 @@ export interface IFatherBaseConfig {
 
 export interface IFatherBundlessConfig extends IFatherBaseConfig {
   /**
+   * choose .js/.mjs/.cjs by package type and match declaration extensions
+   * @default false
+   */
+  autoExtension?: boolean;
+
+  /**
+   * complete module references in JavaScript and declarations independently
+   * @default each extension option follows autoExtension (false by default)
+   */
+  redirect?: {
+    js?: { extension?: boolean };
+    dts?: { extension?: boolean };
+  };
+
+  /**
    * source code directory
    * @default src
    */
@@ -337,22 +352,10 @@ export interface IFatherConfig extends IFatherBaseConfig {
    */
   esm?: IFatherBundlessConfig & {
     /**
-     * complete relative module specifiers in JavaScript and declarations
-     * @default false
-     */
-    fullySpecified?: boolean;
-
-    /**
-     * resolve external dependency subpaths for packages without exports
+     * resolve dependency subpaths for packages without exports
      * @default false
      */
     resolveDepSubpath?: boolean;
-
-    /**
-     * write a package.json type marker in ESM output directories
-     * @default undefined (do not generate or modify package metadata)
-     */
-    outputPackageType?: 'module';
 
     /**
      * output directory

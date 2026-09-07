@@ -1,4 +1,12 @@
-import { chalk, chokidar, debug, glob, lodash, rimraf } from '@umijs/utils';
+import {
+  chalk,
+  chokidar,
+  debug,
+  glob,
+  lodash,
+  rimraf,
+  winPath,
+} from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -9,10 +17,15 @@ import {
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
 import getDeclarations from './dts';
-import { finalizeEsm, getRuntimePath } from './esm';
 import type { IDeclarationResult, ILoaderArgs } from './loaders';
 import runLoaders from './loaders';
 import { IJSTransformer, IJSTransformerFn } from './loaders/types';
+import {
+  finalizeOutputs,
+  getDeclarationFile,
+  getOutputFile,
+  getRuntimePath,
+} from './output';
 import createParallelLoader from './parallelLoader';
 
 const debugLog = debug(DEBUG_BUNDLESS_NAME);
@@ -115,7 +128,11 @@ async function transformFiles(
           config.output!,
           path.relative(config.input, item),
         );
-        let itemDistAbsPath = path.join(opts.cwd, itemDistPath);
+        let itemDistAbsPath = config.autoExtension
+          ? getOutputFile(itemAbsPath, opts.cwd, opts.configProvider)
+          : path.join(opts.cwd, itemDistPath);
+        if (config.autoExtension)
+          itemDistPath = path.relative(opts.cwd, itemDistAbsPath);
         outputs.push({
           file: /\.d\.[cm]?ts$/.test(itemDistAbsPath)
             ? itemDistAbsPath
@@ -189,7 +206,16 @@ async function transformFiles(
         );
 
         declarations.forEach((item) => {
-          const file = path.join(outputDirs.get(item.sourceFile)!, item.file);
+          const config = opts.configProvider.getConfigForFile(
+            winPath(path.relative(opts.cwd, item.sourceFile)),
+          )!;
+          const filename = config.autoExtension
+            ? getDeclarationFile(
+                item.file,
+                getOutputFile(item.sourceFile, opts.cwd, opts.configProvider),
+              )
+            : item.file;
+          const file = path.join(outputDirs.get(item.sourceFile)!, filename);
           fs.writeFileSync(file, item.content, 'utf-8');
           outputs.push({ file, sourceFile: item.sourceFile });
         });
@@ -197,7 +223,7 @@ async function transformFiles(
     }
 
     // Run after all JS, assets and declarations exist, including cache hits.
-    finalizeEsm(outputs, opts.cwd, opts.configProvider);
+    finalizeOutputs(outputs, opts.cwd, opts.configProvider);
 
     return count;
   } catch (err: any) {
@@ -294,7 +320,29 @@ async function bundless(
             path.relative(config.input, rltFilePath),
           );
           // TODO: collect real emit files
-          const relatedFiles = isTsFile
+          const emitted = getOutputFile(
+            path.resolve(opts.cwd, rltFilePath),
+            opts.cwd,
+            opts.configProvider,
+          );
+          const relatedFiles = config.autoExtension
+            ? [
+                emitted,
+                `${emitted}.map`,
+                ...(isTsFile && !/\.d\.ts$/.test(rltFilePath)
+                  ? [
+                      getDeclarationFile(
+                        replacePathExt(emitted, '.d.ts'),
+                        emitted,
+                      ),
+                      getDeclarationFile(
+                        replacePathExt(emitted, '.d.ts.map'),
+                        emitted,
+                      ),
+                    ]
+                  : []),
+              ]
+            : isTsFile
             ? [
                 replacePathExt(fileDistAbsPath, '.js'),
                 replacePathExt(fileDistAbsPath, '.d.ts'),

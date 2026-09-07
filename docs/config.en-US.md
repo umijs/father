@@ -153,15 +153,36 @@ Father provides build configurations based on **output types**:
   - **ESM** → Default is `dist/esm`
   - **CJS** → Default is `dist/cjs`
 
-### **fullySpecified**
+### **autoExtension**
 
 - **Type**: `boolean`
 - **Default**: `false`
-- **ESM only**: applies to the entire ESM build, including `overrides`
+- Supports `esm`, `cjs` and `overrides`
 
-Completes relative imports, re-exports and literal `import()` paths with runtime extensions or directory indexes, such as `./utils` → `./utils.js` or `./utils/index.js`, and aligns declaration specifiers. Paths follow actual output locations, including relocated `overrides`. Unresolved extensionless relative imports produce an error.
+Chooses JavaScript extensions according to the package type and output format, and matches generated or copied declaration extensions:
 
-Works with Babel, esbuild, SWC, parallel builds, caching and watch, preserving JavaScript and declaration source maps. It does not change external dependency paths, output filenames or package.json.
+| Package type                 | ESM output        | CJS output        |
+| ---------------------------- | ----------------- | ----------------- |
+| `type: "module"`             | `.js` / `.d.ts`   | `.cjs` / `.d.cts` |
+| `type: "commonjs"` or absent | `.mjs` / `.d.mts` | `.js` / `.d.ts`   |
+
+The filename policy follows [Rslib's autoExtension](https://rslib.rs/config/lib/auto-extension), but defaults to off for Father 4 compatibility. Father also matches declaration extensions when enabled, avoiding type entry points such as `.mjs` files without corresponding `.d.mts` files.
+
+The root package.json supplies the default package type. Package.json files copied from sources define their own output scopes, including relocated `overrides`. Explicit `.mjs`, `.cjs`, `.d.mts` and `.d.cts` files retain their extensions. No package.json is generated or modified.
+
+Enabling this option also enables `redirect.js.extension` and `redirect.dts.extension` by default so module references match the emitted files. Supports Babel, esbuild, SWC, parallel builds, caching, watch and source maps. After changing package types or output configuration, or disabling the option, restart with a default clean build to avoid retaining old files with `clean: false` or an existing watch process.
+
+### **redirect**
+
+- **Type**: `{ js?: { extension?: boolean }; dts?: { extension?: boolean } }`
+- **Default**: each `extension` follows `autoExtension`, otherwise `false`
+- Supports `esm`, `cjs` and `overrides`
+
+Uses [Rslib's redirect](https://rslib.rs/config/lib/redirect) naming to control relative module references in JavaScript and declarations independently. `js.extension` handles imports, re-exports, literal `import()` and literal `require()` in CJS output. `dts.extension` handles declaration imports, re-exports, type imports and module augmentations.
+
+For example, `./utils` becomes `./utils.mjs` or `./utils/index.mjs` according to emitted files; existing `./utils.js` references are updated too. Paths follow actual output locations, including relocated `overrides`. Unresolved extensionless relative references produce an error. This option does not change filenames or external dependency paths.
+
+Enable `redirect` alone to complete internal references while retaining `.js` filenames. Explicitly disable either `extension` to leave those references for a consumer's build tool to process.
 
 ### **resolveDepSubpath**
 
@@ -169,19 +190,9 @@ Works with Babel, esbuild, SWC, parallel builds, caching and watch, preserving J
 - **Default**: `false`
 - **ESM only**: applies to the entire ESM build, including `overrides`
 
-Completes subpaths of dependencies without `exports`, for example `dayjs/plugin/weekday` → `dayjs/plugin/weekday.js`, in both JavaScript and declarations. Package roots, dependencies with an `exports` map, and unresolved dependencies retain their original specifiers. This option is independent of `fullySpecified`; enable it when compatibility with these legacy dependencies is needed.
+Completes subpaths of dependencies without `exports`, for example `dayjs/plugin/weekday` → `dayjs/plugin/weekday.js`, in JavaScript and declarations. Package roots, dependencies with `exports`, and unresolved dependencies retain their specifiers. Like tsdown's `deps.resolveDepSubpath`, this is independent of internal reference completion; enable it when legacy dependencies need it.
 
-### **outputPackageType**
-
-- **Type**: `'module'`
-- **Default**: `undefined` (do not generate or modify package metadata)
-- **ESM only**: applies to the entire ESM build, including `overrides`
-
-Writes a package.json with `"type": "module"` in ESM output directories, including relocated `overrides`. Package.json files copied into the output also receive this field, preserving other metadata. Existing `.js` and `.d.ts` filenames are retained; Node.js and TypeScript interpret these files as ESM. ESM and CJS must use separate, non-overlapping output directories when this option is enabled.
-
-All three options require explicit configuration. Neither `exports.import` nor the root package.json `type` enables them automatically. Existing configurations retain their build behavior. After disabling an option, perform a default clean build to avoid retaining previously generated files with `clean: false`.
-
-These options do not convert CommonJS dependencies into ESM or make CSS imports and browser-only APIs available in Node.js. See the [native ESM publishing example](./guide/esm-cjs.en-US.md#native-esm-in-nodejs).
+These capabilities require explicit opt-in. Neither `exports.import` nor the root package.json `type` enables them automatically. Existing configurations retain their default build behavior. These options do not convert CommonJS dependencies into ESM or make CSS imports and browser-only APIs available in Node.js. See the [native ESM publishing example](./guide/esm-cjs.en-US.md#native-esm-in-nodejs).
 
 ### **transformer**
 

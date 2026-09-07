@@ -7,7 +7,7 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 import builder from '../src/builder';
 import { addLoader, addTransformer } from '../src/builder/bundless';
-import { finalizeEsm } from '../src/builder/bundless/esm';
+import { finalizeOutputs } from '../src/builder/bundless/output';
 import { createConfigProviders } from '../src/builder/config';
 import { getSchemas } from '../src/features/configPlugins/schema';
 import type { IFatherConfig } from '../src/types';
@@ -81,11 +81,7 @@ const tsconfig = {
   include: ['src'],
 };
 
-const esmOptions = {
-  fullySpecified: true,
-  resolveDepSubpath: true,
-  outputPackageType: 'module',
-} as const;
+const redirect = { js: { extension: true }, dts: { extension: true } };
 
 test.each([
   {},
@@ -102,9 +98,8 @@ test.each([
       },
     },
   },
-  { exports: { import: [null, './dist/esm/index.js'] } },
 ])(
-  'package metadata does not enable ESM processing: %j',
+  'package metadata does not enable output processing: %j',
   async (packageJson) => {
     const cwd = fixture({
       'package.json': packageJson,
@@ -121,9 +116,9 @@ test.each([
     };
     const config = createConfigProviders(userConfig, packageJson, cwd).bundless
       .esm!.configs[0];
-    expect(config.fullySpecified).toBeUndefined();
+    expect(config.autoExtension).toBeUndefined();
+    expect(config.redirect).toBeUndefined();
     expect(config.resolveDepSubpath).toBeUndefined();
-    expect(config.outputPackageType).toBeUndefined();
     await builder({ cwd, pkg: packageJson, userConfig });
     const original = distToMap(path.join(cwd, 'dist'));
     expect(original['esm/package.json']).toBeUndefined();
@@ -134,59 +129,44 @@ test.each([
     expect(read(cwd, 'dist/esm/nested/package.json')).toBe(
       read(cwd, 'src/nested/package.json'),
     );
+    const disabled = {
+      autoExtension: false,
+      redirect: { js: { extension: false }, dts: { extension: false } },
+    };
     await builder({
       cwd,
       pkg: packageJson,
       userConfig: {
-        ...userConfig,
-        esm: {
-          ...userConfig.esm,
-          fullySpecified: false,
-          resolveDepSubpath: false,
-        },
+        esm: { ...userConfig.esm, ...disabled, resolveDepSubpath: false },
+        cjs: disabled,
       },
     });
     expect(distToMap(path.join(cwd, 'dist'))).toEqual(original);
   },
 );
 
-test('output options are ESM-only and validate independently', () => {
-  expect(getSchemas().esm(Joi).validate(esmOptions).error).toBeUndefined();
-  for (const options of [
-    { fullySpecified: 'invalid' },
-    { resolveDepSubpath: 'invalid' },
-    { outputPackageType: 'commonjs' },
-  ])
-    expect(getSchemas().esm(Joi).validate(options).error).toBeDefined();
-  for (const options of [
-    { fullySpecified: true },
-    { resolveDepSubpath: true },
-    { outputPackageType: 'module' },
-  ])
-    expect(getSchemas().cjs(Joi).validate(options).error).toBeDefined();
+test('validates shared output options and ESM-only dependency resolution', () => {
+  for (const format of ['esm', 'cjs']) {
+    const schema = getSchemas()[format](Joi);
+    expect(
+      schema.validate({ autoExtension: true, redirect }).error,
+    ).toBeUndefined();
+    for (const invalid of [
+      { autoExtension: 'invalid' },
+      { redirect: { js: { extension: 'invalid' } } },
+      { redirect: { dts: { extension: 'invalid' } } },
+      { fullySpecified: true },
+      { outputPackageType: 'module' },
+    ])
+      expect(schema.validate(invalid).error).toBeDefined();
+  }
+  expect(
+    getSchemas().esm(Joi).validate({ resolveDepSubpath: true }).error,
+  ).toBeUndefined();
+  expect(
+    getSchemas().cjs(Joi).validate({ resolveDepSubpath: true }).error,
+  ).toBeDefined();
 });
-
-test.each(['dist/cjs', 'dist', 'dist/cjs/nested'])(
-  'rejects package markers overlapping CJS output %s before cleaning',
-  async (output) => {
-    const cwd = fixture({ 'dist/cjs/existing.js': 'keep me' });
-    expect(() =>
-      createConfigProviders(
-        { esm: { fullySpecified: true, output }, cjs: {} },
-        pkg,
-        cwd,
-      ),
-    ).not.toThrow();
-    await expect(
-      builder({
-        cwd,
-        pkg,
-        userConfig: { esm: { outputPackageType: 'module', output }, cjs: {} },
-      }),
-    ).rejects.toThrow('separate directories');
-    expect(read(cwd, 'dist/cjs/existing.js')).toBe('keep me');
-  },
-);
 
 test.each([
   [false, false, false],
@@ -198,18 +178,15 @@ test.each([
   [false, true, true],
   [true, true, true],
 ])(
-  'options act independently: relative=%s dependencies=%s package=%s',
-  async (fullySpecified, resolveDepSubpath, marker) => {
+  'redirect and dependencies are independent: js=%s dts=%s deps=%s',
+  async (js, dts, resolveDepSubpath) => {
     const cwd = fixture({
-      'package.json': pkg,
       'src/index.js':
         "export * from './nested'; export { default as plugin } from 'legacy/plugin';",
       'src/index.d.ts':
         "export * from './nested'; export { default as plugin } from 'legacy/plugin';",
       'src/nested/index.js': 'export const value = 1;',
       'src/nested/index.d.ts': 'export declare const value: 1;',
-      'src/nested/package.json':
-        '{ "sideEffects": false, "type": "commonjs" }\n',
       'node_modules/legacy/package.json': { name: 'legacy' },
       'node_modules/legacy/plugin.js': 'module.exports = 7;',
     });
@@ -219,53 +196,60 @@ test.each([
       userConfig: {
         esm: {
           transformer: 'esbuild',
-          fullySpecified,
           resolveDepSubpath,
-          ...(marker ? { outputPackageType: 'module' } : {}),
+          redirect: { js: { extension: js }, dts: { extension: dts } },
         },
       },
     });
-    for (const file of ['index.js', 'index.d.ts']) {
+    for (const [file, enabled] of [
+      ['index.js', js],
+      ['index.d.ts', dts],
+    ] as const) {
       const content = read(cwd, `dist/esm/${file}`);
-      expect(content.includes('./nested/index.js')).toBe(fullySpecified);
+      expect(content.includes('./nested/index.js')).toBe(enabled);
       expect(content.includes('legacy/plugin.js')).toBe(resolveDepSubpath);
     }
-    if (marker) {
-      expect(JSON.parse(read(cwd, 'dist/esm/package.json'))).toEqual({
-        type: 'module',
-      });
-      expect(JSON.parse(read(cwd, 'dist/esm/nested/package.json'))).toEqual({
-        sideEffects: false,
-        type: 'module',
-      });
-    } else {
-      expect(fs.existsSync(path.join(cwd, 'dist/esm/package.json'))).toBe(
-        false,
-      );
-      expect(read(cwd, 'dist/esm/nested/package.json')).toBe(
-        read(cwd, 'src/nested/package.json'),
-      );
-    }
+    expect(fs.existsSync(path.join(cwd, 'dist/esm/package.json'))).toBe(false);
   },
 );
 
-test.each(['babel', 'esbuild', 'swc'] as const)(
-  '%s emits native ESM and NodeNext declarations while preserving CJS',
-  async (transformer) => {
+const variants = (['babel', 'esbuild', 'swc'] as const).flatMap((transformer) =>
+  [undefined, 'commonjs', 'module'].map((type) => ({ transformer, type })),
+);
+
+test.each(variants)(
+  '$transformer supports import, require and NodeNext with type=$type',
+  async ({ transformer, type }) => {
+    const esmExt = type === 'module' ? 'js' : 'mjs';
+    const cjsExt = type === 'module' ? 'cjs' : 'js';
+    const esmDts = type === 'module' ? 'ts' : 'mts';
+    const cjsDts = type === 'module' ? 'cts' : 'ts';
+    const packageJson = {
+      name: pkg.name,
+      ...(type ? { type } : {}),
+      exports: {
+        '.': {
+          import: {
+            types: `./dist/esm/index.d.${esmDts}`,
+            default: `./dist/esm/index.${esmExt}`,
+          },
+          require: {
+            types: `./dist/cjs/index.d.${cjsDts}`,
+            default: `./dist/cjs/index.${cjsExt}`,
+          },
+        },
+      },
+    };
     const cwd = fixture({
-      'package.json': pkg,
+      'package.json': packageJson,
       'tsconfig.json': tsconfig,
-      'src/index.ts': `
-      export { value } from '@/value';
-      export * from './nested';
+      'src/index.ts': `export { value } from '@/value'; export * from './nested';
       export { default as legacy } from 'legacy/plugin';
       export { default as modern } from 'modern/feature';
-      export const load = () => import('./nested');
-      export type Value = import('./value').Value;
-    `,
+      export const load = () => import('./nested'); export type Value = import('./value').Value;`,
       'src/value.ts':
         'export const value = 42; export interface Value { value: number }',
-      'src/nested/index.ts': "export { value as nested } from '../value';",
+      'src/nested/index.ts': "export { value as nested } from '../value.js';",
       'node_modules/legacy/package.json': { name: 'legacy' },
       'node_modules/legacy/plugin.js': 'module.exports = 7;',
       'node_modules/legacy/plugin.d.ts':
@@ -275,9 +259,8 @@ test.each(['babel', 'esbuild', 'swc'] as const)(
         type: 'module',
         exports: {
           './feature': {
-            types: './feature.d.ts',
-            import: './feature.js',
-            require: './feature.cjs',
+            import: { types: './feature.d.mts', default: './feature.js' },
+            require: { types: './feature.d.cts', default: './feature.cjs' },
           },
         },
       },
@@ -285,33 +268,51 @@ test.each(['babel', 'esbuild', 'swc'] as const)(
       'node_modules/modern/feature.cjs': 'module.exports = 8;',
       'node_modules/modern/feature.d.ts':
         'declare const feature: 8; export default feature;',
+      'node_modules/modern/feature.d.mts':
+        'declare const feature: 8; export default feature;',
+      'node_modules/modern/feature.d.cts':
+        'declare const feature: 8; export = feature;',
     });
     const userConfig: IFatherConfig = {
-      esm: { transformer, ...esmOptions },
-      cjs: {},
+      esm: { transformer, autoExtension: true, resolveDepSubpath: true },
+      cjs: { transformer, autoExtension: true },
       sourcemap: true,
       targets: { node: '18' },
     };
-    await builder({ cwd, pkg, userConfig });
-    const firstCjs = distToMap(path.join(cwd, 'dist/cjs'));
-    const esm = read(cwd, 'dist/esm/index.js');
-    const dts = read(cwd, 'dist/esm/index.d.ts');
-    expect(esm).toContain('./value.js');
-    expect(esm).toContain('./nested/index.js');
-    expect(esm).toContain('legacy/plugin.js');
-    expect(esm).toContain('modern/feature');
-    expect(esm).not.toContain('modern/feature.js');
-    expect(dts).toContain('./value.js');
-    expect(dts).toContain('./nested/index.js');
-    expect(dts).toContain('legacy/plugin.js');
-    expect(JSON.parse(read(cwd, 'dist/esm/package.json'))).toEqual({
-      type: 'module',
-    });
-    for (const file of ['index.js.map', 'index.d.ts.map']) {
-      const map = JSON.parse(read(cwd, `dist/esm/${file}`));
-      expect(map.sources).toEqual(['../../src/index.ts']);
-      expect(map.mappings).not.toBe('');
+    await builder({ cwd, pkg: packageJson, userConfig });
+    for (const [format, ext, dts] of [
+      ['esm', esmExt, esmDts],
+      ['cjs', cjsExt, cjsDts],
+    ]) {
+      const js = read(cwd, `dist/${format}/index.${ext}`);
+      const types = read(cwd, `dist/${format}/index.d.${dts}`);
+      expect(js).toContain(`./value.${ext}`);
+      expect(js).toContain(`./nested/index.${ext}`);
+      expect(types).toContain(`./value.${ext}`);
+      expect(types).toContain(`./nested/index.${ext}`);
+      expect(read(cwd, `dist/${format}/nested/index.${ext}`)).toContain(
+        `../value.${ext}`,
+      );
+      expect(js).toContain('modern/feature');
+      expect(js).not.toContain('modern/feature.js');
+      if (format === 'esm') {
+        expect(js).toContain('legacy/plugin.js');
+        expect(types).toContain('legacy/plugin.js');
+      }
+      expect(fs.existsSync(path.join(cwd, `dist/${format}/package.json`))).toBe(
+        false,
+      );
+      for (const file of [`index.${ext}`, `index.d.${dts}`]) {
+        const map = JSON.parse(read(cwd, `dist/${format}/${file}.map`));
+        expect(map.file).toBe(file);
+        expect(map.sources).toEqual(['../../src/index.ts']);
+        expect(map.mappings).not.toBe('');
+        expect(read(cwd, `dist/${format}/${file}`)).toContain(
+          `sourceMappingURL=${file}.map`,
+        );
+      }
     }
+    expect(JSON.parse(read(cwd, 'package.json'))).toEqual(packageJson);
     const result = execFileSync(
       process.execPath,
       [
@@ -321,20 +322,21 @@ test.each(['babel', 'esbuild', 'swc'] as const)(
     import { createRequire } from 'node:module';
     const esm = await import('native-esm-fixture');
     const cjs = createRequire(import.meta.url)('native-esm-fixture');
-    console.log(JSON.stringify([esm.value, esm.nested, (await esm.load()).nested, esm.legacy, esm.modern, cjs.value, cjs.legacy, cjs.modern]));
+    console.log(JSON.stringify([esm.value, (await esm.load()).nested, esm.legacy, esm.modern, cjs.value, (await cjs.load()).nested, cjs.legacy, cjs.modern]));
   `,
       ],
       { cwd, encoding: 'utf-8' },
     );
-    expect(JSON.parse(result)).toEqual([42, 42, 42, 7, 8, 42, 7, 8]);
-    write(
-      cwd,
-      'consumer.mts',
-      `import { value, nested, legacy, modern, load, type Value } from 'native-esm-fixture';
-    const n: number = value + nested + legacy + modern;
-    const v: Value = { value: n };
+    expect(JSON.parse(result)).toEqual([42, 42, 7, 8, 42, 42, 7, 8]);
+    for (const ext of ['mts', 'cts'])
+      write(
+        cwd,
+        `consumer.${ext}`,
+        `
+    import { value, nested, legacy, modern, load, type Value } from 'native-esm-fixture';
+    const v: Value = { value: value + nested + legacy + modern };
     load().then(m => { const x: number = m.nested; });`,
-    );
+      );
     try {
       execFileSync(
         process.execPath,
@@ -349,20 +351,22 @@ test.each(['babel', 'esbuild', 'swc'] as const)(
           '--target',
           'es2020',
           'consumer.mts',
+          'consumer.cts',
         ],
         { cwd, stdio: 'pipe' },
       );
     } catch (error: any) {
       throw new Error(error.stdout?.toString() || error.message);
     }
+    const firstCjs = distToMap(path.join(cwd, 'dist/cjs'));
     await builder({
       cwd,
-      pkg,
+      pkg: packageJson,
       userConfig: { ...userConfig, esm: { transformer } },
     });
     expect(distToMap(path.join(cwd, 'dist/cjs'))).toEqual(firstCjs);
-    expect(fs.existsSync(path.join(cwd, 'dist/esm/package.json'))).toBe(false);
     expect(read(cwd, 'dist/esm/index.js')).not.toContain('./value.js');
+    expect(fs.existsSync(path.join(cwd, 'dist/esm/index.mjs'))).toBe(false);
   },
 );
 
@@ -408,13 +412,16 @@ declare const untouched: "from './missing'";
     includeContent: true,
   });
   write(cwd, 'dist/esm/index.js.map', map);
-  const provider = createConfigProviders({ esm: { ...esmOptions } }, {}, cwd)
-    .bundless.esm!;
+  const provider = createConfigProviders(
+    { esm: { redirect, resolveDepSubpath: true } },
+    {},
+    cwd,
+  ).bundless.esm!;
   const outputs = ['index.js', 'index.d.ts'].map((file) => ({
     file: path.join(cwd, 'dist/esm', file),
     sourceFile: path.join(cwd, 'src/index.ts'),
   }));
-  finalizeEsm(outputs, cwd, provider);
+  finalizeOutputs(outputs, cwd, provider);
   const result = read(cwd, 'dist/esm/index.js');
   expect(result).toContain('./nested/index.js?raw=1#hash');
   expect(result).toContain('./dotted.name.js');
@@ -438,7 +445,7 @@ declare const untouched: "from './missing'";
   expect(read(cwd, 'dist/esm/index.d.ts')).toContain('"from \'./missing\'"');
   expect(JSON.parse(read(cwd, 'dist/esm/package.json'))).toEqual({
     sideEffects: false,
-    type: 'module',
+    type: 'commonjs',
   });
   // Inspect the decoded mapping after the longer import on the same line.
   const composed = remapping(
@@ -453,22 +460,20 @@ declare const untouched: "from './missing'";
     code.indexOf('after'),
   ]);
   const files = distToMap(path.join(cwd, 'dist'));
-  finalizeEsm(outputs, cwd, provider);
+  finalizeOutputs(outputs, cwd, provider);
   expect(distToMap(path.join(cwd, 'dist'))).toEqual(files);
 });
 
 test('reports unresolved relative modules with the importing file', async () => {
   const cwd = fixture({ 'src/index.js': "export * from './missing';" });
   await expect(
-    builder({ cwd, pkg: {}, userConfig: { esm: { fullySpecified: true } } }),
-  ).rejects.toThrow(
-    'Cannot resolve fully specified ESM import "./missing" from dist',
-  );
+    builder({ cwd, pkg: {}, userConfig: { esm: { redirect } } }),
+  ).rejects.toThrow('Cannot resolve module reference "./missing" from dist');
 });
 
-test('relocates overrides, marks copied package scopes, and handles cache hits', async () => {
+test('relocates overrides, respects copied package scopes, and handles cache hits', async () => {
   const cwd = fixture({
-    'package.json': pkg,
+    'package.json': { ...pkg, type: 'module' },
     'tsconfig.json': tsconfig,
     'src/index.ts': "export { value } from './nested';",
     'src/nested/index.ts': 'export const value = 12;',
@@ -476,26 +481,25 @@ test('relocates overrides, marks copied package scopes, and handles cache hits',
   });
   const userConfig: IFatherConfig = {
     esm: {
-      fullySpecified: true,
-      outputPackageType: 'module',
+      autoExtension: true,
       overrides: { 'src/nested': { output: 'custom/nested' } },
     },
   };
   delete process.env.FATHER_CACHE;
   try {
-    await builder({ cwd, pkg, userConfig });
+    await builder({ cwd, pkg: { ...pkg, type: 'module' }, userConfig });
     expect(read(cwd, 'dist/esm/index.js')).toContain(
-      '../../custom/nested/index.js',
+      '../../custom/nested/index.mjs',
     );
     expect(read(cwd, 'dist/esm/index.d.ts')).toContain(
-      '../../custom/nested/index.js',
+      '../../custom/nested/index.mjs',
     );
     expect(JSON.parse(read(cwd, 'custom/nested/package.json'))).toEqual({
       sideEffects: false,
-      type: 'module',
+      type: 'commonjs',
     });
     const first = distToMap(path.join(cwd, 'dist'));
-    await builder({ cwd, pkg, userConfig });
+    await builder({ cwd, pkg: { ...pkg, type: 'module' }, userConfig });
     expect(distToMap(path.join(cwd, 'dist'))).toEqual(first);
     expect(
       execFileSync(
@@ -515,60 +519,231 @@ test('relocates overrides, marks copied package scopes, and handles cache hits',
   }
 });
 
-test('watch rewrites changed JS, copied declarations and newly added modules', async () => {
-  const cwd = fixture({ 'src/index.js': 'export const initial = 1;' });
-  const watcher = await builder({
-    cwd,
-    pkg: {},
-    userConfig: {
-      esm: {
-        fullySpecified: true,
-        outputPackageType: 'module',
-        transformer: 'esbuild',
-      },
-    },
-    watch: true,
-  });
-  try {
+async function waitFor(check: () => boolean) {
+  const deadline = Date.now() + 15000;
+  while (!check()) {
+    if (Date.now() > deadline) throw new Error('Timed out waiting for output');
     await new Promise((resolve) => setTimeout(resolve, 100));
-    write(cwd, 'src/new/index.js', 'export const value = 2;');
-    write(cwd, 'src/new/index.d.ts', 'export declare const value: 2;');
-    write(cwd, 'src/index.js', "export { value } from './new';");
-    write(cwd, 'src/index.d.ts', "export { value } from './new';");
-    const deadline = Date.now() + 15000;
-    while (true) {
-      if (
-        fs.existsSync(path.join(cwd, 'dist/esm/index.d.ts')) &&
-        read(cwd, 'dist/esm/index.js').includes('./new/index.js') &&
-        read(cwd, 'dist/esm/index.d.ts').includes('./new/index.js')
-      )
-        break;
-      if (Date.now() > deadline)
-        throw new Error('Timed out waiting for native ESM watch output');
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-    expect(JSON.parse(read(cwd, 'dist/esm/package.json'))).toEqual({
-      type: 'module',
-    });
-  } finally {
-    await watcher.close();
   }
-});
+}
 
-test('parallel build finalizes native ESM after workers finish', () => {
+test.each([undefined, 'module'])(
+  'watch rewrites and removes JS, declarations and maps with type=%s',
+  async (type) => {
+    const packageJson = type ? { type } : {};
+    const cwd = fixture({
+      'package.json': packageJson,
+      'src/index.js': 'export const initial = 1;',
+    });
+    // Node 24's native Windows watcher can abort on temporary directory events.
+    // Polling still exercises Father's real watch build and removal handlers.
+    const previousPolling = process.env.CHOKIDAR_USEPOLLING;
+    if (process.platform === 'win32') process.env.CHOKIDAR_USEPOLLING = 'true';
+    const watcher = await builder({
+      cwd,
+      pkg: packageJson,
+      userConfig: {
+        esm: { autoExtension: true, transformer: 'esbuild' },
+        cjs: { autoExtension: true },
+        sourcemap: true,
+      },
+      watch: true,
+    });
+    const variants = [
+      ['esm', type ? 'js' : 'mjs', type ? 'ts' : 'mts'],
+      ['cjs', type ? 'cjs' : 'js', type ? 'cts' : 'ts'],
+    ];
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      write(cwd, 'src/new/index.js', 'export const value = 2;');
+      write(cwd, 'src/new/index.d.ts', 'export declare const value: 2;');
+      write(cwd, 'src/index.js', "export { value } from './new';");
+      write(cwd, 'src/index.d.ts', "export { value } from './new';");
+      await waitFor(() =>
+        variants.every(
+          ([format, ext, dts]) =>
+            fs.existsSync(path.join(cwd, `dist/${format}/index.d.${dts}`)) &&
+            read(cwd, `dist/${format}/index.${ext}`).includes(
+              `./new/index.${ext}`,
+            ) &&
+            read(cwd, `dist/${format}/index.d.${dts}`).includes(
+              `./new/index.${ext}`,
+            ),
+        ),
+      );
+      fs.unlinkSync(path.join(cwd, 'src/new/index.js'));
+      fs.unlinkSync(path.join(cwd, 'src/new/index.d.ts'));
+      await waitFor(() =>
+        variants.every(([format, ext, dts]) =>
+          [`index.${ext}`, `index.${ext}.map`, `index.d.${dts}`].every(
+            (file) =>
+              !fs.existsSync(path.join(cwd, `dist/${format}/new/${file}`)),
+          ),
+        ),
+      );
+    } finally {
+      await watcher.close();
+      if (previousPolling === undefined) delete process.env.CHOKIDAR_USEPOLLING;
+      else process.env.CHOKIDAR_USEPOLLING = previousPolling;
+    }
+  },
+);
+
+test('parallel build emits and references selected extensions', () => {
   const cwd = fixture({
     'package.json': pkg,
     'src/index.js': "export { value } from './nested';",
     'src/nested/index.js': 'export const value = 5;',
-    '.fatherrc.js': `export default { esm: { parallel: true, fullySpecified: true, outputPackageType: 'module' } };`,
+    '.fatherrc.js':
+      'export default { esm: { parallel: true, autoExtension: true }, cjs: { parallel: true, autoExtension: true } };',
   });
   execFileSync(
     process.execPath,
     [path.resolve(__dirname, '../bin/father.js'), 'build'],
     { cwd, env: { ...process.env, APP_ROOT: cwd }, stdio: 'pipe' },
   );
-  expect(read(cwd, 'dist/esm/index.js')).toContain('./nested/index.js');
-  expect(JSON.parse(read(cwd, 'dist/esm/package.json'))).toEqual({
-    type: 'module',
+  expect(read(cwd, 'dist/esm/index.mjs')).toContain('./nested/index.mjs');
+  expect(read(cwd, 'dist/cjs/index.js')).toContain('./nested/index.js');
+  expect(fs.existsSync(path.join(cwd, 'dist/esm/package.json'))).toBe(false);
+});
+
+test('autoExtension allows independent redirect overrides and preserves copied declaration maps', async () => {
+  const map = {
+    version: 3,
+    file: 'index.d.ts',
+    sources: ['../../types/original.ts'],
+    names: [],
+    mappings: 'AAAA',
+  };
+  const cwd = fixture({
+    'src/index.js': "export * from './value';",
+    'src/index.d.ts':
+      "export * from './value';\n//# sourceMappingURL=index.d.ts.map\n",
+    'src/index.d.ts.map': map,
+    'src/value.js': 'export const value = 1;',
+    'src/value.d.ts': 'export declare const value: 1;',
   });
+  await builder({
+    cwd,
+    pkg: {},
+    userConfig: {
+      esm: { autoExtension: true, redirect: { js: { extension: false } } },
+    },
+  });
+  expect(read(cwd, 'dist/esm/index.mjs')).not.toContain('./value.mjs');
+  expect(read(cwd, 'dist/esm/index.d.mts')).toContain('./value.mjs');
+  expect(read(cwd, 'dist/esm/index.d.mts')).toContain(
+    'sourceMappingURL=index.d.mts.map',
+  );
+  expect(JSON.parse(read(cwd, 'dist/esm/index.d.mts.map')).sources).toEqual(
+    map.sources,
+  );
+  await builder({
+    cwd,
+    pkg: {},
+    userConfig: {
+      esm: { autoExtension: true, redirect: { dts: { extension: false } } },
+    },
+  });
+  expect(read(cwd, 'dist/esm/index.mjs')).toContain('./value.mjs');
+  expect(read(cwd, 'dist/esm/index.d.mts')).not.toContain('./value.mjs');
+});
+
+test('cached builds select new filenames when the package type changes', async () => {
+  const cwd = fixture({
+    'package.json': {},
+    'tsconfig.json': tsconfig,
+    'src/index.ts': "export { value } from './value';",
+    'src/value.ts': 'export const value = 1;',
+  });
+  const userConfig = {
+    esm: { autoExtension: true },
+    cjs: { autoExtension: true },
+    sourcemap: true,
+  };
+  delete process.env.FATHER_CACHE;
+  try {
+    await builder({ cwd, pkg: {}, userConfig });
+    const first = distToMap(path.join(cwd, 'dist'));
+    write(cwd, 'package.json', { type: 'module' });
+    await builder({ cwd, pkg: { type: 'module' }, userConfig });
+    expect(read(cwd, 'dist/esm/index.js')).toContain('./value.js');
+    expect(read(cwd, 'dist/cjs/index.cjs')).toContain('./value.cjs');
+    expect(read(cwd, 'dist/cjs/index.d.cts')).toContain('./value.cjs');
+    expect(fs.existsSync(path.join(cwd, 'dist/esm/index.mjs'))).toBe(false);
+    write(cwd, 'package.json', {});
+    await builder({ cwd, pkg: {}, userConfig });
+    expect(distToMap(path.join(cwd, 'dist'))).toEqual(first);
+  } finally {
+    process.env.FATHER_CACHE = 'none';
+  }
+});
+
+test.each([undefined, 'module'])(
+  'dual-format builds can share a directory with type=%s',
+  async (type) => {
+    const packageJson = type ? { type } : {};
+    const cwd = fixture({
+      'package.json': packageJson,
+      'tsconfig.json': tsconfig,
+      'src/index.ts': "export { value } from './value';",
+      'src/value.ts': 'export const value = 9;',
+    });
+    const config = { autoExtension: true, output: 'dist' };
+    await builder({
+      cwd,
+      pkg: packageJson,
+      userConfig: { esm: config, cjs: config },
+    });
+    const esmExt = type ? 'js' : 'mjs';
+    const cjsExt = type ? 'cjs' : 'js';
+    const result = execFileSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '-e',
+        `
+    import { createRequire } from 'node:module';
+    const esm = await import('./dist/index.${esmExt}');
+    const cjs = createRequire(import.meta.url)('./dist/index.${cjsExt}');
+    console.log(esm.value + cjs.value);
+  `,
+      ],
+      { cwd, encoding: 'utf-8' },
+    );
+    expect(result.trim()).toBe('18');
+    expect(read(cwd, `dist/index.d.${type ? 'ts' : 'mts'}`)).toContain(
+      `./value.${esmExt}`,
+    );
+    expect(read(cwd, `dist/index.d.${type ? 'cts' : 'ts'}`)).toContain(
+      `./value.${cjsExt}`,
+    );
+  },
+);
+
+test('CJS resolves renamed modules in require.resolve and declaration import assignments', async () => {
+  const packageJson = { type: 'module' };
+  const cwd = fixture({
+    'package.json': packageJson,
+    'src/index.js':
+      "exports.value = require('./value').value; exports.filename = require.resolve('./value');",
+    'src/index.d.ts': "import value = require('./value'); export { value };",
+    'src/value.js': 'exports.value = 6;',
+    'src/value.d.ts': 'export declare const value: 6;',
+  });
+  await builder({
+    cwd,
+    pkg: packageJson,
+    userConfig: { cjs: { autoExtension: true } },
+  });
+  expect(read(cwd, 'dist/cjs/index.d.cts')).toContain('require("./value.cjs")');
+  const result = execFileSync(
+    process.execPath,
+    [
+      '-e',
+      `const m = require('./dist/cjs/index.cjs'); console.log(m.value, m.filename.endsWith('value.cjs'));`,
+    ],
+    { cwd, encoding: 'utf-8' },
+  );
+  expect(result.trim()).toBe('6 true');
 });

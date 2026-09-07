@@ -43,7 +43,7 @@ For more configuration options, refer to the [Configuration Guide](../config.md)
 
 ## Native ESM in Node.js
 
-The traditional `module` field is intended for bundlers and does not guarantee that Node.js can load its paths directly. Father can complete ESM specifiers, align declarations, and generate an ESM package marker:
+The traditional `module` field is intended for bundlers and does not guarantee that Node.js can load its paths directly. Father can choose output extensions according to package types and align module references and declarations:
 
 ```ts
 // .fatherrc.ts
@@ -51,10 +51,9 @@ export default {
   esm: {
     output: 'es',
     platform: 'node',
-    fullySpecified: true,
-    outputPackageType: 'module',
+    autoExtension: true,
   },
-  cjs: { output: 'lib' },
+  cjs: { output: 'lib', autoExtension: true },
 };
 ```
 
@@ -62,14 +61,15 @@ Declare separate runtime and type entry points in `package.json`:
 
 ```json
 {
+  "type": "commonjs",
   "main": "./lib/index.js",
-  "module": "./es/index.js",
+  "module": "./es/index.mjs",
   "types": "./lib/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./es/index.d.ts",
-        "default": "./es/index.js"
+        "types": "./es/index.d.mts",
+        "default": "./es/index.mjs"
       },
       "require": {
         "types": "./lib/index.d.ts",
@@ -81,12 +81,12 @@ Declare separate runtime and type entry points in `package.json`:
 }
 ```
 
-Configure these options explicitly: `exports.import` declares consumer entry points and does not enable build options. TypeScript projects also need `declaration` enabled in `tsconfig.json`. Publish the generated `es/package.json`. Keep the root package in CommonJS mode so `.js` and `.d.ts` files in `lib` are interpreted as CommonJS.
+This example explicitly uses a CommonJS root package, producing `.mjs` / `.d.mts` for ESM and `.js` / `.d.ts` for CJS. With `"type": "module"`, these become `.js` / `.d.ts` and `.cjs` / `.d.cts` respectively; update the published entry points accordingly. Father does not generate additional package.json files or modify root package metadata.
 
-`fullySpecified` changes `export * from './utils'` to `export * from './utils.js'` or `export * from './utils/index.js'`, depending on the actual output, and aligns declaration specifiers. `outputPackageType` controls package markers independently; omit it when the package type is already set correctly. Neither option changes output filenames.
+Enable `autoExtension` explicitly; `exports.import` only declares consumer entry points. TypeScript projects also need `declaration` enabled in `tsconfig.json`. Relative imports, re-exports, dynamic imports and CJS `require()` references follow actual output files by default, as do declaration references. Control them independently with `redirect.js.extension` and `redirect.dts.extension`.
 
-External dependency paths are preserved by default. For legacy subpaths such as `dayjs/plugin/weekday` in packages without `exports`, enable `esm.resolveDepSubpath: true` separately. Dependencies with `exports` always keep their public specifiers.
+External dependency paths are preserved by default. For legacy subpaths such as `dayjs/plugin/weekday` in packages without `exports`, enable `esm.resolveDepSubpath: true` separately. Dependencies with `exports` retain their public specifiers.
 
-Existing `esm: {}` builds retain their behavior: all these options are disabled by default. Father already preserves ESM syntax, and its output can run directly in Node.js when source paths and package types meet Node.js requirements. These options automate path completion and package markers; your code and dependencies must still support Node.js.
+Existing `esm: {}` / `cjs: {}` builds retain their behavior. Father already preserves ESM syntax, and its output can run directly in Node.js when source paths and package types meet Node.js requirements. The new options automate output extensions and references; your code and dependencies must still support Node.js.
 
 In the Father project, both ESModule and CommonJS outputs are built using the Bundless mode. For details on Bundless mode, see [Build Modes - Bundless](./build-mode.md#bundless).
