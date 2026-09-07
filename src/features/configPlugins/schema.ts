@@ -44,6 +44,11 @@ function getCommonSchemasJoi(Joi: Root) {
 function getBundlessSchemas(Joi: Root) {
   return Joi.object({
     ...getCommonSchemasJoi(Joi),
+    autoExtension: Joi.boolean(),
+    redirect: Joi.object({
+      js: Joi.object({ extension: Joi.boolean() }),
+      dts: Joi.object({ extension: Joi.boolean() }),
+    }),
     input: Joi.string(),
     output: Joi.string(),
     transformer: Joi.equal(
@@ -61,7 +66,10 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
   return {
     ...getCommonSchemas(),
     extends: (Joi) => Joi.string(),
-    esm: (Joi) => getBundlessSchemas(Joi),
+    esm: (Joi) =>
+      getBundlessSchemas(Joi).keys({
+        resolveDepSubpath: Joi.boolean(),
+      }),
     cjs: (Joi) => getBundlessSchemas(Joi),
     umd: (Joi) =>
       Joi.object({

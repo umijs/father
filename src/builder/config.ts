@@ -43,6 +43,7 @@ export interface IBundlessConfig
   format: IFatherBundlessTypes;
   input: string;
   parallel: boolean;
+  resolveDepSubpath?: boolean;
   output: NonNullable<IFatherBundlessConfig['output']>;
 }
 

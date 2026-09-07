@@ -1,4 +1,5 @@
 import { winPath } from '@umijs/utils';
+import path from 'path';
 import { getTsconfig } from '../../dts';
 import type { IBundlessLoader, IJSTransformer, ILoaderOutput } from '../types';
 
@@ -35,6 +36,9 @@ const jsLoader: IBundlessLoader = function (content) {
   if (/\.(jsx|tsx?)$/.test(this.resource)) {
     outputOpts.ext = '.js';
   }
+
+  if (this.config.autoExtension)
+    outputOpts.ext = path.extname(this.itemDistAbsPath);
 
   // mark for output declaration file
   const tsconfig = /\.tsx?$/.test(this.resource)
