@@ -99,3 +99,27 @@ test('config: custom tsconfig name', async () => {
   // check result
   require(`${process.env.APP_ROOT}/expect`).default(fileMap);
 });
+
+test('config: extends plugins and presets should be registered', async () => {
+  // execute build
+  process.env.APP_ROOT = path.join(CASES_DIR, 'config-extends-plugins');
+
+  // workaround for get config file path
+  global.TMP_CASE_CONFIG = path.join(process.env.APP_ROOT, '.fatherrc.ts');
+
+  await cli.run({
+    args: { _: ['build'], $0: 'node' },
+  });
+
+  // prepare file map
+  const fileMap = distToMap(
+    path.join(CASES_DIR, 'config-extends-plugins', 'dist'),
+  );
+
+  // check result
+  require(`${process.env.APP_ROOT}/expect`).default(fileMap);
+
+  // restore mock
+  jest.unmock('@umijs/utils');
+  delete global.TMP_CASE_CONFIG;
+});
