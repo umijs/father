@@ -4,6 +4,7 @@ export default (api: IApi) => {
   [
     'addJSTransformer',
     'addRegularCheckup',
+    'addJSXSourceCheckup',
     'addSourceCheckup',
     'addImportsCheckup',
     'onAllBuildComplete',
