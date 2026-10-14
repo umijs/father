@@ -278,6 +278,59 @@ test('utoopack: bundle wiring preserves the React JSX runtime when Emotion is en
   );
 });
 
+for (const watch of [false, true]) {
+  test.each([
+    { emotion: true, importSource: undefined, expected: undefined },
+    { emotion: {}, importSource: undefined, expected: undefined },
+    {
+      emotion: { autoLabel: 'always' as const },
+      importSource: undefined,
+      expected: undefined,
+    },
+    { emotion: false, importSource: undefined, expected: 'react' },
+    { emotion: undefined, importSource: undefined, expected: 'react' },
+    { emotion: true, importSource: 'react', expected: 'react' },
+    {
+      emotion: {},
+      importSource: '@emotion/react',
+      expected: '@emotion/react',
+    },
+    { emotion: true, importSource: 'preact', expected: 'preact' },
+  ])(
+    `utoopack: preserves JSX inference and overrides for %p (watch: ${watch})`,
+    async ({ emotion, importSource, expected }) => {
+      const config: IBundleConfig = {
+        type: IFatherBuildTypes.BUNDLE,
+        bundler: 'utoopack',
+        entry: 'src/index.ts',
+        output: { path: 'dist', filename: 'index.min.js' },
+        jsMinifier: JSMinifier.terser,
+        utoopack: { styles: { emotion }, react: { importSource } },
+      };
+      await bundle({
+        cwd: path.resolve(__dirname, '..'),
+        watch,
+        configProvider: {
+          configs: [config],
+          pkg: { dependencies: { react: '18.2.0' } },
+        } as BundleConfigProvider,
+      });
+      const { build } = require('@utoo/pack');
+      expect(build).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          config: expect.objectContaining({
+            mode: watch ? 'development' : 'production',
+            react: { runtime: 'automatic', importSource: expected },
+            styles: { emotion },
+          }),
+        }),
+        path.resolve(__dirname, '..'),
+        undefined,
+      );
+    },
+  );
+}
+
 test('utoopack: merges user config into father defaults', () => {
   const defaults = {
     entry: [],

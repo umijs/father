@@ -265,6 +265,7 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           cwd: opts.cwd,
           development: Boolean(opts.watch),
         });
+        const nativeEmotion = config.utoopack?.styles?.emotion;
         const utooPackOpts: BundleOptions = {
           config: mergeUtooPackConfig(
             {
@@ -288,8 +289,12 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               define: config.define,
               react: {
                 runtime: reactOpts.runtime,
-                // Emotion must not implicitly switch the JSX runtime.
-                importSource: reactOpts.importSource ?? 'react',
+                // Preserve Pack's JSX inference for explicit native Emotion.
+                importSource:
+                  reactOpts.importSource ??
+                  (nativeEmotion === undefined || nativeEmotion === false
+                    ? 'react'
+                    : undefined),
               },
               styles: {
                 ...compatibility.styles,
