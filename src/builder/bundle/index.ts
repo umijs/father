@@ -13,6 +13,7 @@ import {
   getBundleTargets,
   getSWCTransformReactOpts,
 } from '../utils';
+import { getUtooPackCompatibility } from './utooCompat';
 
 const webpackBundler: typeof import('@umijs/bundler-webpack') = importLazy(
   path.dirname(require.resolve('@umijs/bundler-webpack/package.json')),
@@ -260,9 +261,15 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
           opts.configProvider.pkg,
           opts.cwd,
         );
+        const compatibility = getUtooPackCompatibility(config, {
+          cwd: opts.cwd,
+          development: Boolean(opts.watch),
+        });
+        const nativeEmotion = config.utoopack?.styles?.emotion;
         const utooPackOpts: BundleOptions = {
           config: mergeUtooPackConfig(
             {
+              ...compatibility,
               entry: [
                 {
                   name: entryName,
@@ -282,9 +289,15 @@ async function bundle(opts: IBundleOpts): Promise<void | IBundleWatcher> {
               define: config.define,
               react: {
                 runtime: reactOpts.runtime,
-                importSource: reactOpts.importSource,
+                // Preserve Pack's JSX inference for explicit native Emotion.
+                importSource:
+                  reactOpts.importSource ??
+                  (nativeEmotion === undefined || nativeEmotion === false
+                    ? 'react'
+                    : undefined),
               },
               styles: {
+                ...compatibility.styles,
                 ...(config.extractCSS !== false ? {} : { inlineCss: {} }),
               },
               output: {
