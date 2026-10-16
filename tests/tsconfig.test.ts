@@ -1,6 +1,5 @@
 import { winPath } from '@umijs/utils';
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import ts from 'typescript';
 import getDeclarations, {
@@ -30,7 +29,9 @@ function writeConfig(config: object, filename = 'tsconfig.json') {
 }
 
 beforeEach(() => {
-  cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'father-tsconfig-'));
+  const fixtureParent = path.join(process.cwd(), 'node_modules', '.cache');
+  fs.mkdirSync(fixtureParent, { recursive: true });
+  cwd = fs.mkdtempSync(path.join(fixtureParent, 'father-tsconfig-'));
   originalEnv = {};
   ENV_KEYS.forEach((key) => {
     originalEnv[key] = process.env[key];
@@ -197,7 +198,12 @@ test('declaration generation does not change cached compiler options', async () 
   });
   process.env.NODE_ENV = 'development';
   delete process.env.FATHER_CACHE;
-  process.env.FATHER_CACHE_DIR = path.join(cwd, 'cache');
+  // Both process-relative and fixture-relative cache paths stay inside the
+  // fixture. A relative path also avoids joining two Windows drive paths.
+  process.env.FATHER_CACHE_DIR = path.relative(
+    process.cwd(),
+    path.join(cwd, 'cache'),
+  );
 
   await withTsconfigCache(async () => {
     const before = { ...getTsconfig(cwd)!.options };

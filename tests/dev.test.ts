@@ -18,6 +18,7 @@ const wait = (
 
 // use global for mock scope
 global.TMP_WATCHERS = [];
+global.TMP_WATCHER_READY = [];
 global.TMP_CASE_CONFIG = CASE_CONFIG;
 
 jest.mock('../src/builder/bundle/index.ts', () => {
@@ -49,6 +50,12 @@ jest.mock('@umijs/utils', () => {
         const ret = originalModule.chokidar.watch(...args);
 
         global.TMP_WATCHERS.push(ret);
+        global.TMP_WATCHER_READY.push(
+          new Promise<void>((resolve, reject) => {
+            ret.once('ready', resolve);
+            ret.once('error', reject);
+          }),
+        );
 
         return ret;
       },
@@ -92,13 +99,14 @@ beforeAll(async () => {
   });
 
   // await chokidar ready
-  await wait(100);
+  await Promise.all(global.TMP_WATCHER_READY);
 });
 
 afterAll(async () => {
   // close watchers
   await Promise.all(global.TMP_WATCHERS.map((watcher) => watcher.close()));
   delete global.TMP_WATCHERS;
+  delete global.TMP_WATCHER_READY;
   delete global.TMP_CASE_CONFIG;
   delete global.TMP_TRANSFORMER;
   delete process.env.APP_ROOT;
