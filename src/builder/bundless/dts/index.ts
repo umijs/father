@@ -1,4 +1,5 @@
 import { chalk, fsExtra, semver, winPath } from '@umijs/utils';
+import { AsyncLocalStorage } from 'async_hooks';
 import { execFile } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -9,6 +10,17 @@ import { getCache, getCachePath, logger } from '../../../utils';
 import { getContentHash } from '../../utils';
 
 const execFileAsync = promisify(execFile);
+
+const tsconfigCache = new AsyncLocalStorage<{
+  paths: Map<string, string | undefined>;
+  configs: Map<string, import('typescript').ParsedCommandLine>;
+}>();
+
+// Limit reuse to a file batch so watch rebuilds also pick up changes to
+// extended configs and the files matched by include/exclude.
+export function withTsconfigCache<T>(callback: () => T): T {
+  return tsconfigCache.run({ paths: new Map(), configs: new Map() }, callback);
+}
 
 type ParsedTsconfig = ReturnType<typeof getTsconfig>;
 type DeclarationOutput = {
@@ -21,20 +33,31 @@ type DeclarationOutput = {
  * get tsconfig.json path for specific path
  */
 export function getTsconfigPath(cwd: string) {
+  const cache = tsconfigCache.getStore()?.paths;
+  const cacheKey = JSON.stringify([
+    path.resolve(cwd),
+    process.env.FATHER_TSCONFIG_NAME,
+  ]);
+  if (cache?.has(cacheKey)) return cache.get(cacheKey);
+
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
 
-  return ts.findConfigFile(
+  const configPath = ts.findConfigFile(
     cwd,
     ts.sys.fileExists,
     process.env.FATHER_TSCONFIG_NAME,
   );
+  cache?.set(cacheKey, configPath);
+  return configPath;
 }
 
 /**
  * get parsed tsconfig.json for specific path
  * ref: https://github.com/privatenumber/get-tsconfig#how-can-i-use-typescript-to-parse-tsconfigjson
+ * NOTE: the result is shared by all callers within a `withTsconfigCache` batch,
+ * copy it before making any changes
  */
 export function getTsconfig(cwd: string) {
   // use require() rather than import(), to avoid jest runner to fail
@@ -43,8 +66,13 @@ export function getTsconfig(cwd: string) {
   const tsconfigPath = getTsconfigPath(cwd);
 
   if (tsconfigPath) {
+    const cache = tsconfigCache.getStore()?.configs;
+    const cacheKey = path.resolve(tsconfigPath);
+    const cached = cache?.get(cacheKey);
+    if (cached) return cached;
+
     const tsconfigFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
-    return ts.parseJsonConfigFileContent(
+    const config = ts.parseJsonConfigFileContent(
       tsconfigFile.config,
       ts.sys,
       path.dirname(tsconfigPath),
@@ -53,6 +81,8 @@ export function getTsconfig(cwd: string) {
       // ref: https://github.com/microsoft/TypeScript/blob/0464e91c8b67579a4ed840e5783575a493c958e0/src/compiler/program.ts#L2325
       tsconfigPath,
     );
+    cache?.set(cacheKey, config);
+    return config;
   }
 }
 
@@ -482,7 +512,13 @@ export default async function getDeclarations(
   // use require() rather than import(), to avoid jest runner to fail
   // ref: https://github.com/nodejs/node/issues/35889
   const ts: typeof import('typescript') = require('typescript');
-  const tsconfig = getTsconfig(opts.cwd);
+  const parsedTsconfig = getTsconfig(opts.cwd);
+  // Declaration generation adjusts compiler options for its own emit. Keep
+  // those changes out of the configuration shared with loaders in this batch.
+  const tsconfig = parsedTsconfig && {
+    ...parsedTsconfig,
+    options: { ...parsedTsconfig.options },
+  };
 
   if (tsconfig) {
     // check tsconfig error

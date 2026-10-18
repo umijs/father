@@ -16,7 +16,7 @@ import {
 } from '../../constants';
 import { logger } from '../../utils';
 import type { BundlessConfigProvider } from '../config';
-import getDeclarations from './dts';
+import getDeclarations, { withTsconfigCache } from './dts';
 import type { IDeclarationResult, ILoaderArgs } from './loaders';
 import runLoaders from './loaders';
 import { IJSTransformer, IJSTransformerFn } from './loaders/types';
@@ -97,7 +97,7 @@ function replacePathExt(filePath: string, ext: string) {
 /**
  * transform specific files
  */
-async function transformFiles(
+function transformFiles(
   files: string[],
   opts: {
     cwd: string;
@@ -105,6 +105,13 @@ async function transformFiles(
     watch?: true;
     incremental?: boolean;
   },
+): Promise<number> {
+  return withTsconfigCache(() => runTransformFiles(files, opts));
+}
+
+async function runTransformFiles(
+  files: string[],
+  opts: Parameters<typeof transformFiles>[1],
 ) {
   try {
     let count = 0;
