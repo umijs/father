@@ -56,6 +56,8 @@ export function getTsconfigPath(cwd: string) {
 /**
  * get parsed tsconfig.json for specific path
  * ref: https://github.com/privatenumber/get-tsconfig#how-can-i-use-typescript-to-parse-tsconfigjson
+ * NOTE: the result is shared by all callers within a `withTsconfigCache` batch,
+ * copy it before making any changes
  */
 export function getTsconfig(cwd: string) {
   // use require() rather than import(), to avoid jest runner to fail
