@@ -1,0 +1,16 @@
+boilerplate/package.json
+  h_dc953829499615 3
+package.json
+  h_dc953829499615 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6e42a0b7a3ec57e7c80db37bbfee708d37ef73e1",
+  "prompts": {},
+  "humans": {
+    "h_dc953829499615": {
+      "author": "fireairforce <1344492820@qq.com>"
+    }
+  }
+}
