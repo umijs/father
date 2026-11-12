@@ -1,0 +1,21 @@
+package.json
+  s_3d4ccbcaa79061::t_23dfef248e02d5 53
+pnpm-lock.yaml
+  s_3d4ccbcaa79061::t_835351071062bc 33-34,3219,3346,3746-3747,4297-4298,4306-4307,4315-4316,4324-4325,4333-4334,4342-4343,4351-4352,4359-4360,4368-4369,4384-4385,4403-4409,6761
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "adc2f98192f197a160fa18177c069f4311c7f570",
+  "prompts": {},
+  "sessions": {
+    "s_3d4ccbcaa79061": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cd9f-5c67-7253-bc9c-ff16038b5d43",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "fireairforce <1344492820@qq.com>"
+    }
+  }
+}
