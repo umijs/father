@@ -170,8 +170,16 @@ export function getContentHash(content: string, length = 8) {
   return createHash('md5').update(content).digest('hex').slice(0, length);
 }
 
+function toUmdExternal(name: string) {
+  // Preserve explicitly typed and whitespace-containing values.
+  if (!name || /\s/.test(name)) return name;
+
+  // Webpack UMD uses the same request for CommonJS and browser globals.
+  return { root: name, commonjs: name };
+}
+
 /**
- * Convert webpack externals configuration to utoopack externals format
+ * Convert webpack UMD externals configuration to utoopack externals format
  * @param externals webpack externals configuration
  * @returns utoopack externals configuration
  */
@@ -184,15 +192,13 @@ export function convertExternalsToUtooPackExternals(
 
   // Handle different webpack externals formats
   if (typeof externals === 'string') {
-    // Single string external: "lodash" -> { "lodash": "lodash" }
-    return { [externals]: externals };
+    return { [externals]: toUmdExternal(externals) };
   }
 
   if (Array.isArray(externals)) {
-    // Array of externals: ["lodash", "react"] -> { "lodash": "lodash", "react": "react" }
     return externals.reduce((acc, external) => {
       if (typeof external === 'string') {
-        acc[external] = external;
+        acc[external] = toUmdExternal(external);
       } else if (typeof external === 'object' && external !== null) {
         Object.assign(acc, convertExternalsToUtooPackExternals(external));
       }
@@ -219,8 +225,7 @@ export function convertExternalsToUtooPackExternals(
             result[key] = value;
           }
         } else {
-          // Simple string mapping: { "react": "React" }
-          result[key] = value;
+          result[key] = toUmdExternal(value);
         }
       } else if (Array.isArray(value)) {
         // Array format handling
