@@ -1,0 +1,21 @@
+boilerplate/package.json
+  s_cb59dff99b8982::t_132244804a7022 3
+package.json
+  s_cb59dff99b8982::t_132244804a7022 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1d702edcf9f0316383f4a736f3e162fe1bdac82b",
+  "prompts": {},
+  "sessions": {
+    "s_cb59dff99b8982": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13420-6ef4-7043-9bac-fee25862981d",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "fireairforce <1344492820@qq.com>"
+    }
+  }
+}
