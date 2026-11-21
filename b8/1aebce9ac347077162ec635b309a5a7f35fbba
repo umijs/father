@@ -1,0 +1,44 @@
+src/builder/bundless/index.ts
+  s_b5c4f1905926d2::t_0a7c3cde41bce5 125,190,208-210,217,221-230,234,236-238
+  s_b5c4f1905926d2::t_e2a1dbdda6c762 231-233,235
+  s_b5c4f1905926d2::t_9c6221d290f930 239
+src/types.ts
+  s_b5c4f1905926d2::t_0a7c3cde41bce5 117-122
+tests/dts-build.test.ts
+  s_b5c4f1905926d2::t_7c59497bf7ab0f 152-153,155
+  s_b5c4f1905926d2::t_199d9eb099d83d 53-56,108-151,156-157,159,163
+  s_b5c4f1905926d2::t_6203c4527304a2 37
+  s_b5c4f1905926d2::t_2f4fc4578de05c 18
+  s_b5c4f1905926d2::t_0f3e94f4922e4c 154,158
+  s_b5c4f1905926d2::t_1e7357a3cbe204 1-17,19-36,38-52,57-107,160-162,164-173
+docs/config.en-US.md
+  s_b5c4f1905926d2::t_04e346664ac72f 28-29,32-43
+  s_b5c4f1905926d2::t_a24d5a990d84b0 44
+src/builder/bundless/dts/index.ts
+  s_b5c4f1905926d2::t_0a7c3cde41bce5 501,680,682-691
+docs/config.md
+  s_b5c4f1905926d2::t_04e346664ac72f 42-43,47-58
+  s_b5c4f1905926d2::t_85f355c647a91f 59
+src/builder/config.ts
+  s_b5c4f1905926d2::t_15a149eb6b371f 16,102-112,241,295
+src/features/configPlugins/schema.ts
+  s_b5c4f1905926d2::t_0a7c3cde41bce5 30
+src/builder/bundless/loaders/index.ts
+  s_b5c4f1905926d2::t_0a7c3cde41bce5 31,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b81aebce9ac347077162ec635b309a5a7f35fbba",
+  "prompts": {},
+  "sessions": {
+    "s_b5c4f1905926d2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f867-ef71-7fa1-a669-d698059178ab",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "fireairforce <1344492820@qq.com>"
+    }
+  }
+}
