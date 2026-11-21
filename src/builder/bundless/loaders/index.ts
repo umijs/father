@@ -28,6 +28,7 @@ export type IDeclarationResult = [
   sourceFile: string,
   outputDir: string,
   compiler?: NonNullable<IBundlessConfig['dts']>['compiler'],
+  failOnError?: boolean,
 ];
 
 function replacePathExt(filePath: string, ext: string) {
@@ -72,6 +73,7 @@ function dealResult(result: any, args: ILoaderArgs) {
       winPath(args.fileAbsPath),
       path.dirname(fileDistAbsPath),
       args.opts.config.dts?.compiler,
+      args.opts.config.dts?.failOnError,
     ] as IDeclarationResult;
   }
 }

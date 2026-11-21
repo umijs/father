@@ -25,9 +25,22 @@ Father supports the following configuration options.
 
 ### **dts**
 
-- **Type**: `{ compiler?: "tsc" | "tsgo" }`
-- **Default**: `{ compiler: "tsc" }`
+- **Type**: `{ compiler?: "tsc" | "tsgo"; failOnError?: boolean }`
+- **Default**: `{ compiler: "tsc", failOnError: false }`
 - Configures TypeScript declaration generation. Father uses the built-in TypeScript Compiler API by default. Set `compiler` to `"tsgo"` to generate `.d.ts` files with the TypeScript 7 native compiler or the legacy tsgo preview.
+
+#### **Failing the build when declarations are missing**
+
+Set `failOnError: true` to require declaration output for each source file scheduled for declaration generation in Bundless mode. For example, `father build` exits with a nonzero status if `tsconfig` enables both `declaration` and `noEmit`, or if `noEmitOnError` blocks declaration generation because of a type error outside the build inputs. Watch mode reports the error and keeps watching. `tsconfig` still determines whether declaration generation is enabled.
+
+In `.fatherrc.ts`, set `dts` at the top level for ESM and CJS, or use `esm.dts` or `cjs.dts` to configure each format individually.
+
+```ts
+export default {
+  esm: {},
+  dts: { failOnError: true },
+};
+```
 
 #### **Using the native TypeScript compiler**
 

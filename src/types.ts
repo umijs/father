@@ -114,6 +114,12 @@ export interface IFatherDtsConfig {
    * @experimental tsgo requires TypeScript 7 (direct or @typescript/native alias) or @typescript/native-preview
    */
   compiler?: `${IFatherDtsCompilerTypes}`;
+
+  /**
+   * fail when a scheduled declaration cannot be generated
+   * @default false
+   */
+  failOnError?: boolean;
 }
 
 export type IFatherUtooPackConfig = Partial<IUtooPackBundleOptions['config']>;

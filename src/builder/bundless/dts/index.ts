@@ -498,6 +498,7 @@ export default async function getDeclarations(
     cwd: string;
     compiler?: `${IFatherDtsCompilerTypes}`;
     outputDirs?: Map<string, string>;
+    failOnError?: boolean;
   },
 ) {
   const cache = getCache('bundless-dts');
@@ -676,11 +677,18 @@ export default async function getDeclarations(
 
     // check compile error
     // ref: https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
-    const diagnostics = ts
+    const allDiagnostics = ts
       .getPreEmitDiagnostics(incrProgram.getProgram())
-      .concat(result.diagnostics)
-      // omit error for files which not included by build
-      .filter((d) => !d.file || inputFiles.includes(d.file.fileName));
+      .concat(result.diagnostics);
+    // An error outside the build inputs can block declaration emit for the
+    // whole project. Cached declarations can hide that failure.
+    const emitBlocked =
+      opts.failOnError && tsconfig.options.noEmitOnError && result.emitSkipped;
+    const diagnostics = emitBlocked
+      ? ts.sortAndDeduplicateDiagnostics(allDiagnostics)
+      : allDiagnostics.filter(
+          (d) => !d.file || inputFiles.includes(d.file.fileName),
+        );
 
     /* istanbul ignore if -- @preserve */
     if (diagnostics.length) {

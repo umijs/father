@@ -122,6 +122,7 @@ async function runTransformFiles(
       {
         outputDir: string;
         compiler?: IDeclarationResult[2];
+        failOnError?: boolean;
       }
     >();
 
@@ -186,6 +187,7 @@ async function runTransformFiles(
         declarationFileMap.set(item[0], {
           outputDir: item[1],
           compiler: item[2],
+          failOnError: item[3],
         });
       }
     });
@@ -203,14 +205,37 @@ async function runTransformFiles(
         const outputDirs = new Map(
           entries.map(([file, meta]) => [file, meta.outputDir]),
         );
+        const strictFiles = entries
+          .filter(([, meta]) => meta.failOnError)
+          .map(([file]) => file);
         const declarations = await getDeclarations(
           entries.map(([file]) => file),
           {
             cwd: opts.cwd,
             compiler: compiler as IDeclarationResult[2],
             outputDirs,
+            failOnError: strictFiles.length > 0,
           },
         );
+
+        if (strictFiles.length) {
+          const declaredFiles = new Set(
+            declarations
+              .filter(({ file }) => /\.d\.[cm]?ts$/.test(file))
+              .map(({ sourceFile }) => winPath(sourceFile)),
+          );
+          const missingFiles = strictFiles.filter(
+            (file) => !declaredFiles.has(file),
+          );
+          if (missingFiles.length) {
+            const paths = missingFiles
+              .map((file) => winPath(path.relative(opts.cwd, file)))
+              .join('\n');
+            throw new Error(
+              `Declaration generation failed. No declaration files emitted for:\n${paths}`,
+            );
+          }
+        }
 
         declarations.forEach((item) => {
           const config = opts.configProvider.getConfigForFile(

@@ -39,10 +39,23 @@ FATHER_TSCONFIG_NAME=tsconfig.build.json father build
 
 ### dts
 
-- 类型：`{ compiler?: 'tsc' | 'tsgo' }`
-- 默认值：`{ compiler: 'tsc' }`
+- 类型：`{ compiler?: 'tsc' | 'tsgo'; failOnError?: boolean }`
+- 默认值：`{ compiler: 'tsc', failOnError: false }`
 
 配置 TypeScript 类型声明生成方式。默认使用 father 内置的 TypeScript Compiler API；当配置为 `compiler: 'tsgo'` 时，会使用 TypeScript 7 原生编译器（或旧版 tsgo preview）生成 `.d.ts` 文件。
+
+#### 声明文件缺失时使构建失败
+
+`failOnError: true` 要求 Bundless 构建为每个参与声明生成的源文件产出声明文件。比如，`tsconfig` 同时开启 `declaration` 和 `noEmit`，或 `noEmitOnError` 因构建范围之外的类型错误阻止生成声明时，`father build` 会以非零退出码结束。Watch 模式会报告错误并继续监听。是否生成声明仍由 `tsconfig` 决定。
+
+在 `.fatherrc.ts` 中可以通过顶层 `dts` 为 ESM 和 CJS 启用，也可以在 `esm.dts` 或 `cjs.dts` 中单独配置。
+
+```ts
+export default {
+  esm: {},
+  dts: { failOnError: true },
+};
+```
 
 #### 使用原生 TypeScript 编译器
 
