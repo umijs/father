@@ -1,0 +1,21 @@
+package.json
+  s_b5c4f1905926d2::t_22e8aba6bc1796 3
+boilerplate/package.json
+  s_b5c4f1905926d2::t_22e8aba6bc1796 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d5769c96cf36ad4a972a4794a941d65d81a841f6",
+  "prompts": {},
+  "sessions": {
+    "s_b5c4f1905926d2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f867-ef71-7fa1-a669-d698059178ab",
+        "model": "gpt-6.2-sol"
+      },
+      "human_author": "fireairforce <1344492820@qq.com>"
+    }
+  }
+}
