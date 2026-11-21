@@ -27,6 +27,7 @@ function getCommonSchemas(): Record<string, (Joi: Root) => any> {
           IFatherDtsCompilerTypes.TSC,
           IFatherDtsCompilerTypes.TSGO,
         ).optional(),
+        failOnError: Joi.boolean(),
       }).optional(),
   };
 }

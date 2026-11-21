@@ -13,6 +13,7 @@ import {
   IFatherBundlessConfig,
   IFatherBundlessTypes,
   IFatherConfig,
+  IFatherDtsConfig,
   IFatherJSTransformerTypes,
   IFatherPlatformTypes,
 } from '../types';
@@ -96,6 +97,17 @@ export function convertAliasByTsconfigPaths(cwd: string) {
   }
 
   return { bundle, bundless };
+}
+
+function inheritDtsFailOnError(
+  parent: IFatherDtsConfig | undefined,
+  child: IFatherDtsConfig | undefined,
+) {
+  if (!child) return parent;
+  if (child.failOnError !== undefined || parent?.failOnError === undefined) {
+    return child;
+  }
+  return { ...child, failOnError: parent.failOnError };
 }
 
 /**
@@ -226,6 +238,7 @@ export function normalizeUserConfig(
       parallel: false,
       ...baseConfig,
       ...esmBaseConfig,
+      dts: inheritDtsFailOnError(baseConfig.dts, esmBaseConfig.dts),
     };
 
     // generate config for input
@@ -279,6 +292,7 @@ export function normalizeUserConfig(
 
         // override all configs for different input
         ...overrides[oInput],
+        dts: inheritDtsFailOnError(bundlessConfig.dts, overrides[oInput].dts),
 
         // specific different input
         input: oInput,
